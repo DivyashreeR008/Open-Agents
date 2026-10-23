@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { AGENT_COUNT, loadAllAgents } from '../agents/registry'
 
-const AgentsContext = createContext(null)
+export const AgentsContext = createContext(null)
 
 /**
  * Provider that lazy-loads all agent definitions once and
