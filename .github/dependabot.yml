@@ -17,9 +17,12 @@ updates:
       prefix: "chore"
     cooldown:
       default-days: 7
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
+    # Major updates remain visible, but are grouped so their compatibility
+    # review can be planned as one deliberate change.
+    groups:
+      major-dependencies:
+        update-types:
+          - "major"
 
   - package-ecosystem: "github-actions"
     directory: "/"
