@@ -1,4 +1,5 @@
-import { execSync, spawn } from 'node:child_process'
+import { execSync } from 'node:child_process'
+import { preview } from 'vite'
 
 const PORT = 4177
 const BASE = `http://localhost:${PORT}`
@@ -66,21 +67,15 @@ async function main() {
   }
   log('Build succeeded')
 
-  log('Starting vite preview server on port', PORT)
-  const preview = spawn('npx', ['--no-install', 'vite', 'preview', '--port', String(PORT), '--host'], {
-    stdio: ['ignore', 'pipe', 'pipe'],
-    cwd: process.cwd(),
-    env: { ...process.env },
+  log(`Starting Vite preview server on port ${PORT}`)
+  const previewServer = await preview({
+    preview: { host: true, port: PORT },
   })
-
-  let previewOutput = ''
-  preview.stdout.on('data', (chunk) => { previewOutput += chunk.toString() })
-  preview.stderr.on('data', (chunk) => { previewOutput += chunk.toString() })
 
   try {
     const ready = await waitForReady()
     if (!ready) {
-      fail(`Preview server did not become ready on ${BASE}\n${previewOutput}`)
+      fail(`Preview server did not become ready on ${BASE}`)
     }
     log('Preview server is ready')
 
@@ -123,7 +118,7 @@ async function main() {
 
     log('All smoke checks passed ✅')
   } finally {
-    preview.kill('SIGTERM')
+    await previewServer.close()
   }
 }
 
