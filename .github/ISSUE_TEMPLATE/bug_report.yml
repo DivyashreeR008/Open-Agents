@@ -6,6 +6,10 @@ body:
   - type: markdown
     attributes:
       value: |
+        **Security vulnerability?** Do not file it here, issues are public. Use [private vulnerability reporting](https://github.com/DivyashreeR008/Open-Agents/security/advisories/new) instead (see [SECURITY.md](https://github.com/DivyashreeR008/Open-Agents/blob/main/SECURITY.md)).
+  - type: markdown
+    attributes:
+      value: |
         Thanks for reporting a bug! Please fill this out so we can understand and fix it quickly.
 
   - type: textarea

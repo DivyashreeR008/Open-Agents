@@ -64,9 +64,10 @@ To protect users against accidental regressions, these rules are actively enforc
 
 If you find something that looks like a security issue, please **do not open a public GitHub issue**.
 
-Instead, use **GitHub > Security > Report a vulnerability** (private security advisory)
-for this repository. If that is unavailable, contact the maintainer privately —
-see [MAINTAINERS.md](./MAINTAINERS.md).
+Instead, [report it privately](https://github.com/DivyashreeR008/Open-Agents/security/advisories/new) (GitHub > Security > Report a vulnerability).
+
+If that page is unavailable, open a public issue that only asks for a private way to
+reach the maintainer. Do not include any details of the vulnerability in it.
 
 Tell us what you found and how to reproduce it. We aim to respond within 48 hours.
 

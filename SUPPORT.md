@@ -45,3 +45,8 @@ If you enjoy working on Open-Agents, hit **Watch** on the repo
 so you never miss a new issue, feature, or release.
 
 The best projects are built by people who stick around. Hope to see you here for a long time. 🙌
+
+## Security Issues
+
+Do not report vulnerabilities in public issues or comments. Use
+[private vulnerability reporting](https://github.com/DivyashreeR008/Open-Agents/security/advisories/new) and see [SECURITY.md](./SECURITY.md).
