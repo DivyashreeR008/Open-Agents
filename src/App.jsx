@@ -27,6 +27,8 @@ const CollectionDetailPage = lazy(() => import('./pages/CollectionDetailPage'))
 const AutomationsPage = lazy(() => import('./pages/AutomationsPage'))
 const AutomationDetailPage = lazy(() => import('./pages/AutomationDetailPage'))
 const MarketplacePage = lazy(() => import('./pages/MarketplacePage'))
+const MarketplaceDraftsPage = lazy(() => import('./pages/MarketplaceDraftsPage'))
+const MarketplaceDraftPage = lazy(() => import('./pages/MarketplaceDraftPage'))
 const Privacy = lazy(() => import('./pages/Privacy'))
 const TermsOfService = lazy(() => import('./pages/TermsOfService'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
@@ -113,6 +115,8 @@ export default function App() {
               <Route path="/automations" element={<AutomationsPage />} />
               <Route path="/automations/:id" element={<AutomationDetailPage />} />
               <Route path="/marketplace" element={<MarketplacePage />} />
+              <Route path="/marketplace/drafts" element={<MarketplaceDraftsPage />} />
+              <Route path="/marketplace/drafts/:id" element={<MarketplaceDraftPage />} />
               <Route path="/analytics" element={<AnalyticsPage />} />
               <Route path="/workflows" element={<WorkflowLibrary />} />
               <Route path="/workflows/build" element={<WorkflowBuilder />} />

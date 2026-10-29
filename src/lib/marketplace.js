@@ -114,19 +114,23 @@ export function importAgent(listingId) {
   const listing = listings.find((l) => l.id === listingId)
   if (!listing) return null
 
+  const flagged = Array.isArray(listing.sanitizedFields)
+    ? listing.sanitizedFields.filter((f) => typeof f === 'string')
+    : []
+
   const draft = {
     id: `draft_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
     sourceListingId: listing.id,
     name: `${listing.name} (imported)`,
     description: listing.description,
     tags: [...listing.tags],
-    config: JSON.parse(JSON.stringify(listing.config)),
-    pendingCredentialFields: [...listing.sanitizedFields],
-    readyToRun: listing.sanitizedFields.length === 0,
+    config: JSON.parse(JSON.stringify(listing.config ?? {})),
+    pendingCredentialFields: flagged,
+    readyToRun: flagged.length === 0,
     importedAt: new Date().toISOString(),
   }
 
-  const drafts = loadJson(DRAFTS_KEY, [])
+  const drafts = loadDrafts()
   drafts.unshift(draft)
   saveJson(DRAFTS_KEY, drafts)
 
@@ -136,12 +140,116 @@ export function importAgent(listingId) {
   return draft
 }
 
+const DRAFT_PROVIDERS = ['openai', 'anthropic', 'gemini', 'openrouter', 'any']
+const PLACEHOLDER_PATTERN = /^YOUR_[A-Z0-9_]+_HERE$/
+
+function normalizeDraft(draft) {
+  if (!draft || typeof draft !== 'object' || Array.isArray(draft)) return null
+  if (typeof draft.id !== 'string' || !draft.id) return null
+
+  const config =
+    draft.config && typeof draft.config === 'object' && !Array.isArray(draft.config)
+      ? draft.config
+      : {}
+  const pending = Array.isArray(draft.pendingCredentialFields)
+    ? draft.pendingCredentialFields.filter((f) => typeof f === 'string' && f)
+    : []
+
+  return {
+    ...draft,
+    name: typeof draft.name === 'string' && draft.name.trim() ? draft.name : 'Imported agent',
+    description: typeof draft.description === 'string' ? draft.description : '',
+    tags: Array.isArray(draft.tags) ? draft.tags.filter((t) => typeof t === 'string') : [],
+    config,
+    pendingCredentialFields: pending,
+    readyToRun: pending.length === 0,
+    importedAt: typeof draft.importedAt === 'string' ? draft.importedAt : '',
+  }
+}
+
 /**
- * Imported drafts, newest first.
+ * Imported drafts, newest first. Entries that are not usable drafts (wrong
+ * shape, no id) are skipped so one bad record cannot break the list.
  * @returns {Array<object>}
  */
 export function loadDrafts() {
-  return loadJson(DRAFTS_KEY, [])
+  const drafts = loadJson(DRAFTS_KEY, [])
+  return Array.isArray(drafts) ? drafts.map(normalizeDraft).filter(Boolean) : []
+}
+
+/**
+ * @param {string} draftId
+ * @returns {object|null}
+ */
+export function getDraft(draftId) {
+  return loadDrafts().find((d) => d.id === draftId) ?? null
+}
+
+/**
+ * Delete an imported draft. The source listing and its import count are left
+ * alone.
+ * @param {string} draftId
+ * @returns {boolean} true when a draft was removed
+ */
+export function removeDraft(draftId) {
+  const drafts = loadDrafts()
+  const next = drafts.filter((d) => d.id !== draftId)
+  if (next.length === drafts.length) return false
+  saveJson(DRAFTS_KEY, next)
+  return true
+}
+
+/**
+ * Ids of the listings that currently have at least one draft in the workspace.
+ * @returns {Set<string>}
+ */
+export function getImportedListingIds() {
+  return new Set(
+    loadDrafts()
+      .map((d) => d.sourceListingId)
+      .filter((id) => typeof id === 'string')
+  )
+}
+
+/**
+ * Flagged credential fields that still have no real value. Values are only
+ * held by the caller (in memory); they are never written back to the drafts
+ * store. A blank value or an untouched YOUR_..._HERE placeholder counts as
+ * missing.
+ * @param {object} draft
+ * @param {Record<string, string>} values
+ * @returns {string[]}
+ */
+export function getMissingDraftFields(draft, values = {}) {
+  return (draft?.pendingCredentialFields ?? []).filter((field) => {
+    const value = typeof values[field] === 'string' ? values[field].trim() : ''
+    return !value || PLACEHOLDER_PATTERN.test(value)
+  })
+}
+
+/**
+ * Turn a draft into something AgentRunner can run: the base agent it was
+ * published from, with the draft's name, provider and system prompt on top.
+ * The base agent id is kept so history and ratings stay attached to a real
+ * agent. Returns null when the base agent is no longer in the catalogue.
+ * @param {object} draft
+ * @param {Array<object>} agents
+ * @returns {object|null}
+ */
+export function buildDraftAgent(draft, agents) {
+  const baseId = draft?.config?.baseAgentId
+  const base = Array.isArray(agents) ? agents.find((a) => a.id === baseId) : null
+  if (!base) return null
+
+  const { provider, systemPrompt } = draft.config
+  return {
+    ...base,
+    name: draft.name,
+    description: draft.description || base.description,
+    provider: DRAFT_PROVIDERS.includes(provider) ? provider : base.provider,
+    systemPrompt:
+      typeof systemPrompt === 'string' && systemPrompt.trim() ? systemPrompt : base.systemPrompt,
+  }
 }
 
 /**

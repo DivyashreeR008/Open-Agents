@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import {
   Store,
   Search,
@@ -9,6 +10,7 @@ import {
   Check,
   ShieldCheck,
   Tag,
+  PackageOpen,
 } from 'lucide-react'
 import { useAgents } from '../lib/useAgents'
 import { useProgressiveList } from '../lib/useProgressiveList'
@@ -20,6 +22,8 @@ import {
   loadListings,
   publishAgent,
   importAgent,
+  loadDrafts,
+  getImportedListingIds,
   rateAgent,
   getUserVote,
   getAverageRating,
@@ -300,11 +304,20 @@ function ListingCard({ listing, onImport, onRate, imported }) {
           </span>
           <button
             onClick={() => onImport(listing.id)}
-            className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold transition-colors bg-zinc-500/10 text-zinc-900 hover:bg-zinc-900 hover:text-white dark:text-white dark:hover:bg-white dark:hover:text-black"
+            disabled={imported}
+            className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold transition-colors bg-zinc-500/10 text-zinc-900 hover:bg-zinc-900 hover:text-white dark:text-white dark:hover:bg-white dark:hover:text-black disabled:cursor-default disabled:hover:bg-zinc-500/10 disabled:hover:text-zinc-900 dark:disabled:hover:bg-zinc-500/10 dark:disabled:hover:text-white"
           >
             {imported ? <Check size={11} /> : <Download size={11} />}
             {imported ? 'Imported' : 'Import'}
           </button>
+          {imported && (
+            <Link
+              to="/marketplace/drafts"
+              className="text-[11px] font-medium text-zinc-600 underline hover:text-black dark:text-text-secondary dark:hover:text-white"
+            >
+              View draft
+            </Link>
+          )}
         </div>
       </div>
     </div>
@@ -319,7 +332,8 @@ export default function MarketplacePage() {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('')
   const [showPublish, setShowPublish] = useState(false)
-  const [importedIds, setImportedIds] = useState(new Set())
+  const [importedIds, setImportedIds] = useState(getImportedListingIds)
+  const [draftCount, setDraftCount] = useState(() => loadDrafts().length)
   const { notice, flash } = useFlashNotice()
 
   useEffect(() => {
@@ -335,11 +349,12 @@ export default function MarketplacePage() {
     const draft = importAgent(listingId)
     if (!draft) return
     setListings(loadListings())
-    setImportedIds((prev) => new Set(prev).add(listingId))
+    setImportedIds(getImportedListingIds())
+    setDraftCount(loadDrafts().length)
     flash(
       draft.pendingCredentialFields.length > 0
-        ? `Imported "${draft.name}". Configure ${draft.pendingCredentialFields.length} credential field(s) before running it.`
-        : `Imported "${draft.name}" into your workspace.`
+        ? `Imported "${draft.name}". Complete ${draft.pendingCredentialFields.length} credential field(s) in My drafts before running it.`
+        : `Imported "${draft.name}". Open it from My drafts to run it.`
     )
   }
 
@@ -374,13 +389,22 @@ export default function MarketplacePage() {
             </p>
           </div>
         </div>
-        <button
-          onClick={() => setShowPublish(true)}
-          className="flex items-center gap-1.5 h-8 px-3 text-sm font-semibold bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 transition-all active:scale-[0.98]"
-        >
-          <UploadCloud size={14} />
-          Publish to Marketplace
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/marketplace/drafts"
+            className="flex items-center gap-1.5 h-8 px-3 text-sm font-semibold border border-gray-200 text-gray-700 hover:bg-gray-100 dark:border-border dark:text-text-primary dark:hover:bg-surface-hover transition-all"
+          >
+            <PackageOpen size={14} aria-hidden="true" />
+            My drafts ({draftCount})
+          </Link>
+          <button
+            onClick={() => setShowPublish(true)}
+            className="flex items-center gap-1.5 h-8 px-3 text-sm font-semibold bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 transition-all active:scale-[0.98]"
+          >
+            <UploadCloud size={14} />
+            Publish to Marketplace
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
