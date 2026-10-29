@@ -355,7 +355,10 @@ const handleRun = async () => {
         outputCost: null,
       });
 
+      const runId = `${agent.id}_${Date.now()}`;
+
       saveRun({
+        runId,
         agentId: agent.id,
         agentName: agent.name,
         inputs: { ...inputs },
@@ -364,6 +367,7 @@ const handleRun = async () => {
       });
 
       recordAnalyticsRun({
+        runId,
         agentId: agent.id,
         agentName: agent.name,
         category: agent.category,

@@ -1,5 +1,7 @@
-import { describe, expect, it } from 'vitest'
-import { allocateRoundedPercentages } from './useAnalytics'
+import { beforeEach, describe, expect, it } from 'vitest'
+import { renderHook, act } from '@testing-library/react'
+import { allocateRoundedPercentages, recordAnalyticsRun, useAnalytics } from './useAnalytics'
+import { useHistory } from './useHistory'
 
 describe('allocateRoundedPercentages', () => {
   it('reconciles three equal shares to exactly one hundred', () => {
@@ -45,5 +47,64 @@ describe('allocateRoundedPercentages', () => {
       )
       expect(result.reduce((sum, item) => sum + item.pct, 0)).toBe(100)
     }
+  })
+})
+
+describe('first analytics visit after runs were already recorded', () => {
+  beforeEach(() => {
+    localStorage.clear()
+  })
+
+  it('does not import a run again when history and analytics share one id', () => {
+    const history = renderHook(() => useHistory())
+    const runId = 'code-reviewer_1793008752066'
+
+    act(() => {
+      history.result.current.saveRun({
+        runId,
+        agentId: 'code-reviewer',
+        agentName: 'Code Reviewer',
+        inputs: {},
+        output: 'ok',
+        provider: 'openai',
+      })
+      recordAnalyticsRun({
+        runId,
+        agentId: 'code-reviewer',
+        agentName: 'Code Reviewer',
+        category: 'Engineering',
+        provider: 'openai',
+        model: 'gpt-4o',
+        duration: 1200,
+      })
+    })
+
+    expect(JSON.parse(localStorage.getItem('OpenAgents_history'))[0].id).toBe(runId)
+    expect(JSON.parse(localStorage.getItem('OpenAgents_history'))[0].runId).toBeUndefined()
+
+    const { result } = renderHook(() => useAnalytics())
+    expect(result.current.stats.totalRuns).toBe(1)
+    expect(result.current.events[0].category).toBe('Engineering')
+  })
+
+  it('still seeds history entries that were never recorded and keeps newest first', () => {
+    localStorage.setItem('oa_analytics', JSON.stringify([
+      { id: 'a_200', agentId: 'a', agentName: 'A', provider: 'x', category: 'Engineering', model: 'm', duration: 1, timestamp: 200 },
+    ]))
+    localStorage.setItem('OpenAgents_history', JSON.stringify([
+      { id: 'a_200', agentId: 'a', agentName: 'A', provider: 'x', timestamp: 200 },
+      { id: 'a_100', agentId: 'a', agentName: 'A', provider: 'x', timestamp: 100 },
+    ]))
+
+    const { result } = renderHook(() => useAnalytics())
+
+    expect(result.current.events.map((e) => e.id)).toEqual(['a_200', 'a_100'])
+    expect(result.current.stats.totalRuns).toBe(2)
+  })
+
+  it('falls back to the old id format when no runId is passed', () => {
+    recordAnalyticsRun({ agentId: 'a', agentName: 'A' })
+    const [event] = JSON.parse(localStorage.getItem('oa_analytics'))
+    expect(event.id).toMatch(/^a_\d+$/)
   })
 })

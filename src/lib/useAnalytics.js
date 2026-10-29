@@ -53,7 +53,10 @@ function seedFromHistory() {
       }))
 
     if (seeded.length > 0) {
-      const merged = [...seeded, ...existing].slice(0, MAX_EVENTS)
+      // newest first, seeded entries can be older than what is already stored
+      const merged = [...seeded, ...existing]
+        .sort((a, b) => b.timestamp - a.timestamp)
+        .slice(0, MAX_EVENTS)
       saveEvents(merged)
       window.dispatchEvent(new Event('oa_analytics_update'))
     }
@@ -64,9 +67,9 @@ function seedFromHistory() {
 
 // ── Plain function (for use outside React components) ───────────────────────
 
-export function recordAnalyticsRun({ agentId, agentName, category, provider, model, duration }) {
+export function recordAnalyticsRun({ runId, agentId, agentName, category, provider, model, duration }) {
   const event = {
-    id: `${agentId}_${Date.now()}`,
+    id: runId || `${agentId}_${Date.now()}`,
     agentId,
     agentName,
     category: category || '',
