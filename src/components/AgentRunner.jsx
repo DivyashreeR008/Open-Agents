@@ -378,6 +378,9 @@ const handleRun = async () => {
    } catch (err) {
   if (!isCurrentRun()) return;
   if (err.name !== "AbortError") {
+    // An error mid-stream must not leave the "Streaming...." panel stuck on.
+    setIsStreaming(false);
+    setStreamingOutput("");
     if (err && err.type === "invalid_api_key") {
       setError(err);
     } else {

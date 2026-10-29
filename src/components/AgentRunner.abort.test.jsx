@@ -177,4 +177,24 @@ describe('AgentRunner: stream cancellation lifecycle', () => {
     expect(history()).toHaveLength(0)
     expect(analyticsFor('test-agent')).toHaveLength(0)
   })
+
+  it('a provider error event mid-stream shows an error and records no run', async () => {
+    await startRun()
+    await act(async () => {
+      push(0, 'The first issue is that the function mutates its')
+      requests[0].closed = true
+      requests[0].controller.enqueue(
+        enc.encode(`data: ${JSON.stringify({ error: { message: 'Overloaded' } })}\n\n`)
+      )
+      requests[0].controller.close()
+    })
+    await flush()
+
+    expect(await screen.findByText(/Overloaded/)).toBeInTheDocument()
+    expect(screen.queryByText(/Streaming\.\.\.\./)).toBeNull()
+    expect(screen.queryByTestId('output')).toBeNull()
+    expect(history()).toHaveLength(0)
+    expect(analyticsFor('test-agent')).toHaveLength(0)
+    expect(screen.getByRole('button', { name: /run agent/i })).toBeInTheDocument()
+  })
 })

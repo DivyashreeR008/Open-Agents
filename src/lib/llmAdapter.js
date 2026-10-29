@@ -5,6 +5,15 @@
  * Supports both one-shot (`runAgent`) and streaming (`streamAgent`) modes.
  */
 
+/**
+ * Pull a readable message out of a provider error object that arrives as an
+ * event inside an already open (200) stream.
+ */
+function streamErrorMessage(err) {
+  if (typeof err === 'string') return err
+  return err?.message || err?.type || err?.status || 'The provider reported an error while streaming.'
+}
+
 const PROVIDER_CONFIGS = {
   openai: {
     url: 'https://api.openai.com/v1/chat/completions',
@@ -44,9 +53,10 @@ const PROVIDER_CONFIGS = {
       if (!line.startsWith('data: ')) return null
       try {
         const json = JSON.parse(line.slice(6))
+        if (json.error) return { content: '', done: false, error: streamErrorMessage(json.error) }
         const delta = json.choices?.[0]?.delta?.content || ''
-        const finished = json.choices?.[0]?.finish_reason === 'stop'
-        return { content: delta, done: finished }
+        const reason = json.choices?.[0]?.finish_reason
+        return { content: delta, done: reason === 'stop', terminated: Boolean(reason) }
       } catch {
         return null
       }
@@ -89,9 +99,10 @@ const PROVIDER_CONFIGS = {
       if (!line.startsWith('data: ')) return null
       try {
         const json = JSON.parse(line.slice(6))
+        if (json.error) return { content: '', done: false, error: streamErrorMessage(json.error) }
         const delta = json.choices?.[0]?.delta?.content || ''
-        const finished = json.choices?.[0]?.finish_reason === 'stop'
-        return { content: delta, done: finished }
+        const reason = json.choices?.[0]?.finish_reason
+        return { content: delta, done: reason === 'stop', terminated: Boolean(reason) }
       } catch {
         return null
       }
@@ -129,6 +140,9 @@ const PROVIDER_CONFIGS = {
       if (!line.startsWith('data: ')) return null
       try {
         const json = JSON.parse(line.slice(6))
+        if (json.type === 'error') {
+          return { content: '', done: false, error: streamErrorMessage(json.error) }
+        }
         if (json.type === 'content_block_delta') {
           return { content: json.delta?.text || '', done: false }
         }
@@ -176,9 +190,10 @@ const PROVIDER_CONFIGS = {
       if (!line.startsWith('data: ')) return null
       try {
         const json = JSON.parse(line.slice(6))
+        if (json.error) return { content: '', done: false, error: streamErrorMessage(json.error) }
         const text = json.candidates?.[0]?.content?.parts?.[0]?.text || ''
-        const finished = json.candidates?.[0]?.finishReason === 'STOP'
-        return { content: text, done: finished }
+        const reason = json.candidates?.[0]?.finishReason
+        return { content: text, done: reason === 'STOP', terminated: Boolean(reason) }
       } catch {
         return null
       }
@@ -505,6 +520,27 @@ export async function streamAgent({ provider, model, apiKey, systemPrompt, userM
     const reader = response.body.getReader()
     const decoder = new TextDecoder()
     let buffer = ''
+    // Set once the provider sends its own end marker (message_stop, [DONE],
+    // a finish reason). A stream that closes without one was cut off.
+    let sawTerminator = false
+
+    // Apply one parsed stream event. A provider error event is thrown, with
+    // whatever text had already arrived kept on the error.
+    const handleParsed = (parsed) => {
+      if (!parsed) return
+      if (parsed.error) {
+        const streamError = new Error(parsed.error)
+        streamError.type = 'stream_error'
+        streamError.provider = provider
+        streamError.partialContent = fullContent
+        throw streamError
+      }
+      if (parsed.done || parsed.terminated) sawTerminator = true
+      if (parsed.content) {
+        fullContent += parsed.content
+        onChunk(parsed.content)
+      }
+    }
 
     while (true) {
       const { done, value } = await reader.read()
@@ -524,10 +560,7 @@ export async function streamAgent({ provider, model, apiKey, systemPrompt, userM
         const parsed = config.parseStreamChunk(trimmed)
         if (!parsed) continue
 
-        if (parsed.content) {
-          fullContent += parsed.content
-          onChunk(parsed.content)
-        }
+        handleParsed(parsed)
 
         if (parsed.done) break
       }
@@ -535,11 +568,17 @@ export async function streamAgent({ provider, model, apiKey, systemPrompt, userM
 
     // Process any remaining buffer content
     if (buffer.trim()) {
-      const parsed = config.parseStreamChunk(buffer.trim())
-      if (parsed?.content) {
-        fullContent += parsed.content
-        onChunk(parsed.content)
-      }
+      handleParsed(config.parseStreamChunk(buffer.trim()))
+    }
+
+    if (!sawTerminator && !signal?.aborted) {
+      const cutOff = new Error(
+        'The response ended before the provider finished. The output may be incomplete, please try again.'
+      )
+      cutOff.type = 'stream_error'
+      cutOff.provider = provider
+      cutOff.partialContent = fullContent
+      throw cutOff
     }
 
     const duration = Math.round(performance.now() - startTime)
