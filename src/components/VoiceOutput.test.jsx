@@ -134,6 +134,35 @@ describe("VoiceOutput speaking lifecycle", () => {
     expect(screen.queryByText("paused")).not.toBeInTheDocument();
   });
 
+  it("announces playback state through a polite status region", () => {
+    render(<VoiceOutput text="Hello world" />);
+    const status = screen.getByRole("status");
+    expect(status).toHaveAttribute("aria-live", "polite");
+    expect(status).toHaveTextContent("");
+
+    fireEvent.click(screen.getByRole("button", { name: "Read response aloud" }));
+    expect(status).toHaveTextContent("Reading aloud");
+    expect(screen.getByRole("button", { name: "Pause reading" })).toHaveAttribute("aria-pressed", "true");
+
+    fireEvent.click(screen.getByRole("button", { name: "Pause reading" }));
+    expect(status).toHaveTextContent("Reading paused");
+    expect(screen.getByRole("button", { name: "Resume reading" })).toHaveAttribute("aria-pressed", "true");
+
+    fireEvent.click(screen.getByRole("button", { name: "Resume reading" }));
+    expect(status).toHaveTextContent("Reading aloud");
+
+    act(() => current().onend());
+    expect(status).toHaveTextContent("Finished reading");
+    expect(screen.getByRole("button", { name: "Read response aloud" })).toHaveAttribute("aria-pressed", "false");
+  });
+
+  it("announces when reading is stopped", () => {
+    render(<VoiceOutput text="Hello world" />);
+    fireEvent.click(screen.getByRole("button", { name: "Read response aloud" }));
+    fireEvent.click(screen.getByRole("button", { name: "Stop reading" }));
+    expect(screen.getByRole("status")).toHaveTextContent("Reading stopped");
+  });
+
   it("stops speaking when stop button is clicked", () => {
     render(<VoiceOutput text="Hello world" />);
 

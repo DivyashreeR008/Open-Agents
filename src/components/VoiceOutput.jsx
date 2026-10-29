@@ -33,7 +33,7 @@ export default function VoiceOutput({
   rate = 1,
   pitch = 1,
 }) {
-  const [status, setStatus] = useState("idle"); // "idle" | "speaking" | "paused" | "error"
+  const [status, setStatus] = useState("idle"); // "idle" | "speaking" | "paused" | "finished" | "stopped" | "error"
   const [errorMsg, setErrorMsg] = useState("");
   const utteranceRef = useRef(null);
 
@@ -72,7 +72,7 @@ export default function VoiceOutput({
     utterance.pitch = pitch;
 
     utterance.onstart = () => setStatus("speaking");
-    utterance.onend = () => setStatus("idle");
+    utterance.onend = () => setStatus("finished");
     utterance.onerror = (e) => {
       if (e.error === "interrupted" || e.error === "canceled") {
         setStatus("idle");
@@ -84,6 +84,11 @@ export default function VoiceOutput({
 
     utteranceRef.current = utterance;
     window.speechSynthesis.speak(utterance);
+  };
+
+  const stop = () => {
+    cancel();
+    setStatus("stopped");
   };
 
   const togglePause = () => {
@@ -101,8 +106,21 @@ export default function VoiceOutput({
   const isPaused = status === "paused";
   const isActive = isSpeaking || isPaused;
 
+  // Text for the polite live region so screen readers hear state changes
+  const statusMessage = {
+    speaking: "Reading aloud",
+    paused: "Reading paused",
+    finished: "Finished reading",
+    stopped: "Reading stopped",
+  }[status] || "";
+
   return (
     <span className="relative inline-flex items-center gap-1">
+      {/* Screen-reader status announcements for playback state */}
+      <span role="status" aria-live="polite" className="sr-only">
+        {statusMessage}
+      </span>
+
       {/* Play / Pause button */}
       <button
         type="button"
@@ -142,7 +160,7 @@ export default function VoiceOutput({
       {isActive && (
         <button
           type="button"
-          onClick={cancel}
+          onClick={stop}
           title="Stop reading"
           aria-label="Stop reading"
           className="flex items-center justify-center w-8 h-8 bg-gray-100 text-gray-600 hover:bg-zinc-50 hover:text-zinc-600 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-1 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-zinc-900/30 dark:hover:text-zinc-400"
