@@ -14,6 +14,11 @@
 - [ ] I tested my changes in the browser ✅
 - [ ] I did not break any existing agents ✅
 - [ ] I did not use `import agents from '../agents/registry'` ✅
+- [ ] I followed the contributor security rules (see SECURITY.md):
+  - [ ] No data sent to third-party services ✅
+  - [ ] No credentials, tokens, or API keys logged or stored insecurely ✅
+  - [ ] No analytics, telemetry, or tracking scripts added ✅
+- [ ] Any accepted security exceptions are deliberately recorded in `security-exceptions.json` ✅
 - [ ] My PR has a clear description above ✅
 
 > Tip: run the tests locally with `npm ci` then `npm test`. They also run in CI on every PR.

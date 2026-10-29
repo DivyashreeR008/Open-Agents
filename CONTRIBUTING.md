@@ -35,6 +35,7 @@ updated definition; invalid input types, option lists, duplicate IDs, and stale
 - Add an axe check for new interactive components or page-level flows. The shared
   `src/test/a11y.js` helper fails on jsdom-supported violations; color contrast
   still requires a real-browser or manual check.
+- Adhere to the contributor security rules in [SECURITY.md](SECURITY.md) (no third-party data transmission, no credential logging or storage, no analytics/tracking). Run `npm run check:security` to scan your changes locally.
 
 ## Report Bugs / Feature Requests
 

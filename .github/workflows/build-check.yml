@@ -42,6 +42,9 @@ jobs:
             exit 1
           fi
 
+      - name: Check contributor security rules
+        run: node scripts/check-security-rules.mjs
+
       - name: Run build
         run: npm run build
 

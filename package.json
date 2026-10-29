@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:smoke": "node scripts/smoke-test.mjs"
+    "test:smoke": "node scripts/smoke-test.mjs",
+    "check:security": "node scripts/check-security-rules.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",

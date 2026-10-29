@@ -46,6 +46,13 @@ If you are contributing code, please do not add anything that:
 
 Any PR that does this will be closed, even if it was not intentional.
 
+### Enforcement and Accepted Exceptions
+
+To protect users against accidental regressions, these rules are actively enforced:
+- **Review checklist**: Contributors and reviewers verify compliance on every PR using the checklist in `.github/PULL_REQUEST_TEMPLATE.md`.
+- **Automated scanning**: Every CI run and test suite executes `node scripts/check-security-rules.mjs` (`npm run check:security`) to catch obvious violations automatically.
+- **Accepted exceptions**: Any necessary and deliberate exception (e.g. approved third-party integrations or opt-in features) must be recorded in [`security-exceptions.json`](./security-exceptions.json) with rule ID, file, pattern, and rationale.
+
 ## Supported Versions
 
 | Version | Supported |

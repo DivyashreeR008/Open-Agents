@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0",
+  "description": "Deliberately recorded and accepted exceptions to Open-Agents contributor security rules (see SECURITY.md).",
+  "exceptions": [
+    {
+      "id": "resend-email-dispatch",
+      "rule": "no-third-party-data",
+      "file": "src/lib/automationsService.js",
+      "pattern": "https://api.resend.com/emails",
+      "reason": "Optional user-configured workflow automation email dispatch via Resend API.",
+      "approved": true
+    },
+    {
+      "id": "automations-encrypted-vault",
+      "rule": "no-storing-credentials",
+      "file": "src/lib/automationsService.js",
+      "pattern": "localStorage.setItem(VAULT_KEY",
+      "reason": "Client-side encrypted vault for optional scheduled background automations.",
+      "approved": true
+    }
+  ]
+}
+
