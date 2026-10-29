@@ -1,4 +1,6 @@
+import { useId, useRef } from 'react'
 import { useTimedState } from '../lib/useTimedState'
+import { useDialogFocus } from '../hooks/useDialogFocus'
 import {
   X, CheckCircle2, AlertCircle, Clock, Zap, Copy, Check,
   Mail, Calendar, FileText, ChevronRight, Share2, Download
@@ -7,6 +9,9 @@ import OutputRenderer from './OutputRenderer'
 
 export default function AutomationRunDrawer({ run, isOpen, onClose }) {
   const [copied, setCopied] = useTimedState(false, isOpen && Boolean(run))
+  const panelRef = useRef(null)
+  const titleId = useId()
+  useDialogFocus(panelRef, { active: isOpen && Boolean(run), onClose })
 
   if (!isOpen || !run) return null
 
@@ -43,10 +48,11 @@ export default function AutomationRunDrawer({ run, isOpen, onClose }) {
       <div
         className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
         onClick={onClose}
+        aria-hidden="true"
       />
 
       {/* Drawer Panel */}
-      <div className="relative w-full max-w-2xl h-full bg-white dark:bg-[#111111] text-gray-900 dark:text-gray-100 shadow-pop border-l dark:border-border/80 border-gray-200 z-10 flex flex-col animate-fade-in">
+      <div ref={panelRef} role="dialog" aria-modal="true" aria-labelledby={titleId} className="relative w-full max-w-2xl h-full bg-white dark:bg-[#111111] text-gray-900 dark:text-gray-100 shadow-pop border-l dark:border-border/80 border-gray-200 z-10 flex flex-col animate-fade-in">
         {/* Header */}
         <div className="p-6 border-b dark:border-border/60 border-gray-100 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -61,7 +67,7 @@ export default function AutomationRunDrawer({ run, isOpen, onClose }) {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold truncate max-w-sm">
+                <h3 id={titleId} className="text-base font-bold truncate max-w-sm">
                   Run Execution Details
                 </h3>
                 <span className={`text-[10px] font-bold px-2 py-0.5 uppercase ${
@@ -80,21 +86,28 @@ export default function AutomationRunDrawer({ run, isOpen, onClose }) {
 
           <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={handleCopy}
+              aria-label="Copy output"
               className="p-2 text-gray-500 hover:text-black hover:bg-gray-100 dark:hover:bg-surface-hover dark:hover:text-white transition-colors"
               title="Copy Output"
             >
               {copied ? <Check size={16} className="text-zinc-500" /> : <Copy size={16} />}
             </button>
             <button
+              type="button"
               onClick={handleDownload}
+              aria-label="Download markdown"
               className="p-2 text-gray-500 hover:text-black hover:bg-gray-100 dark:hover:bg-surface-hover dark:hover:text-white transition-colors"
               title="Download Markdown"
             >
               <Download size={16} />
             </button>
             <button
+              type="button"
               onClick={onClose}
+              data-autofocus
+              aria-label="Close run details"
               className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-surface-hover transition-colors"
             >
               <X size={18} />

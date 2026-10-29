@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   Store,
   Search,
@@ -14,6 +14,7 @@ import { useAgents } from '../lib/useAgents'
 import { useProgressiveList } from '../lib/useProgressiveList'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
 import { useFlashNotice } from '../lib/useFlashNotice'
+import { useDialogFocus } from '../hooks/useDialogFocus'
 import {
   MARKETPLACE_CATEGORIES,
   loadListings,
@@ -71,6 +72,8 @@ function PublishModal({ agents, onClose, onPublished }) {
   const [readme, setReadme] = useState('')
   const [author, setAuthor] = useState('')
   const [agentSearch, setAgentSearch] = useState('')
+  const panelRef = useRef(null)
+  useDialogFocus(panelRef, { onClose })
 
   const selected = agents.find((a) => a.id === agentId)
   const canPublish = agentId && name.trim() && description.trim()
@@ -133,11 +136,12 @@ function PublishModal({ agents, onClose, onPublished }) {
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
       onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-      aria-label="Publish agent to marketplace"
     >
       <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Publish agent to marketplace"
         className="w-full max-w-lg max-h-[85vh] overflow-y-auto border p-5 dark:bg-surface dark:border-border bg-white border-gray-200"
         onClick={(e) => e.stopPropagation()}
       >
@@ -145,7 +149,7 @@ function PublishModal({ agents, onClose, onPublished }) {
           <h2 className="text-sm font-bold dark:text-text-primary text-gray-900">
             Publish to Marketplace
           </h2>
-          <button onClick={onClose} aria-label="Close" className="p-1 dark:hover:bg-surface-hover hover:bg-gray-100">
+          <button type="button" onClick={onClose} aria-label="Close" className="p-1 dark:hover:bg-surface-hover hover:bg-gray-100">
             <X size={15} className="dark:text-text-secondary text-gray-500" />
           </button>
         </div>
@@ -157,6 +161,7 @@ function PublishModal({ agents, onClose, onPublished }) {
             </label>
             <input
               type="search"
+              data-autofocus
               value={agentSearch}
               onChange={(e) => setAgentSearch(e.target.value)}
               placeholder="Filter agents by name, description, or category..."

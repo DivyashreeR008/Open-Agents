@@ -1,19 +1,15 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { FolderPlus, Plus, X } from 'lucide-react'
 import { DEFAULT_COLLECTION_ID, MAX_COLLECTIONS, useCollections } from '../lib/useCollections'
+import { useDialogFocus } from '../hooks/useDialogFocus'
 
 export default function CollectionPicker({ agentId, onClose }) {
   const { collections, createCollection, addAgentToCollection, isAgentInCollection } = useCollections()
   const [name, setName] = useState('')
   const [message, setMessage] = useState('')
 
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === 'Escape') onClose?.()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
+  const panelRef = useRef(null)
+  useDialogFocus(panelRef, { onClose })
 
   const visibleCollections = useMemo(
     () => collections.filter((collection) => collection.id !== DEFAULT_COLLECTION_ID),
@@ -34,8 +30,8 @@ export default function CollectionPicker({ agentId, onClose }) {
   }
 
   return (
-    <div role="dialog" aria-modal="true" aria-label="Add to collection" className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto p-4 pt-8 bg-black/50 backdrop-blur-sm">
-      <div className="flex max-h-[80vh] w-full max-w-md flex-col border border-gray-200 bg-white shadow-pop dark:border-border dark:bg-surface-card">
+    <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto p-4 pt-8 bg-black/50 backdrop-blur-sm">
+      <div ref={panelRef} role="dialog" aria-modal="true" aria-label="Add to collection" className="flex max-h-[80vh] w-full max-w-md flex-col border border-gray-200 bg-white shadow-pop dark:border-border dark:bg-surface-card">
         <div className="flex items-start justify-between gap-4 border-b border-gray-100 p-5 dark:border-border">
           <div className="flex items-start gap-3"><div className=" bg-zinc-500/10 p-2 text-zinc-600 dark:text-zinc-300"><FolderPlus size={18} /></div><div><h2 className="text-base font-semibold text-gray-900 dark:text-text-primary">Add to Collection</h2><p className="mt-1 text-sm text-gray-500 dark:text-text-secondary">Choose a collection or create a new one.</p></div></div>
           <button type="button" onClick={onClose} className=" p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/10 dark:hover:text-text-primary" aria-label="Close dialog"><X size={18} /></button>
@@ -49,7 +45,7 @@ export default function CollectionPicker({ agentId, onClose }) {
           </div>
           <div className="flex gap-2 border-t border-gray-100 pt-4 dark:border-border">
             <label htmlFor="collection-picker-name" className="sr-only">New collection name</label>
-            <input id="collection-picker-name" value={name} onChange={(event) => setName(event.target.value)} disabled={visibleCollections.length >= MAX_COLLECTIONS} className="min-w-0 flex-1 border border-gray-200 bg-white px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500/40 disabled:opacity-60 dark:border-border dark:bg-surface-input dark:text-text-primary" placeholder="New collection name" />
+            <input id="collection-picker-name" data-autofocus value={name} onChange={(event) => setName(event.target.value)} disabled={visibleCollections.length >= MAX_COLLECTIONS} className="min-w-0 flex-1 border border-gray-200 bg-white px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500/40 disabled:opacity-60 dark:border-border dark:bg-surface-input dark:text-text-primary" placeholder="New collection name" />
             <button type="button" onClick={handleCreate} disabled={visibleCollections.length >= MAX_COLLECTIONS} className="inline-flex items-center gap-1.5 bg-black dark:bg-white px-3 py-2 text-sm font-semibold text-white dark:text-black hover:bg-zinc-800 dark:hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-60"><Plus size={15} />Create</button>
           </div>
           {message && <p className=" border border-zinc-500/20 bg-zinc-500/10 px-3 py-2 text-sm text-zinc-900 dark:text-white">{message}</p>}
