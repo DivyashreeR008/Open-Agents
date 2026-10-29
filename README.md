@@ -21,6 +21,13 @@ We welcome contributions! Please see the contributing guidelines below.
 3. Make your changes
 4. Submit a pull request
 
+### Dependency update policy
+
+Dependabot checks npm dependencies weekly. Patch and minor updates are proposed normally;
+major updates are grouped into one `major-dependencies` pull request so maintainers can review
+breaking changes together. No package is globally excluded from major-version updates: grouped
+pull requests keep the upgrade backlog visible while allowing compatibility work to be planned.
+
 ### Development Setup
 ```bash
 # Clone your fork
