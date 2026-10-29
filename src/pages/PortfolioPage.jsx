@@ -33,12 +33,12 @@ export default function PortfolioPage() {
       </a>
 
       <header className="border-b border-white/10">
-        <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link to="/" className="font-mono text-sm tracking-tight">openagents_</Link>
-          <nav className="flex items-center gap-6 font-mono text-xs text-neutral-400">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+          <Link to="/" className="font-mono text-sm tracking-tight shrink-0">openagents_</Link>
+          <nav className="flex items-center gap-4 sm:gap-6 font-mono text-xs text-neutral-400">
             <a href="#index" className="hover:text-white transition-colors">Index</a>
-            <a href="#stack" className="hover:text-white transition-colors">Stack</a>
-            <a href="#license" className="hover:text-white transition-colors">License</a>
+            <a href="#stack" className="hidden sm:inline hover:text-white transition-colors">Stack</a>
+            <a href="#license" className="hidden sm:inline hover:text-white transition-colors">License</a>
             <a
               href="https://github.com/DivyashreeR008/Open-Agents"
               target="_blank"
