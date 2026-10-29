@@ -3,6 +3,8 @@ import PageHeader from '../components/layout/PageHeader'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
 
 const GITHUB_ISSUES_URL = 'https://github.com/DivyashreeR008/Open-Agents/issues/new'
+const SECURITY_REPORT_URL =
+  'https://github.com/DivyashreeR008/Open-Agents/security/advisories/new'
 
 const feedbackOptions = [
   {
@@ -69,6 +71,19 @@ export default function FeedbackPage() {
 
       <p className="mt-6 font-mono text-[11px] text-zinc-400 dark:text-text-muted">
         Opens GitHub so the maintainers can review and respond.
+      </p>
+      <p className="mt-2 text-xs text-zinc-500 dark:text-text-secondary">
+        Found a security vulnerability? Do not post it publicly.{' '}
+        <a
+          href={SECURITY_REPORT_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline underline-offset-2 hover:text-black dark:hover:text-white"
+        >
+          Report it privately
+          <span className="sr-only"> (opens in new tab)</span>
+        </a>
+        .
       </p>
     </div>
   )

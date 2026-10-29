@@ -6,6 +6,10 @@ body:
   - type: markdown
     attributes:
       value: |
+        **Security vulnerability?** Do not file it here, issues are public. Use [private vulnerability reporting](https://github.com/DivyashreeR008/Open-Agents/security/advisories/new) instead (see [SECURITY.md](https://github.com/DivyashreeR008/Open-Agents/blob/main/SECURITY.md)).
+  - type: markdown
+    attributes:
+      value: |
         Got an idea? We would love to hear it.
         If you want to suggest a new agent, please use the New Agent Proposal template instead.
 
