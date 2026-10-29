@@ -37,6 +37,10 @@ updated definition; invalid input types, option lists, duplicate IDs, and stale
   still requires a real-browser or manual check.
 - Adhere to the contributor security rules in [SECURITY.md](SECURITY.md) (no third-party data transmission, no credential logging or storage, no analytics/tracking). Run `npm run check:security` to scan your changes locally.
 
+## Versions and Releases
+
+Versioning, tagging and release notes are described in [RELEASING.md](RELEASING.md). Add an entry under `[Unreleased]` in [CHANGELOG.md](CHANGELOG.md) for any user-facing change.
+
 ## Report Bugs / Feature Requests
 
 - Search for existing issues before creating new ones
