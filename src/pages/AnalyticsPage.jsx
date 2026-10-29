@@ -380,6 +380,7 @@ function ActivityHeatmap({ data }) {
   }, [data])
 
   const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+  const [activeDay, setActiveDay] = useState(null)
 
   return (
     <div>
@@ -400,6 +401,11 @@ function ActivityHeatmap({ data }) {
                 key={day.date}
                 className={`h-[14px] w-[14px] transition-all duration-300 ${getHeatmapIntensity(day.count)}`}
                 title={`${day.date}: ${day.count} run${day.count !== 1 ? 's' : ''}`}
+                role="img"
+                tabIndex={0}
+                aria-label={`${day.date}: ${day.count} run${day.count !== 1 ? 's' : ''}`}
+                onFocus={() => setActiveDay(day)}
+                onClick={() => setActiveDay(day)}
               />
             ))}
             {/* Pad short weeks */}
@@ -409,6 +415,9 @@ function ActivityHeatmap({ data }) {
           </div>
         ))}
       </div>
+      <p aria-live="polite" className="mt-1 min-h-[1rem] text-[11px] dark:text-text-secondary text-gray-600">
+        {activeDay ? `${activeDay.date}: ${activeDay.count} run${activeDay.count !== 1 ? 's' : ''}` : ''}
+      </p>
       {/* Legend */}
       <div className="flex items-center gap-2 mt-2">
         <span className="text-[10px] dark:text-text-muted text-gray-400">Less</span>

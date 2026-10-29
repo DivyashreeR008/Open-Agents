@@ -84,6 +84,7 @@ function TracePayload({ label, value }) {
  * immediately visible.
  */
 export default function TraceViewer({ trace }) {
+  const [activeStep, setActiveStep] = useState(null)
   if (!trace || !trace.steps?.length) {
     return (
       <p className="text-xs dark:text-text-muted text-gray-400 py-3">
@@ -111,11 +112,19 @@ export default function TraceViewer({ trace }) {
             <div
               key={i}
               title={`${step.stepName}: ${formatDuration(step.durationMs)}`}
+              role="img"
+              tabIndex={0}
+              aria-label={`${step.stepName}: ${formatDuration(step.durationMs)}`}
+              onFocus={() => setActiveStep(step)}
+              onClick={() => setActiveStep(step)}
               className={`${BAR_COLORS[step.status] || 'bg-gray-300'} min-w-[4px]`}
               style={{ width: totalMs > 0 ? `${((step.durationMs || 0) / totalMs) * 100}%` : 'auto', flexGrow: totalMs > 0 ? 0 : 1 }}
             />
           ))}
         </div>
+        <p aria-live="polite" className="mt-1 min-h-[1rem] text-[11px] dark:text-text-secondary text-gray-600">
+          {activeStep ? `${activeStep.stepName}: ${formatDuration(activeStep.durationMs)}` : ''}
+        </p>
       </div>
 
       {/* Step accordion */}

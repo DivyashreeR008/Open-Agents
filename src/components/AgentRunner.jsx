@@ -755,11 +755,17 @@ const handleRun = async () => {
     onClick={handleSavePrompt}
     disabled={!getPrimaryPromptInput()}
     title="Save this prompt to your Prompt History"
+    aria-describedby={!getPrimaryPromptInput() ? "save-prompt-reason" : undefined}
     className="inline-flex items-center gap-2 px-3 py-1.5 dark:bg-surface-input bg-gray-100 dark:text-text-secondary text-gray-600 font-semibold border dark:border-border border-gray-200 hover:border-zinc-400 dark:hover:border-zinc-400 hover:text-black dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200"
   >
     <History size={14} />
     Save Prompt
   </button>
+  {!getPrimaryPromptInput() && (
+    <span id="save-prompt-reason" className="text-[11px] dark:text-text-muted text-gray-500">
+      Enter a prompt to save it.
+    </span>
+  )}
 </div>
 
       {/* Prompt Playground */}
@@ -946,16 +952,23 @@ const handleRun = async () => {
         <button
           onClick={handleClear}
           disabled={!hasInputContent()}
+          aria-describedby={!hasInputContent() ? "clear-reason" : undefined}
           className="flex items-center gap-1.5 h-8 px-3 text-sm font-medium transition-colors dark:text-text-secondary dark:hover:text-text-primary dark:hover:bg-surface-hover text-gray-500 hover:text-gray-900 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent dark:disabled:hover:bg-transparent"
         >
           <RotateCcw size={14} />
           Clear
         </button>
+        {!hasInputContent() && (
+          <span id="clear-reason" className="sr-only">
+            Nothing to clear yet.
+          </span>
+        )}
 
         {/* Schedule button */}
         <button
           onClick={() => setScheduleModalOpen(true)}
           disabled={!hasRequiredInputs()}
+          aria-describedby={!hasRequiredInputs() ? "schedule-reason" : undefined}
           title={
             hasRequiredInputs()
               ? "Schedule this agent to run automatically"
@@ -966,6 +979,11 @@ const handleRun = async () => {
           <CalendarClock size={14} />
           Schedule
         </button>
+        {!hasRequiredInputs() && (
+          <span id="schedule-reason" className="text-[11px] dark:text-text-muted text-gray-500">
+            Fill required inputs before scheduling.
+          </span>
+        )}
 
         {duration && (
           <div className="flex items-center gap-1 text-[11px] dark:text-text-muted text-gray-400 ml-auto">
