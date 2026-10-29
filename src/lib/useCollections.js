@@ -397,9 +397,60 @@ export function useCollections() {
         return { ok: false, error: 'Collection and agent are required.' }
       }
 
-      return addAgentToCollection(collectionId, agentId)
+      const normalizedAgentId = typeof agentId === 'string' ? agentId.trim() : ''
+
+      if (!normalizedAgentId) {
+        return { ok: false, error: 'Agent is required.' }
+      }
+
+      return runMutation((current) => {
+        const target = current.find((item) => item.id === collectionId)
+
+        if (!target) {
+          return { ok: false, error: 'Collection not found.' }
+        }
+
+        if (target.agentIds.includes(normalizedAgentId)) {
+          return {
+            ok: false,
+            error: 'This agent is already in that collection.',
+          }
+        }
+
+        if (target.agentIds.length >= MAX_AGENTS_PER_COLLECTION) {
+          return {
+            ok: false,
+            error: `Collections can contain up to ${MAX_AGENTS_PER_COLLECTION} agents.`,
+          }
+        }
+
+        const now = new Date().toISOString()
+
+        return {
+          ok: true,
+          collections: current.map((collection) => {
+            if (collection.id === collectionId) {
+              return {
+                ...collection,
+                agentIds: [...new Set([...collection.agentIds, normalizedAgentId])],
+                updatedAt: now,
+              }
+            }
+
+            if (collection.agentIds.includes(normalizedAgentId)) {
+              return {
+                ...collection,
+                agentIds: collection.agentIds.filter((id) => id !== normalizedAgentId),
+                updatedAt: now,
+              }
+            }
+
+            return collection
+          }),
+        }
+      })
     },
-    [addAgentToCollection]
+    [runMutation]
   )
 
   const addCollectionFromData = useCallback(
