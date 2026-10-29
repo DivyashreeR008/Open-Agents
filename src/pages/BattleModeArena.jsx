@@ -94,6 +94,23 @@ function buildUserMessage(agent, inputs) {
   return parts.join("\n\n");
 }
 
+function handlePaneKeyDown(e) {
+  if (e.target !== e.currentTarget) return;
+  const panes = Array.from(
+    e.currentTarget.parentElement.querySelectorAll("[data-arena-pane]")
+  );
+  const i = panes.indexOf(e.currentTarget);
+  let next = null;
+  if (e.key === "ArrowRight") next = panes[Math.min(i + 1, panes.length - 1)];
+  else if (e.key === "ArrowLeft") next = panes[Math.max(i - 1, 0)];
+  else if (e.key === "Home") next = panes[0];
+  else if (e.key === "End") next = panes[panes.length - 1];
+  if (next) {
+    e.preventDefault();
+    next.focus();
+  }
+}
+
 export default function BattleModeArena() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -596,7 +613,15 @@ export default function BattleModeArena() {
         </div>
 
         {/* Four Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        <p id="arena-pane-hint" className="sr-only">
+          Each model answer is its own region. Focus a region and press the
+          left or right arrow key, or Home or End, to move between answers.
+        </p>
+        <div
+          role="group"
+          aria-label="Model answers"
+          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-7xl mx-auto"
+        >
           {PROVIDERS.map((prov, idx) => {
             const r = results[prov.id];
             const isFirstFinisher = firstFinisher === prov.id;
@@ -604,12 +629,18 @@ export default function BattleModeArena() {
               r.loading && firstFinisher && firstFinisher !== prov.id;
 
             return (
-              <div
+              <section
                 key={prov.id}
+                data-arena-pane
+                aria-labelledby={`arena-pane-title-${prov.id}`}
+                aria-describedby="arena-pane-hint"
+                tabIndex={0}
+                onKeyDown={handlePaneKeyDown}
                 className={`min-w-0 border ${prov.borderClass}
                     dark:bg-surface-card bg-white
                     shadow-panel flex flex-col battle-fade-in
-                    transition-colors duration-300 overflow-hidden`}
+                    transition-colors duration-300 overflow-hidden
+                    focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 style={{
                   animationDelay: `${idx * 100}ms`,
                   "--glow-color": prov.glowHex,
@@ -625,11 +656,12 @@ export default function BattleModeArena() {
                     className={`flex items-center gap-2.5 px-5 py-4 ${prov.headerBg}`}
                   >
                     <Cpu size={16} className={prov.textColor} />
-                    <span
+                    <h2
+                      id={`arena-pane-title-${prov.id}`}
                       className={`text-base font-bold ${prov.textColor} tracking-wide`}
                     >
                       {prov.label}
-                    </span>
+                    </h2>
 
                     {isFirstFinisher && (
                       <span className="flex items-center gap-1 text-[10px] font-bold text-zinc-300 bg-zinc-400/10 border border-zinc-400/30 px-2 py-0.5 battle-badge-pop">
@@ -722,7 +754,7 @@ export default function BattleModeArena() {
                     </div>
                   )}
                 </div>
-              </div>
+              </section>
             );
           })}
         </div>
