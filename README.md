@@ -19,7 +19,8 @@ We welcome contributions! Please see the contributing guidelines below.
 1. Fork the repository
 2. Create a new branch for your feature
 3. Make your changes
-4. Submit a pull request
+4. Run `npm run verify` to test and build locally
+5. Submit a pull request
 
 ### Dependency update policy
 
@@ -34,8 +35,11 @@ pull requests keep the upgrade backlog visible while allowing compatibility work
 git clone https://github.com/your-username/Open-Agents.git
 
 # Install dependencies
-pip install -e .
+npm install
 
-# Run tests
-pytest
+# Run the local verification (tests and build)
+npm run verify
+
+# Start development server
+npm run dev
 ```

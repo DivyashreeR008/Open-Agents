@@ -15,7 +15,7 @@ Before picking an issue or proposing a new feature, please review our [Roadmap &
 1. **Fork the repository** - Click the "Fork" button on the top right of the GitHub page
 2. **Create a branch** - `git checkout -b feature/your-feature-name`
 3. **Make changes** - Implement your feature or fix
-4. **Test your changes** - Ensure existing tests pass and add new tests if applicable
+4. **Verify your changes** - Run `npm run verify` to run the full verification suite (tests and build)
 5. **Commit your changes** - Use clear, descriptive commit messages
 6. **Push to your fork** - `git push origin feature/your-feature-name`
 7. **Submit a Pull Request** - Describe what you changed and why
@@ -31,7 +31,7 @@ updated definition; invalid input types, option lists, duplicate IDs, and stale
 - Link to any related issues
 - Ensure code follows the project's style guidelines
 - Add or update documentation as needed
-- Ensure all tests pass
+- Ensure `npm run verify` passes locally before submitting
 - Add an axe check for new interactive components or page-level flows. The shared
   `src/test/a11y.js` helper fails on jsdom-supported violations; color contrast
   still requires a real-browser or manual check.

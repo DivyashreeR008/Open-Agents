@@ -57,5 +57,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `❌ **Build failed on this PR.**\n\nPlease fix before merging:\n1. Run \`npm run build\` locally\n2. Fix any errors shown\n3. Push your fix — the check will re-run automatically\n\nSee CONTRIBUTING.md for help. 🙏`
+              body: `❌ **Build failed on this PR.**\n\nPlease fix before merging:\n1. Run \`npm run verify\` locally\n2. Fix any errors shown\n3. Push your fix — the check will re-run automatically\n\nSee CONTRIBUTING.md for help. 🙏`
             })

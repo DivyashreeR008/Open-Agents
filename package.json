@@ -10,6 +10,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:smoke": "node scripts/smoke-test.mjs",
+    "verify": "npm test && npm run build",
     "check:security": "node scripts/check-security-rules.mjs"
   },
   "dependencies": {
