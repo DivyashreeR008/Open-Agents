@@ -346,15 +346,6 @@ export function useCollections() {
                 updatedAt: now,
               }
             }
-
-            if (item.agentIds.includes(normalizedAgentId)) {
-              return {
-                ...item,
-                agentIds: item.agentIds.filter((id) => id !== normalizedAgentId),
-                updatedAt: now,
-              }
-            }
-
             return item
           }),
         }
