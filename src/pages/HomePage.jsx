@@ -176,6 +176,9 @@ export default function HomePage() {
   // Filter agents based on search + category
   const filteredAgents = useMemo(() => {
     const q = searchQuery.trim().toLowerCase()
+    // Judge membership by the collection's own list so a duplicated or
+    // imported collection that shares agents with another still shows them.
+    const activeCollection = collections.find((c) => c.id === activeCollectionId)
 
     return agents.filter((agent) => {
       const matchesCategory = !selectedCategory || agent.category === selectedCategory
@@ -188,7 +191,9 @@ export default function HomePage() {
       const matchesCollection =
         activeCollectionId === DEFAULT_COLLECTION_ID
           ? true
-          : getAgentCollectionId(agent.id) === activeCollectionId
+          : activeCollection
+            ? activeCollection.agentIds.includes(agent.id)
+            : getAgentCollectionId(agent.id) === activeCollectionId
 
       if (!matchesCollection) return false
 
@@ -209,7 +214,7 @@ export default function HomePage() {
 
       return searchableText.includes(q)
     })
-  }, [activeCollectionId, agents, getAgentCollectionId, searchQuery, selectedCategory, selectedProvider])
+  }, [activeCollectionId, agents, collections, getAgentCollectionId, searchQuery, selectedCategory, selectedProvider])
 
   const {
     visibleItems: visibleAgents,

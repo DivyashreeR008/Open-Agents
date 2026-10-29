@@ -4,6 +4,7 @@ export const MAX_COLLECTIONS = 10
 export const MAX_AGENTS_PER_COLLECTION = 15
 export const COLLECTIONS_STORAGE_KEY = 'oa_agent_collections'
 export const DEFAULT_COLLECTION_ID = 'all-agents'
+export const MAX_COLLECTION_NAME_LENGTH = 100
 
 const listeners = new Set()
 
@@ -17,6 +18,20 @@ function createId() {
   }
 
   return `collection-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
+
+/**
+ * A name that does not clash (case-insensitively) with any existing custom
+ * collection, e.g. "Reads (copy)", "Reads (copy 2)". The base is shortened so
+ * the result still fits MAX_COLLECTION_NAME_LENGTH.
+ */
+export function uniqueCollectionName(base, existingNames, label) {
+  const taken = new Set(existingNames.map((n) => n.toLowerCase()))
+  for (let i = 1; ; i += 1) {
+    const suffix = ` (${i === 1 ? label : `${label} ${i}`})`
+    const name = `${base.slice(0, MAX_COLLECTION_NAME_LENGTH - suffix.length).trimEnd()}${suffix}`
+    if (!taken.has(name.toLowerCase())) return name
+  }
 }
 
 function createDefaultCollection() {
@@ -387,6 +402,74 @@ export function useCollections() {
     [addAgentToCollection]
   )
 
+  const addCollectionFromData = useCallback(
+    ({ name, agentIds }, label) => {
+      const baseName = typeof name === 'string' ? name.trim() : ''
+      if (!baseName) return { ok: false, error: 'Collection name is required.' }
+
+      return runMutation((current) => {
+        const customCollections = current.filter(
+          (collection) => collection.id !== DEFAULT_COLLECTION_ID
+        )
+
+        if (customCollections.length >= MAX_COLLECTIONS) {
+          return {
+            ok: false,
+            error: `You can create up to ${MAX_COLLECTIONS} collections.`,
+          }
+        }
+
+        const names = customCollections.map((collection) => collection.name)
+        const finalName = names.some((n) => n.toLowerCase() === baseName.toLowerCase())
+          ? uniqueCollectionName(baseName, names, label)
+          : baseName
+
+        const now = new Date().toISOString()
+        const collection = normalizeCollection({
+          id: createId(),
+          name: finalName,
+          agentIds: Array.isArray(agentIds) ? agentIds : [],
+          createdAt: now,
+          updatedAt: now,
+          isDefault: false,
+        })
+
+        return {
+          ok: true,
+          collection,
+          collections: [
+            current.find((item) => item.id === DEFAULT_COLLECTION_ID) ||
+              createDefaultCollection(),
+            collection,
+            ...customCollections,
+          ],
+        }
+      })
+    },
+    [runMutation]
+  )
+
+  // Takes the already validated result of parseCollectionImport. Nothing is
+  // written unless a new collection can be created.
+  const importCollection = useCallback(
+    (data) => addCollectionFromData(data, 'imported'),
+    [addCollectionFromData]
+  )
+
+  const duplicateCollection = useCallback(
+    (collectionId) => {
+      if (collectionId === DEFAULT_COLLECTION_ID) {
+        return { ok: false, error: 'The default collection cannot be duplicated.' }
+      }
+
+      const source = loadCollections().find((item) => item.id === collectionId)
+      if (!source) return { ok: false, error: 'Collection not found.' }
+
+      return addCollectionFromData(source, 'copy')
+    },
+    [addCollectionFromData]
+  )
+
   const getCollectionById = useCallback(
     (collectionId) =>
       collections.find((collection) => collection.id === collectionId),
@@ -422,6 +505,8 @@ export function useCollections() {
     addAgentToCollection,
     removeAgentFromCollection,
     moveAgentToCollection,
+    importCollection,
+    duplicateCollection,
     getCollectionById,
     getAgentCollectionId,
     isAgentInCollection,

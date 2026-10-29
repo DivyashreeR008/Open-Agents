@@ -1,17 +1,28 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Edit3, FolderPlus, Plus, Trash2 } from 'lucide-react'
+import { Copy, Download, Edit3, FolderPlus, Plus, Trash2, Upload } from 'lucide-react'
 import CollectionModal from '../components/CollectionModal'
+import ImportCollectionModal from '../components/collections/ImportCollectionModal'
 import PageHeader from '../components/layout/PageHeader'
 import EmptyState from '../components/layout/EmptyState'
 import { useAgents } from '../lib/useAgents'
 import { DEFAULT_COLLECTION_ID, MAX_COLLECTIONS, useCollections } from '../lib/useCollections'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
+import { useFlashNotice } from '../lib/useFlashNotice'
+import { collectionExportFilename, serializeCollection } from '../lib/collectionTransfer'
 
 export default function CollectionsPage() {
   useDocumentTitle('Collections')
 
-  const { collections, createCollection, deleteCollection, renameCollection } = useCollections()
+  const {
+    collections,
+    createCollection,
+    deleteCollection,
+    renameCollection,
+    importCollection,
+    duplicateCollection,
+  } = useCollections()
+  const { notice, flash } = useFlashNotice()
   const { agents, loading, error: agentsError } = useAgents()
   const [modal, setModal] = useState(null)
   const [name, setName] = useState('')
@@ -35,6 +46,31 @@ export default function CollectionsPage() {
     const result = renameCollection(modal.id, name)
     if (!result.ok) return setError(result.error)
     setModal(null)
+  }
+
+  const handleExport = (collection) => {
+    const blob = new Blob([serializeCollection(collection)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = collectionExportFilename(collection)
+    link.click()
+    URL.revokeObjectURL(url)
+    flash(`Exported "${collection.name}".`)
+  }
+
+  const handleDuplicate = (collection) => {
+    const result = duplicateCollection(collection.id)
+    flash(result.ok ? `Created "${result.collection.name}".` : result.error)
+  }
+
+  const handleImport = (data) => {
+    const result = importCollection(data)
+    if (result.ok) {
+      setModal(null)
+      flash(`Imported "${result.collection.name}".`)
+    }
+    return result
   }
 
   const getPreviewText = (collection) => {
@@ -62,16 +98,32 @@ export default function CollectionsPage() {
         meta={customCollections.length}
         description="Custom groups of agents"
         actions={
-          <button
-            onClick={openCreate}
-            disabled={customCollections.length >= MAX_COLLECTIONS}
-            className="btn-primary"
-          >
-            <Plus size={14} aria-hidden="true" />
-            New collection
-          </button>
+          <>
+            <button
+              onClick={() => setModal('import')}
+              disabled={customCollections.length >= MAX_COLLECTIONS}
+              className="btn-secondary"
+            >
+              <Upload size={14} aria-hidden="true" />
+              Import
+            </button>
+            <button
+              onClick={openCreate}
+              disabled={customCollections.length >= MAX_COLLECTIONS}
+              className="btn-primary"
+            >
+              <Plus size={14} aria-hidden="true" />
+              New collection
+            </button>
+          </>
         }
       />
+
+      {notice && (
+        <p role="status" className="mb-3 border border-zinc-200 px-3 py-2 text-xs text-zinc-700 dark:border-border dark:text-text-secondary">
+          {notice}
+        </p>
+      )}
 
       {customCollections.length === 0 ? (
         <EmptyState
@@ -124,6 +176,23 @@ export default function CollectionsPage() {
                   <Edit3 size={13} />
                 </button>
                 <button
+                  onClick={() => handleExport(collection)}
+                  className="btn-ghost h-7 px-2"
+                  aria-label={`Export ${collection.name}`}
+                  title="Export as JSON"
+                >
+                  <Download size={13} />
+                </button>
+                <button
+                  onClick={() => handleDuplicate(collection)}
+                  disabled={customCollections.length >= MAX_COLLECTIONS}
+                  className="btn-ghost h-7 px-2"
+                  aria-label={`Duplicate ${collection.name}`}
+                  title="Duplicate"
+                >
+                  <Copy size={13} />
+                </button>
+                <button
                   onClick={() => deleteCollection(collection.id)}
                   className="btn-ghost h-7 px-2 hover:text-black dark:hover:text-white"
                   aria-label={`Delete ${collection.name}`}
@@ -149,7 +218,10 @@ export default function CollectionsPage() {
           submitLabel="Create"
         />
       )}
-      {modal && modal !== 'create' && (
+      {modal === 'import' && (
+        <ImportCollectionModal agents={agents} onImport={handleImport} onClose={() => setModal(null)} />
+      )}
+      {modal && modal !== 'create' && modal !== 'import' && (
         <CollectionModal
           title="Rename Collection"
           value={name}
