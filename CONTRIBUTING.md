@@ -36,6 +36,10 @@ updated definition; invalid input types, option lists, duplicate IDs, and stale
   `src/test/a11y.js` helper fails on jsdom-supported violations; color contrast
   still requires a real-browser or manual check.
 
+## Versions and Releases
+
+Versioning, tagging and release notes are described in [RELEASING.md](RELEASING.md). Add an entry under `[Unreleased]` in [CHANGELOG.md](CHANGELOG.md) for any user-facing change.
+
 ## Report Bugs / Feature Requests
 
 - Search for existing issues before creating new ones

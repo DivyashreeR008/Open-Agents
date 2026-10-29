@@ -12,13 +12,14 @@ This changelog is maintained manually by the Open-Agents maintainers
 refreshed each season alongside the project roadmap (see ROADMAP.md).
 Contributors should add an entry to the `[Unreleased]` section as part of any
 PR that ships a user-facing change, linking to the related issue or pull
-request. Automated release and changelog tooling is planned but not yet in
-place (see ROADMAP.md, section 6).
+request. Release tagging steps are documented in RELEASING.md; fully automated
+changelog tooling is planned but not yet in place (see ROADMAP.md, section 6).
 
 ## [Unreleased]
 
 ### Added
 - Changelog maintenance process documented; entries are added as changes ship.
+- Release and tagging policy (`RELEASING.md`), release notes template and generated release notes configuration (`.github/release.yml`).
 
 ### Changed
 - None.
