@@ -25,6 +25,19 @@ through `AgentRunner` by the test suite. Run `npm test` before submitting a new 
 updated definition; invalid input types, option lists, duplicate IDs, and stale
 `exampleInputs` keys will fail with the affected agent's file and ID.
 
+## Test Coverage
+
+`npm run test:coverage` runs the suite with V8 coverage over `src/` (test files
+and `src/test/` excluded). It prints a per-file table and writes an HTML report
+to `coverage/index.html` (git-ignored); open it to see which lines and branches
+are untested. CI runs the same command and shows the totals in the job summary.
+
+`vitest.config.js` sets a minimum threshold for statements, branches, functions
+and lines, a few points below the measured baseline. If a change drops coverage
+under it, the run fails; add tests rather than lowering it, and raise the
+numbers when coverage improves. Coverage shows what is untested, not how good
+the tests are.
+
 ## Pull Request Guidelines
 
 - Fill out the PR template completely
