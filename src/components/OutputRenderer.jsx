@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import ScorecardOutput from './ScorecardOutput'
 import VoiceOutput from './VoiceOutput'
+import { stripMarkdown } from '../lib/stripMarkdown'
 
 // Monochrome prism theme. The default `oneDark` theme ships purple keywords,
 // blue functions and green strings — replaced here with luminance-only tokens
@@ -77,28 +78,6 @@ const monoPrism = {
  * - Code blocks are syntax-highlighted but never evaluated
  * - Do NOT use dangerouslySetInnerHTML with agent output under any circumstances
  */
-
-function stripMarkdown(text) {
-  if (!text) return ''
-  return text
-    .replace(/#{1,6}\s+/g, '')
-    .replace(/~~(.*?)~~/g, '$1')
-    .replace(/__(.*?)__/g, '$1')
-    .replace(/_(.*?)_/g, '$1')
-    .replace(/\*\*(.*?)\*\*/g, '$1')
-    .replace(/\*(.*?)\*/g, '$1')
-    .replace(/`{3}[a-z]*\n?([\s\S]*?)`{3}/g, '$1')
-    .replace(/`([^`]+)`/g, '$1')
-    .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1')
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    .replace(/^[-*+]\s+/gm, '')
-    .replace(/^\d+\.\s+/gm, '')
-    .replace(/^[-*]\s+\[[ x]\]\s+/gm, '')
-    .replace(/^>\s+/gm, '')
-    .replace(/---+/g, '')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim()
-}
 
 function CopyButton({ text, label, icon: Icon = Copy }) {
   const [copyState, setCopyState] = useTimedState('idle')
@@ -266,7 +245,11 @@ ${stringContent}
           />
 
           <CopyButton text={stringContent} label="Copy output" />
-          <CopyButton text={stripMarkdown(stringContent)} label="Copy as Plain Text" icon={FileText} />
+          <CopyButton
+            text={outputType === 'markdown' ? stripMarkdown(stringContent) : stringContent}
+            label="Copy as Plain Text"
+            icon={FileText}
+          />
           <CopyButton text={shareText} label="Share" />
           <button
             onClick={handleDownloadOutput}

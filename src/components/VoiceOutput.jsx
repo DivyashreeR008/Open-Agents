@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Volume2, VolumeX, Square } from "lucide-react";
+import { stripMarkdown } from "../lib/stripMarkdown";
 
 /**
  * VoiceOutput — Text-to-Speech via native Web Speech API
@@ -11,17 +12,11 @@ import { Volume2, VolumeX, Square } from "lucide-react";
  *   pitch?: number      — pitch, 0–2 (default: 1)
  */
 
-// Strip markdown so the synthesizer doesn't read "hashtag" or "asterisk"
-function stripMarkdown(md = "") {
-  return md
-    .replace(/```[a-zA-Z]*\n?([\s\S]*?)```/g, "$1") // fenced code blocks — keep content
-    .replace(/`([^`]*)`/g, "$1")        // inline code — keep content
-    .replace(/#{1,6}\s+/g, "")      // headings
-    .replace(/\*{1,2}([^*]+)\*{1,2}/g, "$1") // bold / italic
-    .replace(/_{1,2}([^_]+)_{1,2}/g, "$1")
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // links → label only
-    .replace(/!\[.*?\]\(.*?\)/g, "")          // images
-    .replace(/^\s*[-*>|]\s*/gm, "")           // list bullets / blockquotes / table pipes
+// Strip markdown so the synthesizer doesn't read "hashtag" or "asterisk",
+// then turn paragraph breaks into pauses.
+function toSpeech(md = "") {
+  return stripMarkdown(md)
+    .replace(/^\s*\|\s*/gm, "")             // table pipes at line start
     .replace(/\n{2,}/g, ". ")                 // paragraph breaks → pause
     .replace(/\n/g, " ")
     .trim();
@@ -60,7 +55,7 @@ export default function VoiceOutput({
       return;
     }
 
-    const cleaned = stripMarkdown(text);
+    const cleaned = toSpeech(text);
     if (!cleaned) return;
 
     setErrorMsg("");

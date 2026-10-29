@@ -118,6 +118,14 @@ describe("VoiceOutput speaking lifecycle", () => {
     expect(screen.getByRole("button", { name: "Stop reading" })).toBeInTheDocument();
   });
 
+  it("reads identifiers and C# as written while dropping markdown markers", () => {
+    render(<VoiceOutput text={"## Notes\n\nRename **my_module_name** and max_retry_count in C#."} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Read response aloud" }));
+
+    expect(current().text).toBe("Notes. Rename my_module_name and max_retry_count in C#.");
+  });
+
   it("pauses and resumes when toggle button is clicked", () => {
     render(<VoiceOutput text="Hello world" />);
 
