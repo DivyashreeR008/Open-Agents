@@ -8,6 +8,7 @@ import ScrollToTopButton from './components/ScrollToTopButton'
 import ScrollToBottom from './components/ScrollToBottom'
 import ErrorBoundary from './components/ErrorBoundary'
 import PageTransition from './components/PageTransition'
+import RouteAnnouncer from './components/RouteAnnouncer'
 
 const HomePage = lazy(() => import('./pages/HomePage'))
 const AgentPage = lazy(() => import('./pages/AgentPage'))
@@ -86,6 +87,7 @@ export default function App() {
     <div className="min-h-screen transition-theme bg-white dark:bg-surface">
       <ScrollToTopButton />
       <ScrollToBottom />
+      <RouteAnnouncer />
       <ErrorBoundary>
         <Suspense fallback={<PageLoader />}>
           <PageTransition>
