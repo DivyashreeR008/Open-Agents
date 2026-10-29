@@ -285,7 +285,14 @@ async function handleErrorResponse(response, provider = "unknown", retries = 0) 
     // Could not parse error body
   }
 
-  if (errorKey === 'invalid_api_key') {
+  // Google answers a bad key with 400 + API_KEY_INVALID instead of 401.
+  const geminiBadKey =
+    provider === 'gemini' &&
+    response.status === 400 &&
+    (errBody?.error?.details?.some?.((d) => d?.reason === 'API_KEY_INVALID') ||
+      /API key not valid|API key expired/i.test(errBody?.error?.message || ''));
+
+  if (errorKey === 'invalid_api_key' || geminiBadKey) {
     throw {
       type: "invalid_api_key",
       provider,
