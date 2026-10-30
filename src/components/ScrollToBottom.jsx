@@ -17,30 +17,67 @@ export default function ScrollToBottom() {
   }, [])
 
   useEffect(() => {
-    const onScroll = () => {
+    const checkVisibility = () => {
       // Use standard documentElement falling back to body
-      const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight
-      const clientHeight = window.innerHeight
-      const scrollY = window.scrollY || window.pageYOffset
+      const scrollHeight = Math.max(
+        document.documentElement?.scrollHeight || 0,
+        document.body?.scrollHeight || 0
+      )
+      const clientHeight = window.innerHeight || document.documentElement?.clientHeight || 0
+      const scrollY = window.scrollY || window.pageYOffset || document.documentElement?.scrollTop || 0
 
       // Check if page is actually scrollable
       const isScrollable = scrollHeight > clientHeight
-      // Check if user is not near the bottom (100px buffer)
-      const isNotNearBottom = scrollY + clientHeight < scrollHeight - 100
+      // Check if user is not near the bottom (buffer of 50px)
+      const isNotNearBottom = scrollY + clientHeight < scrollHeight - 50
 
       setVisible(isScrollable && isNotNearBottom)
     }
 
-    // Defer execution slightly to ensure DOM elements/agents have fully rendered and heights are calculated
-    const timeoutId = setTimeout(onScroll, 100)
+    // Run initial check and defer once to ensure initial elements are measured
+    checkVisibility()
+    const timeoutId = setTimeout(checkVisibility, 100)
 
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll, { passive: true })
+    window.addEventListener('scroll', checkVisibility, { passive: true })
+    window.addEventListener('resize', checkVisibility, { passive: true })
+
+    // Observe DOM mutations so streaming tokens or dynamically rendered
+    // content updating the DOM immediately triggers visibility recalculation
+    // without requiring user interaction (scroll or resize)
+    let mutationObserver = null
+    if (typeof MutationObserver !== 'undefined' && document.body) {
+      mutationObserver = new MutationObserver(() => {
+        checkVisibility()
+      })
+      mutationObserver.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+      })
+    }
+
+    // Observe element resizing in case layout heights change during streaming
+    let resizeObserver = null
+    if (typeof ResizeObserver !== 'undefined' && document.body) {
+      resizeObserver = new ResizeObserver(() => {
+        checkVisibility()
+      })
+      resizeObserver.observe(document.body)
+      if (document.documentElement && document.documentElement !== document.body) {
+        resizeObserver.observe(document.documentElement)
+      }
+    }
 
     return () => {
       clearTimeout(timeoutId)
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
+      window.removeEventListener('scroll', checkVisibility)
+      window.removeEventListener('resize', checkVisibility)
+      if (mutationObserver) {
+        mutationObserver.disconnect()
+      }
+      if (resizeObserver) {
+        resizeObserver.disconnect()
+      }
     }
   }, [])
 
@@ -48,14 +85,18 @@ export default function ScrollToBottom() {
     // Prevent default form behavior if encapsulated, just in case
     e.preventDefault()
 
+    const maxScroll = Math.max(
+      document.documentElement?.scrollHeight || 0,
+      document.body?.scrollHeight || 0
+    )
+
     window.scrollTo({
-      top: document.documentElement.scrollHeight,
+      top: maxScroll,
       behavior: reduceMotion ? 'auto' : 'smooth',
     })
   }
 
   const transitionClasses = reduceMotion ? '' : 'transition-all transform duration-300 ease-in-out'
-  // Removed pointer-events-none from hidden state to prevent event clipping, letting opacity/visibility handle it safely
   const visibilityClasses = visible
     ? 'opacity-100 translate-y-0 visible pointer-events-auto'
     : 'opacity-0 translate-y-2 invisible pointer-events-none'
