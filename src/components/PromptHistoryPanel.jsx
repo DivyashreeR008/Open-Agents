@@ -140,6 +140,7 @@ export default function PromptHistoryPanel({ open, onClose, onUsePrompt }) {
               className="absolute left-2.5 top-1/2 -translate-y-1/2 dark:text-text-muted text-gray-400"
             />
             <input
+              aria-label="Search prompts"
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}

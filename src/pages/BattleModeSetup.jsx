@@ -102,6 +102,7 @@ function InputField({ input, value, onChange }) {
       <div>
         <div className="relative">
           <select
+            aria-label={input.label}
             value={value ?? input.defaultValue ?? ""}
             onChange={(e) => onChange(input.id, e.target.value)}
             className={`${baseClass} ${borderClass} appearance-none cursor-pointer`}
@@ -173,6 +174,7 @@ function InputField({ input, value, onChange }) {
     return (
       <div>
         <textarea
+          aria-label={input.label}
           value={value ?? ""}
           onChange={(e) => onChange(input.id, e.target.value)}
           placeholder={input.placeholder}
@@ -200,6 +202,7 @@ function InputField({ input, value, onChange }) {
   return (
     <div>
       <input
+        aria-label={input.label}
         type="text"
         value={value ?? ""}
         onChange={(e) => onChange(input.id, e.target.value)}
@@ -464,6 +467,7 @@ export default function BattleModeSetup() {
                     </label>
                     <div className="relative">
                       <input
+                        aria-label={field.label}
                         type={showKeys[field.id] ? "text" : "password"}
                         value={apiKeys[field.id]}
                         onChange={(e) =>

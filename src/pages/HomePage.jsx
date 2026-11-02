@@ -736,6 +736,7 @@ ${description}
   return (
     <div className="flex flex-col gap-3">
       <input
+        aria-label="Agent name"
         type="text"
         value={agentName}
         onChange={(e) => setAgentName(e.target.value)}
@@ -743,6 +744,7 @@ ${description}
         className="field h-9"
       />
       <textarea
+        aria-label="What the agent should do"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         placeholder="Describe what it should do — e.g. Takes a job description and rewrites my resume bullet points to match it"

@@ -207,6 +207,7 @@ export default function CreateAutomationModal({
                 Automation Name
               </label>
               <input
+                aria-label="Automation name"
                 type="text"
                 value={name}
                 onChange={e => setName(e.target.value)}
@@ -305,6 +306,7 @@ export default function CreateAutomationModal({
 
                     {inp.type === 'textarea' || inp.type === 'code' ? (
                       <textarea
+                        aria-label={inp.label}
                         rows={3}
                         value={inputs[inp.id] || ''}
                         onChange={e => handleInputChange(inp.id, e.target.value)}
@@ -333,6 +335,7 @@ export default function CreateAutomationModal({
                       </div>
                     ) : (
                       <input
+                        aria-label={inp.label}
                         type="text"
                         value={inputs[inp.id] || ''}
                         onChange={e => handleInputChange(inp.id, e.target.value)}
@@ -380,6 +383,7 @@ export default function CreateAutomationModal({
                 Model Provider
               </label>
               <select
+                aria-label="Model provider"
                 value={provider}
                 onChange={e => {
                   setProvider(e.target.value)
@@ -398,6 +402,7 @@ export default function CreateAutomationModal({
                 Model
               </label>
               <select
+                aria-label="Model"
                 value={selectedModel}
                 onChange={e => setSelectedModel(e.target.value)}
                 className="w-full h-10 px-3 text-xs font-medium dark:bg-surface-input dark:border-border bg-gray-50 border border-gray-200 outline-none"
@@ -425,6 +430,7 @@ export default function CreateAutomationModal({
 
             <div className="relative">
               <input
+                aria-label={`${provider} API key`}
                 type="password"
                 value={apiKey}
                 onChange={e => setApiKey(e.target.value)}
@@ -471,6 +477,7 @@ export default function CreateAutomationModal({
                   Recipient Email Address
                 </label>
                 <input
+                  aria-label="Recipient email address"
                   type="email"
                   value={notificationEmail}
                   onChange={e => setNotificationEmail(e.target.value)}

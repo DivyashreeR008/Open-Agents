@@ -197,6 +197,7 @@ export default function SettingsPage() {
               {/* Input row */}
               <div className="relative">
                 <input
+                  aria-label={`${p.label} API key`}
                   type={showKey[p.id] ? 'text' : 'password'}
                   value={keys[p.id]}
                   onChange={(e) => setKeys((prev) => ({ ...prev, [p.id]: e.target.value }))}
@@ -267,6 +268,7 @@ export default function SettingsPage() {
             </p>
           ) : (
             <select
+              aria-label="Default provider"
               value={defaultProvider}
               onChange={(e) => {
                 const val = e.target.value
