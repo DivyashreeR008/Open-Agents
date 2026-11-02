@@ -205,20 +205,20 @@ function PublishModal({ agents, onClose, onPublished }) {
             <label className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1">
               Display Name <span className="text-zinc-400">*</span>
             </label>
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="My Agent Pack" className={inputClass} />
+            <input aria-label="Display name" value={name} onChange={(e) => setName(e.target.value)} placeholder="My Agent Pack" className={inputClass} />
           </div>
 
           <div>
             <label className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1">
               Description <span className="text-zinc-400">*</span>
             </label>
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} placeholder="What does this agent do?" className={inputClass} />
+            <textarea aria-label="Description" value={description} onChange={(e) => setDescription(e.target.value)} rows={2} placeholder="What does this agent do?" className={inputClass} />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1">Category</label>
-              <select value={category} onChange={(e) => setCategory(e.target.value)} className={inputClass}>
+              <select aria-label="Category" value={category} onChange={(e) => setCategory(e.target.value)} className={inputClass}>
                 {MARKETPLACE_CATEGORIES.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
@@ -226,7 +226,7 @@ function PublishModal({ agents, onClose, onPublished }) {
             </div>
             <div>
               <label className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1">Author</label>
-              <input value={author} onChange={(e) => setAuthor(e.target.value)} placeholder="Your name" className={inputClass} />
+              <input aria-label="Author" value={author} onChange={(e) => setAuthor(e.target.value)} placeholder="Your name" className={inputClass} />
             </div>
           </div>
 
@@ -234,14 +234,14 @@ function PublishModal({ agents, onClose, onPublished }) {
             <label className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1">
               Tags <span className="dark:text-text-muted text-gray-400 font-normal">(comma separated)</span>
             </label>
-            <input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="summarizer, research, markdown" className={inputClass} />
+            <input aria-label="Tags, comma separated" value={tags} onChange={(e) => setTags(e.target.value)} placeholder="summarizer, research, markdown" className={inputClass} />
           </div>
 
           <div>
             <label className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1">
               README <span className="dark:text-text-muted text-gray-400 font-normal">(optional)</span>
             </label>
-            <textarea value={readme} onChange={(e) => setReadme(e.target.value)} rows={3} placeholder="Usage notes, examples, tips..." className={inputClass} />
+            <textarea aria-label="README, optional" value={readme} onChange={(e) => setReadme(e.target.value)} rows={3} placeholder="Usage notes, examples, tips..." className={inputClass} />
           </div>
 
           <div className="flex items-start gap-2 p-2.5 bg-zinc-500/10 border border-zinc-500/20">

@@ -249,6 +249,7 @@ export default function AutomationsPage() {
         <div className="relative w-full sm:w-80">
           <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
+            aria-label="Search automations or agents"
             type="text"
             placeholder="Search automations or agents..."
             value={searchQuery}
@@ -260,6 +261,7 @@ export default function AutomationsPage() {
         <div className="flex items-center gap-2 w-full sm:w-auto justify-end flex-wrap">
           {/* Status Filter */}
           <select
+            aria-label="Filter by status"
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
             className="h-9 px-3 text-xs dark:bg-surface-input dark:border-border bg-gray-50 border border-gray-200 outline-none"
@@ -271,6 +273,7 @@ export default function AutomationsPage() {
 
           {/* Schedule Interval Filter */}
           <select
+            aria-label="Filter by schedule"
             value={scheduleFilter}
             onChange={e => setScheduleFilter(e.target.value)}
             className="h-9 px-3 text-xs dark:bg-surface-input dark:border-border bg-gray-50 border border-gray-200 outline-none"

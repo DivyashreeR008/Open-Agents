@@ -168,7 +168,7 @@ export default function WorkflowBuilder() {
 
       {/* Title */}
       <div className="mb-4">
-        <label className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1.5">
+        <label htmlFor="workflow-title" className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1.5">
           Workflow Title <span className="text-zinc-400">*</span>
         </label>
         <input
@@ -183,7 +183,7 @@ export default function WorkflowBuilder() {
 
       {/* Description */}
       <div className="mb-6">
-        <label className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1.5">
+        <label htmlFor="workflow-description" className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1.5">
           Description <span className="dark:text-text-muted text-gray-400 font-normal">(optional)</span>
         </label>
         <div className="relative">
