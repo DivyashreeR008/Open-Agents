@@ -4,7 +4,7 @@ import {
   Clock, Play, Trash2, ToggleLeft, ToggleRight,
   ChevronRight, AlertCircle, CheckCircle2, Calendar, Zap,
   Loader2, Plus, ShieldCheck, Mail, Search, Filter,
-  Activity, ArrowUpRight, Lock, Sparkles, RefreshCw
+  Activity, ArrowUpRight, Lock, Sparkles, RefreshCw, CalendarX, X
 } from 'lucide-react'
 import {
   loadAutomations, loadRuns, toggleAutomation, deleteAutomation,
@@ -12,6 +12,18 @@ import {
 } from '../lib/automationsService'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
 import CreateAutomationModal from '../components/CreateAutomationModal'
+import { isUnexecutedRun, summarizeHistory } from '../lib/missedRuns'
+
+const MISSED_BANNER_KEY = 'oa_missed_runs_banner_dismissed_at'
+const MISSED_BANNER_WINDOW_MS = 7 * 24 * 60 * 60 * 1000
+
+function readDismissedAt() {
+  try {
+    return Number(localStorage.getItem(MISSED_BANNER_KEY)) || 0
+  } catch {
+    return 0
+  }
+}
 
 export default function AutomationsPage() {
   useDocumentTitle('Scheduled Automations')
@@ -26,6 +38,7 @@ export default function AutomationsPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [editingAutomation, setEditingAutomation] = useState(null)
   const [confirmDeleteId, setConfirmDeleteId] = useState(null)
+  const [missedDismissedAt, setMissedDismissedAt] = useState(readDismissedAt)
   const [notificationBanner, setNotificationBanner] = useState(
     'Notification' in window ? Notification.permission : 'unsupported'
   )
@@ -75,9 +88,24 @@ export default function AutomationsPage() {
   // KPIs
   const totalCount = automations.length
   const activeCount = automations.filter(a => a.enabled).length
-  const totalRunsCount = runs.length
+  // Missed and skipped windows did not run, so they are not counted as runs here.
+  const totalRunsCount = runs.filter(r => !isUnexecutedRun(r)).length
   const successfulRuns = runs.filter(r => r.status === 'success').length
   const successRate = totalRunsCount > 0 ? Math.round((successfulRuns / totalRunsCount) * 100) : 100
+
+  // Runs that did not happen since the banner was last dismissed (looking back at most a week)
+  const bannerSince = Math.max(missedDismissedAt, Date.now() - MISSED_BANNER_WINDOW_MS)
+  const recentUnexecuted = runs.filter(r => isUnexecutedRun(r) && (r.detectedAt || r.startedAt) > bannerSince)
+  const recentSummary = summarizeHistory(recentUnexecuted)
+  const recentAutomationCount = new Set(recentUnexecuted.map(r => r.automationId)).size
+
+  const dismissMissedBanner = () => {
+    const now = Date.now()
+    try {
+      localStorage.setItem(MISSED_BANNER_KEY, String(now))
+    } catch {}
+    setMissedDismissedAt(now)
+  }
 
   // Filtered list
   const filtered = automations.filter(item => {
@@ -196,6 +224,38 @@ export default function AutomationsPage() {
           </div>
         </div>
       </div>
+
+      {recentUnexecuted.length > 0 && (
+        <div
+          id="missed-runs-banner"
+          role="status"
+          className="p-4 border border-dashed dark:border-zinc-500/40 border-zinc-300 flex items-start justify-between gap-3"
+        >
+          <div className="flex items-start gap-3">
+            <CalendarX size={18} className="text-zinc-500 mt-0.5 shrink-0" aria-hidden="true" />
+            <div>
+              <h4 className="text-xs sm:text-sm font-bold text-gray-900 dark:text-gray-100">
+                {recentSummary.missed > 0
+                  ? `${recentSummary.missed} scheduled ${recentSummary.missed === 1 ? 'run was' : 'runs were'} missed`
+                  : `${recentSummary.skipped} scheduled ${recentSummary.skipped === 1 ? 'run was' : 'runs were'} skipped`}
+                {recentSummary.missed > 0 && recentSummary.skipped > 0 && `, and ${recentSummary.skipped} skipped`}
+                {` across ${recentAutomationCount} ${recentAutomationCount === 1 ? 'automation' : 'automations'}`}
+              </h4>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                Scheduled runs only happen while this app is open. Open an automation to see what was missed, or use Edit to change what happens to runs that were due while it was closed.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={dismissMissedBanner}
+            aria-label="Dismiss missed runs notice"
+            className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 shrink-0"
+          >
+            <X size={15} />
+          </button>
+        </div>
+      )}
 
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -350,6 +410,11 @@ export default function AutomationsPage() {
                       {auto.emailNotification && (
                         <span className="text-[10px] font-semibold px-2 py-0.5 bg-zinc-500/10 text-zinc-500 flex items-center gap-1">
                           <Mail size={10} /> Email
+                        </span>
+                      )}
+                      {summarizeHistory(autoRuns).missed > 0 && (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 border border-dashed border-zinc-500/50 text-zinc-500 flex items-center gap-1">
+                          <CalendarX size={10} /> {summarizeHistory(autoRuns).missed} missed
                         </span>
                       )}
                     </div>

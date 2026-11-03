@@ -4,6 +4,7 @@ import {
   ChevronDown, Sparkles, Key, Lock, ArrowRight, Layers
 } from 'lucide-react'
 import { SCHEDULE_PRESETS, createAutomation, updateAutomation } from '../lib/automationsService'
+import { DEFAULT_MISSED_POLICY, MAX_CATCH_UP_RUNS, MISSED_RUN_POLICIES, normalizeMissedPolicy } from '../lib/missedRuns'
 import { MODEL_MAP, MODELS } from '../lib/resolveAgentModel'
 import { useAgents } from '../lib/useAgents'
 import { useProgressiveList } from '../lib/useProgressiveList'
@@ -23,6 +24,9 @@ export default function CreateAutomationModal({
   )
   const [name, setName] = useState(initialData?.name || '')
   const [schedule, setSchedule] = useState(initialData?.schedule || 'daily')
+  const [missedPolicy, setMissedPolicy] = useState(
+    initialData ? normalizeMissedPolicy(initialData.missedPolicy) : DEFAULT_MISSED_POLICY
+  )
   const [provider, setProvider] = useState(initialData?.provider || 'openai')
   const [selectedModel, setSelectedModel] = useState(initialData?.model || 'gpt-4o')
   const [apiKey, setApiKey] = useState(initialData?.apiKey || globalKey || '')
@@ -106,6 +110,7 @@ export default function CreateAutomationModal({
         await updateAutomation(initialData.id, {
           name: name.trim(),
           schedule,
+          missedPolicy,
           inputs,
           provider,
           model: selectedModel,
@@ -122,6 +127,7 @@ export default function CreateAutomationModal({
           provider,
           model: selectedModel,
           schedule,
+          missedPolicy,
           inputs,
           systemPrompt: selectedAgent.systemPrompt,
           apiKey: apiKey.trim(),
@@ -373,6 +379,27 @@ export default function CreateAutomationModal({
                   </span>
                 </button>
               ))}
+            </div>
+
+            <div className="pt-3">
+              <label htmlFor="missed-run-policy" className="block text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-300 mb-1.5">
+                If runs are missed
+              </label>
+              <select
+                id="missed-run-policy"
+                value={missedPolicy}
+                onChange={e => setMissedPolicy(e.target.value)}
+                className="w-full h-10 px-3 text-xs font-medium dark:bg-surface-input dark:border-border bg-gray-50 border border-gray-200 outline-none"
+              >
+                {MISSED_RUN_POLICIES.map(policy => (
+                  <option key={policy.value} value={policy.value}>
+                    {policy.value === 'catch_up' ? `Catch up (up to ${MAX_CATCH_UP_RUNS} runs)` : policy.label}
+                  </option>
+                ))}
+              </select>
+              <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1.5">
+                {MISSED_RUN_POLICIES.find(p => p.value === missedPolicy)?.description} Scheduled runs only happen while this app is open.
+              </p>
             </div>
           </div>
 
