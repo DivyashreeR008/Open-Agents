@@ -1,6 +1,19 @@
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { ArrowRight, ChevronDown, Github, Search, X, Star, History, Swords, GitBranch, Lightbulb, LayoutGrid, Rows3, ExternalLink } from 'lucide-react'
+import {
+  ArrowRight,
+  ChevronDown,
+  Search,
+  X,
+  Star,
+  History,
+  Swords,
+  GitBranch,
+  LayoutGrid,
+  Rows3,
+  ExternalLink,
+} from 'lucide-react'
+import Github from '../components/icons/Github'
 import AgentCardSkeleton from '../components/AgentCardSkeleton'
 import AgentCard from '../components/AgentCard'
 import { useFavorites } from '../lib/useFavorites'
@@ -61,12 +74,15 @@ export default function HomePage() {
   const selectedProvider = searchParams.get('provider') || null
 
   const updateFilter = (key, value) => {
-    setSearchParams((previous) => {
-      const next = new URLSearchParams(previous)
-      if (value) next.set(key, value)
-      else next.delete(key)
-      return next
-    }, { replace: true })
+    setSearchParams(
+      (previous) => {
+        const next = new URLSearchParams(previous)
+        if (value) next.set(key, value)
+        else next.delete(key)
+        return next
+      },
+      { replace: true }
+    )
   }
 
   const setSearchQuery = (value) => updateFilter('q', value)
@@ -144,33 +160,25 @@ export default function HomePage() {
 
   useKeyboardShortcuts({
     '/': (e) => {
-      e.preventDefault();
-      document.getElementById('agent-search')?.focus();
+      e.preventDefault()
+      document.getElementById('agent-search')?.focus()
     },
-  });
+  })
 
   const { favorites } = useFavorites()
   const { history, deleteRun, clearHistory } = useHistory()
   const activeCollectionId = searchParams.get('collection') || DEFAULT_COLLECTION_ID
-  const selectedCollection = collections.find(
-    (collection) => collection.id === activeCollectionId
-  )
+  const selectedCollection = collections.find((collection) => collection.id === activeCollectionId)
 
   const recentAgents = useMemo(() => {
-    const recentIds = JSON.parse(
-      localStorage.getItem('recentAgents') || '[]'
-    )
+    const recentIds = JSON.parse(localStorage.getItem('recentAgents') || '[]')
 
-    return recentIds
-      .map((id) => agents.find((a) => a.id === id))
-      .filter(Boolean)
+    return recentIds.map((id) => agents.find((a) => a.id === id)).filter(Boolean)
   }, [agents])
 
   // Resolve favorite agents (preserving the user's star order)
   const favoriteAgents = useMemo(() => {
-    return favorites
-      .map((id) => agents.find((a) => a.id === id))
-      .filter(Boolean)
+    return favorites.map((id) => agents.find((a) => a.id === id)).filter(Boolean)
   }, [favorites, agents])
 
   // Filter agents based on search + category
@@ -214,7 +222,15 @@ export default function HomePage() {
 
       return searchableText.includes(q)
     })
-  }, [activeCollectionId, agents, collections, getAgentCollectionId, searchQuery, selectedCategory, selectedProvider])
+  }, [
+    activeCollectionId,
+    agents,
+    collections,
+    getAgentCollectionId,
+    searchQuery,
+    selectedCategory,
+    selectedProvider,
+  ])
 
   const {
     visibleItems: visibleAgents,
@@ -258,7 +274,10 @@ export default function HomePage() {
   }
 
   const showingFiltered =
-    searchQuery.trim() || selectedCategory || selectedProvider || activeCollectionId !== DEFAULT_COLLECTION_ID
+    searchQuery.trim() ||
+    selectedCategory ||
+    selectedProvider ||
+    activeCollectionId !== DEFAULT_COLLECTION_ID
 
   const ledger = [
     { label: 'Agents', value: agents.length || catalogSize || 0 },
@@ -268,13 +287,16 @@ export default function HomePage() {
   ]
 
   const clearFilters = () => {
-    setSearchParams((previous) => {
-      const next = new URLSearchParams(previous)
-      next.delete('q')
-      next.delete('category')
-      next.delete('provider')
-      return next
-    }, { replace: true })
+    setSearchParams(
+      (previous) => {
+        const next = new URLSearchParams(previous)
+        next.delete('q')
+        next.delete('category')
+        next.delete('provider')
+        return next
+      },
+      { replace: true }
+    )
   }
 
   return (
@@ -422,7 +444,10 @@ export default function HomePage() {
                   <X size={14} />
                 </button>
               ) : (
-                <span className="kbd absolute right-2.5 top-1/2 hidden -translate-y-1/2 sm:inline-flex" aria-hidden="true">
+                <span
+                  className="kbd absolute right-2.5 top-1/2 hidden -translate-y-1/2 sm:inline-flex"
+                  aria-hidden="true"
+                >
                   /
                 </span>
               )}
@@ -529,10 +554,7 @@ export default function HomePage() {
               }
             >
               {Array.from({ length: 9 }).map((_, idx) => (
-                <AgentCardSkeleton
-                  key={idx}
-                  variant={viewMode === 'grid' ? 'grid' : 'index'}
-                />
+                <AgentCardSkeleton key={idx} variant={viewMode === 'grid' ? 'grid' : 'index'} />
               ))}
             </div>
           ) : filteredCount > 0 ? (
@@ -583,11 +605,7 @@ export default function HomePage() {
                 Showing {visibleCount} of {filteredCount}
               </span>
               {hasMore && (
-                <button
-                  type="button"
-                  onClick={showMore}
-                  className="btn-secondary h-7 text-[11px]"
-                >
+                <button type="button" onClick={showMore} className="btn-secondary h-7 text-[11px]">
                   Load {Math.min(CATALOG_PAGE_SIZE, remaining)} more
                   <ChevronDown size={12} aria-hidden="true" />
                 </button>
@@ -674,10 +692,16 @@ export default function HomePage() {
 
           <div className="flex flex-col gap-2">
             <span className="eyebrow">Legal</span>
-            <Link to="/privacy" className="w-fit text-[13px] text-zinc-500 underline decoration-zinc-300 underline-offset-4 transition-colors hover:text-black hover:decoration-current dark:text-text-secondary dark:hover:text-white">
+            <Link
+              to="/privacy"
+              className="w-fit text-[13px] text-zinc-500 underline decoration-zinc-300 underline-offset-4 transition-colors hover:text-black hover:decoration-current dark:text-text-secondary dark:hover:text-white"
+            >
               Privacy policy
             </Link>
-            <Link to="/terms" className="w-fit text-[13px] text-zinc-500 underline decoration-zinc-300 underline-offset-4 transition-colors hover:text-black hover:decoration-current dark:text-text-secondary dark:hover:text-white">
+            <Link
+              to="/terms"
+              className="w-fit text-[13px] text-zinc-500 underline decoration-zinc-300 underline-offset-4 transition-colors hover:text-black hover:decoration-current dark:text-text-secondary dark:hover:text-white"
+            >
               Terms of service
             </Link>
           </div>
@@ -721,7 +745,7 @@ function AgentRequestPanel() {
     if (!agentName.trim() || !description.trim()) return
     const title = encodeURIComponent(`[Agent Request]: ${agentName}`)
     const body = encodeURIComponent(
-`### What should this agent do?
+      `### What should this agent do?
 ${description}
 
 ### Additional context

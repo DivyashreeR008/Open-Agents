@@ -22,6 +22,7 @@ changelog tooling is planned but not yet in place (see ROADMAP.md, section 6).
 - Release and tagging policy (`RELEASING.md`), release notes template and generated release notes configuration (`.github/release.yml`).
 - Collections can be exported to a JSON file, imported back with a validated preview, and duplicated from the Collections page (#151).
 - Imported marketplace drafts can now be listed, opened, completed, run and removed from `/marketplace/drafts` (#133).
+- ESLint and Prettier configuration with lint, format, and CI checks (#475).
 
 ### Changed
 - None.
