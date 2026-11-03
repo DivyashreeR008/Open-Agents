@@ -20,6 +20,23 @@ Before picking an issue or proposing a new feature, please review our [Roadmap &
 6. **Push to your fork** - `git push origin feature/your-feature-name`
 7. **Submit a Pull Request** - Describe what you changed and why
 
+### Pre-Commit Hooks (Husky & lint-staged)
+
+Git hooks are managed with [Husky](https://typicode.github.io/husky/) and [lint-staged](https://github.com/lint-staged/lint-staged). They install automatically when you run `npm install` (via the `prepare` script in `package.json`).
+
+On every commit, Husky triggers lint-staged to run on staged files only:
+
+- JavaScript and JSX files (`*.{js,jsx,mjs}`) are checked with ESLint (`eslint --fix`) and formatted with Prettier (`prettier --write`).
+- Other configuration and documentation files (`*.{json,css,html,md,yml,yaml}`) are formatted with Prettier.
+
+#### Skipping Hooks in Emergencies
+
+If you need to bypass the pre-commit hook in an emergency (for example, saving a temporary WIP commit or an urgent fix), pass the `--no-verify` flag to `git commit`:
+
+```bash
+git commit -m "emergency commit" --no-verify
+```
+
 Agent definitions are checked directly from the raw registry modules and mounted
 through `AgentRunner` by the test suite. Run `npm test` before submitting a new or
 updated definition; invalid input types, option lists, duplicate IDs, and stale

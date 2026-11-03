@@ -1,6 +1,18 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Sun, Moon, Github, Menu, X, HelpCircle, DollarSign, RotateCcw, Settings, PanelLeft, ExternalLink } from 'lucide-react'
+import {
+  Sun,
+  Moon,
+  Menu,
+  X,
+  HelpCircle,
+  DollarSign,
+  RotateCcw,
+  Settings,
+  PanelLeft,
+  ExternalLink,
+} from 'lucide-react'
+import Github from './icons/Github'
 
 import Logo from './Logo'
 import KeyboardShortcutsModal from './KeyboardShortcutsModal'
@@ -13,7 +25,13 @@ import { useSessionSpend } from '../lib/useSessionSpend'
  * navigation lives in the Sidebar so this row never gets crowded.
  */
 export default function Navbar({ sidebarOpen, setSidebarOpen }) {
-  const [darkMode, setDarkMode] = useState(true)
+  const [darkMode, setDarkMode] = useState(() => {
+    try {
+      return localStorage.getItem('oa_theme') !== 'light'
+    } catch {
+      return true
+    }
+  })
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showSpendPopup, setShowSpendPopup] = useState(false)
@@ -25,15 +43,12 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
   })
 
   useEffect(() => {
-    const saved = localStorage.getItem('oa_theme')
-
-    if (saved === 'light') {
-      setDarkMode(false)
-      document.documentElement.classList.remove('dark')
-    } else {
+    if (darkMode) {
       document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
     }
-  }, [])
+  }, [darkMode])
 
   const toggleTheme = () => {
     const next = !darkMode
@@ -43,7 +58,6 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
       document.documentElement.classList.add('dark')
       localStorage.setItem('oa_theme', 'dark')
     } else {
-      document.documentElement.classList.remove('dark')
       localStorage.setItem('oa_theme', 'light')
     }
   }
@@ -86,7 +100,10 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
             <Logo height={20} className="text-zinc-900 dark:text-text-primary" />
           </Link>
 
-          <span className="mx-1 hidden h-4 w-px shrink-0 bg-zinc-200 dark:bg-border sm:block" aria-hidden="true" />
+          <span
+            className="mx-1 hidden h-4 w-px shrink-0 bg-zinc-200 dark:bg-border sm:block"
+            aria-hidden="true"
+          />
 
           {/* Global search — the primary way into the product */}
           <button
@@ -95,11 +112,20 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
             className="group hidden h-8 min-w-0 flex-1 max-w-xs items-center gap-2 border px-2.5 text-left transition-colors sm:flex border-zinc-200 bg-zinc-50/60 hover:border-zinc-300 hover:bg-white dark:border-border dark:bg-surface-card/60 dark:hover:border-border-light dark:hover:bg-surface-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500"
             aria-label="Search agents"
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 shrink-0 text-zinc-400 dark:text-text-muted" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="h-3.5 w-3.5 shrink-0 text-zinc-400 dark:text-text-muted"
+              aria-hidden="true"
+            >
               <circle cx="11" cy="11" r="7" />
               <path d="m20 20-3.5-3.5" />
             </svg>
-            <span className="truncate text-[13px] text-zinc-400 dark:text-text-muted">Search agents…</span>
+            <span className="truncate text-[13px] text-zinc-400 dark:text-text-muted">
+              Search agents…
+            </span>
             <span className="kbd ml-auto hidden md:inline-flex">/</span>
           </button>
 
@@ -148,7 +174,10 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
                     </div>
                     <div className="mb-2 max-h-32 space-y-1 overflow-y-auto">
                       {runs.slice(0, 10).map((run, i) => (
-                        <div key={i} className="flex justify-between font-mono text-[10px] text-zinc-400 dark:text-text-muted">
+                        <div
+                          key={i}
+                          className="flex justify-between font-mono text-[10px] text-zinc-400 dark:text-text-muted"
+                        >
                           <span className="max-w-[140px] truncate">{run.model || 'Unknown'}</span>
                           <span className="tabular-nums">${run.totalCost.toFixed(4)}</span>
                         </div>
@@ -178,7 +207,12 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
               {darkMode ? <Sun size={16} /> : <Moon size={16} />}
             </button>
 
-            <Link id="nav-settings-link" to="/settings" className="btn-icon hidden sm:inline-flex" aria-label="Settings">
+            <Link
+              id="nav-settings-link"
+              to="/settings"
+              className="btn-icon hidden sm:inline-flex"
+              aria-label="Settings"
+            >
               <Settings size={16} />
             </Link>
 
@@ -200,8 +234,19 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
           }`}
         >
           <div className="p-2">
-            <button type="button" onClick={focusGlobalSearch} className="field flex items-center gap-2 text-left text-zinc-400 dark:text-text-muted">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5" aria-hidden="true">
+            <button
+              type="button"
+              onClick={focusGlobalSearch}
+              className="field flex items-center gap-2 text-left text-zinc-400 dark:text-text-muted"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="h-3.5 w-3.5"
+                aria-hidden="true"
+              >
                 <circle cx="11" cy="11" r="7" />
                 <path d="m20 20-3.5-3.5" />
               </svg>
