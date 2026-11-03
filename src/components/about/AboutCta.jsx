@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Sparkles, Github, GitPullRequest, ArrowRight, PlusCircle, ExternalLink } from 'lucide-react'
+import { Sparkles, GitPullRequest, ArrowRight, PlusCircle, ExternalLink } from 'lucide-react'
+import Github from '../icons/Github'
 
 export default function AboutCta() {
   return (

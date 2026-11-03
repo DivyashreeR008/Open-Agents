@@ -1,4 +1,5 @@
-import { Github, BookOpen, GitPullRequest, AlertCircle, MessageSquare, ExternalLink } from 'lucide-react'
+import { BookOpen, GitPullRequest, AlertCircle, MessageSquare, ExternalLink } from 'lucide-react'
+import Github from '../icons/Github'
 
 export default function AboutResources() {
   const resources = [

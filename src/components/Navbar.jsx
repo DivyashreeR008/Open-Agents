@@ -1,11 +1,22 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Sun, Moon, Github, Menu, X, HelpCircle, DollarSign, RotateCcw, Settings, PanelLeft, ExternalLink } from 'lucide-react'
+import { Sun, Moon, Menu, X, HelpCircle, DollarSign, RotateCcw, Settings, PanelLeft, ExternalLink } from 'lucide-react'
+import Github from './icons/Github'
 
 import Logo from './Logo'
 import KeyboardShortcutsModal from './KeyboardShortcutsModal'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 import { useSessionSpend } from '../lib/useSessionSpend'
+
+function updateThemeMeta(isDark) {
+  if (typeof document === 'undefined') return
+  const metaTags = document.querySelectorAll('meta[name="theme-color"]')
+  metaTags.forEach((tag) => {
+    if (!tag.hasAttribute('media')) {
+      tag.setAttribute('content', isDark ? '#000000' : '#ffffff')
+    }
+  })
+}
 
 /**
  * App bar. Deliberately thin (48px) and mostly monochrome: the brand, a
@@ -30,8 +41,10 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
     if (saved === 'light') {
       setDarkMode(false)
       document.documentElement.classList.remove('dark')
+      updateThemeMeta(false)
     } else {
       document.documentElement.classList.add('dark')
+      updateThemeMeta(true)
     }
   }, [])
 
@@ -42,9 +55,11 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
     if (next) {
       document.documentElement.classList.add('dark')
       localStorage.setItem('oa_theme', 'dark')
+      updateThemeMeta(true)
     } else {
       document.documentElement.classList.remove('dark')
       localStorage.setItem('oa_theme', 'light')
+      updateThemeMeta(false)
     }
   }
 
