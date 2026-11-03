@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Sparkles, Github, ArrowRight, ExternalLink } from 'lucide-react'
+import { Sparkles, ArrowRight, ExternalLink } from 'lucide-react'
+import Github from '../icons/Github'
 import { useAgents } from '../../lib/useAgents'
 
 export default function AboutHero() {

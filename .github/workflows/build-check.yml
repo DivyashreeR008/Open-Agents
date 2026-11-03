@@ -48,6 +48,9 @@ jobs:
       - name: Run build
         run: npm run build
 
+      - name: Check bundle size budget
+        run: npm run check:bundle-size
+
       - name: Comment on failure
         if: failure() && github.event_name == 'pull_request'
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0

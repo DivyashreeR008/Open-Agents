@@ -50,3 +50,6 @@ jobs:
 
       - name: Run build
         run: npm run build
+
+      - name: Check bundle size budget
+        run: npm run check:bundle-size
