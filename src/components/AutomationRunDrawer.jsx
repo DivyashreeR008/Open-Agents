@@ -3,9 +3,10 @@ import { useTimedState } from '../lib/useTimedState'
 import { useDialogFocus } from '../hooks/useDialogFocus'
 import {
   X, CheckCircle2, AlertCircle, Clock, Zap, Copy, Check,
-  Mail, Calendar, FileText, ChevronRight, Share2, Download
+  Mail, Calendar, FileText, ChevronRight, Share2, Download, CalendarX, SkipForward
 } from 'lucide-react'
 import OutputRenderer from './OutputRenderer'
+import { describeUnexecutedRun, isUnexecutedRun } from '../lib/missedRuns'
 
 export default function AutomationRunDrawer({ run, isOpen, onClose }) {
   const [copied, setCopied] = useTimedState(false, isOpen && Boolean(run))
@@ -14,6 +15,9 @@ export default function AutomationRunDrawer({ run, isOpen, onClose }) {
   useDialogFocus(panelRef, { active: isOpen && Boolean(run), onClose })
 
   if (!isOpen || !run) return null
+
+  const unexecuted = isUnexecutedRun(run)
+  const description = unexecuted ? describeUnexecutedRun(run) : null
 
   const handleCopy = () => {
     navigator.clipboard.writeText(run.output || run.error || '')
@@ -63,12 +67,14 @@ export default function AutomationRunDrawer({ run, isOpen, onClose }) {
             }`}>
               {run.status === 'success' ? <CheckCircle2 size={18} /> :
                run.status === 'running' ? <Zap size={18} /> :
+               run.status === 'missed' ? <CalendarX size={18} /> :
+               run.status === 'skipped' ? <SkipForward size={18} /> :
                <AlertCircle size={18} />}
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 id={titleId} className="text-base font-bold truncate max-w-sm">
-                  Run Execution Details
+                  {unexecuted ? 'Scheduled Run Details' : 'Run Execution Details'}
                 </h3>
                 <span className={`text-[10px] font-bold px-2 py-0.5 uppercase ${
                   run.status === 'success' ? 'bg-zinc-500/15 text-zinc-500' :
@@ -117,6 +123,23 @@ export default function AutomationRunDrawer({ run, isOpen, onClose }) {
 
         {/* Content Body */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+          {unexecuted && (
+            <div className="p-4 border border-dashed border-zinc-500/40 space-y-2" id="unexecuted-run-details">
+              <h4 className="text-sm font-bold">{description.title}</h4>
+              <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">{description.detail}</p>
+              <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                Nothing was sent to the model provider for {run.status === 'missed' ? 'these windows' : 'these runs'}, so there is no output.
+              </p>
+            </div>
+          )}
+
+          {run.catchUp && run.scheduledFor && (
+            <div className="p-3 border border-zinc-500/20 bg-zinc-500/10 text-xs text-gray-700 dark:text-gray-200">
+              This was a catch-up run for the window that was due {formatDate(run.scheduledFor)}. It ran late because the app was not open then.
+            </div>
+          )}
+
+          {!unexecuted && (<>
           {/* Metadata KPI Pills */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="p-3 dark:bg-surface-card bg-gray-50 border dark:border-border/60 border-gray-200">
@@ -184,6 +207,7 @@ export default function AutomationRunDrawer({ run, isOpen, onClose }) {
               )}
             </div>
           </div>
+          </>)}
         </div>
       </div>
     </div>
