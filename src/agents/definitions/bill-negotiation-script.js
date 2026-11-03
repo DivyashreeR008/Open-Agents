@@ -1,40 +1,39 @@
 export default {
-  id: "bill-negotiation-script",
-  createdAt: "2026-10-12",
-  name: "Bill Negotiation Script",
+  id: 'bill-negotiation-script',
+  createdAt: '2026-10-12',
+  name: 'Bill Negotiation Script',
   description:
-    "Lower ISP, insurance, and medical bills with call scripts, anchor lines, and escalations.",
-  category: "Productivity",
-  icon: "PhoneCall",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Lower ISP, insurance, and medical bills with call scripts, anchor lines, and escalations.',
+  category: 'Productivity',
+  icon: 'PhoneCall',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     bills:
-      "ISP bill rose from $60 to $89 after promo expired. Car insurance $142/month, no claims in 3 years. $1,200 ER bill, already insured.",
-    provider: "Comcast-style ISP + auto insurer + hospital billing",
-    goal: "Get ISP back under $65, find insurance discount, set up ER payment plan",
+      'ISP bill rose from $60 to $89 after promo expired. Car insurance $142/month, no claims in 3 years. $1,200 ER bill, already insured.',
+    provider: 'Comcast-style ISP + auto insurer + hospital billing',
+    goal: 'Get ISP back under $65, find insurance discount, set up ER payment plan',
   },
   inputs: [
     {
-      id: "bills",
-      label: "Bills to negotiate",
-      type: "textarea",
-      placeholder:
-        "e.g. ISP $89/mo after promo, car insurance $142/mo, $1,200 medical bill",
+      id: 'bills',
+      label: 'Bills to negotiate',
+      type: 'textarea',
+      placeholder: 'e.g. ISP $89/mo after promo, car insurance $142/mo, $1,200 medical bill',
       required: true,
     },
     {
-      id: "provider",
-      label: "Provider names",
-      type: "text",
-      placeholder: "e.g. ISP name, insurer, hospital billing dept",
+      id: 'provider',
+      label: 'Provider names',
+      type: 'text',
+      placeholder: 'e.g. ISP name, insurer, hospital billing dept',
     },
     {
-      id: "goal",
-      label: "Target outcome",
-      type: "text",
-      placeholder: "e.g. Lower monthly total by $50, set up payment plan",
+      id: 'goal',
+      label: 'Target outcome',
+      type: 'text',
+      placeholder: 'e.g. Lower monthly total by $50, set up payment plan',
     },
   ],
   systemPrompt: `You are a consumer-advocacy coach who writes polite,
@@ -75,6 +74,6 @@ Rules:
 - Tailor tactics to bill type: ISP, insurance, and medical each
   get appropriate levers.
 - Keep the tone neutral and encouraging.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["personal-budget-analyzer", "cold-email-writer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['personal-budget-analyzer', 'cold-email-writer'],
+}

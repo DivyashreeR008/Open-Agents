@@ -1,8 +1,18 @@
 import { useState } from 'react'
 import {
-  Clock, Play, Trash2, ToggleLeft, ToggleRight,
-  ChevronDown, ChevronRight, AlertCircle, CheckCircle2,
-  Calendar, Zap, Loader2, X
+  Clock,
+  Play,
+  Trash2,
+  ToggleLeft,
+  ToggleRight,
+  ChevronDown,
+  ChevronRight,
+  AlertCircle,
+  CheckCircle2,
+  Calendar,
+  Zap,
+  Loader2,
+  X,
 } from 'lucide-react'
 import { useScheduler, SCHEDULE_OPTIONS } from '../lib/useScheduler'
 import OutputRenderer from '../components/OutputRenderer'
@@ -23,8 +33,10 @@ function formatNextRun(nextRunAt) {
 function formatDate(ts) {
   if (!ts) return 'Never'
   return new Date(ts).toLocaleString(undefined, {
-    month: 'short', day: 'numeric',
-    hour: '2-digit', minute: '2-digit',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   })
 }
 
@@ -37,11 +49,8 @@ function formatDuration(ms) {
 export default function SchedulerPage() {
   useDocumentTitle('Scheduled Agents')
 
-  const {
-    jobs, results, running,
-    toggleJob, deleteJob, runJob,
-    deleteResult, clearResultsForJob,
-  } = useScheduler()
+  const { jobs, results, running, toggleJob, deleteJob, runJob, deleteResult, clearResultsForJob } =
+    useScheduler()
 
   const [expandedJob, setExpandedJob] = useState(null)
   const [expandedResult, setExpandedResult] = useState(null)
@@ -66,7 +75,8 @@ export default function SchedulerPage() {
             </h1>
           </div>
           <p className="text-xs dark:text-text-secondary text-gray-500">
-            Agents you've scheduled to run automatically. Results are saved here and delivered via browser notifications.
+            Agents you've scheduled to run automatically. Results are saved here and delivered via
+            browser notifications.
           </p>
         </div>
 
@@ -98,7 +108,8 @@ export default function SchedulerPage() {
             No scheduled agents yet
           </h3>
           <p className="text-xs dark:text-text-secondary text-gray-500 max-w-xs mx-auto">
-            Open any agent, fill in your inputs, then click "Schedule" to set it to run automatically.
+            Open any agent, fill in your inputs, then click "Schedule" to set it to run
+            automatically.
           </p>
         </div>
       )}
@@ -106,10 +117,11 @@ export default function SchedulerPage() {
       {/* Jobs list */}
       {jobs.length > 0 && (
         <div className="space-y-3 mb-8">
-          {jobs.map(job => {
-            const jobResults = results.filter(r => r.jobId === job.id)
+          {jobs.map((job) => {
+            const jobResults = results.filter((r) => r.jobId === job.id)
             const isRunning = running[job.id]
-            const scheduleLabel = SCHEDULE_OPTIONS.find(s => s.value === job.schedule)?.label ?? job.schedule
+            const scheduleLabel =
+              SCHEDULE_OPTIONS.find((s) => s.value === job.schedule)?.label ?? job.schedule
             const isExpanded = expandedJob === job.id
 
             return (
@@ -167,10 +179,11 @@ export default function SchedulerPage() {
                       title="Run now"
                       className="p-1.5 dark:hover:bg-surface-hover hover:bg-gray-100 transition-colors dark:text-text-secondary text-gray-500 hover:text-black dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed"
                     >
-                      {isRunning
-                        ? <Loader2 size={15} className="animate-spin text-zinc-900 dark:text-white" />
-                        : <Play size={15} />
-                      }
+                      {isRunning ? (
+                        <Loader2 size={15} className="animate-spin text-zinc-900 dark:text-white" />
+                      ) : (
+                        <Play size={15} />
+                      )}
                     </button>
 
                     {/* Expand results */}
@@ -179,17 +192,18 @@ export default function SchedulerPage() {
                       title="View results"
                       className="p-1.5 dark:hover:bg-surface-hover hover:bg-gray-100 transition-colors dark:text-text-secondary text-gray-500"
                     >
-                      {isExpanded
-                        ? <ChevronDown size={15} />
-                        : <ChevronRight size={15} />
-                      }
+                      {isExpanded ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
                     </button>
 
                     {/* Delete */}
                     {confirmDelete === job.id ? (
                       <div className="flex items-center gap-1">
                         <button
-                          onClick={() => { deleteJob(job.id); clearResultsForJob(job.id); setConfirmDelete(null) }}
+                          onClick={() => {
+                            deleteJob(job.id)
+                            clearResultsForJob(job.id)
+                            setConfirmDelete(null)
+                          }}
                           className="text-[10px] font-medium text-zinc-500 hover:text-zinc-600 px-2 py-1 bg-zinc-500/10 transition-colors"
                         >
                           Confirm
@@ -233,12 +247,14 @@ export default function SchedulerPage() {
                             Clear all
                           </button>
                         </div>
-                        {jobResults.map(result => (
+                        {jobResults.map((result) => (
                           <ResultCard
                             key={result.id}
                             result={result}
                             expanded={expandedResult === result.id}
-                            onToggle={() => setExpandedResult(expandedResult === result.id ? null : result.id)}
+                            onToggle={() =>
+                              setExpandedResult(expandedResult === result.id ? null : result.id)
+                            }
                             onDelete={() => deleteResult(result.id)}
                           />
                         ))}
@@ -259,10 +275,11 @@ function ResultCard({ result, expanded, onToggle, onDelete }) {
   return (
     <div className=" border dark:border-border border-gray-100 dark:bg-surface-hover bg-gray-50 overflow-hidden">
       <div className="flex items-center gap-2 px-3 py-2">
-        {result.error
-          ? <AlertCircle size={13} className="text-zinc-400 flex-shrink-0" />
-          : <CheckCircle2 size={13} className="text-zinc-400 flex-shrink-0" />
-        }
+        {result.error ? (
+          <AlertCircle size={13} className="text-zinc-400 flex-shrink-0" />
+        ) : (
+          <CheckCircle2 size={13} className="text-zinc-400 flex-shrink-0" />
+        )}
         <span className="text-[11px] dark:text-text-secondary text-gray-600 flex-1">
           {formatDate(result.ranAt)}
           {result.duration ? ` · ${formatDuration(result.duration)}` : ''}

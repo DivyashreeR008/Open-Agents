@@ -1,41 +1,40 @@
 export default {
-  id: "dao-proposal-writer",
-  createdAt: "2026-10-12",
-  name: "DAO Proposal Writer",
+  id: 'dao-proposal-writer',
+  createdAt: '2026-10-12',
+  name: 'DAO Proposal Writer',
   description:
-    "Turn an idea into a governance proposal: temp-check, spec, options, and voting params.",
-  category: "Web3",
-  icon: "Vote",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Turn an idea into a governance proposal: temp-check, spec, options, and voting params.',
+  category: 'Web3',
+  icon: 'Vote',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    idea: "Allocate 50,000 USDC from treasury to fund a 3-month security audit bounty program covering two core contracts.",
+    idea: 'Allocate 50,000 USDC from treasury to fund a 3-month security audit bounty program covering two core contracts.',
     daoContext:
-      "Mid-size DeFi DAO, token-weighted voting, 4% quorum, 3-day voting period, multisig executor.",
-    proposalType: "treasury",
+      'Mid-size DeFi DAO, token-weighted voting, 4% quorum, 3-day voting period, multisig executor.',
+    proposalType: 'treasury',
   },
   inputs: [
     {
-      id: "idea",
-      label: "Proposal idea",
-      type: "textarea",
-      placeholder:
-        "e.g. Fund an audit bounty, change a fee parameter, launch a grants round...",
+      id: 'idea',
+      label: 'Proposal idea',
+      type: 'textarea',
+      placeholder: 'e.g. Fund an audit bounty, change a fee parameter, launch a grants round...',
       required: true,
     },
     {
-      id: "daoContext",
-      label: "DAO context",
-      type: "text",
-      placeholder: "e.g. Voting model, quorum, timelock, treasury setup...",
+      id: 'daoContext',
+      label: 'DAO context',
+      type: 'text',
+      placeholder: 'e.g. Voting model, quorum, timelock, treasury setup...',
     },
     {
-      id: "proposalType",
-      label: "Proposal type",
-      type: "select",
-      options: ["treasury", "parameter", "emergency"],
-      defaultValue: "treasury",
+      id: 'proposalType',
+      label: 'Proposal type',
+      type: 'select',
+      options: ['treasury', 'parameter', 'emergency'],
+      defaultValue: 'treasury',
       required: true,
     },
   ],
@@ -68,6 +67,6 @@ Rules:
 - Keep scope tight and execution steps concrete.
 - Call out missing data or approvals explicitly instead of assuming them.
 - Use neutral, instructional tone.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["research-agent", "grant-proposal-writer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['research-agent', 'grant-proposal-writer'],
+}

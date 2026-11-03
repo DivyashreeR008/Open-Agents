@@ -70,15 +70,11 @@ function normalizeCollection(collection) {
 
   return {
     id:
-      typeof collection.id === 'string' && collection.id.trim()
-        ? collection.id.trim()
-        : createId(),
+      typeof collection.id === 'string' && collection.id.trim() ? collection.id.trim() : createId(),
     name: normalizedName,
     agentIds,
-    createdAt:
-      typeof collection.createdAt === 'string' ? collection.createdAt : now,
-    updatedAt:
-      typeof collection.updatedAt === 'string' ? collection.updatedAt : now,
+    createdAt: typeof collection.createdAt === 'string' ? collection.createdAt : now,
+    updatedAt: typeof collection.updatedAt === 'string' ? collection.updatedAt : now,
     isDefault: isDefaultCollection,
   }
 }
@@ -97,8 +93,7 @@ function buildCollections(collections) {
   )
 
   const uniqueCollections = [defaultCollection, ...customCollections].filter(
-    (collection, index, all) =>
-      all.findIndex((item) => item.id === collection.id) === index
+    (collection, index, all) => all.findIndex((item) => item.id === collection.id) === index
   )
 
   return uniqueCollections.slice(0, MAX_COLLECTIONS + 1)
@@ -134,9 +129,7 @@ function persist(updater) {
   const current = loadCollections()
   const result = updater(current)
 
-  const next = Array.isArray(result.collections)
-    ? result.collections
-    : current
+  const next = Array.isArray(result.collections) ? result.collections : current
 
   saveCollections(next)
   notify()
@@ -187,8 +180,7 @@ export function useCollections() {
         }
 
         const duplicateName = customCollections.some(
-          (collection) =>
-            collection.name.toLowerCase() === trimmedName.toLowerCase()
+          (collection) => collection.name.toLowerCase() === trimmedName.toLowerCase()
         )
 
         if (duplicateName) {
@@ -212,8 +204,7 @@ export function useCollections() {
           ok: true,
           collection,
           collections: [
-            current.find((item) => item.id === DEFAULT_COLLECTION_ID) ||
-              createDefaultCollection(),
+            current.find((item) => item.id === DEFAULT_COLLECTION_ID) || createDefaultCollection(),
             collection,
             ...customCollections,
           ],
@@ -236,9 +227,8 @@ export function useCollections() {
           return { ok: false, error: 'Collection not found.' }
         }
 
-        const defaultCollection = current.find(
-          (item) => item.id === DEFAULT_COLLECTION_ID
-        ) || createDefaultCollection()
+        const defaultCollection =
+          current.find((item) => item.id === DEFAULT_COLLECTION_ID) || createDefaultCollection()
         const now = new Date().toISOString()
 
         return {
@@ -256,8 +246,9 @@ export function useCollections() {
                   }
                 : collection
             )
-            .filter((collection, index, all) =>
-              all.findIndex((item) => item.id === collection.id) === index
+            .filter(
+              (collection, index, all) =>
+                all.findIndex((item) => item.id === collection.id) === index
             )
             .map((collection) =>
               collection.id === DEFAULT_COLLECTION_ID
@@ -489,8 +480,7 @@ export function useCollections() {
           ok: true,
           collection,
           collections: [
-            current.find((item) => item.id === DEFAULT_COLLECTION_ID) ||
-              createDefaultCollection(),
+            current.find((item) => item.id === DEFAULT_COLLECTION_ID) || createDefaultCollection(),
             collection,
             ...customCollections,
           ],
@@ -522,8 +512,7 @@ export function useCollections() {
   )
 
   const getCollectionById = useCallback(
-    (collectionId) =>
-      collections.find((collection) => collection.id === collectionId),
+    (collectionId) => collections.find((collection) => collection.id === collectionId),
     [collections]
   )
 
@@ -543,8 +532,7 @@ export function useCollections() {
   )
 
   const isAgentInCollection = useCallback(
-    (collectionId, agentId) =>
-      Boolean(getCollectionById(collectionId)?.agentIds.includes(agentId)),
+    (collectionId, agentId) => Boolean(getCollectionById(collectionId)?.agentIds.includes(agentId)),
     [getCollectionById]
   )
 

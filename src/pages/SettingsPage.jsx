@@ -1,8 +1,15 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  Settings, Eye, EyeOff, Check, X,
-  Trash2, ExternalLink, ShieldCheck, KeyRound,
+  Settings,
+  Eye,
+  EyeOff,
+  Check,
+  X,
+  Trash2,
+  ExternalLink,
+  ShieldCheck,
+  KeyRound,
 } from 'lucide-react'
 import {
   getGlobalKeys,
@@ -13,46 +20,46 @@ import {
 } from '../lib/globalKeys'
 import { clearAutomationKeys } from '../lib/automationsService'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
-import openaiLogo   from '../assets/openai.svg'
+import openaiLogo from '../assets/openai.svg'
 import anthropicLogo from '../assets/anthropic.svg'
-import geminiLogo    from '../assets/gemini.svg'
+import geminiLogo from '../assets/gemini.svg'
 import openrouterLogo from '../assets/openrouter.svg'
 
 const PROVIDERS = [
   {
-    id:          'openai',
-    label:       'OpenAI',
-    logo:        openaiLogo,
+    id: 'openai',
+    label: 'OpenAI',
+    logo: openaiLogo,
     description: 'Powers GPT-4o and GPT-4o Mini',
-    keyUrl:      'https://platform.openai.com/api-keys',
-    keyLabel:    'Get your key →',
+    keyUrl: 'https://platform.openai.com/api-keys',
+    keyLabel: 'Get your key →',
     placeholder: 'sk-...',
   },
   {
-    id:          'anthropic',
-    label:       'Anthropic',
-    logo:        anthropicLogo,
+    id: 'anthropic',
+    label: 'Anthropic',
+    logo: anthropicLogo,
     description: 'Powers Claude Sonnet and Claude Opus',
-    keyUrl:      'https://console.anthropic.com/keys',
-    keyLabel:    'Get free key →',
+    keyUrl: 'https://console.anthropic.com/keys',
+    keyLabel: 'Get free key →',
     placeholder: 'sk-ant-...',
   },
   {
-    id:          'gemini',
-    label:       'Google Gemini',
-    logo:        geminiLogo,
+    id: 'gemini',
+    label: 'Google Gemini',
+    logo: geminiLogo,
     description: 'Powers Gemini 2.5 Flash — free tier available',
-    keyUrl:      'https://aistudio.google.com/app/apikey',
-    keyLabel:    'Get free key →',
+    keyUrl: 'https://aistudio.google.com/app/apikey',
+    keyLabel: 'Get free key →',
     placeholder: 'AIza...',
   },
   {
-    id:          'openrouter',
-    label:       'OpenRouter',
-    logo:        openrouterLogo,
+    id: 'openrouter',
+    label: 'OpenRouter',
+    logo: openrouterLogo,
     description: 'Access 200+ models through one API',
-    keyUrl:      'https://openrouter.ai/keys',
-    keyLabel:    'Get your key →',
+    keyUrl: 'https://openrouter.ai/keys',
+    keyLabel: 'Get your key →',
     placeholder: 'sk-or-...',
   },
 ]
@@ -63,8 +70,18 @@ export default function SettingsPage() {
   // ── Form state
   const [keys, setKeys] = useState({ openai: '', anthropic: '', gemini: '', openrouter: '' })
   const [defaultProvider, setDefaultProvider] = useState('')
-  const [showKey, setShowKey] = useState({ openai: false, anthropic: false, gemini: false, openrouter: false })
-  const [savedStatus, setSavedStatus] = useState({ openai: false, anthropic: false, gemini: false, openrouter: false })
+  const [showKey, setShowKey] = useState({
+    openai: false,
+    anthropic: false,
+    gemini: false,
+    openrouter: false,
+  })
+  const [savedStatus, setSavedStatus] = useState({
+    openai: false,
+    anthropic: false,
+    gemini: false,
+    openrouter: false,
+  })
   const [saveMessage, setSaveMessage] = useState('')
   const [confirmClearAll, setConfirmClearAll] = useState(false)
 
@@ -72,16 +89,16 @@ export default function SettingsPage() {
   useEffect(() => {
     const stored = getGlobalKeys()
     setKeys({
-      openai:     stored.openai     || '',
-      anthropic:  stored.anthropic  || '',
-      gemini:     stored.gemini     || '',
+      openai: stored.openai || '',
+      anthropic: stored.anthropic || '',
+      gemini: stored.gemini || '',
       openrouter: stored.openrouter || '',
     })
     setDefaultProvider(stored.defaultProvider || '')
     setSavedStatus({
-      openai:     !!stored.openai,
-      anthropic:  !!stored.anthropic,
-      gemini:     !!stored.gemini,
+      openai: !!stored.openai,
+      anthropic: !!stored.anthropic,
+      gemini: !!stored.gemini,
       openrouter: !!stored.openrouter,
     })
   }, [])
@@ -93,9 +110,9 @@ export default function SettingsPage() {
     // Refresh saved status
     const stored = getGlobalKeys()
     setSavedStatus({
-      openai:     !!stored.openai,
-      anthropic:  !!stored.anthropic,
-      gemini:     !!stored.gemini,
+      openai: !!stored.openai,
+      anthropic: !!stored.anthropic,
+      gemini: !!stored.gemini,
       openrouter: !!stored.openrouter,
     })
     setSaveMessage('Keys saved successfully')
@@ -145,7 +162,9 @@ export default function SettingsPage() {
           <Settings size={20} className="text-zinc-600 dark:text-zinc-300" />
         </div>
         <div>
-          <h1 className="font-display text-[17px] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-text-primary">Settings</h1>
+          <h1 className="font-display text-[17px] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-text-primary">
+            Settings
+          </h1>
           <p className="text-xs dark:text-text-secondary text-gray-500">
             Manage your API keys and preferences
           </p>
@@ -172,7 +191,15 @@ export default function SettingsPage() {
               {/* Provider name row */}
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <img src={p.logo} alt={p.label} className={p.id === 'openrouter' ? "w-5 h-5 flex-shrink-0 invert dark:invert-0" : "w-5 h-5 flex-shrink-0"} />
+                  <img
+                    src={p.logo}
+                    alt={p.label}
+                    className={
+                      p.id === 'openrouter'
+                        ? 'w-5 h-5 flex-shrink-0 invert dark:invert-0'
+                        : 'w-5 h-5 flex-shrink-0'
+                    }
+                  />
                   <span className="text-sm font-semibold dark:text-text-primary text-gray-800">
                     {p.label} API Key
                   </span>
@@ -214,7 +241,9 @@ export default function SettingsPage() {
 
               {/* Description + link */}
               <div className="flex items-center justify-between mt-1.5">
-                <span className="text-[11px] dark:text-text-muted text-gray-400">{p.description}</span>
+                <span className="text-[11px] dark:text-text-muted text-gray-400">
+                  {p.description}
+                </span>
                 <a
                   href={p.keyUrl}
                   target="_blank"
@@ -254,7 +283,9 @@ export default function SettingsPage() {
       {/* ─────────────────────────────────────────── */}
       <section className="mb-8 border dark:bg-surface-card dark:border-border bg-white border-gray-200 overflow-hidden">
         <div className="px-5 py-4 border-b dark:border-border border-gray-100">
-          <h2 className="text-sm font-bold dark:text-text-primary text-gray-900">Default Provider</h2>
+          <h2 className="text-sm font-bold dark:text-text-primary text-gray-900">
+            Default Provider
+          </h2>
           <p className="text-xs dark:text-text-secondary text-gray-500 mt-0.5">
             This provider is pre-selected on every agent. You can still switch per agent.
           </p>
@@ -277,7 +308,9 @@ export default function SettingsPage() {
             >
               <option value="">Select a default provider...</option>
               {availableForDefault.map((p) => (
-                <option key={p.id} value={p.id}>{p.label}</option>
+                <option key={p.id} value={p.id}>
+                  {p.label}
+                </option>
               ))}
             </select>
           )}

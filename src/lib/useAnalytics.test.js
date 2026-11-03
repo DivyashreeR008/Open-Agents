@@ -88,13 +88,28 @@ describe('first analytics visit after runs were already recorded', () => {
   })
 
   it('still seeds history entries that were never recorded and keeps newest first', () => {
-    localStorage.setItem('oa_analytics', JSON.stringify([
-      { id: 'a_200', agentId: 'a', agentName: 'A', provider: 'x', category: 'Engineering', model: 'm', duration: 1, timestamp: 200 },
-    ]))
-    localStorage.setItem('OpenAgents_history', JSON.stringify([
-      { id: 'a_200', agentId: 'a', agentName: 'A', provider: 'x', timestamp: 200 },
-      { id: 'a_100', agentId: 'a', agentName: 'A', provider: 'x', timestamp: 100 },
-    ]))
+    localStorage.setItem(
+      'oa_analytics',
+      JSON.stringify([
+        {
+          id: 'a_200',
+          agentId: 'a',
+          agentName: 'A',
+          provider: 'x',
+          category: 'Engineering',
+          model: 'm',
+          duration: 1,
+          timestamp: 200,
+        },
+      ])
+    )
+    localStorage.setItem(
+      'OpenAgents_history',
+      JSON.stringify([
+        { id: 'a_200', agentId: 'a', agentName: 'A', provider: 'x', timestamp: 200 },
+        { id: 'a_100', agentId: 'a', agentName: 'A', provider: 'x', timestamp: 100 },
+      ])
+    )
 
     const { result } = renderHook(() => useAnalytics())
 

@@ -1,31 +1,33 @@
 export default {
-  id: "freelancer-tax-organizer",
-  createdAt: "2026-10-12",
-  name: "Freelancer Tax Organizer",
+  id: 'freelancer-tax-organizer',
+  createdAt: '2026-10-12',
+  name: 'Freelancer Tax Organizer',
   description:
-    "Get a tailored tax-season document checklist plus quarterly estimated-payment planner. Organization help, not tax advice.",
-  category: "Finance",
-  icon: "Receipt",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Get a tailored tax-season document checklist plus quarterly estimated-payment planner. Organization help, not tax advice.',
+  category: 'Finance',
+  icon: 'Receipt',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    situation: "Solo freelance designer, US, first full year self-employed. Income ~$95k across 6 clients. Home office, new laptop $2,400, Adobe subscription, some client travel.",
-    country: "United States",
+    situation:
+      'Solo freelance designer, US, first full year self-employed. Income ~$95k across 6 clients. Home office, new laptop $2,400, Adobe subscription, some client travel.',
+    country: 'United States',
   },
   inputs: [
     {
-      id: "situation",
-      label: "Your situation",
-      type: "textarea",
-      placeholder: "e.g. Freelance writer, 2 years in, mix of local and foreign clients, works from home",
+      id: 'situation',
+      label: 'Your situation',
+      type: 'textarea',
+      placeholder:
+        'e.g. Freelance writer, 2 years in, mix of local and foreign clients, works from home',
       required: true,
     },
     {
-      id: "country",
-      label: "Country",
-      type: "text",
-      placeholder: "e.g. United States, India, Germany",
+      id: 'country',
+      label: 'Country',
+      type: 'text',
+      placeholder: 'e.g. United States, India, Germany',
     },
   ],
   systemPrompt: `You organize freelancers for tax season. You are not a tax
@@ -60,6 +62,6 @@ Rules:
 - Never recommend evasion-adjacent behavior; if something sounds like
   hiding income, flag it plainly
 - Keep the checklist checkable: every item actionable in one sitting`,
-  outputType: "markdown",
-  suggestedChainFrom: ["invoice-description-generator", "personal-budget-analyzer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['invoice-description-generator', 'personal-budget-analyzer'],
+}

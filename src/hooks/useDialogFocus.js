@@ -10,7 +10,9 @@ const FOCUSABLE = [
 ].join(',')
 
 const getFocusable = (root) =>
-  [...root.querySelectorAll(FOCUSABLE)].filter((el) => !el.hasAttribute('hidden') && el.getAttribute('aria-hidden') !== 'true')
+  [...root.querySelectorAll(FOCUSABLE)].filter(
+    (el) => !el.hasAttribute('hidden') && el.getAttribute('aria-hidden') !== 'true'
+  )
 
 const focusWithoutScroll = (element) => {
   if (!element) return
@@ -41,7 +43,8 @@ export function useDialogFocus(containerRef, { active = true, onClose } = {}) {
     if (!container.hasAttribute('tabindex')) container.setAttribute('tabindex', '-1')
 
     if (!container.contains(document.activeElement)) {
-      const target = container.querySelector('[data-autofocus]') || getFocusable(container)[0] || container
+      const target =
+        container.querySelector('[data-autofocus]') || getFocusable(container)[0] || container
       focusWithoutScroll(target)
     }
 
@@ -62,7 +65,10 @@ export function useDialogFocus(containerRef, { active = true, onClose } = {}) {
       const first = focusable[0]
       const last = focusable[focusable.length - 1]
       const current = document.activeElement
-      if (event.shiftKey && (current === first || current === container || !container.contains(current))) {
+      if (
+        event.shiftKey &&
+        (current === first || current === container || !container.contains(current))
+      ) {
         event.preventDefault()
         focusWithoutScroll(last)
       } else if (!event.shiftKey && (current === last || !container.contains(current))) {

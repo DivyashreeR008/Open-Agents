@@ -1,49 +1,43 @@
 export default {
-  id: "curl-command-builder",
-  createdAt: "2026-09-22",
-  name: "cURL Command Builder",
+  id: 'curl-command-builder',
+  createdAt: '2026-09-22',
+  name: 'cURL Command Builder',
   description:
-    "Describe an API request in plain English (or paste an endpoint spec) and get a ready-to-run curl command, with each flag explained.",
-  category: "Developer Tools",
-  icon: "Terminal",
-  provider: "any",
-  defaultProvider: "openai",
-  model: "gpt-4o",
+    'Describe an API request in plain English (or paste an endpoint spec) and get a ready-to-run curl command, with each flag explained.',
+  category: 'Developer Tools',
+  icon: 'Terminal',
+  provider: 'any',
+  defaultProvider: 'openai',
+  model: 'gpt-4o',
   exampleInputs: {
     request:
-      "POST to https://api.example.com/v1/users to create a user with JSON body { name, email }",
-    method: "POST",
-    auth: "Bearer token",
+      'POST to https://api.example.com/v1/users to create a user with JSON body { name, email }',
+    method: 'POST',
+    auth: 'Bearer token',
   },
   inputs: [
     {
-      id: "request",
-      label: "Request description",
-      type: "textarea",
+      id: 'request',
+      label: 'Request description',
+      type: 'textarea',
       placeholder:
-        "e.g. GET https://api.example.com/v1/orders?status=open with a bearer token, returning JSON",
+        'e.g. GET https://api.example.com/v1/orders?status=open with a bearer token, returning JSON',
       required: true,
     },
     {
-      id: "method",
-      label: "HTTP method",
-      type: "select",
-      options: ["Auto", "GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"],
-      defaultValue: "Auto",
+      id: 'method',
+      label: 'HTTP method',
+      type: 'select',
+      options: ['Auto', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD'],
+      defaultValue: 'Auto',
       required: true,
     },
     {
-      id: "auth",
-      label: "Authentication",
-      type: "select",
-      options: [
-        "None",
-        "Bearer token",
-        "Basic auth",
-        "API key header",
-        "Cookie/session",
-      ],
-      defaultValue: "None",
+      id: 'auth',
+      label: 'Authentication',
+      type: 'select',
+      options: ['None', 'Bearer token', 'Basic auth', 'API key header', 'Cookie/session'],
+      defaultValue: 'None',
       required: true,
     },
   ],
@@ -76,4 +70,4 @@ Respond in this format:
 
 ## Notes
 - [assumptions, placeholders to fill in, or safer alternatives]`,
-};
+}

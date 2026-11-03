@@ -8,7 +8,9 @@ import { MemoryRouter } from 'react-router-dom'
 // useSessionSpend, analytics and the REAL llmAdapter.streamAgent are all live.
 vi.mock('./ApiKeyBar', () => ({ default: () => null }))
 vi.mock('./ApiKeyInfo', () => ({ default: () => null }))
-vi.mock('./OutputRenderer', () => ({ default: ({ content }) => <div data-testid="output">{content}</div> }))
+vi.mock('./OutputRenderer', () => ({
+  default: ({ content }) => <div data-testid="output">{content}</div>,
+}))
 vi.mock('./VoiceInput', () => ({ default: () => null }))
 vi.mock('./RunRating', () => ({ default: () => null }))
 vi.mock('./SuggestedChainPills', () => ({ default: () => null }))
@@ -30,7 +32,9 @@ const agent = {
   icon: 'Bot',
   outputType: 'markdown',
   systemPrompt: 'You are a test agent.',
-  inputs: [{ id: 'text', label: 'Text', type: 'textarea', required: true, placeholder: 'type here' }],
+  inputs: [
+    { id: 'text', label: 'Text', type: 'textarea', required: true, placeholder: 'type here' },
+  ],
 }
 
 // ── fake `fetch` that behaves like a browser for streaming + abort ───────────
@@ -71,10 +75,14 @@ const finish = (i) => {
   requests[i].controller.close()
 }
 
-const flush = (ms = 30) => act(async () => { await new Promise((r) => setTimeout(r, ms)) })
+const flush = (ms = 30) =>
+  act(async () => {
+    await new Promise((r) => setTimeout(r, ms))
+  })
 
 const history = () => JSON.parse(localStorage.getItem('OpenAgents_history') || '[]')
-const analyticsFor = (id) => JSON.parse(localStorage.getItem('oa_analytics') || '[]').filter((e) => e.agentId === id)
+const analyticsFor = (id) =>
+  JSON.parse(localStorage.getItem('oa_analytics') || '[]').filter((e) => e.agentId === id)
 
 async function startRun() {
   const user = userEvent.setup()
@@ -107,7 +115,10 @@ afterEach(() => {
 describe('AgentRunner: stream cancellation lifecycle', () => {
   it('a normal run still completes, shows output and records history once (guard)', async () => {
     await startRun()
-    await act(async () => { push(0, 'hello world'); finish(0) })
+    await act(async () => {
+      push(0, 'hello world')
+      finish(0)
+    })
     expect(await screen.findByTestId('output')).toHaveTextContent('hello world')
     await waitFor(() => expect(history()).toHaveLength(1))
     expect(analyticsFor('test-agent')).toHaveLength(1)
@@ -115,7 +126,9 @@ describe('AgentRunner: stream cancellation lifecycle', () => {
 
   it('Stop keeps the partial output and returns the UI to idle (guard)', async () => {
     const { user } = await startRun()
-    await act(async () => { push(0, 'partial text') })
+    await act(async () => {
+      push(0, 'partial text')
+    })
     await user.click(await screen.findByRole('button', { name: /stop/i }))
     await flush()
     expect(await screen.findByTestId('output')).toHaveTextContent('partial text')
@@ -124,7 +137,9 @@ describe('AgentRunner: stream cancellation lifecycle', () => {
 
   it('Clear while streaming must not resurrect the cancelled output or record a run', async () => {
     const { user } = await startRun()
-    await act(async () => { push(0, 'partial text that the user threw away') })
+    await act(async () => {
+      push(0, 'partial text that the user threw away')
+    })
 
     await user.click(screen.getByRole('button', { name: /^clear$/i }))
     await flush()
@@ -138,7 +153,9 @@ describe('AgentRunner: stream cancellation lifecycle', () => {
 
   it('Escape while streaming behaves like Clear', async () => {
     await startRun()
-    await act(async () => { push(0, 'partial') })
+    await act(async () => {
+      push(0, 'partial')
+    })
 
     fireEvent.keyDown(window, { key: 'Escape' })
     await flush()
@@ -150,7 +167,9 @@ describe('AgentRunner: stream cancellation lifecycle', () => {
 
   it("a stopped run's late cleanup must not clobber the next run's controller/loading state", async () => {
     await startRun()
-    await act(async () => { push(0, 'first') })
+    await act(async () => {
+      push(0, 'first')
+    })
 
     // Stop and immediately start a second run, before run #1's rejection has
     // propagated (the microtask that runs run #1's `finally`).
@@ -168,7 +187,9 @@ describe('AgentRunner: stream cancellation lifecycle', () => {
 
   it('unmounting mid-stream cancels the request and records nothing', async () => {
     const { unmount } = await startRun()
-    await act(async () => { push(0, 'partial') })
+    await act(async () => {
+      push(0, 'partial')
+    })
 
     unmount()
     expect(requests[0].signal.aborted).toBe(true)

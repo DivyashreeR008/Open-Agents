@@ -1,39 +1,38 @@
 export default {
-  id: "grant-budget-builder",
-  createdAt: "2026-10-12",
-  name: "Grant Budget Builder",
-  description:
-    "Build a grant budget table: line items, justifications, and match-funding notes.",
-  category: "Finance",
-  icon: "CircleDollarSign",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'grant-budget-builder',
+  createdAt: '2026-10-12',
+  name: 'Grant Budget Builder',
+  description: 'Build a grant budget table: line items, justifications, and match-funding notes.',
+  category: 'Finance',
+  icon: 'CircleDollarSign',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    project: "Community digital literacy program: 12 workshops for 300 adults over 9 months",
-    total: "50000 USD",
-    funder: "City Community Foundation, max 50k, requires 20% match",
+    project: 'Community digital literacy program: 12 workshops for 300 adults over 9 months',
+    total: '50000 USD',
+    funder: 'City Community Foundation, max 50k, requires 20% match',
   },
   inputs: [
     {
-      id: "project",
-      label: "Project summary",
-      type: "textarea",
+      id: 'project',
+      label: 'Project summary',
+      type: 'textarea',
       placeholder:
-        "e.g. Community digital literacy program: 12 workshops for 300 adults over 9 months, 2 staff, venue hire...",
+        'e.g. Community digital literacy program: 12 workshops for 300 adults over 9 months, 2 staff, venue hire...',
       required: true,
     },
     {
-      id: "total",
-      label: "Total budget requested",
-      type: "text",
-      placeholder: "e.g. 50000 USD",
+      id: 'total',
+      label: 'Total budget requested',
+      type: 'text',
+      placeholder: 'e.g. 50000 USD',
     },
     {
-      id: "funder",
-      label: "Funder and constraints",
-      type: "text",
-      placeholder: "e.g. City Community Foundation, max 50k, 20% match required",
+      id: 'funder',
+      label: 'Funder and constraints',
+      type: 'text',
+      placeholder: 'e.g. City Community Foundation, max 50k, 20% match required',
     },
   ],
   systemPrompt: `You are a grants finance specialist who builds clear, defensible project budgets for funders.
@@ -63,6 +62,6 @@ Rules:
 - Ask the reader to have a finance professional review the budget before submission
 - Use neutral language and realistic unit costs
 - Flag any unallowable or risky line items explicitly`,
-  outputType: "markdown",
-  suggestedChainFrom: ["grant-proposal-writer", "invoice-description-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['grant-proposal-writer', 'invoice-description-generator'],
+}

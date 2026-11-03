@@ -11,43 +11,42 @@
 // Each definition file becomes a separate chunk loaded on demand.
 // ============================================================
 
-const modules = import.meta.glob('./definitions/*.js', { eager: false });
+const modules = import.meta.glob('./definitions/*.js', { eager: false })
 
 // Known synchronously from the glob, so count-sensitive UI can render the real
 // catalogue size during the lazy load instead of flashing a stale number.
-export const AGENT_COUNT = Object.keys(modules).length;
+export const AGENT_COUNT = Object.keys(modules).length
 
 const normalizeAgents = (agents) => {
-  const seenIds = new Set();
+  const seenIds = new Set()
   return agents.filter(Boolean).filter((agent) => {
     if (!agent?.id) {
-      console.warn('Skipping agent without an id:', agent);
-      return false;
+      console.warn('Skipping agent without an id:', agent)
+      return false
     }
     if (seenIds.has(agent.id)) {
-      console.warn(`Skipping duplicate agent id "${agent.id}".`);
-      return false;
+      console.warn(`Skipping duplicate agent id "${agent.id}".`)
+      return false
     }
-    seenIds.add(agent.id);
-    return true;
-  });
-};
+    seenIds.add(agent.id)
+    return true
+  })
+}
 
-let cachedAgentsPromise = null;
+let cachedAgentsPromise = null
 
 export function loadAllAgents() {
-  if (cachedAgentsPromise) return cachedAgentsPromise;
+  if (cachedAgentsPromise) return cachedAgentsPromise
 
-  cachedAgentsPromise = Promise.all(
-    Object.values(modules).map((loader) => loader())
-  ).then((entries) => {
-    return normalizeAgents(entries.map((mod) => mod.default));
-  })
-  .catch((error) => {
-    // Allow future calls to retry initialization after a failed load.
-    cachedAgentsPromise = null;
-    throw error;
-  });
+  cachedAgentsPromise = Promise.all(Object.values(modules).map((loader) => loader()))
+    .then((entries) => {
+      return normalizeAgents(entries.map((mod) => mod.default))
+    })
+    .catch((error) => {
+      // Allow future calls to retry initialization after a failed load.
+      cachedAgentsPromise = null
+      throw error
+    })
 
-  return cachedAgentsPromise;
+  return cachedAgentsPromise
 }

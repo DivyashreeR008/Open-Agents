@@ -1,29 +1,41 @@
-import { Code2, GitPullRequest, GitFork, CheckCircle2, Terminal, ShieldAlert, ExternalLink } from 'lucide-react'
+import {
+  Code2,
+  GitPullRequest,
+  GitFork,
+  CheckCircle2,
+  Terminal,
+  ShieldAlert,
+  ExternalLink,
+} from 'lucide-react'
 
 export default function AboutOpenSource() {
   const steps = [
     {
       step: '01',
       title: 'Fork & Clone',
-      description: 'Fork the repository on GitHub and clone your fork locally. Install dependencies using npm install.',
+      description:
+        'Fork the repository on GitHub and clone your fork locally. Install dependencies using npm install.',
       command: 'git clone https://github.com/YOUR_USERNAME/OpenAgents.git',
     },
     {
       step: '02',
       title: 'Create Branch',
-      description: 'Always create a feature branch for your changes (e.g. agent/new-agent or fix/bug-name).',
+      description:
+        'Always create a feature branch for your changes (e.g. agent/new-agent or fix/bug-name).',
       command: 'git checkout -b agent/my-new-agent',
     },
     {
       step: '03',
       title: 'Add Agent / Code',
-      description: 'Add a new agent definition in src/agents/definitions/. The registry automatically discovers and loads new agent definitions.',
+      description:
+        'Add a new agent definition in src/agents/definitions/. The registry automatically discovers and loads new agent definitions.',
       command: 'src/agents/definitions/my-new-agent.js',
     },
     {
       step: '04',
       title: 'Validate & Build',
-      description: 'Run local build check before opening a PR to ensure zero compilation or syntax issues.',
+      description:
+        'Run local build check before opening a PR to ensure zero compilation or syntax issues.',
       command: 'npm run build',
     },
   ]
@@ -36,7 +48,10 @@ export default function AboutOpenSource() {
             <Code2 size={14} />
             <span>100% Open Source • MIT Licensed</span>
           </div>
-          <h2 id="about-opensource-title" className="text-2xl sm:text-3xl font-bold dark:text-text-primary text-gray-900 tracking-tight">
+          <h2
+            id="about-opensource-title"
+            className="text-2xl sm:text-3xl font-bold dark:text-text-primary text-gray-900 tracking-tight"
+          >
             Open Source Philosophy & Contribution Workflow
           </h2>
         </div>
@@ -54,7 +69,10 @@ export default function AboutOpenSource() {
       </div>
 
       <p className="text-sm dark:text-text-secondary text-gray-600 mb-8 leading-relaxed">
-        OpenAgents is built by developers, designers, and AI enthusiasts around the world. Every line of code, agent prompt, and UI component is open to public inspection, contribution, and improvement. We maintain a zero-gatekeeping environment where even first-time open-source contributors can make a meaningful impact.
+        OpenAgents is built by developers, designers, and AI enthusiasts around the world. Every
+        line of code, agent prompt, and UI component is open to public inspection, contribution, and
+        improvement. We maintain a zero-gatekeeping environment where even first-time open-source
+        contributors can make a meaningful impact.
       </p>
 
       {/* Contribution Steps */}
@@ -86,7 +104,12 @@ export default function AboutOpenSource() {
       <div className="flex items-start gap-3 p-4 dark:bg-zinc-500/10 bg-zinc-50 border dark:border-zinc-500/20 border-zinc-200 text-xs dark:text-zinc-300 text-zinc-900">
         <ShieldAlert size={18} className="shrink-0 mt-0.5" />
         <div>
-          <strong>Important Requirement Before Opening PR:</strong> Always run <code className="font-mono bg-zinc-200/50 dark:bg-zinc-950/50 px-1 py-0.5 ">npm run build</code> locally to ensure there are no build errors. Clean, building code keeps the repository healthy for everyone!
+          <strong>Important Requirement Before Opening PR:</strong> Always run{' '}
+          <code className="font-mono bg-zinc-200/50 dark:bg-zinc-950/50 px-1 py-0.5 ">
+            npm run build
+          </code>{' '}
+          locally to ensure there are no build errors. Clean, building code keeps the repository
+          healthy for everyone!
         </div>
       </div>
     </section>

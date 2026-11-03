@@ -1,43 +1,42 @@
 export default {
-  id: "eulogy-writing-helper",
-  createdAt: "2026-10-12",
-  name: "Eulogy Writing Helper",
-  description:
-    "Share memories to get a gentle eulogy structure with prompts — handled with care.",
-  category: "Content Writing",
-  icon: "Flower2",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'eulogy-writing-helper',
+  createdAt: '2026-10-12',
+  name: 'Eulogy Writing Helper',
+  description: 'Share memories to get a gentle eulogy structure with prompts — handled with care.',
+  category: 'Content Writing',
+  icon: 'Flower2',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     memories:
       "Grandpa taught me to fish at the lake every summer. He told the same three jokes and laughed hardest himself. He fixed neighbors' radios for free and never mentioned it.",
-    tone: "warm",
-    length: "5min",
+    tone: 'warm',
+    length: '5min',
   },
   inputs: [
     {
-      id: "memories",
-      label: "Memories and stories",
-      type: "textarea",
+      id: 'memories',
+      label: 'Memories and stories',
+      type: 'textarea',
       placeholder:
         "Share what you remember, e.g.:\nGrandpa taught me to fish every summer. He fixed neighbors' radios for free and never mentioned it.",
       required: true,
     },
     {
-      id: "tone",
-      label: "Tone",
-      type: "select",
-      options: ["warm", "celebratory", "quiet-faith-based"],
-      defaultValue: "warm",
+      id: 'tone',
+      label: 'Tone',
+      type: 'select',
+      options: ['warm', 'celebratory', 'quiet-faith-based'],
+      defaultValue: 'warm',
       required: true,
     },
     {
-      id: "length",
-      label: "Length",
-      type: "select",
-      options: ["3min", "5min", "8min"],
-      defaultValue: "5min",
+      id: 'length',
+      label: 'Length',
+      type: 'select',
+      options: ['3min', '5min', '8min'],
+      defaultValue: '5min',
       required: true,
     },
   ],
@@ -64,6 +63,6 @@ Rules:
 - Keep the tone restrained and respectful with no emoji and no humor unless the memories include it
 - For quiet-faith-based tone, keep references general unless the memories specify a tradition
 - Acknowledge this is difficult and remind the user every suggestion is optional`,
-  outputType: "markdown",
-  suggestedChainFrom: ["tone-rewriter", "email-reply-writer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['tone-rewriter', 'email-reply-writer'],
+}

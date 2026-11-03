@@ -1,39 +1,39 @@
 export default {
-  id: "linkedin-seller-profile-optimizer",
-  createdAt: "2026-10-12",
-  name: "Seller Profile Optimizer",
-  description:
-    "Turn a LinkedIn profile into a buyer magnet: headline, about, featured, and CTA.",
-  category: "Sales",
-  icon: "Linkedin",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'linkedin-seller-profile-optimizer',
+  createdAt: '2026-10-12',
+  name: 'Seller Profile Optimizer',
+  description: 'Turn a LinkedIn profile into a buyer magnet: headline, about, featured, and CTA.',
+  category: 'Sales',
+  icon: 'Linkedin',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    profile: "Sam Lee, AE at Acme CRM. Headline: Sales Rep. About: I sell software. 500 connections.",
-    buyers: "Ops leaders at 50-500 person SaaS companies",
-    offer: "Free 20-minute workflow audit for support and ops teams",
+    profile:
+      'Sam Lee, AE at Acme CRM. Headline: Sales Rep. About: I sell software. 500 connections.',
+    buyers: 'Ops leaders at 50-500 person SaaS companies',
+    offer: 'Free 20-minute workflow audit for support and ops teams',
   },
   inputs: [
     {
-      id: "profile",
-      label: "Current profile text",
-      type: "textarea",
+      id: 'profile',
+      label: 'Current profile text',
+      type: 'textarea',
       placeholder:
-        "Paste headline, about, and experience, e.g.:\nSam Lee, AE at Acme CRM. Headline: Sales Rep...",
+        'Paste headline, about, and experience, e.g.:\nSam Lee, AE at Acme CRM. Headline: Sales Rep...',
       required: true,
     },
     {
-      id: "buyers",
-      label: "Target buyers",
-      type: "text",
-      placeholder: "e.g. Ops leaders at 50-500 person SaaS companies",
+      id: 'buyers',
+      label: 'Target buyers',
+      type: 'text',
+      placeholder: 'e.g. Ops leaders at 50-500 person SaaS companies',
     },
     {
-      id: "offer",
-      label: "Offer and CTA",
-      type: "text",
-      placeholder: "e.g. Free 20-minute workflow audit for ops teams",
+      id: 'offer',
+      label: 'Offer and CTA',
+      type: 'text',
+      placeholder: 'e.g. Free 20-minute workflow audit for ops teams',
     },
   ],
   systemPrompt: `You are a social selling coach who rewrites seller LinkedIn
@@ -65,6 +65,6 @@ Rules:
 - Do not invent metrics, quotes, reviews, or client logos
 - Keep tone professional, direct, and buyer-focused
 - Flag claims that need real numbers before publishing`,
-  outputType: "markdown",
-  suggestedChainFrom: ["linkedin-outreach-message-writer", "resume-screener"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['linkedin-outreach-message-writer', 'resume-screener'],
+}

@@ -1,22 +1,22 @@
-import { useState } from "react";
-import { useTimedState } from "../lib/useTimedState";
-import { X, Search, Star, Trash2, Copy, RotateCcw, History } from "lucide-react";
-import { usePromptHistory } from "../lib/usePromptHistory";
+import { useState } from 'react'
+import { useTimedState } from '../lib/useTimedState'
+import { X, Search, Star, Trash2, Copy, RotateCcw, History } from 'lucide-react'
+import { usePromptHistory } from '../lib/usePromptHistory'
 
 function truncate(text, max = 140) {
-  if (!text) return "";
-  return text.length > max ? text.slice(0, max).trim() + "…" : text;
+  if (!text) return ''
+  return text.length > max ? text.slice(0, max).trim() + '…' : text
 }
 
 function timeAgo(timestamp) {
-  const diff = Date.now() - timestamp;
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins}m ago`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.floor(hours / 24);
-  return `${days}d ago`;
+  const diff = Date.now() - timestamp
+  const mins = Math.floor(diff / 60000)
+  if (mins < 1) return 'just now'
+  if (mins < 60) return `${mins}m ago`
+  const hours = Math.floor(mins / 60)
+  if (hours < 24) return `${hours}h ago`
+  const days = Math.floor(hours / 24)
+  return `${days}d ago`
 }
 
 function PromptItem({ entry, onUse, onToggleFavorite, onDelete, onCopy }) {
@@ -51,14 +51,14 @@ function PromptItem({ entry, onUse, onToggleFavorite, onDelete, onCopy }) {
           </button>
           <button
             onClick={() => onToggleFavorite(entry.id)}
-            title={entry.favorite ? "Remove from favorites" : "Add to favorites"}
+            title={entry.favorite ? 'Remove from favorites' : 'Add to favorites'}
             className={`p-1 transition-colors ${
               entry.favorite
-                ? "text-zinc-400 hover:text-zinc-300"
-                : "dark:text-text-muted text-gray-500 hover:text-zinc-400"
+                ? 'text-zinc-400 hover:text-zinc-300'
+                : 'dark:text-text-muted text-gray-500 hover:text-zinc-400'
             }`}
           >
-            <Star size={13} className={entry.favorite ? "fill-zinc-400" : ""} />
+            <Star size={13} className={entry.favorite ? 'fill-zinc-400' : ''} />
           </button>
           <button
             onClick={() => onDelete(entry.id)}
@@ -70,7 +70,7 @@ function PromptItem({ entry, onUse, onToggleFavorite, onDelete, onCopy }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 /**
@@ -83,36 +83,33 @@ function PromptItem({ entry, onUse, onToggleFavorite, onDelete, onCopy }) {
  */
 export default function PromptHistoryPanel({ open, onClose, onUsePrompt }) {
   const { prompts, favorites, deletePrompt, clearHistory, toggleFavorite, searchPrompts } =
-    usePromptHistory();
-  const [query, setQuery] = useState("");
-  const [copiedId, setCopiedId] = useTimedState(null, open);
-  const [confirmClear, setConfirmClear] = useState(false);
+    usePromptHistory()
+  const [query, setQuery] = useState('')
+  const [copiedId, setCopiedId] = useTimedState(null, open)
+  const [confirmClear, setConfirmClear] = useState(false)
 
-  if (!open) return null;
+  if (!open) return null
 
-  const nonFavorites = prompts.filter((p) => !p.favorite);
-  const filteredFavorites = query ? searchPrompts(query).filter((p) => p.favorite) : favorites;
-  const filteredHistory = query ? searchPrompts(query).filter((p) => !p.favorite) : nonFavorites;
+  const nonFavorites = prompts.filter((p) => !p.favorite)
+  const filteredFavorites = query ? searchPrompts(query).filter((p) => p.favorite) : favorites
+  const filteredHistory = query ? searchPrompts(query).filter((p) => !p.favorite) : nonFavorites
 
   const handleUse = (entry) => {
-    onUsePrompt(entry.text);
-    onClose();
-  };
+    onUsePrompt(entry.text)
+    onClose()
+  }
 
   const handleCopy = async (entry) => {
     try {
-      await navigator.clipboard.writeText(entry.text);
-      setCopiedId(entry.id, 1500);
+      await navigator.clipboard.writeText(entry.text)
+      setCopiedId(entry.id, 1500)
     } catch {}
-  };
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/40 animate-fade-in"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/40 animate-fade-in" onClick={onClose} />
 
       {/* Panel */}
       <div className="relative w-full max-w-sm h-full dark:bg-surface-card bg-white border-l dark:border-border border-gray-200 shadow-pop flex flex-col animate-fade-in">
@@ -184,14 +181,18 @@ export default function PromptHistoryPanel({ open, onClose, onUsePrompt }) {
                 <h3 className="text-[10px] font-semibold uppercase tracking-wider dark:text-text-muted text-gray-400">
                   History
                 </h3>
-                {!query && nonFavorites.length > 0 && (
-                  confirmClear ? (
+                {!query &&
+                  nonFavorites.length > 0 &&
+                  (confirmClear ? (
                     <span className="flex items-center gap-2">
                       <span className="text-[10px] dark:text-text-muted text-gray-400">
                         Clear {nonFavorites.length} prompts?
                       </span>
                       <button
-                        onClick={() => { clearHistory(); setConfirmClear(false) }}
+                        onClick={() => {
+                          clearHistory()
+                          setConfirmClear(false)
+                        }}
                         className="text-[10px] font-semibold text-zinc-500 hover:underline"
                       >
                         Confirm
@@ -210,8 +211,7 @@ export default function PromptHistoryPanel({ open, onClose, onUsePrompt }) {
                     >
                       Clear all
                     </button>
-                  )
-                )}
+                  ))}
               </div>
               <div className="space-y-2">
                 {filteredHistory.map((entry) => (
@@ -236,5 +236,5 @@ export default function PromptHistoryPanel({ open, onClose, onUsePrompt }) {
         </div>
       </div>
     </div>
-  );
+  )
 }

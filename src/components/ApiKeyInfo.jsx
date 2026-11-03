@@ -1,4 +1,4 @@
-import { Info, ExternalLink } from "lucide-react";
+import { Info, ExternalLink } from 'lucide-react'
 
 export default function ApiKeyInfo({ provider, url }) {
   return (
@@ -18,5 +18,5 @@ export default function ApiKeyInfo({ provider, url }) {
         </a>
       </div>
     </div>
-  );
+  )
 }

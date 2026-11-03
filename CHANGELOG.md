@@ -18,6 +18,7 @@ changelog tooling is planned but not yet in place (see ROADMAP.md, section 6).
 ## [Unreleased]
 
 ### Added
+
 - Changelog maintenance process documented; entries are added as changes ship.
 - Release and tagging policy (`RELEASING.md`), release notes template and generated release notes configuration (`.github/release.yml`).
 - Collections can be exported to a JSON file, imported back with a validated preview, and duplicated from the Collections page (#151).
@@ -25,23 +26,29 @@ changelog tooling is planned but not yet in place (see ROADMAP.md, section 6).
 - ESLint and Prettier configuration with lint, format, and CI checks (#475).
 
 ### Changed
+
 - None.
 
 ### Deprecated
+
 - None.
 
 ### Removed
+
 - None.
 
 ### Fixed
+
 - None.
 
 ### Security
+
 - None.
 
 ## [1.0.0] - Q1 2026 (Advanced Modes & Tooling)
 
 ### Added
+
 - Battle Mode arena for side-by-side agent and model comparison
   (`BattleModeLanding`, `BattleModeSetup`, `BattleModeArena`, `BattleModeWinner`).
 - Multi-agent workflows: `WorkflowLibrary`, `WorkflowBuilder`, `WorkflowDetail`,
@@ -72,15 +79,18 @@ changelog tooling is planned but not yet in place (see ROADMAP.md, section 6).
   management, and `prefers-reduced-motion` handling.
 
 ### Changed
+
 - Agent definitions are lazy-loaded via Vite `import.meta.glob` to reduce the
   initial bundle size.
 
 ### Fixed
+
 - Issue chooser help link now points to a working destination.
 
 ## [0.1.0] - Q3/Q4 2025 (Core Foundations)
 
 ### Added
+
 - Initial open-source community setup: README, CONTRIBUTING, Code of Conduct,
   Security, Support, issue/PR templates, and CI workflows.
 - `AGENTS.md` agent directory and `agent_proposal.md` proposal template.

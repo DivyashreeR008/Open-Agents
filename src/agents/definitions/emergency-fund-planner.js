@@ -1,7 +1,8 @@
 export default {
   id: 'emergency-fund-planner',
   name: 'Emergency Fund Planner',
-  description: 'Plan an emergency fund based on essential expenses, current savings, monthly contributions, and a target coverage period.',
+  description:
+    'Plan an emergency fund based on essential expenses, current savings, monthly contributions, and a target coverage period.',
   category: 'Finance',
   icon: 'ShieldCheck',
   provider: 'any',
@@ -9,11 +10,11 @@ export default {
   model: 'gpt-4o',
 
   exampleInputs: {
-    essentialExpenses: "25000",
-    currentSavings: "40000",
-    monthlyContribution: "10000",
-    targetMonths: "6",
-    currency: "INR",
+    essentialExpenses: '25000',
+    currentSavings: '40000',
+    monthlyContribution: '10000',
+    targetMonths: '6',
+    currency: 'INR',
   },
 
   inputs: [
@@ -56,7 +57,7 @@ export default {
     },
   ],
 
-systemPrompt: `You are an emergency fund planning assistant.
+  systemPrompt: `You are an emergency fund planning assistant.
 
 Help users plan an emergency fund using the financial information they provide.
 
@@ -126,4 +127,4 @@ Include current coverage, target amount, amount needed, and estimated time to ta
 ## Disclaimer
 This plan is for educational and planning purposes only and does not constitute professional financial advice.`,
   outputType: 'markdown',
-};
+}

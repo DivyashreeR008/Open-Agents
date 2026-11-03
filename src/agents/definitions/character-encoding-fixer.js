@@ -1,38 +1,38 @@
 export default {
-  id: "character-encoding-fixer",
-  createdAt: "2026-10-12",
-  name: "Character Encoding Fixer",
+  id: 'character-encoding-fixer',
+  createdAt: '2026-10-12',
+  name: 'Character Encoding Fixer',
   description:
-    "Paste mojibake or encoding errors to get the diagnosis and the exact conversion fix.",
-  category: "Developer Tools",
-  icon: "Binary",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Paste mojibake or encoding errors to get the diagnosis and the exact conversion fix.',
+  category: 'Developer Tools',
+  icon: 'Binary',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    brokenText: "CafÃ© MÃ¼nchen â€” naÃ¯ve rÃ©sumÃ© showed as ??? in the CSV export",
-    sourceHint: "CSV exported from legacy Windows app",
-    targetStack: "Node.js + Postgres, UTF-8",
+    brokenText: 'CafÃ© MÃ¼nchen â€” naÃ¯ve rÃ©sumÃ© showed as ??? in the CSV export',
+    sourceHint: 'CSV exported from legacy Windows app',
+    targetStack: 'Node.js + Postgres, UTF-8',
   },
   inputs: [
     {
-      id: "brokenText",
-      label: "Broken text sample",
-      type: "textarea",
-      placeholder: "Paste the garbled text, e.g. CafÃ© instead of Cafe with accent",
+      id: 'brokenText',
+      label: 'Broken text sample',
+      type: 'textarea',
+      placeholder: 'Paste the garbled text, e.g. CafÃ© instead of Cafe with accent',
       required: true,
     },
     {
-      id: "sourceHint",
-      label: "Source hint (optional)",
-      type: "text",
-      placeholder: "e.g. legacy Windows app, MySQL latin1 column",
+      id: 'sourceHint',
+      label: 'Source hint (optional)',
+      type: 'text',
+      placeholder: 'e.g. legacy Windows app, MySQL latin1 column',
     },
     {
-      id: "targetStack",
-      label: "Target stack (optional)",
-      type: "text",
-      placeholder: "e.g. Node.js + Postgres, UTF-8 everywhere",
+      id: 'targetStack',
+      label: 'Target stack (optional)',
+      type: 'text',
+      placeholder: 'e.g. Node.js + Postgres, UTF-8 everywhere',
     },
   ],
   systemPrompt: `You are a senior internationalization engineer who fixes encoding bugs.
@@ -61,6 +61,6 @@ Rules:
 - Say when the sample is too short for a confident diagnosis
 - Keep code snippets minimal and runnable
 - Use neutral technical language with no emoji`,
-  outputType: "markdown",
-  suggestedChainFrom: ["readme-generator", "data-cleaning-plan-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['readme-generator', 'data-cleaning-plan-generator'],
+}

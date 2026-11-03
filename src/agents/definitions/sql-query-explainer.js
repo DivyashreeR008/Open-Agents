@@ -1,52 +1,41 @@
 export default {
-    id: "sql-query-explainer",
-    createdAt: "2026-09-24",
-    name: "SQL Query Explainer",
-    description:
-        "Explains SQL queries in simple language, clause by clause, for beginners.",
-    category: "Engineering",
-    icon: "Database",
-    provider: "any",
-    defaultProvider: "anthropic",
-    model: "claude-sonnet-4-6",
+  id: 'sql-query-explainer',
+  createdAt: '2026-09-24',
+  name: 'SQL Query Explainer',
+  description: 'Explains SQL queries in simple language, clause by clause, for beginners.',
+  category: 'Engineering',
+  icon: 'Database',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
 
-    exampleInputs: {
-        query: `SELECT department, COUNT(*)
+  exampleInputs: {
+    query: `SELECT department, COUNT(*)
 FROM employees
 WHERE salary > 50000
 GROUP BY department
 ORDER BY COUNT(*) DESC;`,
-        dialect: "MySQL",
+    dialect: 'MySQL',
+  },
+
+  inputs: [
+    {
+      id: 'query',
+      label: 'SQL Query',
+      type: 'textarea',
+      placeholder: 'Paste the SQL query you want explained...',
+      required: true,
     },
+    {
+      id: 'dialect',
+      label: 'SQL Dialect (optional)',
+      type: 'select',
+      options: ['PostgreSQL', 'MySQL', 'SQLite', 'BigQuery', 'Snowflake', 'SQL Server'],
+      required: false,
+    },
+  ],
 
-    inputs: [
-        {
-            id: "query",
-            label: "SQL Query",
-            type: "textarea",
-            placeholder:
-                "Paste the SQL query you want explained...",
-            required: true,
-        },
-        {
-                    
-            id: "dialect",
-            label: "SQL Dialect (optional)",
-            type: "select",
-            options: [
-                "PostgreSQL",
-                "MySQL",
-                "SQLite",
-                "BigQuery",
-                "Snowflake",
-                "SQL Server",
-            ],
-            required: false,
-        
-        },
-    ],
-
-    systemPrompt: `You are a SQL educator who explains database queries clearly to beginners.
+  systemPrompt: `You are a SQL educator who explains database queries clearly to beginners.
 
 Your job is to explain what a SQL query does, step by step, in simple language.
 
@@ -92,5 +81,5 @@ Rules:
 - If schema information is not provided, explain only what can be determined from the query.
 - Keep the explanation concise but useful.`,
 
-    outputType: "markdown",
-};
+  outputType: 'markdown',
+}

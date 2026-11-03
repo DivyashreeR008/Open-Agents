@@ -1,17 +1,18 @@
 export default {
   id: 'personal-budget-analyzer',
   name: 'Personal Budget Analyzer',
-  description: 'Analyze your monthly income and expenses to get a clear breakdown, savings rate, and actionable financial recommendations.',
+  description:
+    'Analyze your monthly income and expenses to get a clear breakdown, savings rate, and actionable financial recommendations.',
   category: 'Finance',
   icon: 'PieChart',
   provider: 'any',
   defaultProvider: 'openai',
   model: 'gpt-4o',
   exampleInputs: {
-    income: "3000",
-    expenses: "rent 1200, food 400, transport 150, subscriptions 50, entertainment 200",
-    goal: "Save for a house deposit",
-    currency: "GBP",
+    income: '3000',
+    expenses: 'rent 1200, food 400, transport 150, subscriptions 50, entertainment 200',
+    goal: 'Save for a house deposit',
+    currency: 'GBP',
   },
   inputs: [
     {
@@ -117,5 +118,5 @@ export default {
     ## Disclaimer
 
     This analysis is for educational and planning purposes only and does not constitute professional financial advice.`,
-    outputType: 'markdown',
-};
+  outputType: 'markdown',
+}

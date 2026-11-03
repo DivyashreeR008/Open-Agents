@@ -29,10 +29,13 @@ function getSafeApiKey(provider) {
  */
 function setSafeApiKey(provider, key) {
   if (key) {
-    sessionStorage.setItem(STORAGE_PREFIX + provider, JSON.stringify({
-      key,
-      expiresAt: Date.now() + EXPIRY_MS,
-    }))
+    sessionStorage.setItem(
+      STORAGE_PREFIX + provider,
+      JSON.stringify({
+        key,
+        expiresAt: Date.now() + EXPIRY_MS,
+      })
+    )
   } else {
     sessionStorage.removeItem(STORAGE_PREFIX + provider)
   }
@@ -46,31 +49,30 @@ export function useApiKey() {
   const [apiKey, setApiKey] = useState('')
   const [saveForSession, setSaveForSession] = useState(false)
 
- 
-// Load saved key on mount and provider change
-useEffect(() => {
-  // 1. First check if a session key exists
-  const sessionKey = getSafeApiKey(provider)
-  
-  if (sessionKey) {
-    setApiKey(sessionKey)
-    setSaveForSession(true)
-  } else {
-    // 2. Fall back to global keys only if no session key exists
-    const globalKeys = getGlobalKeys()
-    const savedGlobalKey = globalKeys[provider]
-    
-    if (savedGlobalKey) {
-      setApiKey(savedGlobalKey)
-      setSaveForSession(false) // Do NOT auto-check session box for global keys
+  // Load saved key on mount and provider change
+  useEffect(() => {
+    // 1. First check if a session key exists
+    const sessionKey = getSafeApiKey(provider)
+
+    if (sessionKey) {
+      setApiKey(sessionKey)
+      setSaveForSession(true)
     } else {
-      setApiKey('')
-      setSaveForSession(false)
+      // 2. Fall back to global keys only if no session key exists
+      const globalKeys = getGlobalKeys()
+      const savedGlobalKey = globalKeys[provider]
+
+      if (savedGlobalKey) {
+        setApiKey(savedGlobalKey)
+        setSaveForSession(false) // Do NOT auto-check session box for global keys
+      } else {
+        setApiKey('')
+        setSaveForSession(false)
+      }
     }
-  }
-}, [provider])
+  }, [provider])
   // Persist or clear from sessionStorage when saveForSession changes
- const updateApiKey = useCallback(
+  const updateApiKey = useCallback(
     (key) => {
       setApiKey(key)
       if (saveForSession && key) {

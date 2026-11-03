@@ -1,7 +1,8 @@
 const regexDecoder = {
   id: 'regex-decoder',
   name: 'Regex Decoder',
-  description: 'Decodes an existing regex pattern into a plain-English, token-by-token breakdown with examples and edge cases.',
+  description:
+    'Decodes an existing regex pattern into a plain-English, token-by-token breakdown with examples and edge cases.',
   category: 'Productivity',
   icon: 'ScanSearch',
   provider: 'any',
@@ -52,6 +53,6 @@ If the user provided sample strings, state clearly for each one whether it match
 
 Be precise and technical but avoid jargon overload — assume the reader knows what regex is broadly but not this specific pattern. If the pattern is invalid/malformed, say so clearly instead of guessing at intent.`,
   outputType: 'markdown',
-};
+}
 
-export default regexDecoder;
+export default regexDecoder

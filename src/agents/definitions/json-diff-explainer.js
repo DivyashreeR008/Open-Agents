@@ -1,41 +1,41 @@
 export default {
-  id: "json-diff-explainer",
-  createdAt: "2026-10-12",
-  name: "JSON Diff Explainer",
+  id: 'json-diff-explainer',
+  createdAt: '2026-10-12',
+  name: 'JSON Diff Explainer',
   description:
-    "Diff two JSON documents into a semantic change list grouped by added, removed, changed.",
-  category: "Developer Tools",
-  icon: "FileDiff",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Diff two JSON documents into a semantic change list grouped by added, removed, changed.',
+  category: 'Developer Tools',
+  icon: 'FileDiff',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     before:
       '{"name": "Acme API", "version": 1, "features": ["auth", "billing"], "limits": {"rpm": 100}}',
     after:
       '{"name": "Acme API", "version": 2, "features": ["auth", "billing", "sso"], "limits": {"rpm": 500}}',
-    ignoreKeys: "lastUpdated, etag",
+    ignoreKeys: 'lastUpdated, etag',
   },
   inputs: [
     {
-      id: "before",
-      label: "Before JSON",
-      type: "textarea",
-      placeholder: "e.g. Paste the original JSON document",
+      id: 'before',
+      label: 'Before JSON',
+      type: 'textarea',
+      placeholder: 'e.g. Paste the original JSON document',
       required: true,
     },
     {
-      id: "after",
-      label: "After JSON",
-      type: "textarea",
-      placeholder: "e.g. Paste the updated JSON document",
+      id: 'after',
+      label: 'After JSON',
+      type: 'textarea',
+      placeholder: 'e.g. Paste the updated JSON document',
       required: true,
     },
     {
-      id: "ignoreKeys",
-      label: "Keys to ignore",
-      type: "text",
-      placeholder: "e.g. lastUpdated, etag (comma-separated, optional)",
+      id: 'ignoreKeys',
+      label: 'Keys to ignore',
+      type: 'text',
+      placeholder: 'e.g. lastUpdated, etag (comma-separated, optional)',
     },
   ],
   systemPrompt: `You are a developer tools assistant who explains JSON differences clearly.
@@ -66,6 +66,6 @@ Rules:
 - Summarize array diffs by added and removed elements, not raw indexes alone
 - Do not invent schema versions, CVEs, or values not present in the inputs
 - Keep language neutral and concise`,
-  outputType: "markdown",
-  suggestedChainFrom: ["json-schema-generator", "data-analysis-agent"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['json-schema-generator', 'data-analysis-agent'],
+}

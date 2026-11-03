@@ -1,7 +1,8 @@
 const homeBuyingChecklist = {
   id: 'home-buying-checklist',
   name: 'Home Buying Checklist Generator',
-  description: 'Generates a complete property viewing checklist based on property type, building age, and location.',
+  description:
+    'Generates a complete property viewing checklist based on property type, building age, and location.',
   category: 'Business',
   icon: 'ClipboardList',
   provider: 'any',
@@ -63,6 +64,6 @@ Rules:
 - Write in plain English — the reader is a first-time buyer, not an engineer
 - End with a short "Red Flags" section listing 5 deal-breakers that should make a buyer walk away`,
   outputType: 'markdown',
-};
+}
 
-export default homeBuyingChecklist;
+export default homeBuyingChecklist

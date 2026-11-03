@@ -1,7 +1,9 @@
 ## What does this PR do?
+
 <!-- Describe your changes clearly -->
 
 ## Type of change
+
 - [ ] New agent
 - [ ] Bug fix
 - [ ] UI improvement
@@ -9,6 +11,7 @@
 - [ ] Other
 
 ## Checklist
+
 - [ ] I ran `npm run verify` locally and all checks passed ✅
 - [ ] I tested my changes in the browser ✅
 - [ ] I did not break any existing agents ✅
@@ -23,4 +26,5 @@
 > Tip: run `npm run verify` locally before opening your PR. It runs both the test suite and build check matching CI.
 
 ## Screenshots (if UI change)
+
 <!-- Add screenshots here -->

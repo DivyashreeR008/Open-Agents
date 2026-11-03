@@ -1,4 +1,4 @@
-import { HeartPulse } from 'lucide-react';
+import { HeartPulse } from 'lucide-react'
 const pcosLifestylePlanner = {
   id: 'pcos-lifestyle-planner',
   name: 'PCOS Lifestyle Planner',
@@ -26,7 +26,7 @@ const pcosLifestylePlanner = {
       required: true,
     },
     {
-     id: 'pcos_weight',
+      id: 'pcos_weight',
       label: 'Weight',
       type: 'text',
       placeholder: 'e.g. 70 kg',
@@ -49,33 +49,21 @@ const pcosLifestylePlanner = {
       id: 'pcos_activity_level',
       label: 'Activity Level',
       type: 'select',
-      options: [
-        'Sedentary',
-        'Lightly Active',
-        'Moderately Active',
-        'Very Active',
-      ],
+      options: ['Sedentary', 'Lightly Active', 'Moderately Active', 'Very Active'],
       required: true,
     },
     {
       id: 'pcos_dietary_preferences',
       label: 'Dietary Preferences',
       type: 'multiselect',
-      options: [
-        'Vegetarian',
-        'Vegan',
-        'Gluten-Free',
-        'Dairy-Free',
-        'No Preference',
-      ],
+      options: ['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'No Preference'],
       required: false,
     },
     {
       id: 'pcos_symptoms',
       label: 'Current Symptoms',
       type: 'textarea',
-      placeholder:
-        'e.g. irregular periods, acne, weight gain, fatigue',
+      placeholder: 'e.g. irregular periods, acne, weight gain, fatigue',
       required: false,
     },
   ],
@@ -157,6 +145,6 @@ Clearly explain that this plan is educational only and does not replace advice f
 Clearly explain that this plan is educational only and does not replace advice from a qualified healthcare professional. Recommend consulting a doctor or registered dietitian before making significant diet or exercise changes.`,
 
   outputType: 'markdown',
-};
+}
 
-export default pcosLifestylePlanner;
+export default pcosLifestylePlanner

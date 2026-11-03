@@ -51,16 +51,16 @@ export default function CostEstimator({ inputText = '', systemPrompt = '', model
           <line x1="12" y1="1" x2="12" y2="23" />
           <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
         </svg>
-        <span className="font-semibold dark:text-text-primary text-gray-900">
-          Cost Estimate
-        </span>
+        <span className="font-semibold dark:text-text-primary text-gray-900">Cost Estimate</span>
         <span className="dark:text-text-muted text-gray-400">·</span>
         <span className="dark:text-text-muted text-gray-400">{pricing.provider}</span>
       </div>
 
       <div className="space-y-1.5">
         <div className="flex justify-between">
-          <span className="dark:text-text-secondary text-gray-500">Input ({totalInputTokens.toLocaleString()} tokens)</span>
+          <span className="dark:text-text-secondary text-gray-500">
+            Input ({totalInputTokens.toLocaleString()} tokens)
+          </span>
           <span className="dark:text-text-primary text-gray-900 font-medium tabular-nums">
             {formatCost(inputCost)}
           </span>
@@ -74,7 +74,9 @@ export default function CostEstimator({ inputText = '', systemPrompt = '', model
           </span>
         </div>
         <div className="border-t dark:border-border border-gray-200 pt-1.5 mt-1.5 flex justify-between">
-          <span className="font-semibold dark:text-text-primary text-gray-900">Estimated Total</span>
+          <span className="font-semibold dark:text-text-primary text-gray-900">
+            Estimated Total
+          </span>
           <span className="font-bold dark:text-text-primary text-gray-900 tabular-nums">
             {formatCostShort(totalCost)}
           </span>
@@ -84,7 +86,9 @@ export default function CostEstimator({ inputText = '', systemPrompt = '', model
       <div className="mt-2">
         <div className="flex justify-between text-[10px] mb-1">
           <span className="dark:text-text-muted text-gray-400">Context window</span>
-          <span className={`font-medium ${isOverLimit ? 'text-zinc-900 dark:text-white' : isNearLimit ? 'text-zinc-600 dark:text-zinc-300' : 'dark:text-text-muted text-gray-400'}`}>
+          <span
+            className={`font-medium ${isOverLimit ? 'text-zinc-900 dark:text-white' : isNearLimit ? 'text-zinc-600 dark:text-zinc-300' : 'dark:text-text-muted text-gray-400'}`}
+          >
             {Math.round(ratio * 100)}%
           </span>
         </div>

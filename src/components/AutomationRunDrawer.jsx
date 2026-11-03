@@ -2,8 +2,19 @@ import { useId, useRef } from 'react'
 import { useTimedState } from '../lib/useTimedState'
 import { useDialogFocus } from '../hooks/useDialogFocus'
 import {
-  X, CheckCircle2, AlertCircle, Clock, Zap, Copy, Check,
-  Mail, Calendar, FileText, ChevronRight, Share2, Download
+  X,
+  CheckCircle2,
+  AlertCircle,
+  Clock,
+  Zap,
+  Copy,
+  Check,
+  Mail,
+  Calendar,
+  FileText,
+  ChevronRight,
+  Share2,
+  Download,
 } from 'lucide-react'
 import OutputRenderer from './OutputRenderer'
 
@@ -52,29 +63,47 @@ export default function AutomationRunDrawer({ run, isOpen, onClose }) {
       />
 
       {/* Drawer Panel */}
-      <div ref={panelRef} role="dialog" aria-modal="true" aria-labelledby={titleId} className="relative w-full max-w-2xl h-full bg-white dark:bg-[#111111] text-gray-900 dark:text-gray-100 shadow-pop border-l dark:border-border/80 border-gray-200 z-10 flex flex-col animate-fade-in">
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="relative w-full max-w-2xl h-full bg-white dark:bg-[#111111] text-gray-900 dark:text-gray-100 shadow-pop border-l dark:border-border/80 border-gray-200 z-10 flex flex-col animate-fade-in"
+      >
         {/* Header */}
         <div className="p-6 border-b dark:border-border/60 border-gray-100 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className={`w-9 h-9 flex items-center justify-center ${
-              run.status === 'success' ? 'bg-zinc-500/15 text-zinc-500' :
-              run.status === 'running' ? 'bg-zinc-500/15 text-zinc-500 animate-spin' :
-              'bg-zinc-500/15 text-zinc-500'
-            }`}>
-              {run.status === 'success' ? <CheckCircle2 size={18} /> :
-               run.status === 'running' ? <Zap size={18} /> :
-               <AlertCircle size={18} />}
+            <div
+              className={`w-9 h-9 flex items-center justify-center ${
+                run.status === 'success'
+                  ? 'bg-zinc-500/15 text-zinc-500'
+                  : run.status === 'running'
+                    ? 'bg-zinc-500/15 text-zinc-500 animate-spin'
+                    : 'bg-zinc-500/15 text-zinc-500'
+              }`}
+            >
+              {run.status === 'success' ? (
+                <CheckCircle2 size={18} />
+              ) : run.status === 'running' ? (
+                <Zap size={18} />
+              ) : (
+                <AlertCircle size={18} />
+              )}
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 id={titleId} className="text-base font-bold truncate max-w-sm">
                   Run Execution Details
                 </h3>
-                <span className={`text-[10px] font-bold px-2 py-0.5 uppercase ${
-                  run.status === 'success' ? 'bg-zinc-500/15 text-zinc-500' :
-                  run.status === 'running' ? 'bg-zinc-500/15 text-zinc-500' :
-                  'bg-zinc-500/15 text-zinc-500'
-                }`}>
+                <span
+                  className={`text-[10px] font-bold px-2 py-0.5 uppercase ${
+                    run.status === 'success'
+                      ? 'bg-zinc-500/15 text-zinc-500'
+                      : run.status === 'running'
+                        ? 'bg-zinc-500/15 text-zinc-500'
+                        : 'bg-zinc-500/15 text-zinc-500'
+                  }`}
+                >
                   {run.status}
                 </span>
               </div>

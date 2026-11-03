@@ -61,8 +61,7 @@ export default {
       id: 'monitoring_stack',
       label: 'Monitoring and alerting stack',
       type: 'text',
-      placeholder:
-        'e.g. Prometheus, Grafana, Alertmanager, PagerDuty, Datadog, or CloudWatch',
+      placeholder: 'e.g. Prometheus, Grafana, Alertmanager, PagerDuty, Datadog, or CloudWatch',
       required: false,
     },
   ],
@@ -123,4 +122,4 @@ Rules:
 - Tailor all examples to the stated criticality, traffic profile, dependencies, and monitoring stack.
 - If Prometheus is not named, still provide the rule format as an optional Prometheus-compatible starter and say it must be adapted to the actual platform.`,
   outputType: 'markdown',
-};
+}

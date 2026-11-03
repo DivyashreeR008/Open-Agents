@@ -1,60 +1,52 @@
 export default {
-    id: "sql-query-optimizer",
-    createdAt: "2026-06-05",
-    name: "SQL Query Optimizer",
-    description:
-        "Analyzes SQL queries and suggests performance optimizations, indexing strategies, and cleaner alternatives.",
-    category: "Engineering",
-    icon: "Database",
-    provider: "any",
-    defaultProvider: "anthropic",
-    model: "claude-sonnet-4-6",
+  id: 'sql-query-optimizer',
+  createdAt: '2026-06-05',
+  name: 'SQL Query Optimizer',
+  description:
+    'Analyzes SQL queries and suggests performance optimizations, indexing strategies, and cleaner alternatives.',
+  category: 'Engineering',
+  icon: 'Database',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
 
-    exampleInputs: {
-        query: `SELECT *
+  exampleInputs: {
+    query: `SELECT *
 FROM orders o
 JOIN customers c ON o.customer_id = c.id
 WHERE YEAR(o.created_at) = 2025
 ORDER BY o.created_at DESC;`,
-        schema: `customers (id, name, email)
+    schema: `customers (id, name, email)
 orders (id, customer_id, total_amount, status, created_at)`,
-        dialect: "MySQL",
+    dialect: 'MySQL',
+  },
+
+  inputs: [
+    {
+      id: 'query',
+      label: 'SQL Query',
+      type: 'textarea',
+      placeholder: 'Paste the SQL query you want to optimize...',
+      required: true,
     },
+    {
+      id: 'schema',
+      label: 'Database Schema (Optional)',
+      type: 'textarea',
+      placeholder: `Paste your schema for more accurate optimization:\n\nusers (id, name, email)\norders (id, user_id, total, status, created_at)`,
+      required: false,
+    },
+    {
+      id: 'dialect',
+      label: 'SQL Dialect',
+      type: 'select',
+      options: ['PostgreSQL', 'MySQL', 'SQLite', 'BigQuery', 'Snowflake', 'SQL Server'],
+      defaultValue: 'PostgreSQL',
+      required: true,
+    },
+  ],
 
-    inputs: [
-        {
-            id: "query",
-            label: "SQL Query",
-            type: "textarea",
-            placeholder:
-                "Paste the SQL query you want to optimize...",
-            required: true,
-        },
-        {
-            id: "schema",
-            label: "Database Schema (Optional)",
-            type: "textarea",
-            placeholder: `Paste your schema for more accurate optimization:\n\nusers (id, name, email)\norders (id, user_id, total, status, created_at)`,
-            required: false,
-        },
-        {
-            id: "dialect",
-            label: "SQL Dialect",
-            type: "select",
-            options: [
-                "PostgreSQL",
-                "MySQL",
-                "SQLite",
-                "BigQuery",
-                "Snowflake",
-                "SQL Server",
-            ],
-            defaultValue: "PostgreSQL",
-            required: true,
-        },
-    ],
-
-    systemPrompt: `You are a senior database performance engineer and SQL optimization expert.
+  systemPrompt: `You are a senior database performance engineer and SQL optimization expert.
 
 Your job is to analyze SQL queries and provide performance improvements, readability enhancements, and indexing recommendations.
 
@@ -113,5 +105,5 @@ Rules:
 - Never invent tables or columns that are not present in the query or schema
 - If schema information is missing, optimize using best practices and clearly state assumptions`,
 
-    outputType: "markdown",
-};
+  outputType: 'markdown',
+}

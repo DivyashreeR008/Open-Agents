@@ -17,9 +17,7 @@ export default function SuggestedChainPills({ agent }) {
   if (!agent.suggestedChainFrom?.length) return null
 
   const predecessors = agents.length
-    ? agent.suggestedChainFrom
-        .map((id) => agents.find((a) => a.id === id))
-        .filter(Boolean)
+    ? agent.suggestedChainFrom.map((id) => agents.find((a) => a.id === id)).filter(Boolean)
     : []
 
   if (!predecessors.length) return null
@@ -33,14 +31,10 @@ export default function SuggestedChainPills({ agent }) {
   }
 
   return (
-    <div
-      className="mb-4 p-3 border dark:bg-surface-card dark:border-border bg-white border-gray-200"
-    >
+    <div className="mb-4 p-3 border dark:bg-surface-card dark:border-border bg-white border-gray-200">
       <div className="flex items-center gap-1.5 mb-2">
         <GitBranch size={12} className="text-zinc-600 dark:text-zinc-300" />
-        <span
-          className="text-[11px] font-semibold uppercase tracking-wider dark:text-text-muted text-gray-400"
-        >
+        <span className="text-[11px] font-semibold uppercase tracking-wider dark:text-text-muted text-gray-400">
           Works well after
         </span>
       </div>

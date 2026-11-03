@@ -1,46 +1,48 @@
 const terraformConfigGeneratorAgent = {
-    id: 'terraform-config-generator',
-    name: 'Terraform Config Generator Agent',
-    description: 'Turns a plain-English infrastructure description into ready-to-use Terraform configuration (main.tf, variables.tf, outputs.tf) for your chosen cloud provider.',
-    category: 'Engineering',
-    icon: 'Server',
-    provider: 'any',
-    defaultProvider: 'openai',
-    model: 'gpt-4o',
-    inputs: [
-        {
-            id: 'infra_description',
-            label: 'Infrastructure Description',
-            type: 'textarea',
-            placeholder: 'e.g. A VPC with 2 public subnets, an EC2 instance, and an RDS PostgreSQL database',
-            required: true,
-        },
-        {
-            id: 'cloud_provider',
-            label: 'Cloud Provider',
-            type: 'select',
-            options: ['AWS', 'GCP', 'Azure', 'DigitalOcean'],
-            defaultValue: 'AWS',
-            required: true,
-        },
-        {
-            id: 'environment',
-            label: 'Environment',
-            type: 'select',
-            options: ['dev', 'staging', 'production'],
-            defaultValue: 'dev',
-            required: true,
-        },
-        {
-            id: 'include_variables_file',
-            label: 'Include Variables File',
-            type: 'select',
-            options: ['yes', 'no'],
-            defaultValue: 'yes',
-            required: true,
-        },
-    ],
-    systemPrompt: `You are an expert Cloud Infrastructure Engineer specializing in writing clean, production-grade Terraform (HCL) configuration.
+  id: 'terraform-config-generator',
+  name: 'Terraform Config Generator Agent',
+  description:
+    'Turns a plain-English infrastructure description into ready-to-use Terraform configuration (main.tf, variables.tf, outputs.tf) for your chosen cloud provider.',
+  category: 'Engineering',
+  icon: 'Server',
+  provider: 'any',
+  defaultProvider: 'openai',
+  model: 'gpt-4o',
+  inputs: [
+    {
+      id: 'infra_description',
+      label: 'Infrastructure Description',
+      type: 'textarea',
+      placeholder:
+        'e.g. A VPC with 2 public subnets, an EC2 instance, and an RDS PostgreSQL database',
+      required: true,
+    },
+    {
+      id: 'cloud_provider',
+      label: 'Cloud Provider',
+      type: 'select',
+      options: ['AWS', 'GCP', 'Azure', 'DigitalOcean'],
+      defaultValue: 'AWS',
+      required: true,
+    },
+    {
+      id: 'environment',
+      label: 'Environment',
+      type: 'select',
+      options: ['dev', 'staging', 'production'],
+      defaultValue: 'dev',
+      required: true,
+    },
+    {
+      id: 'include_variables_file',
+      label: 'Include Variables File',
+      type: 'select',
+      options: ['yes', 'no'],
+      defaultValue: 'yes',
+      required: true,
+    },
+  ],
+  systemPrompt: `You are an expert Cloud Infrastructure Engineer specializing in writing clean, production-grade Terraform (HCL) configuration.
 
 Based on the user's inputs:
 - Infrastructure Description: a plain-English description of the desired infrastructure.
@@ -78,7 +80,7 @@ A bulleted list explaining, for each resource block, what it does and why it's c
 - Suggested \`terraform init\` / \`plan\` / \`apply\` next steps.
 
 Use idiomatic, current Terraform syntax (Terraform >= 1.x, HCL2). Format the response using clean, beautiful markdown with properly fenced \`\`\`hcl code blocks for each file.`,
-    outputType: 'markdown',
-};
+  outputType: 'markdown',
+}
 
-export default terraformConfigGeneratorAgent;
+export default terraformConfigGeneratorAgent

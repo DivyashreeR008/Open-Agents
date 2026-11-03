@@ -1,40 +1,40 @@
 // Inspired by "Recruiter" + "Talent Coach" from f/awesome-chatgpt-prompts (CC0-1.0), rewritten for Open-Agents.
 export default {
-  id: "interview-scorecard-designer",
-  createdAt: "2026-10-12",
-  name: "Interview Scorecard Designer",
+  id: 'interview-scorecard-designer',
+  createdAt: '2026-10-12',
+  name: 'Interview Scorecard Designer',
   description:
-    "Enter a role to get a structured interview scorecard: competencies, questions per area, a 1-5 rubric, and red flags.",
-  category: "HR",
-  icon: "ClipboardList",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Enter a role to get a structured interview scorecard: competencies, questions per area, a 1-5 rubric, and red flags.',
+  category: 'HR',
+  icon: 'ClipboardList',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    roleTitle: "Senior Backend Engineer",
-    seniority: "Senior",
-    focusAreas: "API design, Postgres performance, incident ownership, mentoring",
+    roleTitle: 'Senior Backend Engineer',
+    seniority: 'Senior',
+    focusAreas: 'API design, Postgres performance, incident ownership, mentoring',
   },
   inputs: [
     {
-      id: "roleTitle",
-      label: "Role title",
-      type: "text",
-      placeholder: "e.g. Customer Success Manager",
+      id: 'roleTitle',
+      label: 'Role title',
+      type: 'text',
+      placeholder: 'e.g. Customer Success Manager',
       required: true,
     },
     {
-      id: "seniority",
-      label: "Seniority",
-      type: "select",
-      options: ["Intern", "Junior", "Mid", "Senior", "Staff / Lead", "Manager"],
-      defaultValue: "Mid",
+      id: 'seniority',
+      label: 'Seniority',
+      type: 'select',
+      options: ['Intern', 'Junior', 'Mid', 'Senior', 'Staff / Lead', 'Manager'],
+      defaultValue: 'Mid',
     },
     {
-      id: "focusAreas",
-      label: "What to assess (optional)",
-      type: "textarea",
-      placeholder: "e.g. SQL depth, stakeholder management, on-call experience",
+      id: 'focusAreas',
+      label: 'What to assess (optional)',
+      type: 'textarea',
+      placeholder: 'e.g. SQL depth, stakeholder management, on-call experience',
     },
   ],
   systemPrompt: `You design structured interview scorecards that make hiring
@@ -76,6 +76,6 @@ Rules:
 - Calibrate difficulty to the seniority; say what "good" looks like
   at this level specifically
 - Keep it usable in one page of notes during a live interview`,
-  outputType: "markdown",
-  suggestedChainFrom: ["job-description-writer", "resume-screener"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['job-description-writer', 'resume-screener'],
+}

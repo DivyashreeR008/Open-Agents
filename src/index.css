@@ -9,7 +9,6 @@
    product feeling consistent rather than assembled.
    ========================================================================== */
 @layer components {
-
   /* â”€â”€ Micro-labels â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   .eyebrow {
     @apply font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-zinc-400 dark:text-text-muted;
@@ -192,7 +191,11 @@ html {
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -216,12 +219,12 @@ html.preloader-active body {
 /* Dark mode defaults â€” pure black canvas, pure white ink */
 .dark body {
   background-color: #000000;
-  color: #FAFAFA;
+  color: #fafafa;
 }
 
 /* Light mode â€” the inverse of the above, no hue either way */
 html:not(.dark) body {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   color: #000000;
 }
 
@@ -236,7 +239,7 @@ html:not(.dark) body {
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #2E2E2E;
+  background: #2e2e2e;
   border: 2px solid #000000;
 }
 
@@ -245,24 +248,24 @@ html:not(.dark) body {
 }
 
 html:not(.dark) ::-webkit-scrollbar-track {
-  background: #FAFAFA;
+  background: #fafafa;
 }
 
 html:not(.dark) ::-webkit-scrollbar-thumb {
-  background: #D4D4D4;
-  border: 2px solid #FAFAFA;
+  background: #d4d4d4;
+  border: 2px solid #fafafa;
   border-radius: 6px;
 }
 
 /* ===== Selection ===== */
 ::selection {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   color: #000000;
 }
 
 /* ===== Focus Ring ===== */
 *:focus-visible {
-  outline: 2px solid #FFFFFF;
+  outline: 2px solid #ffffff;
   outline-offset: 2px;
 }
 
@@ -348,7 +351,6 @@ html:not(.dark) ::-webkit-scrollbar-thumb {
 
 /* Streaming cursor */
 @keyframes blink {
-
   0%,
   100% {
     opacity: 1;
@@ -413,7 +415,7 @@ html:not(.dark) .grid-bg {
   inset: -1px;
   border-radius: inherit;
   opacity: 0;
-  border: 1px solid #FFFFFF;
+  border: 1px solid #ffffff;
   transition: opacity 180ms ease;
   z-index: 1;
 }
@@ -544,7 +546,7 @@ html:not(.dark) .light-surface-page {
 }
 
 html:not(.dark) .light-border {
-  border-color: #E4E4E4;
+  border-color: #e4e4e4;
 }
 
 html:not(.dark) .light-text-primary {
@@ -581,7 +583,6 @@ html:not(.dark) .light-text-secondary {
 }
 
 @keyframes buttonPulse {
-
   0%,
   100% {
     box-shadow: 0 0 0 0 currentColor;
@@ -631,7 +632,9 @@ html:not(.dark) .light-text-secondary {
 }
 
 .battle-glow-white {
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.15), 0 0 60px rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 0 30px rgba(255, 255, 255, 0.15),
+    0 0 60px rgba(255, 255, 255, 0.05);
 }
 
 @keyframes slideInFromLeft {
@@ -659,14 +662,15 @@ html:not(.dark) .light-text-secondary {
 }
 
 @keyframes glowPulse {
-
   0%,
   100% {
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
   }
 
   50% {
-    box-shadow: 0 0 35px rgba(255, 255, 255, 0.8), 0 0 60px rgba(255, 255, 255, 0.3);
+    box-shadow:
+      0 0 35px rgba(255, 255, 255, 0.8),
+      0 0 60px rgba(255, 255, 255, 0.3);
   }
 }
 
@@ -690,7 +694,9 @@ html:not(.dark) .light-text-secondary {
 }
 
 .battle-glow-white {
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.15), 0 0 60px rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 0 30px rgba(255, 255, 255, 0.15),
+    0 0 60px rgba(255, 255, 255, 0.05);
 }
 
 .battle-card-white {
@@ -700,7 +706,10 @@ html:not(.dark) .light-text-secondary {
 
 .battle-card-white:hover {
   border-color: rgb(255, 255, 255, 0.6);
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.25), 0 0 60px rgba(255, 255, 255, 0.1), 0 15px 35px rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 0 30px rgba(255, 255, 255, 0.25),
+    0 0 60px rgba(255, 255, 255, 0.1),
+    0 15px 35px rgba(255, 255, 255, 0.1);
 }
 
 .battle-btn-primary {

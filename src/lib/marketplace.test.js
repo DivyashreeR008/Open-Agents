@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { getAverageRating, filterListings, sanitizeAgentConfig, MARKETPLACE_CATEGORIES } from './marketplace'
+import {
+  getAverageRating,
+  filterListings,
+  sanitizeAgentConfig,
+  MARKETPLACE_CATEGORIES,
+} from './marketplace'
 
 describe('getAverageRating', () => {
   it('returns 0 when ratingCount is 0', () => {

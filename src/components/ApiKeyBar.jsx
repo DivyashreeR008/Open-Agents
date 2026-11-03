@@ -5,11 +5,11 @@ import { Link } from 'react-router-dom'
 import CustomSelect from './CustomSelect'
 import { MODELS } from '../lib/resolveAgentModel'
 import ApiKeyInfo from './ApiKeyInfo'
-import openaiLogo from "../assets/openai.svg";
-import anthropicLogo from "../assets/anthropic.svg";
-import geminiLogo from "../assets/gemini.svg";
-import openrouterLogo from "../assets/openrouter.svg";
-import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
+import openaiLogo from '../assets/openai.svg'
+import anthropicLogo from '../assets/anthropic.svg'
+import geminiLogo from '../assets/gemini.svg'
+import openrouterLogo from '../assets/openrouter.svg'
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 import { getGlobalKeys, getAvailableProviders } from '../lib/globalKeys'
 
 const PROVIDERS = [
@@ -26,7 +26,6 @@ const providerLogos = {
   openrouter: openrouterLogo,
 }
 
-
 const providerUrls = {
   openai: 'https://platform.openai.com/account/api-keys',
   anthropic: 'https://console.anthropic.com/keys',
@@ -42,9 +41,11 @@ function ProviderIcon({ provider, label }) {
       <img
         src={logo}
         alt={`${label} logo`}
-        className={provider === 'openrouter'
-          ? "w-4 h-4 flex-shrink-0 invert dark:invert-0"
-          : "w-4 h-4 flex-shrink-0"}
+        className={
+          provider === 'openrouter'
+            ? 'w-4 h-4 flex-shrink-0 invert dark:invert-0'
+            : 'w-4 h-4 flex-shrink-0'
+        }
       />
     )
   }
@@ -55,8 +56,6 @@ function ProviderIcon({ provider, label }) {
     </span>
   )
 }
-
-
 
 export default function ApiKeyBar({
   provider,
@@ -95,11 +94,7 @@ export default function ApiKeyBar({
     const globalKeys = getGlobalKeys()
     const isValidProvider = PROVIDERS.some((p) => p.value === globalKeys.defaultProvider)
 
-    if (
-      agentProvider === 'any' &&
-      isValidProvider &&
-      provider !== globalKeys.defaultProvider
-    ) {
+    if (agentProvider === 'any' && isValidProvider && provider !== globalKeys.defaultProvider) {
       setProvider(globalKeys.defaultProvider)
     }
   }, [])
@@ -128,11 +123,9 @@ export default function ApiKeyBar({
   }, [provider, apiKey])
 
   // Filter providers if agent requires a specific one
-  const savedProviders = new Set(getAvailableProviders().map(p => p.id))
+  const savedProviders = new Set(getAvailableProviders().map((p) => p.id))
   const availableProviders = (
-    agentProvider === 'any'
-      ? PROVIDERS
-      : PROVIDERS.filter((p) => p.value === agentProvider)
+    agentProvider === 'any' ? PROVIDERS : PROVIDERS.filter((p) => p.value === agentProvider)
   ).map((p) => ({
     ...p,
     icon: (
@@ -145,27 +138,26 @@ export default function ApiKeyBar({
     ),
   }))
 
-  const availableModels =
-    provider === 'gemini' ? geminiModels : MODELS[provider] || []
+  const availableModels = provider === 'gemini' ? geminiModels : MODELS[provider] || []
 
   useKeyboardShortcuts({
     'Alt+1': () => {
-      const p = availableProviders.find(p => p.value === 'openai');
-      if (p) setProvider('openai');
+      const p = availableProviders.find((p) => p.value === 'openai')
+      if (p) setProvider('openai')
     },
     'Alt+2': () => {
-      const p = availableProviders.find(p => p.value === 'anthropic');
-      if (p) setProvider('anthropic');
+      const p = availableProviders.find((p) => p.value === 'anthropic')
+      if (p) setProvider('anthropic')
     },
     'Alt+3': () => {
-      const p = availableProviders.find(p => p.value === 'gemini');
-      if (p) setProvider('gemini');
+      const p = availableProviders.find((p) => p.value === 'gemini')
+      if (p) setProvider('gemini')
     },
     'Alt+4': () => {
-      const p = availableProviders.find(p => p.value === 'openrouter');
-      if (p) setProvider('openrouter');
+      const p = availableProviders.find((p) => p.value === 'openrouter')
+      if (p) setProvider('openrouter')
     },
-  });
+  })
 
   return (
     <div className=" border p-3 mb-4 transition-theme dark:bg-surface-card dark:border-border bg-white border-gray-200">
@@ -183,7 +175,7 @@ export default function ApiKeyBar({
         <CustomSelect
           value={model}
           onChange={setModel}
-          options={availableModels.map(m => ({ value: m.value, label: m.label }))}
+          options={availableModels.map((m) => ({ value: m.value, label: m.label }))}
           disabled={geminiLoading}
           placeholder={geminiLoading ? 'Loading models...' : 'Select Model'}
           className="w-auto min-w-[150px]"
@@ -196,12 +188,12 @@ export default function ApiKeyBar({
             type={showKey ? 'text' : 'password'}
             value={apiKey}
             onChange={(e) => {
-              const newKey = e.target.value;
-              setApiKey(newKey);
+              const newKey = e.target.value
+              setApiKey(newKey)
               // Auto-clear session storage if user clears the input
               if (!newKey.trim() && saveForSession) {
-                setSaveForSession(false);
-                }
+                setSaveForSession(false)
+              }
             }}
             placeholder={`Enter your ${provider} API key...`}
             className="w-full h-8 px-3 pr-10 text-xs font-mono transition-colors dark:bg-surface-input dark:border-border dark:text-text-primary dark:placeholder:text-text-muted bg-gray-50 border border-gray-200 text-gray-900 placeholder:text-gray-400 focus:ring-1 focus:ring-zinc-500/40 focus:border-zinc-500 outline-none"
@@ -219,14 +211,16 @@ export default function ApiKeyBar({
         </div>
 
         {/* Save checkbox */}
-        <label className={`flex items-center gap-1.5 select-none ${!apiKey?.trim() ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}>
+        <label
+          className={`flex items-center gap-1.5 select-none ${!apiKey?.trim() ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
+        >
           <input
             type="checkbox"
             checked={saveForSession}
             disabled={!apiKey?.trim()}
             onChange={(e) => {
-              if (!apiKey?.trim()) return;
-              setSaveForSession(e.target.checked);
+              if (!apiKey?.trim()) return
+              setSaveForSession(e.target.checked)
             }}
             className="w-3.5 h-3.5 accent-zinc-500 cursor-pointer disabled:cursor-not-allowed"
           />

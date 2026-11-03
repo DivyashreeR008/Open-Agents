@@ -1,15 +1,23 @@
-import { X, Command, CornerDownLeft, Search, Type, HelpCircle } from 'lucide-react';
+import { X, Command, CornerDownLeft, Search, Type, HelpCircle } from 'lucide-react'
 
 export default function KeyboardShortcutsModal({ isOpen, onClose }) {
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   const shortcuts = [
-    { key: 'Ctrl + Enter', description: 'Run Agent or Workflow', icon: <CornerDownLeft size={14} /> },
+    {
+      key: 'Ctrl + Enter',
+      description: 'Run Agent or Workflow',
+      icon: <CornerDownLeft size={14} />,
+    },
     { key: '/', description: 'Focus Search Bar', icon: <Search size={14} /> },
     { key: 'Esc', description: 'Clear Inputs / Collapse Playground', icon: <X size={14} /> },
-    { key: 'Alt + 1 / 2 / 3', description: 'Toggle Provider (OpenAI, Anthropic, Gemini)', icon: <Type size={14} /> },
+    {
+      key: 'Alt + 1 / 2 / 3',
+      description: 'Toggle Provider (OpenAI, Anthropic, Gemini)',
+      icon: <Type size={14} />,
+    },
     { key: '?', description: 'Open this help menu', icon: <HelpCircle size={14} /> },
-  ];
+  ]
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
@@ -46,5 +54,5 @@ export default function KeyboardShortcutsModal({ isOpen, onClose }) {
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -85,4 +85,4 @@ List the three most useful actions the user can take this week.
 This is general educational information, not personalized financial, credit, tax, legal, or investment advice. Verify important decisions with a qualified professional or creditor.`,
   outputType: 'markdown',
   suggestedChainFrom: ['personal-budget-analyzer', 'financial-planning-assistant'],
-};
+}

@@ -29,8 +29,7 @@ const aiStudyPlanner = {
       id: 'exam_dates',
       label: 'Exam Dates',
       type: 'textarea',
-      placeholder:
-        'e.g.\nMaths - 10-11-2026\nEnglish - 11-11-2026',
+      placeholder: 'e.g.\nMaths - 10-11-2026\nEnglish - 11-11-2026',
       required: true,
     },
 
@@ -118,6 +117,6 @@ Include realistic study timings and balanced scheduling.
 `,
 
   outputType: 'markdown',
-};
+}
 
-export default aiStudyPlanner;
+export default aiStudyPlanner

@@ -1,41 +1,39 @@
 export default {
-  id: "literature-review-outliner",
-  createdAt: "2026-10-12",
-  name: "Literature Review Outliner",
-  description:
-    "Structure a lit review: themes, synthesis matrix, gaps, and chapter order.",
-  category: "Research",
-  icon: "Library",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'literature-review-outliner',
+  createdAt: '2026-10-12',
+  name: 'Literature Review Outliner',
+  description: 'Structure a lit review: themes, synthesis matrix, gaps, and chapter order.',
+  category: 'Research',
+  icon: 'Library',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    topic:
-      "Peer feedback in undergraduate writing courses, 2015-2025, focusing on digital tools.",
+    topic: 'Peer feedback in undergraduate writing courses, 2015-2025, focusing on digital tools.',
     sources:
-      "12 papers: 5 on peer review platforms, 4 on feedback quality, 3 on student motivation. Key authors: Chen 2019, Okafor 2021...",
-    length: "masters",
+      '12 papers: 5 on peer review platforms, 4 on feedback quality, 3 on student motivation. Key authors: Chen 2019, Okafor 2021...',
+    length: 'masters',
   },
   inputs: [
     {
-      id: "topic",
-      label: "Review topic and scope",
-      type: "textarea",
-      placeholder: "e.g. Research question, date range, population, context...",
+      id: 'topic',
+      label: 'Review topic and scope',
+      type: 'textarea',
+      placeholder: 'e.g. Research question, date range, population, context...',
       required: true,
     },
     {
-      id: "sources",
-      label: "Sources collected",
-      type: "textarea",
-      placeholder: "e.g. Paste titles, authors, years, or short summaries of each source...",
+      id: 'sources',
+      label: 'Sources collected',
+      type: 'textarea',
+      placeholder: 'e.g. Paste titles, authors, years, or short summaries of each source...',
     },
     {
-      id: "length",
-      label: "Review length",
-      type: "select",
-      options: ["short", "masters", "PhD"],
-      defaultValue: "masters",
+      id: 'length',
+      label: 'Review length',
+      type: 'select',
+      options: ['short', 'masters', 'PhD'],
+      defaultValue: 'masters',
       required: true,
     },
   ],
@@ -66,6 +64,6 @@ Rules:
 - Flag clearly where the user's source list looks thin
 - Keep a neutral academic tone
 - Recommend that claims be verified against the original texts`,
-  outputType: "markdown",
-  suggestedChainFrom: ["research-agent", "grant-proposal-writer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['research-agent', 'grant-proposal-writer'],
+}

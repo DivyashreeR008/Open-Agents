@@ -1,7 +1,4 @@
-import {
-  MAX_AGENTS_PER_COLLECTION,
-  MAX_COLLECTION_NAME_LENGTH,
-} from './useCollections'
+import { MAX_AGENTS_PER_COLLECTION, MAX_COLLECTION_NAME_LENGTH } from './useCollections'
 
 export const COLLECTION_EXPORT_FORMAT = 'open-agents.collection'
 export const COLLECTION_EXPORT_VERSION = 1

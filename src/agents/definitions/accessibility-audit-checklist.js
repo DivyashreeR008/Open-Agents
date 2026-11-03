@@ -1,28 +1,28 @@
 export default {
-  id: "accessibility-audit-checklist",
-  createdAt: "2026-10-20",
-  name: "Accessibility Audit Checklist",
+  id: 'accessibility-audit-checklist',
+  createdAt: '2026-10-20',
+  name: 'Accessibility Audit Checklist',
   description:
-    "Generate WCAG 2.2 compliance checklists tailored to specific page types and components.",
-  category: "Design",
-  icon: "HardHat",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Generate WCAG 2.2 compliance checklists tailored to specific page types and components.',
+  category: 'Design',
+  icon: 'HardHat',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {},
   inputs: [
     {
-      id: "pageType",
-      label: "Page/component type",
-      type: "text",
-      placeholder: "e.g. login form, dashboard, modal, data table...",
+      id: 'pageType',
+      label: 'Page/component type',
+      type: 'text',
+      placeholder: 'e.g. login form, dashboard, modal, data table...',
       required: true,
     },
     {
-      id: "level",
-      label: "WCAG level",
-      type: "text",
-      placeholder: "e.g. AA, AAA...",
+      id: 'level',
+      label: 'WCAG level',
+      type: 'text',
+      placeholder: 'e.g. AA, AAA...',
       required: true,
     },
   ],
@@ -49,5 +49,5 @@ Rules:
 - Reference specific WCAG 2.2 success criteria.
 - Provide actionable test steps.`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

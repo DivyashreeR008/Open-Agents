@@ -14,13 +14,16 @@ describe('PortfolioPage header', () => {
     render(
       <MemoryRouter>
         <PortfolioPage />
-      </MemoryRouter>,
+      </MemoryRouter>
     )
 
   it('keeps Index and GitHub visible on phones and hides the two extra links below sm', () => {
     renderPage()
     const header = screen.getByRole('banner')
-    const link = (name) => Array.from(header.querySelectorAll('nav a')).find((a) => a.textContent.trim().startsWith(name))
+    const link = (name) =>
+      Array.from(header.querySelectorAll('nav a')).find((a) =>
+        a.textContent.trim().startsWith(name)
+      )
 
     expect(link('Index').className).not.toMatch(/\bhidden\b/)
     expect(link('GitHub').className).not.toMatch(/\bhidden\b/)

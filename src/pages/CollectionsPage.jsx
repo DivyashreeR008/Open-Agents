@@ -34,7 +34,11 @@ export default function CollectionsPage() {
   )
   const agentMap = useMemo(() => new Map(agents.map((agent) => [agent.id, agent])), [agents])
 
-  const openCreate = () => { setModal('create'); setName(''); setError('') }
+  const openCreate = () => {
+    setModal('create')
+    setName('')
+    setError('')
+  }
   const submitCreate = (event) => {
     event.preventDefault()
     const result = createCollection(name)
@@ -75,7 +79,8 @@ export default function CollectionsPage() {
 
   const getPreviewText = (collection) => {
     if (loading) return 'Loading agent previews…'
-    if (agentsError) return 'Agent previews unavailable. Open the collection to manage saved agents.'
+    if (agentsError)
+      return 'Agent previews unavailable. Open the collection to manage saved agents.'
 
     const previewAgents = collection.agentIds
       .map((id) => agentMap.get(id))
@@ -120,7 +125,10 @@ export default function CollectionsPage() {
       />
 
       {notice && (
-        <p role="status" className="mb-3 border border-zinc-200 px-3 py-2 text-xs text-zinc-700 dark:border-border dark:text-text-secondary">
+        <p
+          role="status"
+          className="mb-3 border border-zinc-200 px-3 py-2 text-xs text-zinc-700 dark:border-border dark:text-text-secondary"
+        >
           {notice}
         </p>
       )}
@@ -160,7 +168,10 @@ export default function CollectionsPage() {
               </p>
 
               <div className="mt-3 flex items-center gap-1.5 border-t border-zinc-100 pt-2.5 dark:border-border/60">
-                <Link to={`/collections/${collection.id}`} className="btn-secondary h-7 flex-1 text-[11px]">
+                <Link
+                  to={`/collections/${collection.id}`}
+                  className="btn-secondary h-7 flex-1 text-[11px]"
+                >
                   Open
                 </Link>
                 <button
@@ -219,7 +230,11 @@ export default function CollectionsPage() {
         />
       )}
       {modal === 'import' && (
-        <ImportCollectionModal agents={agents} onImport={handleImport} onClose={() => setModal(null)} />
+        <ImportCollectionModal
+          agents={agents}
+          onImport={handleImport}
+          onClose={() => setModal(null)}
+        />
       )}
       {modal && modal !== 'create' && modal !== 'import' && (
         <CollectionModal

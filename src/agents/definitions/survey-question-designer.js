@@ -1,40 +1,38 @@
 export default {
-  id: "survey-question-designer",
-  createdAt: "2026-10-12",
-  name: "Survey Question Designer",
-  description:
-    "Get a bias-free survey: screening, core questions, scales, and an analysis plan.",
-  category: "Marketing",
-  icon: "ClipboardList",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'survey-question-designer',
+  createdAt: '2026-10-12',
+  name: 'Survey Question Designer',
+  description: 'Get a bias-free survey: screening, core questions, scales, and an analysis plan.',
+  category: 'Marketing',
+  icon: 'ClipboardList',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    goal:
-      "Understand why trial users do not convert to paid plans within 14 days of signup.",
-    audience: "Trial users from the last 90 days who did not convert",
-    length: "10-questions",
+    goal: 'Understand why trial users do not convert to paid plans within 14 days of signup.',
+    audience: 'Trial users from the last 90 days who did not convert',
+    length: '10-questions',
   },
   inputs: [
     {
-      id: "goal",
-      label: "Survey goal",
-      type: "textarea",
-      placeholder: "e.g. Understand why trial users do not convert within 14 days",
+      id: 'goal',
+      label: 'Survey goal',
+      type: 'textarea',
+      placeholder: 'e.g. Understand why trial users do not convert within 14 days',
       required: true,
     },
     {
-      id: "audience",
-      label: "Target audience",
-      type: "text",
-      placeholder: "e.g. Trial users from the last 90 days who did not convert",
+      id: 'audience',
+      label: 'Target audience',
+      type: 'text',
+      placeholder: 'e.g. Trial users from the last 90 days who did not convert',
     },
     {
-      id: "length",
-      label: "Survey length",
-      type: "select",
-      options: ["5-questions", "10-questions", "15-questions"],
-      defaultValue: "10-questions",
+      id: 'length',
+      label: 'Survey length',
+      type: 'select',
+      options: ['5-questions', '10-questions', '15-questions'],
+      defaultValue: '10-questions',
     },
   ],
   systemPrompt: `You are a survey methodologist who writes neutral, bias-free questionnaires.
@@ -63,6 +61,6 @@ Rules:
 - Do not invent metrics, quotes, reviews, or prices; leave answer data to respondents.
 - Use neutral language with no emoji.
 - Match the question count to the selected length option.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["research-agent", "data-analysis-agent"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['research-agent', 'data-analysis-agent'],
+}

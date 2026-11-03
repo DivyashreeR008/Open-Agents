@@ -1,38 +1,36 @@
 export default {
-  id: "medication-interaction-explainer",
+  id: 'medication-interaction-explainer',
 
-  createdAt: "2026-05-16",
+  createdAt: '2026-05-16',
 
-  name: "Medication Interaction Explainer",
+  name: 'Medication Interaction Explainer',
 
   description:
-    "Understand possible medication interactions, side effects, and safety concerns in plain English.",
+    'Understand possible medication interactions, side effects, and safety concerns in plain English.',
 
-  category: "Healthcare",
+  category: 'Healthcare',
 
-  icon: "Pill",
+  icon: 'Pill',
 
-  provider: "any",
+  provider: 'any',
 
-  defaultProvider: "openai",
+  defaultProvider: 'openai',
 
-  model: "gpt-4o",
+  model: 'gpt-4o',
 
   exampleInputs: {
-    medications:
-      "Warfarin\nIbuprofen\nAspirin",
+    medications: 'Warfarin\nIbuprofen\nAspirin',
   },
 
   inputs: [
     {
-      id: "medications",
+      id: 'medications',
 
-      label: "Medications",
+      label: 'Medications',
 
-      type: "textarea",
+      type: 'textarea',
 
-      placeholder:
-        "Enter medications, one per line...\n\nExample:\nWarfarin\nIbuprofen\nMetformin",
+      placeholder: 'Enter medications, one per line...\n\nExample:\nWarfarin\nIbuprofen\nMetformin',
 
       required: true,
     },
@@ -90,5 +88,5 @@ Rules:
 - Keep explanations concise and easy to understand
 - Avoid unnecessary medical jargon`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

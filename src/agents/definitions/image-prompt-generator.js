@@ -1,7 +1,8 @@
 const imagePromptGenerator = {
   id: 'image-prompt-generator',
   name: 'Master Image Prompt Generator',
-  description: 'Turn a basic idea into a highly detailed, professional prompt for Midjourney, DALL-E 3 or other AI image generation tools.',
+  description:
+    'Turn a basic idea into a highly detailed, professional prompt for Midjourney, DALL-E 3 or other AI image generation tools.',
   category: 'Design',
   icon: 'Wand2',
   provider: 'any',
@@ -20,18 +21,18 @@ const imagePromptGenerator = {
       label: 'Art Style',
       type: 'select',
       options: [
-        'Cinematic & Photorealistic', 
+        'Cinematic & Photorealistic',
         'Nature / National Geographic',
         'Fashion / High-End Runway',
-        'Anime / Studio Ghibli', 
+        'Anime / Studio Ghibli',
         'Concept Art / Video Game',
-        'Oil Painting', 
-        '3D Render / Pixar', 
-        'Cyberpunk', 
+        'Oil Painting',
+        '3D Render / Pixar',
+        'Cyberpunk',
         'Minimalist Vector',
         'Watercolor',
         'Pencil Sketch',
-        'Macro Photography'
+        'Macro Photography',
       ],
       required: true,
     },
@@ -40,17 +41,17 @@ const imagePromptGenerator = {
       label: 'Aspect Ratio',
       type: 'select',
       options: [
-        '16:9 (Widescreen)', 
-        '9:16 (Mobile/Reels)', 
+        '16:9 (Widescreen)',
+        '9:16 (Mobile/Reels)',
         '1:1 (Square)',
         '4:3 (Classic Photography)',
         '3:4 (Vertical Photography)',
         '3:2 (DSLR Print)',
         '2:3 (Vertical Print)',
-        '21:9 (Cinematic Ultra-Wide)'
+        '21:9 (Cinematic Ultra-Wide)',
       ],
       required: true,
-    }
+    },
   ],
   systemPrompt: `You are an expert AI image prompt engineer. 
 Take the user's subject, style, and aspect ratio, and craft a master-level prompt optimized for Midjourney v6 and DALL-E 3. 
@@ -67,6 +68,6 @@ Structure the prompt to naturally include:
 
 Output ONLY the prompt text inside a markdown code block, ready to be copied and pasted. Do not include any conversational filler. For the aspect ratio, append the standard Midjourney parameter at the very end (e.g., --ar 16:9).`,
   outputType: 'markdown',
-};
+}
 
-export default imagePromptGenerator;
+export default imagePromptGenerator

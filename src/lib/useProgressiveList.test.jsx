@@ -2,8 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { act, renderHook } from '@testing-library/react'
 import { useProgressiveList } from './useProgressiveList'
 
-const makeItems = (count) =>
-  Array.from({ length: count }, (_, index) => ({ id: `agent-${index}` }))
+const makeItems = (count) => Array.from({ length: count }, (_, index) => ({ id: `agent-${index}` }))
 
 describe('useProgressiveList', () => {
   it('renders one page and reveals more on demand', () => {
@@ -33,8 +32,7 @@ describe('useProgressiveList', () => {
   it('resets to the first page when the filter key changes', () => {
     const items = makeItems(75)
     const { result, rerender } = renderHook(
-      ({ resetKey }) =>
-        useProgressiveList(items, { pageSize: 10, resetKey }),
+      ({ resetKey }) => useProgressiveList(items, { pageSize: 10, resetKey }),
       { initialProps: { resetKey: 'first' } }
     )
 
@@ -55,8 +53,7 @@ describe('useProgressiveList', () => {
 
   it('clamps the window when the result set shrinks', () => {
     const { result, rerender } = renderHook(
-      ({ items }) =>
-        useProgressiveList(items, { pageSize: 10, resetKey: 'same' }),
+      ({ items }) => useProgressiveList(items, { pageSize: 10, resetKey: 'same' }),
       { initialProps: { items: makeItems(25) } }
     )
 

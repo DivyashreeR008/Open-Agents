@@ -1,7 +1,8 @@
 const memoryCardBuilder = {
   id: 'memory-card-builder',
   name: 'Memory Card Builder',
-  description: 'Transforms study notes or raw learning material into active recall cards with prompts, hints, answers, and self-test questions for better memory retention.',
+  description:
+    'Transforms study notes or raw learning material into active recall cards with prompts, hints, answers, and self-test questions for better memory retention.',
   category: 'Education',
   icon: 'BrainCircuit',
   provider: 'any',
@@ -54,6 +55,6 @@ Rules:
 - Write prompts that test understanding, not just memorization.
 - Use clean Markdown throughout.`,
   outputType: 'markdown',
-};
+}
 
-export default memoryCardBuilder;
+export default memoryCardBuilder

@@ -1,7 +1,8 @@
 const healthWellnessPlan = {
   id: 'health-wellness-plan',
   name: 'Health & Wellness Plan Generator',
-  description: 'Generates a personalized 4-week wellness plan with diet, exercise, and sleep guidance based on your goals.',
+  description:
+    'Generates a personalized 4-week wellness plan with diet, exercise, and sleep guidance based on your goals.',
   category: 'Healthcare',
   icon: 'HeartPulse',
   provider: 'any',
@@ -26,14 +27,25 @@ const healthWellnessPlan = {
       id: 'goal',
       label: 'Health Goal',
       type: 'select',
-      options: ['Lose weight', 'Build muscle', 'Improve fitness', 'Reduce stress & improve sleep', 'General wellness'],
+      options: [
+        'Lose weight',
+        'Build muscle',
+        'Improve fitness',
+        'Reduce stress & improve sleep',
+        'General wellness',
+      ],
       required: true,
     },
     {
       id: 'activity_level',
       label: 'Current Activity Level',
       type: 'select',
-      options: ['Sedentary (desk job, little exercise)', 'Lightly active (1–2 days/week)', 'Moderately active (3–4 days/week)', 'Very active (5+ days/week)'],
+      options: [
+        'Sedentary (desk job, little exercise)',
+        'Lightly active (1–2 days/week)',
+        'Moderately active (3–4 days/week)',
+        'Very active (5+ days/week)',
+      ],
       required: true,
     },
     {
@@ -82,6 +94,6 @@ A simple table with one realistic milestone to track per week.
 
 Keep the tone encouraging and practical. Use markdown formatting. Include a brief disclaimer at the end that this does not replace professional medical advice.`,
   outputType: 'markdown',
-};
+}
 
-export default healthWellnessPlan;
+export default healthWellnessPlan

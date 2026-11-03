@@ -64,6 +64,6 @@ The GDD should include the following sections:
 
 Please output the response in well-structured Markdown format.`,
   outputType: 'markdown',
-};
+}
 
-export default gameDesignDocumentGenerator;
+export default gameDesignDocumentGenerator

@@ -29,8 +29,7 @@ export default {
       id: 'code',
       label: 'Code Snippet',
       type: 'code',
-      placeholder:
-        'Paste a function, class, or module you want analyzed...',
+      placeholder: 'Paste a function, class, or module you want analyzed...',
       required: true,
     },
 

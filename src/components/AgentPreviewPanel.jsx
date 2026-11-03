@@ -1,26 +1,26 @@
-import { useState } from "react";
-import * as Icons from "lucide-react";
-import { ChevronDown, ChevronRight, FileCode2 } from "lucide-react";
+import { useState } from 'react'
+import * as Icons from 'lucide-react'
+import { ChevronDown, ChevronRight, FileCode2 } from 'lucide-react'
 
 const providerLabels = {
-  openai: "OpenAI",
-  anthropic: "Anthropic",
-  gemini: "Gemini",
-  openrouter: "OpenRouter",
-  any: "Any",
-};
+  openai: 'OpenAI',
+  anthropic: 'Anthropic',
+  gemini: 'Gemini',
+  openrouter: 'OpenRouter',
+  any: 'Any',
+}
 
 const typeLabels = {
-  text: "Text",
-  textarea: "Textarea",
-  code: "Code",
-  select: "Select",
-  multiselect: "Multi-select",
-};
+  text: 'Text',
+  textarea: 'Textarea',
+  code: 'Code',
+  select: 'Select',
+  multiselect: 'Multi-select',
+}
 
 export default function AgentPreviewPanel({ agent }) {
-  const [promptOpen, setPromptOpen] = useState(false);
-  const IconComponent = Icons[agent.icon] || Icons.Bot;
+  const [promptOpen, setPromptOpen] = useState(false)
+  const IconComponent = Icons[agent.icon] || Icons.Bot
 
   return (
     <div className="space-y-4 animate-fade-in">
@@ -44,17 +44,13 @@ export default function AgentPreviewPanel({ agent }) {
               {agent.outputType}
             </span>
           </div>
-          <p className="text-xs dark:text-text-secondary text-gray-500">
-            {agent.description}
-          </p>
+          <p className="text-xs dark:text-text-secondary text-gray-500">{agent.description}</p>
         </div>
       </div>
 
       {/* Input fields */}
       <div className="p-4 border dark:bg-surface-card dark:border-border bg-white border-gray-200">
-        <h3 className="eyebrow mb-3">
-          Input Fields
-        </h3>
+        <h3 className="eyebrow mb-3">Input Fields</h3>
         <div className="space-y-2">
           {agent.inputs.map((input) => (
             <div
@@ -77,7 +73,7 @@ export default function AgentPreviewPanel({ agent }) {
                 )}
                 {input.options && input.options.length > 0 && (
                   <p className="text-[11px] dark:text-text-muted text-gray-400 mt-0.5">
-                    Options: {input.options.join(", ")}
+                    Options: {input.options.join(', ')}
                   </p>
                 )}
               </div>
@@ -116,5 +112,5 @@ export default function AgentPreviewPanel({ agent }) {
         )}
       </div>
     </div>
-  );
+  )
 }

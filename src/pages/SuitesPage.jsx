@@ -1,6 +1,23 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Sparkles, ArrowRight, Code2, BarChart3, TrendingUp, DollarSign, Palette, PenLine, GraduationCap, Briefcase, HeartPulse, ShieldCheck, Gamepad2, Wand2, Loader2, GitBranch } from 'lucide-react'
+import {
+  Sparkles,
+  ArrowRight,
+  Code2,
+  BarChart3,
+  TrendingUp,
+  DollarSign,
+  Palette,
+  PenLine,
+  GraduationCap,
+  Briefcase,
+  HeartPulse,
+  ShieldCheck,
+  Gamepad2,
+  Wand2,
+  Loader2,
+  GitBranch,
+} from 'lucide-react'
 import { suites } from '../suites/suitesData'
 import SuiteWizard from '../components/SuiteWizard'
 import PageHeader from '../components/layout/PageHeader'
@@ -11,8 +28,17 @@ import ApiKeyBar from '../components/ApiKeyBar'
 
 // Map icon name string → Lucide component
 const SUITE_ICONS = {
-  Code2, BarChart3, TrendingUp, DollarSign, Palette,
-  PenLine, GraduationCap, Briefcase, HeartPulse, ShieldCheck, Gamepad2,
+  Code2,
+  BarChart3,
+  TrendingUp,
+  DollarSign,
+  Palette,
+  PenLine,
+  GraduationCap,
+  Briefcase,
+  HeartPulse,
+  ShieldCheck,
+  Gamepad2,
 }
 
 /**
@@ -24,14 +50,8 @@ const SUITE_ICONS = {
 export default function SuitesPage() {
   useDocumentTitle('Suites')
   const navigate = useNavigate()
-  const {
-    provider,
-    setProvider,
-    apiKey,
-    setApiKey,
-    saveForSession,
-    setSaveForSession,
-  } = useApiKey()
+  const { provider, setProvider, apiKey, setApiKey, saveForSession, setSaveForSession } =
+    useApiKey()
 
   const [activeSuite, setActiveSuite] = useState(null)
   const [selectedModel, setSelectedModel] = useState(null)
@@ -62,7 +82,7 @@ export default function SuitesPage() {
       state: {
         preselectedAgents: customSuite.agents.map((a) => a.id),
         workflowTitle: customSuite.title,
-      }
+      },
     })
   }
 
@@ -70,10 +90,7 @@ export default function SuitesPage() {
   if (activeSuite) {
     return (
       <div className="animate-fade-in">
-        <SuiteWizard
-          suite={activeSuite}
-          onBack={() => setActiveSuite(null)}
-        />
+        <SuiteWizard suite={activeSuite} onBack={() => setActiveSuite(null)} />
       </div>
     )
   }
@@ -129,18 +146,12 @@ export default function SuitesPage() {
             disabled={!goal.trim() || !apiKey || generating}
             className="btn-primary w-full shrink-0 sm:w-auto"
           >
-            {generating ? (
-              <Loader2 size={13} className="animate-spin" />
-            ) : (
-              <Wand2 size={13} />
-            )}
+            {generating ? <Loader2 size={13} className="animate-spin" /> : <Wand2 size={13} />}
             {generating ? 'Generating...' : 'Generate'}
           </button>
         </div>
 
-        {generatorError && (
-          <p className="text-[11px] text-zinc-500 mt-2">{generatorError}</p>
-        )}
+        {generatorError && <p className="text-[11px] text-zinc-500 mt-2">{generatorError}</p>}
 
         {/* Custom Suite Result */}
         {customSuite && (
@@ -167,9 +178,7 @@ export default function SuitesPage() {
                     <p className="text-xs font-semibold dark:text-text-primary text-gray-900 truncate">
                       {agent.id}
                     </p>
-                    <p className="text-[11px] dark:text-text-muted text-gray-400">
-                      {agent.reason}
-                    </p>
+                    <p className="text-[11px] dark:text-text-muted text-gray-400">{agent.reason}</p>
                   </div>
                   <button
                     onClick={() => navigate(`/agent/${agent.id}`)}
@@ -184,15 +193,15 @@ export default function SuitesPage() {
 
             {/* Action buttons */}
             <div className="flex items-center gap-3 mt-4">
-              <button
-                onClick={handleCreateWorkflow}
-                className="btn-primary"
-              >
+              <button onClick={handleCreateWorkflow} className="btn-primary">
                 <GitBranch size={13} aria-hidden="true" />
                 Create workflow
               </button>
               <button
-                onClick={() => { setCustomSuite(null); setGoal('') }}
+                onClick={() => {
+                  setCustomSuite(null)
+                  setGoal('')
+                }}
                 className="font-mono text-[11px] text-zinc-400 transition-colors hover:text-black dark:text-text-muted dark:hover:text-white"
               >
                 Reset
@@ -205,11 +214,7 @@ export default function SuitesPage() {
       {/* Suite cards grid */}
       <div className="mb-6 grid grid-cols-1 gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
         {suites.map((suite) => (
-          <SuiteCard
-            key={suite.id}
-            suite={suite}
-            onSelect={() => setActiveSuite(suite)}
-          />
+          <SuiteCard key={suite.id} suite={suite} onSelect={() => setActiveSuite(suite)} />
         ))}
       </div>
 

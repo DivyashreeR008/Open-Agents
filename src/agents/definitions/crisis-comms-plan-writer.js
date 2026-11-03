@@ -1,39 +1,38 @@
 export default {
-  id: "crisis-comms-plan-writer",
-  createdAt: "2026-10-12",
-  name: "Crisis Comms Planner",
+  id: 'crisis-comms-plan-writer',
+  createdAt: '2026-10-12',
+  name: 'Crisis Comms Planner',
   description:
-    "Prepare for bad days: holding statements, spokespeople, channels, and hour-one checklist.",
-  category: "Business",
-  icon: "Siren",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Prepare for bad days: holding statements, spokespeople, channels, and hour-one checklist.',
+  category: 'Business',
+  icon: 'Siren',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    risks:
-      "Data breach affecting customer accounts; prolonged service outage during peak season.",
-    team: "CEO spokesperson, support lead, on-call engineer",
-    channels: "Status page, email, X and LinkedIn accounts",
+    risks: 'Data breach affecting customer accounts; prolonged service outage during peak season.',
+    team: 'CEO spokesperson, support lead, on-call engineer',
+    channels: 'Status page, email, X and LinkedIn accounts',
   },
   inputs: [
     {
-      id: "risks",
-      label: "Top risks",
-      type: "textarea",
-      placeholder: "e.g. Data breach, outage, safety incident, executive issue",
+      id: 'risks',
+      label: 'Top risks',
+      type: 'textarea',
+      placeholder: 'e.g. Data breach, outage, safety incident, executive issue',
       required: true,
     },
     {
-      id: "team",
-      label: "Response team",
-      type: "text",
-      placeholder: "e.g. Spokesperson, support lead, engineering on-call",
+      id: 'team',
+      label: 'Response team',
+      type: 'text',
+      placeholder: 'e.g. Spokesperson, support lead, engineering on-call',
     },
     {
-      id: "channels",
-      label: "Communication channels",
-      type: "text",
-      placeholder: "e.g. Status page, email, social accounts",
+      id: 'channels',
+      label: 'Communication channels',
+      type: 'text',
+      placeholder: 'e.g. Status page, email, social accounts',
     },
   ],
   systemPrompt: `You are a crisis-communications planner who prepares calm, ready-to-use response kits.
@@ -59,6 +58,6 @@ Rules:
 - Avoid speculation, blame, or promises about outcomes.
 - Mark every unverified fact as a placeholder to confirm.
 - Keep tone calm, factual, and neutral.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["email-reply-writer", "incident-runbook-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['email-reply-writer', 'incident-runbook-generator'],
+}

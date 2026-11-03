@@ -108,9 +108,7 @@ export function usePromptHistory() {
   }, [])
 
   const toggleFavorite = useCallback((id) => {
-    const updated = loadPrompts().map((p) =>
-      p.id === id ? { ...p, favorite: !p.favorite } : p
-    )
+    const updated = loadPrompts().map((p) => (p.id === id ? { ...p, favorite: !p.favorite } : p))
     savePrompts(updated)
     setPrompts(updated)
     notify()
@@ -122,8 +120,7 @@ export function usePromptHistory() {
       const q = query.trim().toLowerCase()
       return prompts.filter(
         (p) =>
-          p.text.toLowerCase().includes(q) ||
-          (p.agentName && p.agentName.toLowerCase().includes(q))
+          p.text.toLowerCase().includes(q) || (p.agentName && p.agentName.toLowerCase().includes(q))
       )
     },
     [prompts]

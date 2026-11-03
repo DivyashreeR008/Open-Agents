@@ -1,40 +1,38 @@
 export default {
-  id: "negotiation-prep-sheet",
-  createdAt: "2026-10-12",
-  name: "Negotiation Prep Sheet",
-  description:
-    "Prep B2B negotiations: BATNA, walk-away, tradeables, and concession ladder.",
-  category: "Sales",
-  icon: "Handshake",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'negotiation-prep-sheet',
+  createdAt: '2026-10-12',
+  name: 'Negotiation Prep Sheet',
+  description: 'Prep B2B negotiations: BATNA, walk-away, tradeables, and concession ladder.',
+  category: 'Sales',
+  icon: 'Handshake',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    deal: "50-seat annual contract for Acme CRM, $30k ARR, procurement pushing for 20 percent discount",
-    leverage: "Strong champion, weak alternative in place, quarter-end timing on our side",
-    deadline: "Decision needed by June 30",
+    deal: '50-seat annual contract for Acme CRM, $30k ARR, procurement pushing for 20 percent discount',
+    leverage: 'Strong champion, weak alternative in place, quarter-end timing on our side',
+    deadline: 'Decision needed by June 30',
   },
   inputs: [
     {
-      id: "deal",
-      label: "Deal summary",
-      type: "textarea",
-      placeholder:
-        "e.g. 50-seat annual contract, $30k ARR, procurement pushing for 20% discount",
+      id: 'deal',
+      label: 'Deal summary',
+      type: 'textarea',
+      placeholder: 'e.g. 50-seat annual contract, $30k ARR, procurement pushing for 20% discount',
       required: true,
     },
     {
-      id: "leverage",
-      label: "Leverage and context",
-      type: "textarea",
+      id: 'leverage',
+      label: 'Leverage and context',
+      type: 'textarea',
       placeholder:
-        "e.g. Strong champion, weak alternative in place, quarter-end timing on our side",
+        'e.g. Strong champion, weak alternative in place, quarter-end timing on our side',
     },
     {
-      id: "deadline",
-      label: "Deadline",
-      type: "text",
-      placeholder: "e.g. Decision needed by June 30",
+      id: 'deadline',
+      label: 'Deadline',
+      type: 'text',
+      placeholder: 'e.g. Decision needed by June 30',
     },
   ],
   systemPrompt: `You are a B2B sales negotiation coach who prepares sellers
@@ -65,6 +63,6 @@ Rules:
 - Do not invent metrics, quotes, reviews, or competitor terms
 - Keep advice principled: trade, never just concede
 - Note open questions where leverage information is missing`,
-  outputType: "markdown",
-  suggestedChainFrom: ["cold-email-writer", "research-agent"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['cold-email-writer', 'research-agent'],
+}

@@ -1,25 +1,24 @@
-const passwordStrengthAgent= {
-  id: 'password-strength-reviewer-agent',           // lowercase, kebab-case, URL safe
+const passwordStrengthAgent = {
+  id: 'password-strength-reviewer-agent', // lowercase, kebab-case, URL safe
   name: 'Password Strength Reviewer',
   description: 'The agent takes in the password and reviews whether it is strong enough.',
-  category: 'Cybersecurity',          // Productivity | Research | Marketing | Engineering | HR | Business | Education | Design | Product | Legal
-  icon: 'LockKeyhole',              // Any icon from lucide.dev/icons
-  provider: 'any',               // 'openai' | 'anthropic' | 'gemini' | 'any'
-  defaultProvider: 'openai',     // Only needed if provider is 'any'
+  category: 'Cybersecurity', // Productivity | Research | Marketing | Engineering | HR | Business | Education | Design | Product | Legal
+  icon: 'LockKeyhole', // Any icon from lucide.dev/icons
+  provider: 'any', // 'openai' | 'anthropic' | 'gemini' | 'any'
+  defaultProvider: 'openai', // Only needed if provider is 'any'
   model: 'gpt-4o',
   inputs: [
     {
       id: 'password-to-be-checked',
       label: 'Password To Review',
-      type: 'text',          // text | textarea | code | select | multiselect
+      type: 'text', // text | textarea | code | select | multiselect
       sensitive: true,
       placeholder: 'Include uppercase and lowercase alphabets, digits and special characters',
       required: true,
-    }
+    },
+  ],
 
-],
-  
-systemPrompt: `You are a cybersecurity agent that evaluates password strength.
+  systemPrompt: `You are a cybersecurity agent that evaluates password strength.
 
 Your responsibilities:
 
@@ -59,7 +58,7 @@ Strength ratings:
 
 `,
 
-  outputType: 'markdown',        // markdown | text | json
-};
+  outputType: 'markdown', // markdown | text | json
+}
 
-export default passwordStrengthAgent;
+export default passwordStrengthAgent

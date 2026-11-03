@@ -25,7 +25,8 @@ const STATUS_COLORS = {
 
 function StatusIcon({ status }) {
   if (status === 'waiting') return <Clock size={13} className={STATUS_COLORS.waiting} />
-  if (status === 'running') return <Loader2 size={13} className="text-zinc-900 dark:text-white animate-spin" />
+  if (status === 'running')
+    return <Loader2 size={13} className="text-zinc-900 dark:text-white animate-spin" />
   if (status === 'done') return <CheckCircle2 size={13} className={STATUS_COLORS.done} />
   if (status === 'failed') return <XCircle size={13} className={STATUS_COLORS.failed} />
   return null
@@ -123,7 +124,8 @@ export default function BatchModeRunner({ agent, provider, apiKey, selectedModel
   }
 
   const canRun = () => {
-    if (!apiKey || items.length === 0 || items.length > MAX_BATCH_SIZE || !batchFieldId) return false
+    if (!apiKey || items.length === 0 || items.length > MAX_BATCH_SIZE || !batchFieldId)
+      return false
     return agent.inputs
       .filter((i) => i.required && i.id !== batchFieldId)
       .every((i) => {
@@ -223,7 +225,9 @@ export default function BatchModeRunner({ agent, provider, apiKey, selectedModel
               ) : input.type === 'multiselect' ? (
                 <div className="flex flex-wrap gap-2">
                   {input.options?.map((opt) => {
-                    const selected = (fixedInputs[input.id] || input.defaultValue || []).includes(opt)
+                    const selected = (fixedInputs[input.id] || input.defaultValue || []).includes(
+                      opt
+                    )
                     return (
                       <button
                         key={opt}
@@ -334,15 +338,22 @@ export default function BatchModeRunner({ agent, provider, apiKey, selectedModel
                   onChange={handleCsvColumnChange}
                   options={
                     csvHasHeader
-                      ? csvHeaders.map((h, i) => ({ value: String(i), label: h || `Column ${i + 1}` }))
-                      : csvRawRows[0].map((_, i) => ({ value: String(i), label: `Column ${i + 1}` }))
+                      ? csvHeaders.map((h, i) => ({
+                          value: String(i),
+                          label: h || `Column ${i + 1}`,
+                        }))
+                      : csvRawRows[0].map((_, i) => ({
+                          value: String(i),
+                          label: `Column ${i + 1}`,
+                        }))
                   }
                   triggerClassName="h-7 text-xs"
                 />
               </div>
             )}
             <p className="text-[10px] dark:text-text-muted text-gray-400">
-              {csvDataRows?.length || 0} row{csvDataRows?.length !== 1 ? 's' : ''} will be used as batch items.
+              {csvDataRows?.length || 0} row{csvDataRows?.length !== 1 ? 's' : ''} will be used as
+              batch items.
             </p>
           </div>
         )}
@@ -411,7 +422,9 @@ export default function BatchModeRunner({ agent, provider, apiKey, selectedModel
                   {r.input}
                 </span>
                 <StatusIcon status={r.status} />
-                <span className={`text-[11px] font-medium capitalize ${STATUS_COLORS[r.status] || ''}`}>
+                <span
+                  className={`text-[11px] font-medium capitalize ${STATUS_COLORS[r.status] || ''}`}
+                >
                   {r.status}
                 </span>
               </div>

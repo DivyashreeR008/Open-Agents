@@ -2,8 +2,8 @@
 
 ## Who Maintains This Project
 
-| Name | GitHub | Role |
-|------|--------|------|
+| Name         | GitHub                                               | Role                 |
+| ------------ | ---------------------------------------------------- | -------------------- |
 | Divyashree R | [@DivyashreeR008](https://github.com/DivyashreeR008) | Creator & Maintainer |
 
 > Update this table as the team grows. Add new maintainers with their area of focus.
@@ -23,4 +23,4 @@ start a conversation in GitHub Discussions. We are open to it as the project gro
 
 ---
 
-*Want to contribute? See [CONTRIBUTING.md](./CONTRIBUTING.md).*
+_Want to contribute? See [CONTRIBUTING.md](./CONTRIBUTING.md)._

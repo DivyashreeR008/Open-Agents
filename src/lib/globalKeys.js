@@ -22,9 +22,9 @@
  */
 
 const KEYS = {
-  openai:     'OpenAgents_openai_key',
-  anthropic:  'OpenAgents_anthropic_key',
-  gemini:     'OpenAgents_gemini_key',
+  openai: 'OpenAgents_openai_key',
+  anthropic: 'OpenAgents_anthropic_key',
+  gemini: 'OpenAgents_gemini_key',
   openrouter: 'OpenAgents_openrouter_key',
 }
 const DEFAULT_PROVIDER_KEY = 'OpenAgents_default_provider'
@@ -64,10 +64,13 @@ function readSecret(storageKey) {
  * Store a secret in sessionStorage with a fresh 8-hour expiry.
  */
 function writeSecret(storageKey, value) {
-  sessionStorage.setItem(storageKey, JSON.stringify({
-    key: value,
-    expiresAt: Date.now() + EXPIRY_MS,
-  }))
+  sessionStorage.setItem(
+    storageKey,
+    JSON.stringify({
+      key: value,
+      expiresAt: Date.now() + EXPIRY_MS,
+    })
+  )
 }
 
 /**
@@ -76,10 +79,10 @@ function writeSecret(storageKey, value) {
  */
 export function getGlobalKeys() {
   return {
-    openai:          readSecret(KEYS.openai),
-    anthropic:       readSecret(KEYS.anthropic),
-    gemini:          readSecret(KEYS.gemini),
-    openrouter:      readSecret(KEYS.openrouter),
+    openai: readSecret(KEYS.openai),
+    anthropic: readSecret(KEYS.anthropic),
+    gemini: readSecret(KEYS.gemini),
+    openrouter: readSecret(KEYS.openrouter),
     defaultProvider: localStorage.getItem(DEFAULT_PROVIDER_KEY) || '',
   }
 }
@@ -90,11 +93,14 @@ export function getGlobalKeys() {
  * @param {{ openai?: string, anthropic?: string, gemini?: string, openrouter?: string, defaultProvider?: string }} keys
  */
 export function saveGlobalKeys({ openai, anthropic, gemini, openrouter, defaultProvider } = {}) {
-  if (openai          !== undefined && openai.trim()          !== '') writeSecret(KEYS.openai,          openai.trim())
-  if (anthropic       !== undefined && anthropic.trim()       !== '') writeSecret(KEYS.anthropic,       anthropic.trim())
-  if (gemini          !== undefined && gemini.trim()          !== '') writeSecret(KEYS.gemini,          gemini.trim())
-  if (openrouter      !== undefined && openrouter.trim()      !== '') writeSecret(KEYS.openrouter,      openrouter.trim())
-  if (defaultProvider !== undefined && defaultProvider.trim() !== '') localStorage.setItem(DEFAULT_PROVIDER_KEY, defaultProvider.trim())
+  if (openai !== undefined && openai.trim() !== '') writeSecret(KEYS.openai, openai.trim())
+  if (anthropic !== undefined && anthropic.trim() !== '')
+    writeSecret(KEYS.anthropic, anthropic.trim())
+  if (gemini !== undefined && gemini.trim() !== '') writeSecret(KEYS.gemini, gemini.trim())
+  if (openrouter !== undefined && openrouter.trim() !== '')
+    writeSecret(KEYS.openrouter, openrouter.trim())
+  if (defaultProvider !== undefined && defaultProvider.trim() !== '')
+    localStorage.setItem(DEFAULT_PROVIDER_KEY, defaultProvider.trim())
 }
 
 /**
@@ -126,9 +132,9 @@ export function clearAllGlobalKeys() {
  */
 export function getAvailableProviders() {
   const PROVIDER_LABELS = {
-    openai:    'OpenAI',
+    openai: 'OpenAI',
     anthropic: 'Anthropic',
-    gemini:    'Google Gemini',
+    gemini: 'Google Gemini',
     openrouter: 'OpenRouter',
   }
 

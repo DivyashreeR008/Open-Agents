@@ -36,12 +36,7 @@ const apiRateLimiterDesigner = {
       id: 'rate_limit_goal',
       label: 'Rate Limiting Goal',
       type: 'select',
-      options: [
-        'Prevent abuse',
-        'Protect resources',
-        'Tiered pricing',
-        'All of the above',
-      ],
+      options: ['Prevent abuse', 'Protect resources', 'Tiered pricing', 'All of the above'],
       required: true,
     },
     {
@@ -157,6 +152,6 @@ Rules:
 - Include both the happy path and the 429 error response in the code`,
 
   outputType: 'markdown',
-};
+}
 
-export default apiRateLimiterDesigner;
+export default apiRateLimiterDesigner

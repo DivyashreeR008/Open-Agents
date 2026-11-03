@@ -39,4 +39,3 @@ const noopSupabase = {
 export const supabase = isSupabaseConfigured
   ? createClient(supabaseUrl, supabaseAnonKey)
   : noopSupabase
-

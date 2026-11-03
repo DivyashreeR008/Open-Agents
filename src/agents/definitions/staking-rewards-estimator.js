@@ -1,41 +1,40 @@
 export default {
-  id: "staking-rewards-estimator",
-  createdAt: "2026-10-12",
-  name: "Staking Rewards Estimator",
+  id: 'staking-rewards-estimator',
+  createdAt: '2026-10-12',
+  name: 'Staking Rewards Estimator',
   description:
-    "Compare staking options with an APR-vs-APY, lockup, and slashing framework — no live data invented.",
-  category: "Web3",
-  icon: "PiggyBank",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Compare staking options with an APR-vs-APY, lockup, and slashing framework — no live data invented.',
+  category: 'Web3',
+  icon: 'PiggyBank',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     options:
-      "Option A: native staking, advertised 4.2% APR, 21-day unbonding. Option B: liquid staking token, advertised 3.8% APR plus DeFi use. Option C: exchange earn, advertised 5% APY, custodial.",
-    horizon: "12 months, may need funds with 30 days notice",
-    risk: "medium",
+      'Option A: native staking, advertised 4.2% APR, 21-day unbonding. Option B: liquid staking token, advertised 3.8% APR plus DeFi use. Option C: exchange earn, advertised 5% APY, custodial.',
+    horizon: '12 months, may need funds with 30 days notice',
+    risk: 'medium',
   },
   inputs: [
     {
-      id: "options",
-      label: "Staking options",
-      type: "textarea",
-      placeholder:
-        "List each option with advertised rate, lockup, fees, and custody model.",
+      id: 'options',
+      label: 'Staking options',
+      type: 'textarea',
+      placeholder: 'List each option with advertised rate, lockup, fees, and custody model.',
       required: true,
     },
     {
-      id: "horizon",
-      label: "Time horizon",
-      type: "text",
-      placeholder: "e.g. 12 months, may need funds within 30 days",
+      id: 'horizon',
+      label: 'Time horizon',
+      type: 'text',
+      placeholder: 'e.g. 12 months, may need funds within 30 days',
     },
     {
-      id: "risk",
-      label: "Risk tolerance",
-      type: "select",
-      options: ["low", "medium", "high"],
-      defaultValue: "medium",
+      id: 'risk',
+      label: 'Risk tolerance',
+      type: 'select',
+      options: ['low', 'medium', 'high'],
+      defaultValue: 'medium',
       required: true,
     },
   ],
@@ -66,6 +65,6 @@ Rules:
 - Show formulas so all arithmetic is verifiable.
 - This is educational, not financial advice; say so briefly.
 - Keep tone neutral and factual.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["research-agent", "personal-budget-analyzer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['research-agent', 'personal-budget-analyzer'],
+}

@@ -1,35 +1,33 @@
 export default {
-  id: "linkedin-post-writer",
-  createdAt: "2025-05-06",
-  name: "LinkedIn Post Writer",
-  description:
-    "Generate ready-to-post LinkedIn content with a strong hook and hashtags.",
-  category: "Marketing",
-  icon: "PenLine",
-  provider: "any",
-  defaultProvider: "openai",
-  model: "gpt-4o-mini",
+  id: 'linkedin-post-writer',
+  createdAt: '2025-05-06',
+  name: 'LinkedIn Post Writer',
+  description: 'Generate ready-to-post LinkedIn content with a strong hook and hashtags.',
+  category: 'Marketing',
+  icon: 'PenLine',
+  provider: 'any',
+  defaultProvider: 'openai',
+  model: 'gpt-4o-mini',
 
   exampleInputs: {
-    topic:
-      "Why I stopped using 'ASAP' in my professional communications and what I use instead.",
-    tone: "Story",
+    topic: "Why I stopped using 'ASAP' in my professional communications and what I use instead.",
+    tone: 'Story',
   },
 
   inputs: [
     {
-      id: "topic",
-      label: "Topic",
-      type: "text",
-      placeholder: "e.g. Lessons from building my first startup",
+      id: 'topic',
+      label: 'Topic',
+      type: 'text',
+      placeholder: 'e.g. Lessons from building my first startup',
       required: true,
     },
     {
-      id: "tone",
-      label: "Tone",
-      type: "select",
-      options: ["Thought-leader", "Story", "Data-driven"],
-      defaultValue: "Story",
+      id: 'tone',
+      label: 'Tone',
+      type: 'select',
+      options: ['Thought-leader', 'Story', 'Data-driven'],
+      defaultValue: 'Story',
       required: true,
     },
   ],
@@ -47,6 +45,6 @@ Requirements:
 
 Return ONLY the LinkedIn post ready to copy and publish.`,
 
-  outputType: "markdown",
-  suggestedChainFrom: ["research-agent", "meeting-notes-summarizer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['research-agent', 'meeting-notes-summarizer'],
+}

@@ -1,42 +1,42 @@
 export default {
-  id: "data-storytelling-coach",
-  createdAt: "2026-10-12",
-  name: "Data Storytelling Coach",
+  id: 'data-storytelling-coach',
+  createdAt: '2026-10-12',
+  name: 'Data Storytelling Coach',
   description:
-    "Turn analysis output into an executive narrative: headline, so-what, and chart callouts.",
-  category: "Data Science",
-  icon: "Presentation",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Turn analysis output into an executive narrative: headline, so-what, and chart callouts.',
+  category: 'Data Science',
+  icon: 'Presentation',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     findings:
-      "Q3 signup conversion fell from 8.2% to 6.1% after the pricing page redesign. Drop concentrated in mobile traffic (down 3.4 pts) while desktop held flat. Trial-to-paid stayed at 22%. Support tickets mentioning pricing rose 40%.",
-    audience: "exec",
-    decision: "Whether to roll back the pricing page redesign or iterate on mobile layout",
+      'Q3 signup conversion fell from 8.2% to 6.1% after the pricing page redesign. Drop concentrated in mobile traffic (down 3.4 pts) while desktop held flat. Trial-to-paid stayed at 22%. Support tickets mentioning pricing rose 40%.',
+    audience: 'exec',
+    decision: 'Whether to roll back the pricing page redesign or iterate on mobile layout',
   },
   inputs: [
     {
-      id: "findings",
-      label: "Analysis findings",
-      type: "textarea",
+      id: 'findings',
+      label: 'Analysis findings',
+      type: 'textarea',
       placeholder:
-        "Paste key findings, metrics, and context, e.g.:\nConversion fell from 8.2% to 6.1% after redesign\nDrop concentrated in mobile traffic\nTrial-to-paid steady at 22%",
+        'Paste key findings, metrics, and context, e.g.:\nConversion fell from 8.2% to 6.1% after redesign\nDrop concentrated in mobile traffic\nTrial-to-paid steady at 22%',
       required: true,
     },
     {
-      id: "audience",
-      label: "Audience",
-      type: "select",
-      options: ["exec", "board", "client"],
-      defaultValue: "exec",
+      id: 'audience',
+      label: 'Audience',
+      type: 'select',
+      options: ['exec', 'board', 'client'],
+      defaultValue: 'exec',
       required: true,
     },
     {
-      id: "decision",
-      label: "Decision needed",
-      type: "text",
-      placeholder: "e.g. Whether to roll back the redesign or iterate",
+      id: 'decision',
+      label: 'Decision needed',
+      type: 'text',
+      placeholder: 'e.g. Whether to roll back the redesign or iterate',
     },
   ],
   systemPrompt: `You are a data storytelling coach who turns analysis output into a clear executive narrative.
@@ -69,6 +69,6 @@ Rules:
 - Flag any claim that lacks supporting evidence
 - Keep language neutral and concise
 - Use no emoji anywhere in the output`,
-  outputType: "markdown",
-  suggestedChainFrom: ["data-analysis-agent", "linkedin-post-writer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['data-analysis-agent', 'linkedin-post-writer'],
+}

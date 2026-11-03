@@ -1,41 +1,40 @@
 export default {
-  id: "contract-testing-guide",
-  createdAt: "2026-10-12",
-  name: "Contract Testing Guide",
+  id: 'contract-testing-guide',
+  createdAt: '2026-10-12',
+  name: 'Contract Testing Guide',
   description:
-    "Set up consumer-driven contract tests: pacts, provider verification, and CI gating.",
-  category: "Engineering",
-  icon: "FileCheck",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Set up consumer-driven contract tests: pacts, provider verification, and CI gating.',
+  category: 'Engineering',
+  icon: 'FileCheck',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    stack: "Node consumers, Python provider, Jest + Pact",
+    stack: 'Node consumers, Python provider, Jest + Pact',
     parties:
-      "Consumer: checkout-web expects POST /orders to return orderId. Provider: orders-service owns the endpoint.",
-    broker: "pactflow",
+      'Consumer: checkout-web expects POST /orders to return orderId. Provider: orders-service owns the endpoint.',
+    broker: 'pactflow',
   },
   inputs: [
     {
-      id: "stack",
-      label: "Languages and frameworks",
-      type: "text",
-      placeholder: "e.g. Node consumers, Python provider, Jest + Pact",
+      id: 'stack',
+      label: 'Languages and frameworks',
+      type: 'text',
+      placeholder: 'e.g. Node consumers, Python provider, Jest + Pact',
       required: true,
     },
     {
-      id: "parties",
-      label: "Consumers and providers",
-      type: "textarea",
-      placeholder:
-        "List each consumer, the endpoints it calls, and which provider owns them",
+      id: 'parties',
+      label: 'Consumers and providers',
+      type: 'textarea',
+      placeholder: 'List each consumer, the endpoints it calls, and which provider owns them',
     },
     {
-      id: "broker",
-      label: "Pact broker setup",
-      type: "select",
-      options: ["pactflow", "self-hosted", "none-yet"],
-      defaultValue: "pactflow",
+      id: 'broker',
+      label: 'Pact broker setup',
+      type: 'select',
+      options: ['pactflow', 'self-hosted', 'none-yet'],
+      defaultValue: 'pactflow',
       required: true,
     },
   ],
@@ -67,6 +66,6 @@ Rules:
 - Call out missing broker or CI details as assumptions to confirm
 - Keep the plan provider-neutral where the stack is ambiguous
 - Use neutral, procedural language throughout`,
-  outputType: "markdown",
-  suggestedChainFrom: ["api-doc-generator", "test-case-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['api-doc-generator', 'test-case-generator'],
+}

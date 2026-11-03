@@ -1,7 +1,8 @@
 const mockDataGenerator = {
   id: 'mock-data-generator',
   name: 'Mock Data Generator',
-  description: 'Describe a data schema and get realistic mock data in JSON format instantly — names, emails, addresses, dates, and more.',
+  description:
+    'Describe a data schema and get realistic mock data in JSON format instantly — names, emails, addresses, dates, and more.',
   category: 'Engineering',
   icon: 'Database',
   provider: 'any',
@@ -12,7 +13,8 @@ const mockDataGenerator = {
       id: 'schema',
       label: 'Data Schema or Description',
       type: 'textarea',
-      placeholder: 'e.g. "User object with id, name, email, age, address, and createdAt date" or paste your actual JSON schema...',
+      placeholder:
+        'e.g. "User object with id, name, email, age, address, and createdAt date" or paste your actual JSON schema...',
       required: true,
     },
     {
@@ -51,6 +53,6 @@ Output format based on user selection:
 
 Return only the data — no explanation, no markdown prose around it. Just clean, copyable output.`,
   outputType: 'markdown',
-};
+}
 
-export default mockDataGenerator;
+export default mockDataGenerator

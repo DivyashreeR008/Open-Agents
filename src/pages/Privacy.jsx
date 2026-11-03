@@ -1,64 +1,55 @@
-import {
-  ShieldCheck,
-  Lock,
-  Database,
-  Eye,
-  Globe,
-  Mail,
-  RefreshCw,
-  ArrowLeft,
-} from "lucide-react";
+import { ShieldCheck, Lock, Database, Eye, Globe, Mail, RefreshCw, ArrowLeft } from 'lucide-react'
 
 const sections = [
   {
     icon: ShieldCheck,
-    title: "Information We Collect",
+    title: 'Information We Collect',
     content:
-      "OpenAgents collects only the information necessary to operate and improve the platform. This may include account information (when provided), workflow configurations, technical information such as browser type, and anonymous usage statistics.",
+      'OpenAgents collects only the information necessary to operate and improve the platform. This may include account information (when provided), workflow configurations, technical information such as browser type, and anonymous usage statistics.',
   },
   {
     icon: Database,
-    title: "Cookies & Local Storage",
+    title: 'Cookies & Local Storage',
     content:
       "OpenAgents uses your browser's local storage to improve your experience. For example, recently viewed agents and certain user preferences may be stored locally on your device. This information stays in your browser and can be cleared at any time through your browser settings.",
   },
   {
     icon: Eye,
-    title: "How We Use Your Information",
+    title: 'How We Use Your Information',
     content:
-      "Information collected through the platform is used to provide core functionality, improve performance, troubleshoot issues, understand feature usage, and enhance future releases. We do not sell your personal information.",
+      'Information collected through the platform is used to provide core functionality, improve performance, troubleshoot issues, understand feature usage, and enhance future releases. We do not sell your personal information.',
   },
   {
     icon: Lock,
-    title: "Data Security",
+    title: 'Data Security',
     content:
-      "Reasonable technical and organizational safeguards are implemented to protect information from unauthorized access, disclosure, or misuse. While no online service can guarantee absolute security, we continuously work to strengthen our security practices.",
+      'Reasonable technical and organizational safeguards are implemented to protect information from unauthorized access, disclosure, or misuse. While no online service can guarantee absolute security, we continuously work to strengthen our security practices.',
   },
   {
     icon: ShieldCheck,
-    title: "Your Privacy Rights",
+    title: 'Your Privacy Rights',
     content:
-      "You may clear browser-stored data, including local storage, at any time using your browser settings. Where applicable, users may request access to, correction of, or deletion of personal information collected by the platform.",
+      'You may clear browser-stored data, including local storage, at any time using your browser settings. Where applicable, users may request access to, correction of, or deletion of personal information collected by the platform.',
   },
   {
     icon: Globe,
-    title: "Third-Party Services",
+    title: 'Third-Party Services',
     content:
-      "OpenAgents may integrate with third-party AI providers, APIs, or external services. Those services operate under their own privacy policies and terms, and users should review them before sharing information.",
+      'OpenAgents may integrate with third-party AI providers, APIs, or external services. Those services operate under their own privacy policies and terms, and users should review them before sharing information.',
   },
   {
     icon: RefreshCw,
-    title: "Policy Updates",
+    title: 'Policy Updates',
     content:
       "This Privacy Policy may be updated periodically to reflect new features, improvements, or legal requirements. The 'Last Updated' date at the top of this page indicates the most recent revision.",
   },
   {
     icon: Mail,
-    title: "Contact Us",
+    title: 'Contact Us',
     content:
-      "If you have questions about this Privacy Policy or how your information is handled, please contact the project maintainers by opening an issue or discussion on the official GitHub repository.",
+      'If you have questions about this Privacy Policy or how your information is handled, please contact the project maintainers by opening an issue or discussion on the official GitHub repository.',
   },
-];
+]
 
 import LegalDoc from '../components/layout/LegalDoc'
 import { useDocumentTitle } from '../lib/useDocumentTitle'

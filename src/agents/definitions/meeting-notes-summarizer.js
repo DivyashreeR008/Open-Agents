@@ -1,40 +1,39 @@
 export default {
-  id: "meeting-notes-summarizer",
-  createdAt: "2025-05-06",
-  name: "Meeting Notes Summarizer",
+  id: 'meeting-notes-summarizer',
+  createdAt: '2025-05-06',
+  name: 'Meeting Notes Summarizer',
   description:
-    "Turns raw meeting notes or transcripts into a clean summary with decisions, action items, and owners.",
-  category: "Productivity",
-  icon: "ClipboardList",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Turns raw meeting notes or transcripts into a clean summary with decisions, action items, and owners.',
+  category: 'Productivity',
+  icon: 'ClipboardList',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     notes:
-      "- Discussed the new dashboard layout\n- Sarah thinks we should use a sidebar instead of top nav\n- Budget for Q3 is approved, extra $10k for marketing\n- Action: Mike to update the Figma by Wednesday\n- Action: Priya to send the budget breakdown to the board",
-    meetingTitle: "Weekly Design & Budget Sync",
-    attendees: "Sarah, Mike, Priya, David",
+      '- Discussed the new dashboard layout\n- Sarah thinks we should use a sidebar instead of top nav\n- Budget for Q3 is approved, extra $10k for marketing\n- Action: Mike to update the Figma by Wednesday\n- Action: Priya to send the budget breakdown to the board',
+    meetingTitle: 'Weekly Design & Budget Sync',
+    attendees: 'Sarah, Mike, Priya, David',
   },
   inputs: [
     {
-      id: "notes",
-      label: "Raw meeting notes or transcript",
-      type: "textarea",
-      placeholder:
-        "Paste your raw notes, transcript, or bullet points here...",
+      id: 'notes',
+      label: 'Raw meeting notes or transcript',
+      type: 'textarea',
+      placeholder: 'Paste your raw notes, transcript, or bullet points here...',
       required: true,
     },
     {
-      id: "meetingTitle",
-      label: "Meeting title (optional)",
-      type: "text",
-      placeholder: "e.g. Q2 Planning Sync",
+      id: 'meetingTitle',
+      label: 'Meeting title (optional)',
+      type: 'text',
+      placeholder: 'e.g. Q2 Planning Sync',
     },
     {
-      id: "attendees",
-      label: "Attendees (optional)",
-      type: "text",
-      placeholder: "e.g. Alex, Priya, Rahul",
+      id: 'attendees',
+      label: 'Attendees (optional)',
+      type: 'text',
+      placeholder: 'e.g. Alex, Priya, Rahul',
     },
   ],
   systemPrompt: `You are an expert at turning messy meeting notes and transcripts into clean, professional summaries.
@@ -64,5 +63,5 @@ Rules:
 - Keep the Summary concise — executives should be able to read it in 10 seconds
 - Do not add information that was not in the original notes
 - Use plain language, no jargon`,
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

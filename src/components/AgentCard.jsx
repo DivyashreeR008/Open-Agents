@@ -130,7 +130,11 @@ export default function AgentCard({ agent, variant = 'grid', index = null }) {
             {index == null ? '—' : String(index).padStart(3, '0')}
           </span>
 
-          <IconComponent size={14} className="shrink-0 text-zinc-400 dark:text-text-muted" aria-hidden="true" />
+          <IconComponent
+            size={14}
+            className="shrink-0 text-zinc-400 dark:text-text-muted"
+            aria-hidden="true"
+          />
 
           <span className="w-44 shrink-0 truncate text-[13.5px] font-medium text-zinc-900 dark:text-text-primary sm:w-60">
             {name}
@@ -179,9 +183,7 @@ export default function AgentCard({ agent, variant = 'grid', index = null }) {
             </h3>
             <div className="mt-1 flex items-center gap-1.5">
               <span className="eyebrow truncate">{agent?.category}</span>
-              {isWithinLast7Days(agent?.createdAt) && (
-                <span className="badge">new</span>
-              )}
+              {isWithinLast7Days(agent?.createdAt) && <span className="badge">new</span>}
             </div>
           </div>
 

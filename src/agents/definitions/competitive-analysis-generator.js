@@ -1,54 +1,50 @@
 export default {
-  id: "competitive-analysis-generator",
-  createdAt: "2025-05-06",
-  name: "Competitive Analysis Generator",
+  id: 'competitive-analysis-generator',
+  createdAt: '2025-05-06',
+  name: 'Competitive Analysis Generator',
   description:
-    "Name your product and competitors to get a structured competitive analysis with feature comparisons, positioning, and strategic recommendations.",
-  category: "Business",
-  icon: "Target",
-  provider: "any",
-  defaultProvider: "openai",
-  model: "gpt-4o",
+    'Name your product and competitors to get a structured competitive analysis with feature comparisons, positioning, and strategic recommendations.',
+  category: 'Business',
+  icon: 'Target',
+  provider: 'any',
+  defaultProvider: 'openai',
+  model: 'gpt-4o',
   exampleInputs: {
     product:
       "A privacy-focused browser extension that automatically blocks all trackers and provides a 'clean' version of news articles without ads or clickbait.",
-    competitors: "uBlock Origin, Brave Browser, Pocket, Reader Mode",
-    industry: "Consumer Privacy / Productivity",
-    analysisDepth: "Detailed analysis",
+    competitors: 'uBlock Origin, Brave Browser, Pocket, Reader Mode',
+    industry: 'Consumer Privacy / Productivity',
+    analysisDepth: 'Detailed analysis',
   },
   inputs: [
     {
-      id: "product",
-      label: "Your product or idea",
-      type: "textarea",
+      id: 'product',
+      label: 'Your product or idea',
+      type: 'textarea',
       placeholder:
-        "e.g. A project management tool for remote teams that focuses on async communication and automatic status updates.",
+        'e.g. A project management tool for remote teams that focuses on async communication and automatic status updates.',
       required: true,
     },
     {
-      id: "competitors",
-      label: "Known competitors",
-      type: "textarea",
+      id: 'competitors',
+      label: 'Known competitors',
+      type: 'textarea',
       placeholder:
-        "e.g. Asana, Monday.com, Linear, Notion. Leave blank if you want the AI to identify competitors.",
+        'e.g. Asana, Monday.com, Linear, Notion. Leave blank if you want the AI to identify competitors.',
     },
     {
-      id: "industry",
-      label: "Industry or market",
-      type: "text",
-      placeholder: "e.g. B2B SaaS, EdTech, HealthTech, E-commerce",
+      id: 'industry',
+      label: 'Industry or market',
+      type: 'text',
+      placeholder: 'e.g. B2B SaaS, EdTech, HealthTech, E-commerce',
       required: true,
     },
     {
-      id: "analysisDepth",
-      label: "Analysis depth",
-      type: "select",
-      options: [
-        "Quick overview",
-        "Detailed analysis",
-        "Deep dive with strategy",
-      ],
-      defaultValue: "Detailed analysis",
+      id: 'analysisDepth',
+      label: 'Analysis depth',
+      type: 'select',
+      options: ['Quick overview', 'Detailed analysis', 'Deep dive with strategy'],
+      defaultValue: 'Detailed analysis',
       required: true,
     },
   ],
@@ -116,5 +112,5 @@ Rules:
 - Feature comparisons must be fair — don't bias toward the user's product
 - Strategic recommendations must be specific and actionable
 - Be honest about vulnerabilities — sugar-coating helps nobody`,
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

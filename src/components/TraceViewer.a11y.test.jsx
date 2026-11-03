@@ -13,7 +13,9 @@ const trace = {
 describe('TraceViewer timeline segments', () => {
   it('are keyboard focusable with an accessible name', () => {
     render(<TraceViewer trace={trace} />)
-    const seg = screen.getAllByRole('img').find((el) => el.getAttribute('aria-label')?.startsWith('Plan'))
+    const seg = screen
+      .getAllByRole('img')
+      .find((el) => el.getAttribute('aria-label')?.startsWith('Plan'))
     expect(seg).toHaveAttribute('tabindex', '0')
   })
 
@@ -28,7 +30,9 @@ describe('TraceViewer timeline segments', () => {
   it('shows the step duration on tap/click', async () => {
     const user = userEvent.setup()
     render(<TraceViewer trace={trace} />)
-    const seg = screen.getAllByRole('img').find((el) => el.getAttribute('aria-label')?.startsWith('Write'))
+    const seg = screen
+      .getAllByRole('img')
+      .find((el) => el.getAttribute('aria-label')?.startsWith('Write'))
     await user.click(seg)
     expect(document.querySelector('[aria-live="polite"]').textContent).toMatch(/^Write:/)
   })

@@ -37,27 +37,48 @@ const TASK_REASONS = {
 export function buildRecommendationReasons(agent, preferences = {}, matchedSignals = {}) {
   const reasons = []
   const goal = GOAL_OPTIONS.find((option) => option.id === preferences.primaryGoal)
-  if (matchedSignals.exactCategory || matchedSignals.goalCategory || matchedSignals.taskTypes?.length) {
+  if (
+    matchedSignals.exactCategory ||
+    matchedSignals.goalCategory ||
+    matchedSignals.taskTypes?.length
+  ) {
     reasons.push(GOAL_REASONS[preferences.primaryGoal] || 'Matches your selected workflow.')
   }
-  if (matchedSignals.goalCategory && agent?.category) reasons.push(`Listed in ${agent.category}, a category related to this goal.`)
+  if (matchedSignals.goalCategory && agent?.category)
+    reasons.push(`Listed in ${agent.category}, a category related to this goal.`)
   matchedSignals.taskTypes?.forEach((taskType) => {
     if (TASK_REASONS[taskType]) reasons.push(TASK_REASONS[taskType])
   })
   matchedSignals.capabilities?.forEach((id) => {
     const preference = EXTRA_PREFERENCE_OPTIONS.find((option) => option.id === id)
-    if (preference) reasons.push(`Its metadata suggests relevance to your ${preference.label.toLowerCase()} preference.`)
+    if (preference)
+      reasons.push(
+        `Its metadata suggests relevance to your ${preference.label.toLowerCase()} preference.`
+      )
   })
   if (matchedSignals.provider === 'exact') reasons.push('Aligns with your preferred provider.')
-  if (matchedSignals.provider === 'compatible') reasons.push('Uses flexible provider metadata compatible with your preference.')
-  if (matchedSignals.freeTextTerms?.length) reasons.push(`Matched terms from your goal: ${matchedSignals.freeTextTerms.slice(0, 3).join(', ')}.`)
-  if (matchedSignals.preference === 'fast') reasons.push('Its focused scope aligns with your fast, lightweight preference.')
-  if (matchedSignals.preference === 'capable') reasons.push('Its detailed scope aligns with your capability preference.')
-  if (matchedSignals.experience) reasons.push(`Its metadata aligns with your ${matchedSignals.experience} guidance preference.`)
-  if (!reasons.length && goal && agent?.category) reasons.push(`Listed in ${agent.category}; this is one of the closest available matches.`)
-  if (reasons.length < 3 && agent?.category && !reasons.some((reason) => reason.includes(`Listed in ${agent.category}`))) {
+  if (matchedSignals.provider === 'compatible')
+    reasons.push('Uses flexible provider metadata compatible with your preference.')
+  if (matchedSignals.freeTextTerms?.length)
+    reasons.push(
+      `Matched terms from your goal: ${matchedSignals.freeTextTerms.slice(0, 3).join(', ')}.`
+    )
+  if (matchedSignals.preference === 'fast')
+    reasons.push('Its focused scope aligns with your fast, lightweight preference.')
+  if (matchedSignals.preference === 'capable')
+    reasons.push('Its detailed scope aligns with your capability preference.')
+  if (matchedSignals.experience)
+    reasons.push(`Its metadata aligns with your ${matchedSignals.experience} guidance preference.`)
+  if (!reasons.length && goal && agent?.category)
+    reasons.push(`Listed in ${agent.category}; this is one of the closest available matches.`)
+  if (
+    reasons.length < 3 &&
+    agent?.category &&
+    !reasons.some((reason) => reason.includes(`Listed in ${agent.category}`))
+  ) {
     reasons.push(`Agent metadata identifies its focus as ${agent.category}.`)
   }
-  if (reasons.length < 3 && agent?.description) reasons.push('Its published description is relevant to the selected workflow.')
+  if (reasons.length < 3 && agent?.description)
+    reasons.push('Its published description is relevant to the selected workflow.')
   return [...new Set(reasons)].slice(0, 4)
 }

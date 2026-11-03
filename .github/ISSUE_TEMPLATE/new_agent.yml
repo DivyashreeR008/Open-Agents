@@ -1,7 +1,7 @@
 name: New Agent Proposal
 description: Suggest a new agent to add to Open-Agents
-title: "[Agent]: "
-labels: ["new-agent"]
+title: '[Agent]: '
+labels: ['new-agent']
 body:
   - type: markdown
     attributes:

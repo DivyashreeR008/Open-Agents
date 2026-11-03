@@ -1,7 +1,8 @@
 export default {
   id: 'git-branch-naming-generator',
   name: 'Git Branch Naming Generator',
-  description: 'Generate 3-5 clean, consistent branch name options from a ticket number, title, and branch type following common conventions like feature/ILA-123-add-login-page.',
+  description:
+    'Generate 3-5 clean, consistent branch name options from a ticket number, title, and branch type following common conventions like feature/ILA-123-add-login-page.',
   category: 'Engineering',
   icon: 'GitBranch',
   provider: 'any',
@@ -61,6 +62,3 @@ feature/ILA-123-login-oauth-support
 Brief explanation of the naming choices made.`,
   outputType: 'markdown',
 }
-
-
-

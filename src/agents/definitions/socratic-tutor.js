@@ -1,30 +1,31 @@
 export default {
-  id: "socratic-tutor",
-  createdAt: "2026-10-12",
-  name: "Socratic Tutor",
+  id: 'socratic-tutor',
+  createdAt: '2026-10-12',
+  name: 'Socratic Tutor',
   description:
-    "Bring a topic you want to understand deeply. This tutor only asks questions — never gives answers — until you derive it yourself.",
-  category: "Education",
-  icon: "HelpCircle",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Bring a topic you want to understand deeply. This tutor only asks questions — never gives answers — until you derive it yourself.',
+  category: 'Education',
+  icon: 'HelpCircle',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    topic: "Why does ice float on water?",
-    currentUnderstanding: "I know ice is less dense but I don't know why, since solids are usually denser than liquids.",
+    topic: 'Why does ice float on water?',
+    currentUnderstanding:
+      "I know ice is less dense but I don't know why, since solids are usually denser than liquids.",
   },
   inputs: [
     {
-      id: "topic",
-      label: "Topic to explore",
-      type: "text",
+      id: 'topic',
+      label: 'Topic to explore',
+      type: 'text',
       placeholder: "e.g. How inflation works, Bayes' theorem, why the sky is blue",
       required: true,
     },
     {
-      id: "currentUnderstanding",
-      label: "What you already believe (optional)",
-      type: "textarea",
+      id: 'currentUnderstanding',
+      label: 'What you already believe (optional)',
+      type: 'textarea',
       placeholder: "e.g. Your current take — including the parts you're unsure about",
     },
   ],
@@ -60,6 +61,6 @@ Rules:
 - If the topic is a math calculation, ask for the next step, not the result
 - Keep the whole response short enough that the student acts instead
   of scrolling`,
-  outputType: "markdown",
-  suggestedChainFrom: ["eli5-explainer", "math-problem-solver"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['eli5-explainer', 'math-problem-solver'],
+}

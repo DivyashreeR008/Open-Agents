@@ -1,40 +1,37 @@
 export default {
-  id: "account-plan-builder",
-  createdAt: "2026-10-12",
-  name: "Account Plan Builder",
-  description:
-    "Build key-account plans: org maps, whitespace, plays per quarter.",
-  category: "Sales",
-  icon: "Building2",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'account-plan-builder',
+  createdAt: '2026-10-12',
+  name: 'Account Plan Builder',
+  description: 'Build key-account plans: org maps, whitespace, plays per quarter.',
+  category: 'Sales',
+  icon: 'Building2',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    account: "Globex Manufacturing, 500 employees, using our reporting module in two plants",
-    arr: "$85k current ARR",
-    contacts: "Champion: Dana (Ops). Economic buyer: Priya (CFO). Unknown: IT security contact.",
+    account: 'Globex Manufacturing, 500 employees, using our reporting module in two plants',
+    arr: '$85k current ARR',
+    contacts: 'Champion: Dana (Ops). Economic buyer: Priya (CFO). Unknown: IT security contact.',
   },
   inputs: [
     {
-      id: "account",
-      label: "Account background",
-      type: "textarea",
-      placeholder:
-        "e.g. Globex Manufacturing, 500 employees, using reporting module in two plants",
+      id: 'account',
+      label: 'Account background',
+      type: 'textarea',
+      placeholder: 'e.g. Globex Manufacturing, 500 employees, using reporting module in two plants',
       required: true,
     },
     {
-      id: "arr",
-      label: "Current ARR or spend",
-      type: "text",
-      placeholder: "e.g. $85k current ARR",
+      id: 'arr',
+      label: 'Current ARR or spend',
+      type: 'text',
+      placeholder: 'e.g. $85k current ARR',
     },
     {
-      id: "contacts",
-      label: "Known contacts",
-      type: "textarea",
-      placeholder:
-        "e.g. Champion: Dana (Ops). Economic buyer: Priya (CFO). Unknown: IT security.",
+      id: 'contacts',
+      label: 'Known contacts',
+      type: 'textarea',
+      placeholder: 'e.g. Champion: Dana (Ops). Economic buyer: Priya (CFO). Unknown: IT security.',
     },
   ],
   systemPrompt: `You are a strategic account planner who turns scattered
@@ -66,6 +63,6 @@ Rules:
 - Do not invent metrics, quotes, reviews, or org details
 - Mark every assumption as an assumption to verify
 - Keep plays concrete with a single next action each`,
-  outputType: "markdown",
-  suggestedChainFrom: ["competitive-analysis-generator", "meeting-notes-summarizer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['competitive-analysis-generator', 'meeting-notes-summarizer'],
+}

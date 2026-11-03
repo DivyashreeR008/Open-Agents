@@ -41,9 +41,7 @@ export default function WorkflowBuilder() {
   useEffect(() => {
     if (!hasResolvedPreselected && agents.length > 0 && location.state?.preselectedAgents) {
       const preselected = location.state.preselectedAgents
-      const loaded = preselected
-        .map((id) => agents.find((a) => a.id === id))
-        .filter(Boolean)
+      const loaded = preselected.map((id) => agents.find((a) => a.id === id)).filter(Boolean)
       if (loaded.length > 0) {
         setSelectedAgents(loaded)
       }
@@ -68,9 +66,10 @@ export default function WorkflowBuilder() {
   const availableAgents = agents.filter((a) => !selectedIds.has(a.id))
 
   // Filter agents based on search query
-  const filteredAgents = availableAgents.filter((agent) =>
-    agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    agent.category.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredAgents = availableAgents.filter(
+    (agent) =>
+      agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      agent.category.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   const {
@@ -160,8 +159,8 @@ export default function WorkflowBuilder() {
       {location.state?.preselectedAgents && (
         <div className="mb-4 flex items-center gap-3 border px-4 py-3 animate-fade-in dark:bg-zinc-500/5 dark:border-zinc-500/20 bg-zinc-50 border-zinc-200">
           <p className="text-sm dark:text-text-secondary text-gray-700 leading-snug">
-            <strong className="dark:text-text-primary text-gray-900">Suite imported!</strong>{' '}
-            We've pre-loaded your custom suite agents. Add, remove or reorder them before saving.
+            <strong className="dark:text-text-primary text-gray-900">Suite imported!</strong> We've
+            pre-loaded your custom suite agents. Add, remove or reorder them before saving.
           </p>
         </div>
       )}
@@ -184,7 +183,8 @@ export default function WorkflowBuilder() {
       {/* Description */}
       <div className="mb-6">
         <label className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1.5">
-          Description <span className="dark:text-text-muted text-gray-400 font-normal">(optional)</span>
+          Description{' '}
+          <span className="dark:text-text-muted text-gray-400 font-normal">(optional)</span>
         </label>
         <div className="relative">
           <textarea
@@ -261,7 +261,10 @@ export default function WorkflowBuilder() {
                     <div className="flex justify-center my-1">
                       <div className="flex flex-col items-center gap-0.5">
                         <div className="w-px h-2 dark:bg-border bg-gray-200" />
-                        <ArrowRight size={12} className="dark:text-text-muted text-gray-400 rotate-90" />
+                        <ArrowRight
+                          size={12}
+                          className="dark:text-text-muted text-gray-400 rotate-90"
+                        />
                         <div className="text-[9px] dark:text-text-muted text-gray-400 font-medium tracking-wide">
                           output feeds in
                         </div>
@@ -371,7 +374,10 @@ export default function WorkflowBuilder() {
                   {agent.name}
                 </span>
                 {index < selectedAgents.length - 1 && (
-                  <ArrowRight size={12} className="dark:text-text-muted text-gray-400 flex-shrink-0" />
+                  <ArrowRight
+                    size={12}
+                    className="dark:text-text-muted text-gray-400 flex-shrink-0"
+                  />
                 )}
               </span>
             ))}
@@ -394,13 +400,13 @@ export default function WorkflowBuilder() {
             <div className="flex justify-between">
               <span className="dark:text-text-muted text-gray-500">Title</span>
               <span className="font-medium dark:text-text-primary text-gray-900 max-w-[60%] text-right break-words">
-                {title.trim() || "Not provided"}
+                {title.trim() || 'Not provided'}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="dark:text-text-muted text-gray-500">Description</span>
               <span className="font-medium dark:text-text-primary text-gray-900 max-w-[60%] text-right break-words">
-                {description.trim() || "Not provided"}
+                {description.trim() || 'Not provided'}
               </span>
             </div>
             <div className="flex justify-between">
@@ -415,7 +421,9 @@ export default function WorkflowBuilder() {
             </div>
             <div className="flex justify-between">
               <span className="dark:text-text-muted text-gray-500">Estimated Runtime</span>
-              <span className="font-medium text-zinc-900 dark:text-white">~{estimatedRuntime} sec</span>
+              <span className="font-medium text-zinc-900 dark:text-white">
+                ~{estimatedRuntime} sec
+              </span>
             </div>
           </div>
         </div>
@@ -438,7 +446,10 @@ export default function WorkflowBuilder() {
         >
           {saving ? (
             <>
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" style={{ borderRadius: '50%' }} />
+              <div
+                className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
+                style={{ borderRadius: '50%' }}
+              />
               Saving...
             </>
           ) : (

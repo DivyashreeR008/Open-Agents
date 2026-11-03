@@ -1,7 +1,8 @@
 const cicdPipelineGenerator = {
   id: 'cicd-pipeline-generator',
   name: 'CI/CD Pipeline Generator',
-  description: 'Describe your stack and deployment target to get a ready-to-use CI/CD pipeline YAML with step-by-step comments.',
+  description:
+    'Describe your stack and deployment target to get a ready-to-use CI/CD pipeline YAML with step-by-step comments.',
   category: 'DevOps',
   icon: 'GitBranch',
   provider: 'any',
@@ -47,7 +48,6 @@ Rules:
 - If test commands are not provided, include a placeholder with a note
 - Output must be a valid YAML file ready to copy-paste into the project`,
   outputType: 'markdown',
-};
+}
 
-export default cicdPipelineGenerator;
-
+export default cicdPipelineGenerator

@@ -154,18 +154,25 @@ function CopyButton({ text, label, icon: Icon = Copy }) {
 
 import { buildPdfHtml } from '../lib/exportPdf'
 
-export default function OutputRenderer({ content, outputType, agentName, systemPrompt, userMessage }) {
+export default function OutputRenderer({
+  content,
+  outputType,
+  agentName,
+  systemPrompt,
+  userMessage,
+}) {
   if (!content) return null
 
   // Normalize content to string for safe text operations (JSON outputs might be objects)
-  const stringContent = typeof content === 'object' && content !== null
-    ? JSON.stringify(content, null, 2)
-    : String(content || '');
+  const stringContent =
+    typeof content === 'object' && content !== null
+      ? JSON.stringify(content, null, 2)
+      : String(content || '')
 
   const shareText = `--- Agent: ${agentName} ---\n\n--- Output ---\n${stringContent}`
 
   const handleDownloadTxt = () => {
-    const timestamp = new Date().toISOString();
+    const timestamp = new Date().toISOString()
     const logText = `==================================================
 AGENT RUN LOG: ${agentName || 'Agent'}
 Timestamp: ${timestamp}
@@ -179,33 +186,35 @@ ${userMessage || 'N/A'}
 
 --- Output ---
 ${stringContent}
-`;
-    const blob = new Blob([logText], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${agentName ? agentName.replace(/\s+/g, '_').toLowerCase() : 'agent'}_run_log.txt`;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  };
+`
+    const blob = new Blob([logText], { type: 'text/plain;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${agentName ? agentName.replace(/\s+/g, '_').toLowerCase() : 'agent'}_run_log.txt`
+    a.click()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+  }
 
   const handleDownloadJson = () => {
-    const timestamp = new Date().toISOString();
+    const timestamp = new Date().toISOString()
     const logObj = {
       agentName: agentName || 'Agent',
       timestamp: timestamp,
       systemPrompt: systemPrompt || '',
       inputs: userMessage || '',
-      output: content || ''
-    };
-    const blob = new Blob([JSON.stringify(logObj, null, 2)], { type: 'application/json;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${agentName ? agentName.replace(/\s+/g, '_').toLowerCase() : 'agent'}_run_log.json`;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  };
+      output: content || '',
+    }
+    const blob = new Blob([JSON.stringify(logObj, null, 2)], {
+      type: 'application/json;charset=utf-8',
+    })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${agentName ? agentName.replace(/\s+/g, '_').toLowerCase() : 'agent'}_run_log.json`
+    a.click()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+  }
 
   const handleExportPdf = () => {
     const html = buildPdfHtml(agentName, stringContent)
@@ -221,28 +230,24 @@ ${stringContent}
   // the output is markdown, otherwise .txt — matches the "Download Output"
   // request in issue #429.
   const handleDownloadOutput = () => {
-    const extension = outputType === 'markdown' ? 'md' : 'txt';
-    const blob = new Blob([stringContent], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${agentName ? agentName.replace(/\s+/g, '_').toLowerCase() : 'agent'}_output.${extension}`;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  };
+    const extension = outputType === 'markdown' ? 'md' : 'txt'
+    const blob = new Blob([stringContent], { type: 'text/plain;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${agentName ? agentName.replace(/\s+/g, '_').toLowerCase() : 'agent'}_output.${extension}`
+    a.click()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+  }
 
   return (
     <div className="animate-fade-in">
       {/* Toolbar */}
       <div className="flex items-center justify-between mb-3">
-        <span className="eyebrow">
-          Output
-        </span>
+        <span className="eyebrow">Output</span>
         <div className="flex items-center gap-2">
           {/* VoiceOutput — reads the response aloud */}
-          <VoiceOutput
-            text={stringContent}
-          />
+          <VoiceOutput text={stringContent} />
 
           <CopyButton text={stringContent} label="Copy output" />
           <CopyButton
@@ -298,7 +303,7 @@ ${stringContent}
               components={{
                 code({ node, className, children, ...props }) {
                   const match = /language-(\w+)/.exec(className || '')
-                  const isInline = !match && ((children?.length ?? 0) < 80);
+                  const isInline = !match && (children?.length ?? 0) < 80
                   return !isInline && match ? (
                     <SyntaxHighlighter
                       style={monoPrism}

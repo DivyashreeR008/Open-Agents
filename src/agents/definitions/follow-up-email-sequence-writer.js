@@ -1,41 +1,44 @@
 export default {
-  id: "follow-up-email-sequence-writer",
-  createdAt: "2026-06-06",
-  name: "Follow-Up Email Sequence Writer",
+  id: 'follow-up-email-sequence-writer',
+  createdAt: '2026-06-06',
+  name: 'Follow-Up Email Sequence Writer',
   description:
-    "Generate a strategic 5-email follow-up sequence spaced over 2 weeks with varied psychological angles based on your product and prospect context.",
-  category: "Sales",
-  icon: "Mail",
-  provider: "any",
-  defaultProvider: "openai",
-  model: "gpt-4o",
+    'Generate a strategic 5-email follow-up sequence spaced over 2 weeks with varied psychological angles based on your product and prospect context.',
+  category: 'Sales',
+  icon: 'Mail',
+  provider: 'any',
+  defaultProvider: 'openai',
+  model: 'gpt-4o',
   exampleInputs: {
-    product: "Nexura - An AI-powered platform that automates lead generation by analyzing social signals and intent data in real-time.",
-    prospectSituation: "VP of Sales at a B2B SaaS company struggling with manual prospecting and low conversion rates from cold outreach.",
-    lastInteraction: "Completed a 30-minute product demo where they liked the automation features but expressed concern over team onboarding timelines."
+    product:
+      'Nexura - An AI-powered platform that automates lead generation by analyzing social signals and intent data in real-time.',
+    prospectSituation:
+      'VP of Sales at a B2B SaaS company struggling with manual prospecting and low conversion rates from cold outreach.',
+    lastInteraction:
+      'Completed a 30-minute product demo where they liked the automation features but expressed concern over team onboarding timelines.',
   },
   inputs: [
     {
-      id: "product",
-      label: "Product",
-      type: "textarea",
-      placeholder: "Describe the product or service being offered...",
+      id: 'product',
+      label: 'Product',
+      type: 'textarea',
+      placeholder: 'Describe the product or service being offered...',
       required: true,
     },
     {
-      id: "prospectSituation",
-      label: "Prospect Situation",
-      type: "textarea",
+      id: 'prospectSituation',
+      label: 'Prospect Situation',
+      type: 'textarea',
       placeholder: "Describe the prospect's current situation, pain points, or needs...",
       required: true,
     },
     {
-      id: "lastInteraction",
-      label: "Last Interaction",
-      type: "textarea",
-      placeholder: "Describe the most recent interaction with the prospect...",
+      id: 'lastInteraction',
+      label: 'Last Interaction',
+      type: 'textarea',
+      placeholder: 'Describe the most recent interaction with the prospect...',
       required: true,
-    }
+    },
   ],
   systemPrompt: `You are an expert sales communication strategist and elite B2B sales copywriter.
 
@@ -60,9 +63,6 @@ Rules:
 - Keep emails short, human, and highly scannable (clear line breaks).
 - Avoid generic corporate clichés, fluff, and fake scarcity tactics.
 - Use clean markdown formatting.`,
-  outputType: "markdown",
-  suggestedChainFrom: [
-    "cold-email-writer",
-    "linkedin-outreach-message-writer",
-  ],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['cold-email-writer', 'linkedin-outreach-message-writer'],
+}

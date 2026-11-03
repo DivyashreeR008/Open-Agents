@@ -63,7 +63,10 @@ export default function RecentRuns({ history, onRerun, onCopy, onDelete, onClear
                   {run.agentName}
                 </h3>
                 <div className="mt-1 flex items-center gap-1.5 font-mono text-[10px] text-zinc-400 dark:text-text-muted">
-                  <span className={`h-1.5 w-1.5 shrink-0 ${providerDot(run.provider)}`} aria-hidden="true" />
+                  <span
+                    className={`h-1.5 w-1.5 shrink-0 ${providerDot(run.provider)}`}
+                    aria-hidden="true"
+                  />
                   <span className="truncate">{run.provider || 'unknown'}</span>
                   <span aria-hidden="true">·</span>
                   <span className="shrink-0">{formatTimeAgo(run.timestamp)}</span>
@@ -85,11 +88,17 @@ export default function RecentRuns({ history, onRerun, onCopy, onDelete, onClear
             </p>
 
             <div className="mt-2.5 flex items-center gap-1.5 border-t border-zinc-100 pt-2 dark:border-border/60">
-              <button onClick={() => onRerun(run)} className="btn-ghost h-6 flex-1 px-2 text-[11px]">
+              <button
+                onClick={() => onRerun(run)}
+                className="btn-ghost h-6 flex-1 px-2 text-[11px]"
+              >
                 <RotateCcw size={11} aria-hidden="true" />
                 Re-run
               </button>
-              <button onClick={() => onCopy(run.output)} className="btn-ghost h-6 flex-1 px-2 text-[11px]">
+              <button
+                onClick={() => onCopy(run.output)}
+                className="btn-ghost h-6 flex-1 px-2 text-[11px]"
+              >
                 <Copy size={11} aria-hidden="true" />
                 Copy
               </button>

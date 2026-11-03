@@ -7,7 +7,12 @@ function getStore(target) {
   return target[STORE]
 }
 
-const StorageConstructor = typeof Storage !== 'undefined' ? Storage : (typeof window !== 'undefined' && window.Storage) ? window.Storage : null
+const StorageConstructor =
+  typeof Storage !== 'undefined'
+    ? Storage
+    : typeof window !== 'undefined' && window.Storage
+      ? window.Storage
+      : null
 if (StorageConstructor && StorageConstructor.prototype) {
   StorageConstructor.prototype.getItem = function (key) {
     const s = getStore(this)

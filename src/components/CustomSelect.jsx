@@ -36,7 +36,9 @@ export default function CustomSelect({
   )
 
   const selectedLabel = selectedOption
-    ? (typeof selectedOption === 'object' ? selectedOption.label : selectedOption)
+    ? typeof selectedOption === 'object'
+      ? selectedOption.label
+      : selectedOption
     : placeholder
 
   const selectedIcon = selectedOption && typeof selectedOption === 'object' && selectedOption.icon
@@ -157,9 +159,10 @@ export default function CustomSelect({
                 className={`w-full flex items-center gap-2 px-3 py-2 text-sm transition-colors duration-150 text-left
                   text-gray-700 dark:text-text-secondary
                   focus:outline-none focus:ring-2 focus:ring-zinc-500/40
-                  ${isSelected
-                    ? accentItem
-                    : 'dark:hover:bg-surface-hover dark:hover:text-text-primary hover:bg-gray-50 hover:text-gray-900'
+                  ${
+                    isSelected
+                      ? accentItem
+                      : 'dark:hover:bg-surface-hover dark:hover:text-text-primary hover:bg-gray-50 hover:text-gray-900'
                   }`}
               >
                 {icon}

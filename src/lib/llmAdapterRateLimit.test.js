@@ -13,7 +13,11 @@ function res(status, body, headers = {}) {
 }
 
 const rateLimitBody = {
-  error: { message: 'Rate limit reached for gpt-4o-mini on tokens per min', type: 'tokens', code: 'rate_limit_exceeded' },
+  error: {
+    message: 'Rate limit reached for gpt-4o-mini on tokens per min',
+    type: 'tokens',
+    code: 'rate_limit_exceeded',
+  },
 }
 const quotaBody = {
   error: {
@@ -39,7 +43,9 @@ function sseStream(chunks) {
   return new ReadableStream({
     start(c) {
       for (const text of chunks) {
-        c.enqueue(enc.encode(`data: ${JSON.stringify({ choices: [{ delta: { content: text } }] })}\n`))
+        c.enqueue(
+          enc.encode(`data: ${JSON.stringify({ choices: [{ delta: { content: text } }] })}\n`)
+        )
       }
       c.enqueue(enc.encode('data: [DONE]\n'))
       c.close()
@@ -62,14 +68,17 @@ describe('classifyProviderError', () => {
   })
 
   it('treats a plain OpenAI 429 as rate_limited', () => {
-    expect(classifyProviderError(429, rateLimitBody.error.message, rateLimitBody)).toBe('rate_limited')
+    expect(classifyProviderError(429, rateLimitBody.error.message, rateLimitBody)).toBe(
+      'rate_limited'
+    )
   })
 
   it('splits Gemini RESOURCE_EXHAUSTED by wording', () => {
     const perMinute = {
       error: {
         status: 'RESOURCE_EXHAUSTED',
-        message: 'Quota exceeded for metric: generate_content_free_tier_requests PerMinute. Please retry in 8.2s.',
+        message:
+          'Quota exceeded for metric: generate_content_free_tier_requests PerMinute. Please retry in 8.2s.',
       },
     }
     const perDay = {
