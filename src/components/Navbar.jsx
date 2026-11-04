@@ -1,18 +1,29 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Sun, Moon, Github, Menu, X, HelpCircle, DollarSign, RotateCcw, Settings, PanelLeft, ExternalLink } from 'lucide-react'
+import { Sun, Moon, Menu, X, HelpCircle, DollarSign, RotateCcw, Settings, PanelLeft, ExternalLink } from 'lucide-react'
+import Github from './icons/Github'
 
 import Logo from './Logo'
 import KeyboardShortcutsModal from './KeyboardShortcutsModal'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 import { useSessionSpend } from '../lib/useSessionSpend'
 
+function updateThemeMeta(isDark) {
+  if (typeof document === 'undefined') return
+  const metaTags = document.querySelectorAll('meta[name="theme-color"]')
+  metaTags.forEach((tag) => {
+    if (!tag.hasAttribute('media')) {
+      tag.setAttribute('content', isDark ? '#000000' : '#ffffff')
+    }
+  })
+}
+
 /**
  * App bar. Deliberately thin (48px) and mostly monochrome: the brand, a
  * global search affordance, and the account/utility actions. Primary
  * navigation lives in the Sidebar so this row never gets crowded.
  */
-export default function Navbar({ sidebarOpen, setSidebarOpen }) {
+export default function Navbar({ sidebarOpen, setSidebarOpen, onOpenCommandPalette }) {
   const [darkMode, setDarkMode] = useState(true)
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -30,8 +41,10 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
     if (saved === 'light') {
       setDarkMode(false)
       document.documentElement.classList.remove('dark')
+      updateThemeMeta(false)
     } else {
       document.documentElement.classList.add('dark')
+      updateThemeMeta(true)
     }
   }, [])
 
@@ -42,25 +55,28 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
     if (next) {
       document.documentElement.classList.add('dark')
       localStorage.setItem('oa_theme', 'dark')
+      updateThemeMeta(true)
     } else {
       document.documentElement.classList.remove('dark')
       localStorage.setItem('oa_theme', 'light')
+      updateThemeMeta(false)
     }
   }
 
-  const focusGlobalSearch = () => {
+  const handleSearchClick = () => {
     setMobileMenuOpen(false)
+    if (onOpenCommandPalette) {
+      onOpenCommandPalette()
+      return
+    }
 
-    // Focus synchronously when the catalogue is already mounted. This keeps
-    // the mobile keyboard opening from the original tap gesture.
+    // Fallback: Focus synchronously when the catalogue is already mounted.
     const input = document.getElementById('agent-search')
     if (input) {
       input.focus()
       return
     }
 
-    // The catalogue is lazy-loaded, so hand focus intent to HomePage via
-    // router state and let it focus once the search field exists.
     navigate('/agents', { state: { focusSearch: true } })
   }
 
@@ -88,19 +104,19 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
 
           <span className="mx-1 hidden h-4 w-px shrink-0 bg-zinc-200 dark:bg-border sm:block" aria-hidden="true" />
 
-          {/* Global search — the primary way into the product */}
+          {/* Global search / Command Palette trigger */}
           <button
             type="button"
-            onClick={focusGlobalSearch}
+            onClick={handleSearchClick}
             className="group hidden h-8 min-w-0 flex-1 max-w-xs items-center gap-2 border px-2.5 text-left transition-colors sm:flex border-zinc-200 bg-zinc-50/60 hover:border-zinc-300 hover:bg-white dark:border-border dark:bg-surface-card/60 dark:hover:border-border-light dark:hover:bg-surface-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500"
-            aria-label="Search agents"
+            aria-label="Search agents, workflows, settings (Ctrl+K)"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 shrink-0 text-zinc-400 dark:text-text-muted" aria-hidden="true">
               <circle cx="11" cy="11" r="7" />
               <path d="m20 20-3.5-3.5" />
             </svg>
-            <span className="truncate text-[13px] text-zinc-400 dark:text-text-muted">Search agents…</span>
-            <span className="kbd ml-auto hidden md:inline-flex">/</span>
+            <span className="truncate text-[13px] text-zinc-400 dark:text-text-muted">Jump to agent, workflow…</span>
+            <span className="kbd ml-auto hidden md:inline-flex font-mono">⌘K</span>
           </button>
 
           <div className="ml-auto flex shrink-0 items-center gap-1">
@@ -200,12 +216,16 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
           }`}
         >
           <div className="p-2">
-            <button type="button" onClick={focusGlobalSearch} className="field flex items-center gap-2 text-left text-zinc-400 dark:text-text-muted">
+            <button
+              type="button"
+              onClick={handleSearchClick}
+              className="field flex items-center gap-2 text-left text-zinc-400 dark:text-text-muted"
+            >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5" aria-hidden="true">
                 <circle cx="11" cy="11" r="7" />
                 <path d="m20 20-3.5-3.5" />
               </svg>
-              Search agents…
+              Jump to agent, workflow…
             </button>
             <div className="mt-2 grid grid-cols-2 gap-1.5">
               <a

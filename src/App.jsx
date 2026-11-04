@@ -3,6 +3,8 @@ import { Routes, Route, Outlet ,Link} from 'react-router-dom'
 import { Loader2 ,MessageSquare} from 'lucide-react'
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
+import CommandPalette from './components/CommandPalette'
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import SkipToMainContentLink, { MAIN_CONTENT_ID } from './components/SkipToMainContentLink'
 import ScrollToTopButton from './components/ScrollToTopButton'
 import ScrollToBottom from './components/ScrollToBottom'
@@ -50,11 +52,15 @@ function PageLoader() {
   )
 }
 
-function MainLayout({ sidebarOpen, setSidebarOpen }) {
+function MainLayout({ sidebarOpen, setSidebarOpen, onOpenCommandPalette }) {
   return (
     <>
       <SkipToMainContentLink />
-      <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <Navbar
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+        onOpenCommandPalette={onOpenCommandPalette}
+      />
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <Link
         to="/feedback"
@@ -83,6 +89,18 @@ function MainLayout({ sidebarOpen, setSidebarOpen }) {
 }
 
 export default function App() {
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false)
+
+  useKeyboardShortcuts({
+    'Control+k': (e) => {
+      e.preventDefault()
+      setCommandPaletteOpen((prev) => !prev)
+    },
+    'Control+K': (e) => {
+      e.preventDefault()
+      setCommandPaletteOpen((prev) => !prev)
+    },
+  })
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
@@ -90,6 +108,10 @@ export default function App() {
       <ScrollToTopButton />
       <ScrollToBottom />
       <RouteAnnouncer />
+      <CommandPalette
+        isOpen={commandPaletteOpen}
+        onClose={() => setCommandPaletteOpen(false)}
+      />
       <ErrorBoundary>
         <Suspense fallback={<PageLoader />}>
           <PageTransition>
@@ -98,6 +120,7 @@ export default function App() {
               <MainLayout
                 sidebarOpen={sidebarOpen}
                 setSidebarOpen={setSidebarOpen}
+                onOpenCommandPalette={() => setCommandPaletteOpen(true)}
               />
             }>
               <Route path="/" element={<PortfolioPage />} />
