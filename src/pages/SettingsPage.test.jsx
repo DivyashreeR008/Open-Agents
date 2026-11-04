@@ -31,8 +31,9 @@ describe('Settings credential state', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Save Keys' }))
 
-    expect(screen.getByText(/No keys were saved/)).toBeInTheDocument()
-    expect(screen.getByText(/Skipped empty fields: OpenAI, Anthropic, Google Gemini, OpenRouter/)).toBeInTheDocument()
+    const status = screen.getByRole('status')
+    expect(status).toHaveTextContent(/No keys were saved/)
+    expect(status).toHaveTextContent(/Skipped empty fields: OpenAI, Anthropic, Google Gemini, OpenRouter/)
     expect(getGlobalKeys().openai).toBe('')
   })
 
@@ -44,8 +45,9 @@ describe('Settings credential state', () => {
     })
     fireEvent.click(screen.getByRole('button', { name: 'Save Keys' }))
 
-    expect(screen.getByText(/Saved keys for OpenAI/)).toBeInTheDocument()
-    expect(screen.getByText(/Skipped empty fields: Anthropic, Google Gemini, OpenRouter/)).toBeInTheDocument()
+    const status = screen.getByRole('status')
+    expect(status).toHaveTextContent(/Saved keys for OpenAI/)
+    expect(status).toHaveTextContent(/Skipped empty fields: Anthropic, Google Gemini, OpenRouter/)
     expect(screen.getByText('Saved')).toBeInTheDocument()
     expect(getGlobalKeys().openai).toBe('sk-openai-test')
   })
@@ -70,7 +72,9 @@ describe('Settings credential state', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Clear OpenAI key' }))
     fireEvent.click(screen.getByRole('button', { name: 'Yes, clear OpenAI key' }))
 
-    await screen.findByText('Key cleared.')
+    await waitFor(() => {
+      expect(screen.getByRole('status')).toHaveTextContent('Key cleared.')
+    })
     expect(getGlobalKeys().openai).toBe('')
     expect(clearAutomationKeys).toHaveBeenCalledWith('openai')
   })
@@ -83,7 +87,7 @@ describe('Settings credential state', () => {
       target: { value: '' },
     })
 
-    expect(screen.getByText('Default provider cleared.')).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('Default provider cleared.')
     expect(getGlobalKeys().defaultProvider).toBe('')
   })
 

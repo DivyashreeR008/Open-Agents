@@ -74,12 +74,17 @@ export default function SettingsPage() {
   const [showKey, setShowKey] = useState({ openai: false, anthropic: false, gemini: false, openrouter: false })
   const [savedStatus, setSavedStatus] = useState({ openai: false, anthropic: false, gemini: false, openrouter: false })
   const [saveMessage, setSaveMessage] = useState('')
+  const [announcement, setAnnouncement] = useState('')
   const [confirmClearAll, setConfirmClearAll] = useState(false)
   const [confirmClearProvider, setConfirmClearProvider] = useState(null)
   const messageTimer = useRef(null)
+  const clearAllTriggerRef = useRef(null)
+  const clearAllConfirmRef = useRef(null)
+  const restoreClearAllFocus = useRef(false)
 
   const showMessage = (message) => {
     if (messageTimer.current) clearTimeout(messageTimer.current)
+    setAnnouncement(message)
     setSaveMessage(message)
     messageTimer.current = setTimeout(() => {
       setSaveMessage('')
@@ -90,6 +95,20 @@ export default function SettingsPage() {
   useEffect(() => () => {
     if (messageTimer.current) clearTimeout(messageTimer.current)
   }, [])
+
+  useEffect(() => {
+    if (confirmClearAll) {
+      clearAllConfirmRef.current?.focus()
+    } else if (restoreClearAllFocus.current) {
+      restoreClearAllFocus.current = false
+      clearAllTriggerRef.current?.focus()
+    }
+  }, [confirmClearAll])
+
+  const closeClearAll = () => {
+    restoreClearAllFocus.current = true
+    setConfirmClearAll(false)
+  }
 
   // ── Load from localStorage on mount
   useEffect(() => {
@@ -112,32 +131,35 @@ export default function SettingsPage() {
   const availableForDefault = getAvailableProviders()
 
   const handleSave = () => {
-    const { stored, skipped } = saveGlobalKeys({ ...keys, defaultProvider })
-    // Refresh saved status from the storage layer so the badges reflect what
-    // was actually written, not what the form happened to contain.
-    const current = getGlobalKeys()
-    setSavedStatus({
-      openai:     !!current.openai,
-      anthropic:  !!current.anthropic,
-      gemini:     !!current.gemini,
-      openrouter: !!current.openrouter,
-    })
+    try {
+      const { stored, skipped } = saveGlobalKeys({ ...keys, defaultProvider })
+      // Refresh saved status from the storage layer so the badges reflect what
+      // was actually written, not what the form happened to contain.
+      const current = getGlobalKeys()
+      setSavedStatus({
+        openai:     !!current.openai,
+        anthropic:  !!current.anthropic,
+        gemini:     !!current.gemini,
+        openrouter: !!current.openrouter,
+      })
 
-    const parts = []
-    if (stored.length > 0) {
-      parts.push(`Saved keys for ${formatProviderList(stored)}.`)
-    } else {
-      parts.push('No keys were saved. Enter a key for at least one provider.')
+      const parts = []
+      if (stored.length > 0) {
+        parts.push(`Saved keys for ${formatProviderList(stored)}.`)
+      } else {
+        parts.push('No keys were saved. Enter a key for at least one provider.')
+      }
+      if (skipped.length > 0) {
+        parts.push(`Skipped empty fields: ${formatProviderList(skipped)}.`)
+      }
+      showMessage(parts.join(' '))
+    } catch {
+      showMessage('Keys could not be saved. Check that browser storage is available and try again.')
     }
-    if (skipped.length > 0) {
-      parts.push(`Skipped empty fields: ${formatProviderList(skipped)}.`)
-    }
-    showMessage(parts.join(' '))
   }
 
   const handleClearKey = async (provider) => {
     clearGlobalKey(provider)
-    const clearedJobs = await clearAutomationKeys(provider)
     setKeys((prev) => ({ ...prev, [provider]: '' }))
     setSavedStatus((prev) => ({ ...prev, [provider]: false }))
     setConfirmClearProvider(null)
@@ -146,26 +168,37 @@ export default function SettingsPage() {
     if (defaultProvider === provider) {
       setDefaultProvider('')
     }
-    showMessage(
-      clearedJobs > 0
-        ? `Key and ${clearedJobs} scheduled job ${clearedJobs === 1 ? 'copy' : 'copies'} cleared.`
-        : 'Key cleared.'
-    )
+
+    try {
+      const clearedJobs = await clearAutomationKeys(provider)
+      showMessage(
+        clearedJobs > 0
+          ? `Key and ${clearedJobs} scheduled job ${clearedJobs === 1 ? 'copy' : 'copies'} cleared.`
+          : 'Key cleared.'
+      )
+    } catch {
+      showMessage('Key cleared, but scheduled job credentials could not be removed.')
+    }
   }
 
   const handleClearAll = async () => {
     clearAllGlobalKeys()
-    const clearedJobs = await clearAutomationKeys()
     setKeys({ openai: '', anthropic: '', gemini: '', openrouter: '' })
     setDefaultProvider('')
     setSavedStatus({ openai: false, anthropic: false, gemini: false, openrouter: false })
-    setConfirmClearAll(false)
     setConfirmClearProvider(null)
-    showMessage(
-      clearedJobs > 0
-        ? `All saved keys and ${clearedJobs} scheduled job ${clearedJobs === 1 ? 'copy' : 'copies'} cleared.`
-        : 'All saved keys and the default provider preference cleared.'
-    )
+    closeClearAll()
+
+    try {
+      const clearedJobs = await clearAutomationKeys()
+      showMessage(
+        clearedJobs > 0
+          ? `All saved keys and ${clearedJobs} scheduled job ${clearedJobs === 1 ? 'copy' : 'copies'} cleared.`
+          : 'All saved keys and the default provider preference cleared.'
+      )
+    } catch {
+      showMessage('All saved keys cleared, but scheduled job credentials could not be removed.')
+    }
   }
 
   const toggleShow = (provider) => {
@@ -174,6 +207,10 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-2xl mx-auto animate-fade-in">
+      <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {announcement}
+      </div>
+
       {/* Page header */}
       <div className="flex items-center gap-3 mb-8">
         <div className="w-10 h-10 bg-zinc-500/10 flex items-center justify-center flex-shrink-0">
@@ -257,6 +294,7 @@ export default function SettingsPage() {
               {/* Input row */}
               <div className="relative">
                 <input
+                  id={`api-key-${p.id}`}
                   aria-label={`${p.label} API key`}
                   type={showKey[p.id] ? 'text' : 'password'}
                   value={keys[p.id]}
@@ -265,11 +303,15 @@ export default function SettingsPage() {
                   className="w-full h-9 pl-3 pr-10 text-xs font-mono transition-colors dark:bg-surface-input dark:border-border dark:text-text-primary dark:placeholder:text-text-muted bg-gray-50 border border-gray-200 text-gray-900 placeholder:text-gray-400 focus:ring-1 focus:ring-zinc-500/40 focus:border-zinc-500 outline-none"
                 />
                 <button
+                  type="button"
                   onClick={() => toggleShow(p.id)}
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 dark:text-text-muted text-gray-400 hover:text-black dark:hover:text-white transition-colors"
-                  aria-label={showKey[p.id] ? 'Hide key' : 'Show key'}
+                  aria-label={`Show ${p.label} API key`}
+                  aria-pressed={showKey[p.id]}
+                  aria-controls={`api-key-${p.id}`}
+                  title={showKey[p.id] ? `Hide ${p.label} API key` : `Show ${p.label} API key`}
                 >
-                  {showKey[p.id] ? <EyeOff size={14} /> : <Eye size={14} />}
+                  {showKey[p.id] ? <EyeOff size={14} aria-hidden="true" /> : <Eye size={14} aria-hidden="true" />}
                 </button>
               </div>
 
@@ -370,7 +412,18 @@ export default function SettingsPage() {
           </div>
 
           {confirmClearAll ? (
-            <div className="flex flex-col gap-3 p-3 border border-zinc-500/20 bg-zinc-500/5">
+            <div
+              id="clear-all-confirmation"
+              role="group"
+              aria-label="Confirm clearing all saved keys"
+              onKeyDown={(event) => {
+                if (event.key === 'Escape') {
+                  event.preventDefault()
+                  closeClearAll()
+                }
+              }}
+              className="flex flex-col gap-3 p-3 border border-zinc-500/20 bg-zinc-500/5"
+            >
               <p className="text-xs font-medium text-zinc-500">
                 Are you sure? This removes all saved provider keys, every credential copy held by
                 scheduled jobs, and your default provider preference. Scheduled jobs will stop
@@ -378,14 +431,15 @@ export default function SettingsPage() {
               </p>
               <div className="flex items-center gap-2">
                 <button
+                  ref={clearAllConfirmRef}
                   onClick={handleClearAll}
                   className="flex items-center gap-1.5 h-8 px-3 text-xs font-semibold text-white bg-zinc-500 hover:bg-zinc-600 transition-colors"
                 >
-                  <Trash2 size={13} />
+                  <Trash2 size={13} aria-hidden="true" />
                   Yes, clear all
                 </button>
                 <button
-                  onClick={() => setConfirmClearAll(false)}
+                  onClick={closeClearAll}
                   className="h-8 px-3 text-xs font-medium transition-colors dark:text-text-secondary dark:hover:bg-surface-hover text-gray-600 hover:bg-gray-100"
                 >
                   Cancel
@@ -394,10 +448,12 @@ export default function SettingsPage() {
             </div>
           ) : (
             <button
+              ref={clearAllTriggerRef}
               onClick={() => setConfirmClearAll(true)}
+              aria-expanded={confirmClearAll}
               className="flex items-center gap-2 h-8 px-3 text-sm font-medium transition-colors text-zinc-500 border border-zinc-500/20 hover:bg-zinc-500/10"
             >
-              <Trash2 size={15} />
+              <Trash2 size={15} aria-hidden="true" />
               Clear All Keys
             </button>
           )}
