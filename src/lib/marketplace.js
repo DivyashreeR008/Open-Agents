@@ -92,13 +92,27 @@ export function loadListings() {
 
 export function normalizeListing(listing) {
   if (!listing || typeof listing !== 'object') return listing
+  const ratingCount =
+    Number.isFinite(listing.ratingCount) && listing.ratingCount > 0
+      ? Math.floor(listing.ratingCount)
+      : 0
+  const ratingTotal =
+    Number.isFinite(listing.ratingTotal) && listing.ratingTotal > 0
+      ? listing.ratingTotal
+      : 0
   return {
     ...listing,
     tags: Array.isArray(listing.tags)
       ? listing.tags.filter((t) => typeof t === 'string')
       : [],
     sanitizedFields: Array.isArray(listing.sanitizedFields) ? listing.sanitizedFields : [],
-    importCount: typeof listing.importCount === 'number' ? listing.importCount : 0,
+    importCount:
+      Number.isFinite(listing.importCount) && listing.importCount > 0
+        ? Math.floor(listing.importCount)
+        : 0,
+    ratingCount,
+    ratingTotal,
+    publishedAt: typeof listing.publishedAt === 'string' ? listing.publishedAt : '',
   }
 }
 
@@ -253,23 +267,40 @@ export function buildDraftAgent(draft, agents) {
 }
 
 /**
- * Rate a listing 1 to 5 stars. One vote per user per agent: re-rating
- * replaces the previous vote instead of adding a second one.
+ * Rate a listing 1 to 5 stars, or retract the current vote with null or 0.
+ * One vote per user per agent: re-rating replaces the previous vote instead of
+ * adding a second one, and retracting removes it from both the vote count and
+ * the running total.
  * @param {string} listingId
- * @param {number} stars 1..5
- * @returns {{ average: number, count: number }|null}
+ * @param {number|null} stars 1..5, or null/0 to remove the vote
+ * @returns {{ average: number, count: number, vote: number|null }|null}
  */
 export function rateAgent(listingId, stars) {
-  const value = Math.min(5, Math.max(1, Math.round(stars)))
   const listings = loadListings()
   const listing = listings.find((l) => l.id === listingId)
   if (!listing) return null
 
   const votes = loadJson(VOTES_KEY, {})
   const previous = votes[listingId]
+  const clearing = stars === null || stars === undefined || Number(stars) === 0
+
+  if (clearing) {
+    if (previous) {
+      listing.ratingTotal = Math.max(0, (listing.ratingTotal ?? 0) - previous)
+      listing.ratingCount = Math.max(0, (listing.ratingCount ?? 0) - 1)
+      delete votes[listingId]
+      saveJson(LISTINGS_KEY, listings)
+      saveJson(VOTES_KEY, votes)
+    }
+    return { average: getAverageRating(listing), count: listing.ratingCount, vote: null }
+  }
+
+  const numeric = Number(stars)
+  if (!Number.isFinite(numeric)) return null
+  const value = Math.min(5, Math.max(1, Math.round(numeric)))
 
   if (previous) {
-    listing.ratingTotal = listing.ratingTotal - previous + value
+    listing.ratingTotal = (listing.ratingTotal ?? 0) - previous + value
   } else {
     listing.ratingTotal = (listing.ratingTotal ?? 0) + value
     listing.ratingCount = (listing.ratingCount ?? 0) + 1
@@ -278,7 +309,7 @@ export function rateAgent(listingId, stars) {
 
   saveJson(LISTINGS_KEY, listings)
   saveJson(VOTES_KEY, votes)
-  return { average: getAverageRating(listing), count: listing.ratingCount }
+  return { average: getAverageRating(listing), count: listing.ratingCount, vote: value }
 }
 
 /**

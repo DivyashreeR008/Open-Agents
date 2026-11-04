@@ -34,35 +34,73 @@ function StarRating({ listing, onRate }) {
   const [hover, setHover] = useState(0)
   const userVote = getUserVote(listing.id)
   const average = getAverageRating(listing)
+  const ratingCount = listing.ratingCount ?? 0
+  const displayValue = hover || average
+  const hasUserVote = userVote !== null && userVote !== undefined
 
   return (
-    <div className="flex items-center gap-1.5">
-      <div className="flex" role="radiogroup" aria-label={`Rate ${listing.name}`}>
-        {[1, 2, 3, 4, 5].map((star) => (
-          <button
-            key={star}
-            role="radio"
-            aria-checked={userVote === star}
-            aria-label={`${star} star${star > 1 ? 's' : ''}`}
-            onClick={() => onRate(listing.id, star)}
-            onMouseEnter={() => setHover(star)}
-            onMouseLeave={() => setHover(0)}
-            className="p-0.5"
-          >
-            <Star
-              size={13}
-              className={
-                star <= (hover || userVote || Math.round(average))
-                  ? 'text-zinc-400 fill-zinc-400'
-                  : 'dark:text-text-muted text-gray-300'
+    <div className="flex flex-wrap items-center gap-1.5">
+      <div
+        className="flex"
+        role="radiogroup"
+        aria-label={`Rate ${listing.name}. Average ${average > 0 ? average.toFixed(1) : 'not rated yet'} from ${ratingCount} rating${ratingCount === 1 ? '' : 's'}.`}
+      >
+        {[1, 2, 3, 4, 5].map((star) => {
+          const fill = Math.max(0, Math.min(1, displayValue - (star - 1)))
+          return (
+            <button
+              key={star}
+              type="button"
+              role="radio"
+              aria-checked={userVote === star}
+              aria-label={`${star} star${star > 1 ? 's' : ''}`}
+              title={
+                userVote === star
+                  ? `Remove your ${star}-star rating`
+                  : `Rate ${star} star${star > 1 ? 's' : ''}`
               }
-            />
-          </button>
-        ))}
+              onClick={() => onRate(listing.id, userVote === star ? null : star)}
+              onMouseEnter={() => setHover(star)}
+              onMouseLeave={() => setHover(0)}
+              className="p-0.5"
+            >
+              <span className="relative block h-[13px] w-[13px]" aria-hidden="true">
+                <Star
+                  size={13}
+                  className="absolute inset-0 dark:text-text-muted text-gray-300"
+                />
+                <span
+                  className="absolute inset-y-0 left-0 overflow-hidden"
+                  style={{ width: `${Math.round(fill * 10000) / 100}%` }}
+                >
+                  <Star
+                    size={13}
+                    className="absolute left-0 top-0 text-zinc-400 fill-zinc-400"
+                  />
+                </span>
+              </span>
+            </button>
+          )
+        })}
       </div>
       <span className="text-[11px] dark:text-text-muted text-gray-400">
-        {average > 0 ? `${average} (${listing.ratingCount})` : 'No ratings'}
+        {average > 0 ? `${average.toFixed(1)} (${ratingCount})` : 'No ratings'}
       </span>
+      {hasUserVote && (
+        <>
+          <span className="text-[10px] font-medium text-zinc-500">
+            You: {userVote}
+          </span>
+          <button
+            type="button"
+            onClick={() => onRate(listing.id, null)}
+            aria-label={`Remove your rating for ${listing.name}`}
+            className="text-[10px] underline text-zinc-500 transition-colors hover:text-black dark:hover:text-white"
+          >
+            Clear
+          </button>
+        </>
+      )}
     </div>
   )
 }

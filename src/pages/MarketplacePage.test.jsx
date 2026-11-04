@@ -199,3 +199,73 @@ describe('MarketplacePage publishing and import', () => {
     expect(screen.getByRole('heading', { name: 'Persisted' })).toBeInTheDocument()
   })
 })
+
+describe('MarketplacePage rating display', () => {
+  beforeEach(() => {
+    localStorage.clear()
+  })
+
+  it('keeps the aggregate and the viewer vote as separate values', () => {
+    localStorage.setItem(
+      LISTINGS_KEY,
+      JSON.stringify([seedListing({ ratingTotal: 11, ratingCount: 3 })])
+    )
+    localStorage.setItem('oa_marketplace_votes', JSON.stringify({ mkt_seed: 2 }))
+
+    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+
+    expect(screen.getByText('3.7 (3)')).toBeInTheDocument()
+    expect(screen.getByText('You: 2')).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: '2 stars' })).toHaveAttribute('aria-checked', 'true')
+    expect(
+      screen.getByRole('radiogroup', { name: /Rate Seed Agent/ })
+    ).toHaveAccessibleName(/Average 3.7 from 3 ratings/)
+  })
+
+  it('toggles the same star off and returns the listing to unrated', async () => {
+    localStorage.setItem(LISTINGS_KEY, JSON.stringify([seedListing()]))
+    const user = userEvent.setup()
+    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+
+    await user.click(screen.getByRole('radio', { name: '4 stars' }))
+    expect(screen.getByText('4.0 (1)')).toBeInTheDocument()
+    expect(screen.getByText('You: 4')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('radio', { name: '4 stars' }))
+    expect(screen.getByText('No ratings')).toBeInTheDocument()
+    expect(screen.queryByText('You: 4')).not.toBeInTheDocument()
+  })
+
+  it('retracts a vote through the explicit clear control', async () => {
+    localStorage.setItem(
+      LISTINGS_KEY,
+      JSON.stringify([seedListing({ ratingTotal: 2, ratingCount: 1 })])
+    )
+    localStorage.setItem('oa_marketplace_votes', JSON.stringify({ mkt_seed: 2 }))
+    const user = userEvent.setup()
+    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+
+    await user.click(
+      screen.getByRole('button', { name: 'Remove your rating for Seed Agent' })
+    )
+
+    expect(screen.getByText('No ratings')).toBeInTheDocument()
+    expect(JSON.parse(localStorage.getItem('oa_marketplace_votes'))).toEqual({})
+  })
+
+  it('draws fractional fills from the same average as the text', () => {
+    localStorage.setItem(
+      LISTINGS_KEY,
+      JSON.stringify([seedListing({ ratingTotal: 22, ratingCount: 5 })])
+    )
+
+    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+
+    const group = screen.getByRole('radiogroup', { name: /Rate Seed Agent/ })
+    const widths = Array.from(group.querySelectorAll('span[style]')).map(
+      (node) => node.style.width
+    )
+    expect(widths).toEqual(['100%', '100%', '100%', '100%', '40%'])
+    expect(screen.getByText('4.4 (5)')).toBeInTheDocument()
+  })
+})
