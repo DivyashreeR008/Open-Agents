@@ -11,7 +11,7 @@ import {
   ChevronDown,
   GitBranch,
 } from 'lucide-react'
-import * as Icons from 'lucide-react'
+import { resolveAgentIcon } from '../lib/agentIcons'
 import { useAgents } from '../lib/useAgents'
 import { useProgressiveList } from '../lib/useProgressiveList'
 import { saveWorkflow } from '../hooks/useWorkflows'
@@ -230,7 +230,7 @@ export default function WorkflowBuilder() {
         {selectedAgents.length > 0 && (
           <div className="mb-4 space-y-2">
             {selectedAgents.map((agent, index) => {
-              const IconComponent = Icons[agent.icon] || Icons.Bot
+              const IconComponent = resolveAgentIcon(agent.icon)
               return (
                 <div key={`${agent.id}-${index}`} className="animate-fade-in">
                   <div className="flex items-center gap-3 p-3 border dark:bg-surface-card dark:border-border bg-white border-gray-200">
@@ -312,7 +312,7 @@ export default function WorkflowBuilder() {
                 ) : (
                   <>
                     {visibleAgentOptions.map((agent) => {
-                      const IconComponent = Icons[agent.icon] || Icons.Bot
+                      const IconComponent = resolveAgentIcon(agent.icon)
                       return (
                         <button
                           key={agent.id}

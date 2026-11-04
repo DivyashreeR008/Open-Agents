@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import * as Icons from 'lucide-react'
 import { ArrowRight } from 'lucide-react'
+import { resolveAgentIcon } from '../../lib/agentIcons'
 
 const providerLabels = { openai: 'OpenAI', anthropic: 'Anthropic', gemini: 'Gemini', openrouter: 'OpenRouter', any: 'Any Provider' }
 const providerClasses = {
@@ -12,7 +12,7 @@ const providerClasses = {
 }
 
 export default function RecommendationResultCard({ rank, agent, result, onOpenAgent }) {
-  const Icon = Icons[agent?.icon] || Icons.Bot
+  const Icon = resolveAgentIcon(agent?.icon)
   const provider = agent?.provider || 'any'
   return (
     <article className=" border bg-white border-gray-200 dark:bg-surface-card dark:border-border p-4 space-y-3">

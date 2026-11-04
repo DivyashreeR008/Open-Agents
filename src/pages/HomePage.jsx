@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { ArrowRight, ChevronDown, Github, Search, X, Star, History, Swords, GitBranch, Lightbulb, LayoutGrid, Rows3, ExternalLink } from 'lucide-react'
+import { ArrowRight, ChevronDown, Search, X, Star, History, Swords, GitBranch, Lightbulb, LayoutGrid, Rows3, ExternalLink } from 'lucide-react'
 import AgentCardSkeleton from '../components/AgentCardSkeleton'
 import AgentCard from '../components/AgentCard'
 import { useFavorites } from '../lib/useFavorites'
@@ -15,6 +15,7 @@ import { DEFAULT_COLLECTION_ID, useCollections } from '../lib/useCollections'
 import RecommendationWizardModal from '../components/recommendation/RecommendationWizardModal'
 import { getGlobalKeys } from '../lib/globalKeys'
 import Logo from '../components/Logo'
+import GitHubIcon from '../components/GitHubIcon'
 
 const providerLabels = {
   any: 'Any Provider',
@@ -690,7 +691,7 @@ export default function HomePage() {
               rel="noopener noreferrer"
               className="btn-secondary w-fit"
             >
-              <Github size={14} aria-hidden="true" />
+              <GitHubIcon size={14} aria-hidden="true" />
               GitHub
               <ExternalLink size={12} aria-hidden="true" />
               <span className="sr-only">(opens in new tab)</span>
