@@ -269,3 +269,98 @@ describe('MarketplacePage rating display', () => {
     expect(screen.getByText('4.4 (5)')).toBeInTheDocument()
   })
 })
+
+describe('MarketplacePage listing order and dates', () => {
+  const seedCatalog = () => {
+    localStorage.setItem(
+      LISTINGS_KEY,
+      JSON.stringify([
+        seedListing({
+          id: 'mkt_alpha',
+          name: 'Alpha',
+          category: 'Research',
+          publishedAt: '2026-03-01T12:00:00.000Z',
+          ratingTotal: 4,
+          ratingCount: 1,
+          importCount: 1,
+        }),
+        seedListing({
+          id: 'mkt_beta',
+          name: 'Beta',
+          category: 'Content Generation',
+          publishedAt: '2026-02-01T12:00:00.000Z',
+          ratingTotal: 5,
+          ratingCount: 1,
+          importCount: 10,
+        }),
+        seedListing({
+          id: 'mkt_gamma',
+          name: 'Gamma',
+          category: 'Research',
+          publishedAt: '2026-01-01T12:00:00.000Z',
+          ratingTotal: 0,
+          ratingCount: 0,
+          importCount: 3,
+        }),
+      ])
+    )
+  }
+
+  const cardNames = () =>
+    screen.getAllByRole('heading', { level: 3 }).map((heading) => heading.textContent)
+
+  beforeEach(() => {
+    localStorage.clear()
+  })
+
+  it('shows a readable publication date on every card', () => {
+    seedCatalog()
+    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+
+    expect(screen.getByText('Published Mar 1, 2026')).toBeInTheDocument()
+    expect(screen.getByText('Published Feb 1, 2026')).toBeInTheDocument()
+    expect(screen.getByText('Published Jan 1, 2026')).toBeInTheDocument()
+  })
+
+  it('orders by newest, oldest, rating and imports with a labelled active order', async () => {
+    seedCatalog()
+    const user = userEvent.setup()
+    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+
+    expect(cardNames()).toEqual(['Alpha', 'Beta', 'Gamma'])
+    expect(screen.getByText('Sorted by newest first.')).toBeInTheDocument()
+
+    await user.selectOptions(screen.getByLabelText('Sort listings'), 'oldest')
+    expect(cardNames()).toEqual(['Gamma', 'Beta', 'Alpha'])
+    expect(screen.getByText('Sorted by oldest first.')).toBeInTheDocument()
+
+    await user.selectOptions(screen.getByLabelText('Sort listings'), 'rating')
+    expect(cardNames()).toEqual(['Beta', 'Alpha', 'Gamma'])
+    expect(screen.getByText('Sorted by highest rated.')).toBeInTheDocument()
+
+    await user.selectOptions(screen.getByLabelText('Sort listings'), 'imports')
+    expect(cardNames()).toEqual(['Beta', 'Gamma', 'Alpha'])
+    expect(screen.getByText('Sorted by most imported.')).toBeInTheDocument()
+  })
+
+  it('keeps sorting active while searching and filtering by category', async () => {
+    seedCatalog()
+    const user = userEvent.setup()
+    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+
+    await user.selectOptions(screen.getByLabelText('Sort listings'), 'imports')
+    await user.type(screen.getByLabelText('Search marketplace'), 'Beta')
+
+    expect(cardNames()).toEqual(['Beta'])
+    expect(screen.getByText('Published Feb 1, 2026')).toBeInTheDocument()
+    expect(screen.getByText('1 of 3 listings')).toBeInTheDocument()
+    expect(screen.getByText('Sorted by most imported.')).toBeInTheDocument()
+
+    await user.clear(screen.getByLabelText('Search marketplace'))
+    await user.selectOptions(screen.getByLabelText('Filter by category'), 'Research')
+    await user.selectOptions(screen.getByLabelText('Sort listings'), 'oldest')
+
+    expect(cardNames()).toEqual(['Gamma', 'Alpha'])
+    expect(screen.getByText('2 of 3 listings')).toBeInTheDocument()
+  })
+})

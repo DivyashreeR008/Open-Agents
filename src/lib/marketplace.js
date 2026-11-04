@@ -18,6 +18,13 @@ export const MARKETPLACE_CATEGORIES = [
   'Research',
 ]
 
+export const MARKETPLACE_SORTS = [
+  { value: 'newest', label: 'Newest first' },
+  { value: 'oldest', label: 'Oldest first' },
+  { value: 'rating', label: 'Highest rated' },
+  { value: 'imports', label: 'Most imported' },
+]
+
 // Config keys that must never be published as-is
 const CREDENTIAL_KEY_PATTERN = /(api[_-]?key|token|secret|password|credential|auth)/i
 
@@ -349,6 +356,69 @@ export function filterListings(listings, { search = '', category = '' } = {}) {
       tags.some((t) => String(t).toLowerCase().includes(q))
     )
   })
+}
+
+function publishedTime(listing) {
+  const parsed = Date.parse(listing?.publishedAt ?? '')
+  return Number.isFinite(parsed) ? parsed : null
+}
+
+function compareNewest(a, b) {
+  const aTime = publishedTime(a)
+  const bTime = publishedTime(b)
+  if (aTime === null && bTime === null) return String(a.id ?? '').localeCompare(String(b.id ?? ''))
+  if (aTime === null) return 1
+  if (bTime === null) return -1
+  if (aTime !== bTime) return bTime - aTime
+  return String(a.id ?? '').localeCompare(String(b.id ?? ''))
+}
+
+function compareOldest(a, b) {
+  const aTime = publishedTime(a)
+  const bTime = publishedTime(b)
+  if (aTime === null && bTime === null) return String(a.id ?? '').localeCompare(String(b.id ?? ''))
+  if (aTime === null) return 1
+  if (bTime === null) return -1
+  if (aTime !== bTime) return aTime - bTime
+  return String(a.id ?? '').localeCompare(String(b.id ?? ''))
+}
+
+function compareByRating(a, b) {
+  const averageDiff = getAverageRating(b) - getAverageRating(a)
+  if (averageDiff !== 0) return averageDiff
+  const countDiff = (b.ratingCount ?? 0) - (a.ratingCount ?? 0)
+  if (countDiff !== 0) return countDiff
+  return compareNewest(a, b)
+}
+
+function compareByImports(a, b) {
+  const importDiff = (b.importCount ?? 0) - (a.importCount ?? 0)
+  if (importDiff !== 0) return importDiff
+  return compareByRating(a, b)
+}
+
+/**
+ * Order listings without mutating the input. Unknown publication dates sort
+ * last in both age directions, and ties fall back to the next meaningful
+ * signal instead of an arbitrary order.
+ * @param {Array<object>} listings
+ * @param {'newest'|'oldest'|'rating'|'imports'} sort
+ * @returns {Array<object>}
+ */
+export function sortListings(listings, sort = 'newest') {
+  if (!Array.isArray(listings)) return []
+  const copy = [...listings]
+  switch (sort) {
+    case 'oldest':
+      return copy.sort(compareOldest)
+    case 'rating':
+      return copy.sort(compareByRating)
+    case 'imports':
+      return copy.sort(compareByImports)
+    case 'newest':
+    default:
+      return copy.sort(compareNewest)
+  }
 }
 
 function loadJson(key, fallback) {

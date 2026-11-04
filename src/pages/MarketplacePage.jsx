@@ -19,6 +19,7 @@ import { useFlashNotice } from '../lib/useFlashNotice'
 import { useDialogFocus } from '../hooks/useDialogFocus'
 import {
   MARKETPLACE_CATEGORIES,
+  MARKETPLACE_SORTS,
   loadListings,
   publishAgent,
   importAgent,
@@ -28,7 +29,21 @@ import {
   getUserVote,
   getAverageRating,
   filterListings,
+  sortListings,
 } from '../lib/marketplace'
+
+const publishedDateFormatter = new Intl.DateTimeFormat('en', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+  timeZone: 'UTC',
+})
+
+function formatPublishedDate(value) {
+  if (!value) return ''
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? '' : publishedDateFormatter.format(date)
+}
 
 function StarRating({ listing, onRate }) {
   const [hover, setHover] = useState(0)
@@ -312,6 +327,9 @@ function ListingCard({ listing, onImport, onRate, imported }) {
         <div className="min-w-0">
           <h3 className="text-sm font-semibold dark:text-text-primary text-gray-900 truncate">{listing.name}</h3>
           <p className="text-[11px] dark:text-text-muted text-gray-400">by {listing.author}</p>
+          <p className="text-[10px] dark:text-text-muted text-gray-400">
+            Published {formatPublishedDate(listing.publishedAt) || 'date unknown'}
+          </p>
         </div>
         <span className="flex-shrink-0 px-2 py-0.5 text-[10px] font-medium bg-zinc-500/10 text-zinc-900 dark:text-white">
           {listing.category}
@@ -369,6 +387,7 @@ export default function MarketplacePage() {
   const [listings, setListings] = useState([])
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('')
+  const [sortOrder, setSortOrder] = useState('newest')
   const [showPublish, setShowPublish] = useState(false)
   const [importedIds, setImportedIds] = useState(getImportedListingIds)
   const [draftCount, setDraftCount] = useState(() => loadDrafts().length)
@@ -379,9 +398,11 @@ export default function MarketplacePage() {
   }, [])
 
   const visible = useMemo(
-    () => filterListings(listings, { search, category }),
-    [listings, search, category]
+    () => sortListings(filterListings(listings, { search, category }), sortOrder),
+    [listings, search, category, sortOrder]
   )
+  const activeSort =
+    MARKETPLACE_SORTS.find((option) => option.value === sortOrder) || MARKETPLACE_SORTS[0]
 
   const handleImport = (listingId) => {
     const draft = importAgent(listingId)
@@ -468,6 +489,16 @@ export default function MarketplacePage() {
             <option key={c} value={c}>{c}</option>
           ))}
         </select>
+        <select
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value)}
+          aria-label="Sort listings"
+          className={inputClass}
+        >
+          {MARKETPLACE_SORTS.map((option) => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
+        </select>
       </div>
 
       {/* Notice */}
@@ -476,6 +507,13 @@ export default function MarketplacePage() {
           <p className="text-xs font-medium text-zinc-400">{notice}</p>
         </div>
       )}
+
+      <div className="flex items-center justify-between gap-2 mb-2 text-[11px] dark:text-text-muted text-gray-400">
+        <p>
+          {visible.length} of {listings.length} listing{listings.length === 1 ? '' : 's'}
+        </p>
+        <p aria-live="polite">Sorted by {activeSort.label.toLowerCase()}.</p>
+      </div>
 
       {/* Grid */}
       {visible.length > 0 ? (
