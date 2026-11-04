@@ -156,7 +156,7 @@ export const suites = [
     color: '#B8B8B8',
     agents: [
       'color-palette-generator',
-      'font-pair-generator',
+      'font-pairing-agent',
       'typography-pairer',
       'accessibility-audit-generator',
       'game_world_lore_generator',
@@ -168,7 +168,7 @@ export const suites = [
           id: 'task',
           question: 'What are you creating?',
           options: [
-            { label: 'UI / Product design', tags: ['color-palette-generator', 'font-pair-generator', 'typography-pairer'] },
+            { label: 'UI / Product design', tags: ['color-palette-generator', 'font-pairing-agent', 'typography-pairer'] },
             { label: 'Accessible experiences', tags: ['accessibility-audit-generator'] },
             { label: 'Game worlds & stories', tags: ['game_world_lore_generator', 'npc-dialogue-lore-generator'] },
           ],
@@ -330,7 +330,7 @@ export const suites = [
     description: 'Build game worlds, check compatibility, and explore your future',
     color: '#787878',
     agents: [
-      'game-system-compatibility-analyser',
+      'game-system-compatibility-agent',
       'game_world_lore_generator',
       'npc-dialogue-lore-generator',
       'future-self-letter-agent',
@@ -341,7 +341,7 @@ export const suites = [
           id: 'task',
           question: 'What sounds fun?',
           options: [
-            { label: 'Check if my PC can run a game', tags: ['game-system-compatibility-analyser'] },
+            { label: 'Check if my PC can run a game', tags: ['game-system-compatibility-agent'] },
             { label: 'Build a game world', tags: ['game_world_lore_generator', 'npc-dialogue-lore-generator'] },
             { label: 'Write a letter to my future self', tags: ['future-self-letter-agent'] },
           ],

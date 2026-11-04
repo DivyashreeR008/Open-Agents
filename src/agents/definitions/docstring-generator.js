@@ -9,6 +9,7 @@ export default {
   provider: "any",
   defaultProvider: "openai",
   model: "gpt-4o",
+  outputType: "markdown",
   exampleInputs: {
     code: "def slugify(text, sep='-'):\n    return sep.join(text.lower().split())",
     language: "Python",
