@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Settings, Eye, EyeOff, Check, X,
@@ -34,7 +34,7 @@ const PROVIDERS = [
     logo:        anthropicLogo,
     description: 'Powers Claude Sonnet and Claude Opus',
     keyUrl:      'https://console.anthropic.com/keys',
-    keyLabel:    'Get free key →',
+    keyLabel:    'Get your key →',
     placeholder: 'sk-ant-...',
   },
   {
@@ -57,6 +57,14 @@ const PROVIDERS = [
   },
 ]
 
+const PROVIDER_LABEL_BY_ID = Object.fromEntries(
+  PROVIDERS.map((provider) => [provider.id, provider.label])
+)
+
+function formatProviderList(providerIds) {
+  return providerIds.map((id) => PROVIDER_LABEL_BY_ID[id] || id).join(', ')
+}
+
 export default function SettingsPage() {
   useDocumentTitle('Settings')
 
@@ -67,6 +75,21 @@ export default function SettingsPage() {
   const [savedStatus, setSavedStatus] = useState({ openai: false, anthropic: false, gemini: false, openrouter: false })
   const [saveMessage, setSaveMessage] = useState('')
   const [confirmClearAll, setConfirmClearAll] = useState(false)
+  const [confirmClearProvider, setConfirmClearProvider] = useState(null)
+  const messageTimer = useRef(null)
+
+  const showMessage = (message) => {
+    if (messageTimer.current) clearTimeout(messageTimer.current)
+    setSaveMessage(message)
+    messageTimer.current = setTimeout(() => {
+      setSaveMessage('')
+      messageTimer.current = null
+    }, 5000)
+  }
+
+  useEffect(() => () => {
+    if (messageTimer.current) clearTimeout(messageTimer.current)
+  }, [])
 
   // ── Load from localStorage on mount
   useEffect(() => {
@@ -89,17 +112,27 @@ export default function SettingsPage() {
   const availableForDefault = getAvailableProviders()
 
   const handleSave = () => {
-    saveGlobalKeys({ ...keys, defaultProvider })
-    // Refresh saved status
-    const stored = getGlobalKeys()
+    const { stored, skipped } = saveGlobalKeys({ ...keys, defaultProvider })
+    // Refresh saved status from the storage layer so the badges reflect what
+    // was actually written, not what the form happened to contain.
+    const current = getGlobalKeys()
     setSavedStatus({
-      openai:     !!stored.openai,
-      anthropic:  !!stored.anthropic,
-      gemini:     !!stored.gemini,
-      openrouter: !!stored.openrouter,
+      openai:     !!current.openai,
+      anthropic:  !!current.anthropic,
+      gemini:     !!current.gemini,
+      openrouter: !!current.openrouter,
     })
-    setSaveMessage('Keys saved successfully')
-    setTimeout(() => setSaveMessage(''), 3000)
+
+    const parts = []
+    if (stored.length > 0) {
+      parts.push(`Saved keys for ${formatProviderList(stored)}.`)
+    } else {
+      parts.push('No keys were saved. Enter a key for at least one provider.')
+    }
+    if (skipped.length > 0) {
+      parts.push(`Skipped empty fields: ${formatProviderList(skipped)}.`)
+    }
+    showMessage(parts.join(' '))
   }
 
   const handleClearKey = async (provider) => {
@@ -107,17 +140,17 @@ export default function SettingsPage() {
     const clearedJobs = await clearAutomationKeys(provider)
     setKeys((prev) => ({ ...prev, [provider]: '' }))
     setSavedStatus((prev) => ({ ...prev, [provider]: false }))
-    // If cleared provider was default, reset default
+    setConfirmClearProvider(null)
+    // clearGlobalKey already removes a preference that pointed at this
+    // provider; mirror that in the form state.
     if (defaultProvider === provider) {
-      clearGlobalKey('defaultProvider')
       setDefaultProvider('')
     }
-    setSaveMessage(
+    showMessage(
       clearedJobs > 0
         ? `Key and ${clearedJobs} scheduled job ${clearedJobs === 1 ? 'copy' : 'copies'} cleared.`
         : 'Key cleared.'
     )
-    setTimeout(() => setSaveMessage(''), 3000)
   }
 
   const handleClearAll = async () => {
@@ -127,10 +160,12 @@ export default function SettingsPage() {
     setDefaultProvider('')
     setSavedStatus({ openai: false, anthropic: false, gemini: false, openrouter: false })
     setConfirmClearAll(false)
-    setSaveMessage(
-      `All saved keys and ${clearedJobs} scheduled job ${clearedJobs === 1 ? 'copy' : 'copies'} cleared.`
+    setConfirmClearProvider(null)
+    showMessage(
+      clearedJobs > 0
+        ? `All saved keys and ${clearedJobs} scheduled job ${clearedJobs === 1 ? 'copy' : 'copies'} cleared.`
+        : 'All saved keys and the default provider preference cleared.'
     )
-    setTimeout(() => setSaveMessage(''), 3000)
   }
 
   const toggleShow = (provider) => {
@@ -184,13 +219,38 @@ export default function SettingsPage() {
                   )}
                 </div>
                 {savedStatus[p.id] && (
-                  <button
-                    onClick={() => handleClearKey(p.id)}
-                    className="flex items-center gap-1 text-[10px] font-medium text-zinc-400 hover:text-zinc-500 transition-colors px-2 py-1 hover:bg-zinc-500/10"
-                  >
-                    <X size={11} />
-                    Clear
-                  </button>
+                  confirmClearProvider === p.id ? (
+                    <div
+                      className="flex flex-wrap items-center justify-end gap-1.5"
+                      role="group"
+                      aria-label={`Confirm clearing ${p.label} key`}
+                    >
+                      <span className="text-[10px] font-medium text-zinc-500">Clear key?</span>
+                      <button
+                        onClick={() => handleClearKey(p.id)}
+                        aria-label={`Yes, clear ${p.label} key`}
+                        className="px-2 py-1 text-[10px] font-semibold text-zinc-700 transition-colors hover:bg-zinc-500/10 dark:text-zinc-200"
+                      >
+                        Yes, clear
+                      </button>
+                      <button
+                        onClick={() => setConfirmClearProvider(null)}
+                        aria-label={`Cancel clearing ${p.label} key`}
+                        className="px-2 py-1 text-[10px] font-medium text-zinc-500 transition-colors hover:bg-zinc-500/10"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setConfirmClearProvider(p.id)}
+                      aria-label={`Clear ${p.label} key`}
+                      className="flex items-center gap-1 text-[10px] font-medium text-zinc-400 transition-colors hover:bg-zinc-500/10 hover:text-zinc-500 px-2 py-1"
+                    >
+                      <X size={11} />
+                      Clear
+                    </button>
+                  )
                 )}
               </div>
 
@@ -274,6 +334,11 @@ export default function SettingsPage() {
                 const val = e.target.value
                 setDefaultProvider(val)
                 saveGlobalKeys({ defaultProvider: val })
+                showMessage(
+                  val
+                    ? `Default provider set to ${PROVIDER_LABEL_BY_ID[val] || val}.`
+                    : 'Default provider cleared.'
+                )
               }}
               className="w-full sm:w-64 h-9 px-3 text-sm transition-colors dark:bg-surface-input dark:border-border dark:text-text-primary bg-gray-50 border border-gray-200 text-gray-900 focus:ring-1 focus:ring-zinc-500/40 focus:border-zinc-500 outline-none"
             >
