@@ -29,6 +29,7 @@ vi.mock('../lib/useAgents', () => {
 
 const LISTINGS_KEY = 'oa_marketplace_listings'
 const DRAFTS_KEY = 'oa_marketplace_drafts'
+const VOTES_KEY = 'oa_marketplace_votes'
 
 const seedListing = (overrides = {}) => ({
   id: 'mkt_seed',
@@ -350,6 +351,40 @@ describe('MarketplacePage rating display', () => {
     )
     expect(widths).toEqual(['100%', '100%', '100%', '100%', '40%'])
     expect(screen.getByText('4.4 (5)')).toBeInTheDocument()
+  })
+
+  it('reads stored votes once for the list instead of once per card render', async () => {
+    localStorage.setItem(
+      LISTINGS_KEY,
+      JSON.stringify([
+        seedListing({ id: 'mkt_one', name: 'First Agent' }),
+        seedListing({ id: 'mkt_two', name: 'Second Agent' }),
+        seedListing({ id: 'mkt_three', name: 'Third Agent' }),
+      ])
+    )
+    localStorage.setItem(
+      VOTES_KEY,
+      JSON.stringify({ mkt_one: 4, mkt_two: 2, mkt_three: 5 })
+    )
+    const getItem = vi.spyOn(Storage.prototype, 'getItem')
+    const user = userEvent.setup()
+
+    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+
+    expect(screen.getByText('You: 4')).toBeInTheDocument()
+    expect(screen.getByText('You: 2')).toBeInTheDocument()
+    expect(screen.getByText('You: 5')).toBeInTheDocument()
+
+    const voteReads = () =>
+      getItem.mock.calls.filter(([key]) => key === VOTES_KEY).length
+    const readsAfterMount = voteReads()
+    expect(readsAfterMount).toBeGreaterThan(0)
+
+    await user.hover(screen.getAllByRole('radio', { name: '5 stars' })[0])
+    await user.type(screen.getByLabelText('Search marketplace'), 'agent')
+    await user.selectOptions(screen.getByLabelText('Sort listings'), 'rating')
+
+    expect(voteReads()).toBe(readsAfterMount)
   })
 
   it('shows a numeric average after re-rating a listing with no stored total', async () => {

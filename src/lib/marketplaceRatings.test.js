@@ -3,6 +3,7 @@ import {
   getAverageRating,
   getUserVote,
   loadListings,
+  loadUserVotes,
   normalizeListing,
   rateAgent,
 } from './marketplace'
@@ -218,5 +219,24 @@ describe('marketplace rating reconciliation', () => {
   it('ignores a corrupt personal vote instead of treating it as a star value', () => {
     localStorage.setItem(VOTES_KEY, JSON.stringify({ mkt_rating: 'five' }))
     expect(getUserVote('mkt_rating')).toBeNull()
+  })
+
+  it('loads all valid votes in one read for list rendering', () => {
+    localStorage.setItem(
+      VOTES_KEY,
+      JSON.stringify({ first: 4, second: '5', third: 0, fourth: 5 })
+    )
+
+    expect(loadUserVotes()).toEqual({ first: 4, fourth: 5 })
+  })
+
+  it('returns an empty vote map when storage is malformed or unavailable', () => {
+    localStorage.setItem(VOTES_KEY, JSON.stringify(['not', 'a', 'map']))
+    expect(loadUserVotes()).toEqual({})
+
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('SecurityError')
+    })
+    expect(loadUserVotes()).toEqual({})
   })
 })

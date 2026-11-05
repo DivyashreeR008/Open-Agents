@@ -26,7 +26,7 @@ import {
   loadDrafts,
   getImportedListingIds,
   rateAgent,
-  getUserVote,
+  loadUserVotes,
   getAverageRating,
   filterListings,
   sortListings,
@@ -45,9 +45,8 @@ function formatPublishedDate(value) {
   return Number.isNaN(date.getTime()) ? '' : publishedDateFormatter.format(date)
 }
 
-function StarRating({ listing, onRate }) {
+function StarRating({ listing, userVote, onRate }) {
   const [hover, setHover] = useState(0)
-  const userVote = getUserVote(listing.id)
   const average = getAverageRating(listing)
   const ratingCount = listing.ratingCount ?? 0
   const displayValue = hover || average
@@ -318,7 +317,7 @@ function PublishModal({ agents, onClose, onPublished }) {
   )
 }
 
-function ListingCard({ listing, onImport, onRate, imported }) {
+function ListingCard({ listing, onImport, onRate, imported, userVote }) {
   return (
     <div
       className=" border p-4 flex flex-col gap-2.5 transition-colors dark:bg-surface-card dark:border-border dark:hover:border-zinc-400 bg-white border-gray-200 hover:border-zinc-400"
@@ -353,7 +352,7 @@ function ListingCard({ listing, onImport, onRate, imported }) {
       )}
 
       <div className="flex items-center justify-between mt-auto pt-1">
-        <StarRating listing={listing} onRate={onRate} />
+        <StarRating listing={listing} userVote={userVote} onRate={onRate} />
         <div className="flex items-center gap-2">
           <span className="text-[11px] dark:text-text-muted text-gray-400">
             {listing.importCount} import{listing.importCount === 1 ? '' : 's'}
@@ -385,6 +384,7 @@ export default function MarketplacePage() {
 
   const { agents } = useAgents()
   const [listings, setListings] = useState([])
+  const [userVotes, setUserVotes] = useState(loadUserVotes)
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('')
   const [sortOrder, setSortOrder] = useState('newest')
@@ -395,6 +395,7 @@ export default function MarketplacePage() {
 
   useEffect(() => {
     setListings(loadListings())
+    setUserVotes(loadUserVotes())
   }, [])
 
   const visible = useMemo(
@@ -408,6 +409,7 @@ export default function MarketplacePage() {
     try {
       const draft = importAgent(listingId)
       setListings(loadListings())
+      setUserVotes(loadUserVotes())
       setImportedIds(getImportedListingIds())
       setDraftCount(loadDrafts().length)
 
@@ -430,6 +432,7 @@ export default function MarketplacePage() {
       )
     } catch {
       setListings(loadListings())
+      setUserVotes(loadUserVotes())
       setImportedIds(getImportedListingIds())
       setDraftCount(loadDrafts().length)
       flash('Import failed because the stored listing could not be read. Refresh the marketplace and try again.')
@@ -439,6 +442,7 @@ export default function MarketplacePage() {
   const handleRate = (listingId, stars) => {
     const outcome = rateAgent(listingId, stars)
     setListings(loadListings())
+    setUserVotes(loadUserVotes())
     if (!outcome) {
       flash('Rating was not saved because browser storage is unavailable or full. Free space or leave private mode, then try again.')
     }
@@ -451,6 +455,7 @@ export default function MarketplacePage() {
     }
     setShowPublish(false)
     setListings(loadListings())
+    setUserVotes(loadUserVotes())
     flash(`Published "${listing.name}" to the marketplace.`)
   }
 
@@ -551,6 +556,7 @@ export default function MarketplacePage() {
               onImport={handleImport}
               onRate={handleRate}
               imported={importedIds.has(listing.id)}
+              userVote={userVotes[listing.id] ?? null}
             />
           ))}
         </div>

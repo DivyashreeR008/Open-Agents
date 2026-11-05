@@ -428,6 +428,17 @@ export function rateAgent(listingId, stars) {
 }
 
 /**
+ * Every valid personal vote, keyed by listing id. Callers that render a list
+ * of cards should read this once instead of asking storage per card.
+ * @returns {Record<string, number>}
+ */
+export function loadUserVotes() {
+  return Object.fromEntries(
+    Object.entries(loadVotes()).filter(([, vote]) => isRating(vote))
+  )
+}
+
+/**
  * The current user's vote for a listing, or null.
  * @param {string} listingId
  * @returns {number|null}
