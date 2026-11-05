@@ -7,6 +7,7 @@ import Logo from './Logo'
 import KeyboardShortcutsModal from './KeyboardShortcutsModal'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 import { useSessionSpend } from '../lib/useSessionSpend'
+import { formatCost } from '../lib/formatting'
 
 /**
  * App bar. Deliberately thin (48px) and mostly monochrome: the brand, a
@@ -133,7 +134,7 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
                   aria-label="Session spend"
                 >
                   <DollarSign size={11} />
-                  {totalSpend.toFixed(2)}
+                  {formatCost(totalSpend, { symbol: false })}
                 </button>
 
                 {showSpendPopup && (
@@ -145,13 +146,13 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
                       </span>
                     </div>
                     <div className="mb-2 font-mono text-lg font-semibold tabular-nums text-zinc-900 dark:text-text-primary">
-                      ${totalSpend.toFixed(4)}
+                      {formatCost(totalSpend)}
                     </div>
                     <div className="mb-2 max-h-32 space-y-1 overflow-y-auto">
                       {runs.slice(0, 10).map((run, i) => (
                         <div key={i} className="flex justify-between font-mono text-[10px] text-zinc-400 dark:text-text-muted">
                           <span className="max-w-[140px] truncate">{run.model || 'Unknown'}</span>
-                          <span className="tabular-nums">${run.totalCost.toFixed(4)}</span>
+                          <span className="tabular-nums">{formatCost(run.totalCost)}</span>
                         </div>
                       ))}
                     </div>

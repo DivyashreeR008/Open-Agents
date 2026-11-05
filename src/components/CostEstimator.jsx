@@ -1,18 +1,6 @@
+import { formatCost } from '../lib/formatting'
 import { useTokenCounter } from '../lib/useTokenCounter'
 import { getPricing, getContextWindow } from '../lib/modelPricing'
-
-function formatCost(cost) {
-  if (cost == null || isNaN(cost)) return '—'
-  if (cost < 0.0001) return '< $0.0001'
-  return `$${cost.toFixed(4)}`
-}
-
-function formatCostShort(cost) {
-  if (cost == null || isNaN(cost)) return '—'
-  if (cost < 0.0001) return '<$0.0001'
-  if (cost < 0.01) return `$${cost.toFixed(4)}`
-  return `$${cost.toFixed(2)}`
-}
 
 export default function CostEstimator({ inputText = '', systemPrompt = '', modelId = '' }) {
   const { tokens: inputTokens } = useTokenCounter(inputText)
@@ -76,7 +64,7 @@ export default function CostEstimator({ inputText = '', systemPrompt = '', model
         <div className="border-t dark:border-border border-gray-200 pt-1.5 mt-1.5 flex justify-between">
           <span className="font-semibold dark:text-text-primary text-gray-900">Estimated Total</span>
           <span className="font-bold dark:text-text-primary text-gray-900 tabular-nums">
-            {formatCostShort(totalCost)}
+            {formatCost(totalCost)}
           </span>
         </div>
       </div>
