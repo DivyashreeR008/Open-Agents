@@ -32,9 +32,14 @@ describe('useDialogFocus', () => {
     const user = userEvent.setup()
     render(<Harness />)
     const opener = screen.getByRole('button', { name: 'Open' })
+    const behind = screen.getByRole('button', { name: 'Behind' })
     await user.click(opener)
 
     expect(screen.getByRole('button', { name: 'Close' })).toHaveFocus()
+    expect(opener).toHaveAttribute('inert')
+    expect(behind).toHaveAttribute('inert')
+    expect(behind).toHaveAttribute('aria-hidden', 'true')
+    expect(screen.getByRole('dialog')).not.toHaveAttribute('inert')
 
     await user.tab()
     await user.tab()
@@ -47,5 +52,8 @@ describe('useDialogFocus', () => {
     fireEvent.keyDown(document.activeElement, { key: 'Escape' })
     expect(screen.queryByRole('dialog')).toBeNull()
     expect(opener).toHaveFocus()
+    expect(opener).not.toHaveAttribute('inert')
+    expect(behind).not.toHaveAttribute('inert')
+    expect(behind).not.toHaveAttribute('aria-hidden')
   })
 })
