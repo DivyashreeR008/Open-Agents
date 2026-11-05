@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   getAverageRating,
   getUserVote,
@@ -32,6 +32,10 @@ function seedListing(overrides = {}) {
 
 beforeEach(() => {
   localStorage.clear()
+})
+
+afterEach(() => {
+  vi.restoreAllMocks()
 })
 
 describe('marketplace rating lifecycle', () => {
@@ -134,5 +138,85 @@ describe('normalizeListing rating fields', () => {
       importCount: 7,
       publishedAt: '2026-01-02T03:04:05.000Z',
     })
+  })
+
+  it('rejects entries that cannot be rendered as a listing', () => {
+    expect(normalizeListing(null)).toBeNull()
+    expect(normalizeListing('not a listing')).toBeNull()
+    expect(normalizeListing(42)).toBeNull()
+    expect(normalizeListing([])).toBeNull()
+    expect(normalizeListing({ name: 'No id' })).toBeNull()
+  })
+
+  it('skips damaged records without discarding the valid ones', () => {
+    const good = { ...seedListing(), id: 'mkt_survivor' }
+    localStorage.setItem(
+      LISTINGS_KEY,
+      JSON.stringify([null, 'broken', 5, [], good, { name: 'No id' }])
+    )
+
+    expect(loadListings().map((listing) => listing.id)).toEqual(['mkt_survivor'])
+  })
+
+  it('resets an aggregate that no set of whole-star ratings could produce', () => {
+    const listing = normalizeListing({
+      id: 'mkt_impossible',
+      ratingTotal: 99,
+      ratingCount: 3,
+    })
+
+    expect(listing).toMatchObject({ ratingTotal: 0, ratingCount: 0 })
+    expect(getAverageRating(listing)).toBe(0)
+    expect(getAverageRating({ ratingTotal: 99, ratingCount: 3 })).toBe(0)
+  })
+})
+
+describe('marketplace rating reconciliation', () => {
+  it('rebuilds a missing total from the stored personal vote before re-rating', () => {
+    localStorage.setItem(
+      LISTINGS_KEY,
+      JSON.stringify([seedListing({ ratingTotal: undefined, ratingCount: 1 })])
+    )
+    localStorage.setItem(VOTES_KEY, JSON.stringify({ mkt_rating: 5 }))
+
+    const outcome = rateAgent('mkt_rating', 3)
+
+    expect(outcome).toEqual({ average: 3, count: 1, vote: 3 })
+    expect(loadListings()[0]).toMatchObject({ ratingTotal: 3, ratingCount: 1 })
+  })
+
+  it('repairs an orphan personal vote when loading listings', () => {
+    localStorage.setItem(
+      LISTINGS_KEY,
+      JSON.stringify([seedListing({ ratingTotal: 0, ratingCount: 0 })])
+    )
+    localStorage.setItem(VOTES_KEY, JSON.stringify({ mkt_rating: 4 }))
+
+    expect(loadListings()[0]).toMatchObject({ ratingTotal: 4, ratingCount: 1 })
+  })
+
+  it('removes votes for listings that are no longer present and invalid votes', () => {
+    localStorage.setItem(LISTINGS_KEY, JSON.stringify([seedListing()]))
+    localStorage.setItem(VOTES_KEY, JSON.stringify({ mkt_rating: 4, removed: 5, bad: 'x' }))
+
+    loadListings()
+
+    expect(JSON.parse(localStorage.getItem(VOTES_KEY))).toEqual({ mkt_rating: 4 })
+  })
+
+  it('does not expose a success result when the aggregate write fails', () => {
+    seedListing()
+    const before = JSON.parse(localStorage.getItem(LISTINGS_KEY))
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('QuotaExceededError')
+    })
+
+    expect(rateAgent('mkt_rating', 5)).toBeNull()
+    expect(JSON.parse(localStorage.getItem(LISTINGS_KEY))).toEqual(before)
+  })
+
+  it('ignores a corrupt personal vote instead of treating it as a star value', () => {
+    localStorage.setItem(VOTES_KEY, JSON.stringify({ mkt_rating: 'five' }))
+    expect(getUserVote('mkt_rating')).toBeNull()
   })
 })

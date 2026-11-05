@@ -405,24 +405,50 @@ export default function MarketplacePage() {
     MARKETPLACE_SORTS.find((option) => option.value === sortOrder) || MARKETPLACE_SORTS[0]
 
   const handleImport = (listingId) => {
-    const draft = importAgent(listingId)
-    if (!draft) return
-    setListings(loadListings())
-    setImportedIds(getImportedListingIds())
-    setDraftCount(loadDrafts().length)
-    flash(
-      draft.pendingCredentialFields.length > 0
-        ? `Imported "${draft.name}". Complete ${draft.pendingCredentialFields.length} credential field(s) in My drafts before running it.`
-        : `Imported "${draft.name}". Open it from My drafts to run it.`
-    )
+    try {
+      const draft = importAgent(listingId)
+      setListings(loadListings())
+      setImportedIds(getImportedListingIds())
+      setDraftCount(loadDrafts().length)
+
+      if (!draft) {
+        flash('Import failed because the listing is no longer available. Refresh the marketplace and try again.')
+        return
+      }
+      if (draft.persisted === false) {
+        flash('Import could not be saved because browser storage is unavailable or full. Free space or leave private mode, then try again.')
+        return
+      }
+      if (draft.alreadyImported) {
+        flash(`"${draft.name}" is already in My drafts. Open it from My drafts to continue.`)
+        return
+      }
+      flash(
+        draft.pendingCredentialFields.length > 0
+          ? `Imported "${draft.name}". Complete ${draft.pendingCredentialFields.length} credential field(s) in My drafts before running it.`
+          : `Imported "${draft.name}". Open it from My drafts to run it.`
+      )
+    } catch {
+      setListings(loadListings())
+      setImportedIds(getImportedListingIds())
+      setDraftCount(loadDrafts().length)
+      flash('Import failed because the stored listing could not be read. Refresh the marketplace and try again.')
+    }
   }
 
   const handleRate = (listingId, stars) => {
-    rateAgent(listingId, stars)
+    const outcome = rateAgent(listingId, stars)
     setListings(loadListings())
+    if (!outcome) {
+      flash('Rating was not saved because browser storage is unavailable or full. Free space or leave private mode, then try again.')
+    }
   }
 
   const handlePublished = (listing) => {
+    if (!listing || listing.persisted === false) {
+      flash('Publishing failed because browser storage is unavailable or full. Free space or leave private mode, then try again.')
+      return
+    }
     setShowPublish(false)
     setListings(loadListings())
     flash(`Published "${listing.name}" to the marketplace.`)

@@ -84,8 +84,8 @@ export function publishAgent(entry) {
   }
   const listings = loadListings()
   listings.unshift(listing)
-  saveJson(LISTINGS_KEY, listings)
-  return listing
+  const persisted = saveJson(LISTINGS_KEY, listings)
+  return { ...listing, persisted }
 }
 
 /**
@@ -94,33 +94,96 @@ export function publishAgent(entry) {
  */
 export function loadListings() {
   const listings = loadJson(LISTINGS_KEY, [])
-  return Array.isArray(listings) ? listings.map(normalizeListing) : []
+  const normalized = Array.isArray(listings)
+    ? listings.map(normalizeListing).filter(Boolean)
+    : []
+  return reconcileListingsWithVotes(normalized)
 }
 
+const isRating = (value) => Number.isInteger(value) && value >= 1 && value <= 5
+
 export function normalizeListing(listing) {
-  if (!listing || typeof listing !== 'object') return listing
-  const ratingCount =
-    Number.isFinite(listing.ratingCount) && listing.ratingCount > 0
-      ? Math.floor(listing.ratingCount)
-      : 0
-  const ratingTotal =
-    Number.isFinite(listing.ratingTotal) && listing.ratingTotal > 0
-      ? listing.ratingTotal
-      : 0
+  if (!listing || typeof listing !== 'object' || Array.isArray(listing)) return null
+  const id = typeof listing.id === 'string' ? listing.id.trim() : ''
+  if (!id) return null
+
+  const rawCount = Number.isFinite(listing.ratingCount) ? Math.floor(listing.ratingCount) : 0
+  const rawTotal = Number.isFinite(listing.ratingTotal) ? listing.ratingTotal : 0
+  const ratingCount = rawCount > 0 ? rawCount : 0
+  // Total must be reachable by whole-star votes. If it is not, reset both
+  // fields rather than render an average that no set of ratings could produce.
+  const aggregateIsPlausible =
+    ratingCount > 0 && rawTotal >= ratingCount && rawTotal <= ratingCount * 5
+  const ratingTotal = aggregateIsPlausible ? rawTotal : 0
+
   return {
     ...listing,
+    id,
+    name:
+      typeof listing.name === 'string' && listing.name.trim()
+        ? listing.name.trim()
+        : 'Untitled listing',
+    description: typeof listing.description === 'string' ? listing.description : '',
     tags: Array.isArray(listing.tags)
-      ? listing.tags.filter((t) => typeof t === 'string')
+      ? listing.tags.filter((t) => typeof t === 'string' && t.trim())
       : [],
-    sanitizedFields: Array.isArray(listing.sanitizedFields) ? listing.sanitizedFields : [],
+    category:
+      typeof listing.category === 'string' && listing.category
+        ? listing.category
+        : MARKETPLACE_CATEGORIES[0],
+    readme: typeof listing.readme === 'string' ? listing.readme : '',
+    author:
+      typeof listing.author === 'string' && listing.author.trim()
+        ? listing.author.trim()
+        : 'Anonymous',
+    config:
+      listing.config && typeof listing.config === 'object' && !Array.isArray(listing.config)
+        ? listing.config
+        : {},
+    sanitizedFields: Array.isArray(listing.sanitizedFields)
+      ? listing.sanitizedFields.filter((field) => typeof field === 'string' && field)
+      : [],
     importCount:
       Number.isFinite(listing.importCount) && listing.importCount > 0
         ? Math.floor(listing.importCount)
         : 0,
-    ratingCount,
+    ratingCount: aggregateIsPlausible ? ratingCount : 0,
     ratingTotal,
     publishedAt: typeof listing.publishedAt === 'string' ? listing.publishedAt : '',
   }
+}
+
+function loadVotes() {
+  const votes = loadJson(VOTES_KEY, {})
+  return votes && typeof votes === 'object' && !Array.isArray(votes) ? votes : {}
+}
+
+function reconcileListingsWithVotes(listings) {
+  const votes = loadVotes()
+  let listingsChanged = false
+  const nextListings = listings.map((listing) => {
+    const vote = votes[listing.id]
+    if (!isRating(vote)) return listing
+    if (listing.ratingCount > 0) return listing
+    // A personal vote without an aggregate is a partial write or a cleared
+    // listing record. Rebuild the smallest consistent aggregate from the vote.
+    listingsChanged = true
+    return { ...listing, ratingCount: 1, ratingTotal: vote }
+  })
+
+  if (listingsChanged) {
+    saveJson(LISTINGS_KEY, nextListings)
+  }
+
+  const listingIds = new Set(nextListings.map((listing) => listing.id))
+  const nextVotes = Object.fromEntries(
+    Object.entries(votes).filter(([id, vote]) => listingIds.has(id) && isRating(vote))
+  )
+  if (Object.keys(nextVotes).length !== Object.keys(votes).length) {
+    saveJson(VOTES_KEY, nextVotes)
+  }
+
+  return nextListings
 }
 
 /**
@@ -134,6 +197,14 @@ export function importAgent(listingId) {
   const listings = loadListings()
   const listing = listings.find((l) => l.id === listingId)
   if (!listing) return null
+
+  const drafts = loadDrafts()
+  const existing = drafts.find((draft) => draft.sourceListingId === listing.id)
+  if (existing) {
+    // Importing the same listing twice creates duplicate drafts and inflates
+    // its import count. Reuse the existing draft and let the caller say so.
+    return { ...existing, alreadyImported: true }
+  }
 
   const flagged = Array.isArray(listing.sanitizedFields)
     ? listing.sanitizedFields.filter((f) => typeof f === 'string')
@@ -151,12 +222,18 @@ export function importAgent(listingId) {
     importedAt: new Date().toISOString(),
   }
 
-  const drafts = loadDrafts()
-  drafts.unshift(draft)
-  saveJson(DRAFTS_KEY, drafts)
+  if (!saveJson(DRAFTS_KEY, [draft, ...drafts])) {
+    return { ...draft, persisted: false }
+  }
 
-  listing.importCount = (listing.importCount ?? 0) + 1
-  saveJson(LISTINGS_KEY, listings)
+  const nextListings = listings.map((item) =>
+    item.id === listing.id ? { ...item, importCount: item.importCount + 1 } : item
+  )
+  if (!saveJson(LISTINGS_KEY, nextListings)) {
+    // Do not leave a draft whose source count was never recorded.
+    saveJson(DRAFTS_KEY, drafts)
+    return { ...draft, persisted: false }
+  }
 
   return draft
 }
@@ -216,8 +293,7 @@ export function removeDraft(draftId) {
   const drafts = loadDrafts()
   const next = drafts.filter((d) => d.id !== draftId)
   if (next.length === drafts.length) return false
-  saveJson(DRAFTS_KEY, next)
-  return true
+  return saveJson(DRAFTS_KEY, next)
 }
 
 /**
@@ -282,41 +358,73 @@ export function buildDraftAgent(draft, agents) {
  * @param {number|null} stars 1..5, or null/0 to remove the vote
  * @returns {{ average: number, count: number, vote: number|null }|null}
  */
+function ratingBase(listing, previous) {
+  const count = Math.max(0, Math.floor(Number(listing?.ratingCount) || 0))
+  const total = Math.max(0, Number(listing?.ratingTotal) || 0)
+  if (count === 0) return { total: 0, count: 0 }
+  if (previous) {
+    // Remove the viewer's previous vote only when the aggregate can contain
+    // it. A total below the vote means the two stores already disagree, so
+    // rebuilding from the new vote is safer than subtracting into a negative.
+    if (total < previous) return { total: 0, count: 0 }
+    const withoutTotal = total - previous
+    const withoutCount = count - 1
+    if (withoutCount > 0 && (withoutTotal < withoutCount || withoutTotal > withoutCount * 5)) {
+      return { total: 0, count: 0 }
+    }
+    return { total: withoutTotal, count: withoutCount }
+  }
+  if (total < count || total > count * 5) return { total: 0, count: 0 }
+  return { total, count }
+}
+
 export function rateAgent(listingId, stars) {
   const listings = loadListings()
   const listing = listings.find((l) => l.id === listingId)
   if (!listing) return null
 
-  const votes = loadJson(VOTES_KEY, {})
-  const previous = votes[listingId]
+  const votes = loadVotes()
+  const rawPrevious = votes[listingId]
+  const previous = isRating(rawPrevious) ? rawPrevious : null
   const clearing = stars === null || stars === undefined || Number(stars) === 0
 
-  if (clearing) {
-    if (previous) {
-      listing.ratingTotal = Math.max(0, (listing.ratingTotal ?? 0) - previous)
-      listing.ratingCount = Math.max(0, (listing.ratingCount ?? 0) - 1)
-      delete votes[listingId]
-      saveJson(LISTINGS_KEY, listings)
-      saveJson(VOTES_KEY, votes)
-    }
+  if (clearing && rawPrevious === undefined) {
     return { average: getAverageRating(listing), count: listing.ratingCount, vote: null }
   }
 
   const numeric = Number(stars)
-  if (!Number.isFinite(numeric)) return null
-  const value = Math.min(5, Math.max(1, Math.round(numeric)))
+  if (!clearing && !Number.isFinite(numeric)) return null
+  const value = clearing ? null : Math.min(5, Math.max(1, Math.round(numeric)))
 
-  if (previous) {
-    listing.ratingTotal = (listing.ratingTotal ?? 0) - previous + value
-  } else {
-    listing.ratingTotal = (listing.ratingTotal ?? 0) + value
-    listing.ratingCount = (listing.ratingCount ?? 0) + 1
+  if (previous === value && rawPrevious === value) {
+    return { average: getAverageRating(listing), count: listing.ratingCount, vote: value }
   }
-  votes[listingId] = value
 
-  saveJson(LISTINGS_KEY, listings)
-  saveJson(VOTES_KEY, votes)
-  return { average: getAverageRating(listing), count: listing.ratingCount, vote: value }
+  const base = ratingBase(listing, previous)
+  const nextListing = {
+    ...listing,
+    ratingTotal: base.total + (value ?? 0),
+    ratingCount: base.count + (value === null ? 0 : 1),
+  }
+  const nextVotes = { ...votes }
+  if (value === null) delete nextVotes[listingId]
+  else nextVotes[listingId] = value
+
+  if (!saveJson(VOTES_KEY, nextVotes)) return null
+
+  const nextListings = listings.map((item) => (item.id === listingId ? nextListing : item))
+  if (!saveJson(LISTINGS_KEY, nextListings)) {
+    // Put the personal vote back so a failed aggregate write does not leave
+    // the two stores diverged by this operation.
+    saveJson(VOTES_KEY, votes)
+    return null
+  }
+
+  return {
+    average: getAverageRating(nextListing),
+    count: nextListing.ratingCount,
+    vote: value,
+  }
 }
 
 /**
@@ -325,18 +433,22 @@ export function rateAgent(listingId, stars) {
  * @returns {number|null}
  */
 export function getUserVote(listingId) {
-  const votes = loadJson(VOTES_KEY, {})
-  return votes[listingId] ?? null
+  const vote = loadVotes()[listingId]
+  return isRating(vote) ? vote : null
 }
 
 /**
- * Average rating to one decimal, 0 when unrated.
+ * Average rating to one decimal, 0 when unrated or the stored total is not a
+ * finite number.
  * @param {object} listing
  * @returns {number}
  */
 export function getAverageRating(listing) {
-  if (!listing?.ratingCount) return 0
-  return Math.round((listing.ratingTotal / listing.ratingCount) * 10) / 10
+  const total = Number(listing?.ratingTotal)
+  const count = Number(listing?.ratingCount)
+  if (!Number.isFinite(total) || !Number.isFinite(count) || count <= 0 || total <= 0) return 0
+  if (total < count || total > count * 5) return 0
+  return Math.round((total / count) * 10) / 10
 }
 
 /**
@@ -433,7 +545,10 @@ function loadJson(key, fallback) {
 function saveJson(key, value) {
   try {
     localStorage.setItem(key, JSON.stringify(value))
+    return true
   } catch {
-    // Storage unavailable or full; the UI keeps its in-memory state
+    // Storage unavailable or full. Callers must not report success unless
+    // this returns true.
+    return false
   }
 }

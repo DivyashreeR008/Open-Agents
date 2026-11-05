@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { afterEach, describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
@@ -51,6 +51,10 @@ const openPublish = async (user) => {
   await user.click(screen.getByRole('button', { name: /publish to marketplace/i }))
   return screen.getByRole('dialog', { name: /publish agent to marketplace/i })
 }
+
+afterEach(() => {
+  vi.restoreAllMocks()
+})
 
 describe('MarketplacePage publishing and import', () => {
   beforeEach(() => {
@@ -198,6 +202,85 @@ describe('MarketplacePage publishing and import', () => {
     render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
     expect(screen.getByRole('heading', { name: 'Persisted' })).toBeInTheDocument()
   })
+
+  it('keeps the publish form open and reports when storage refuses the write', async () => {
+    const user = userEvent.setup()
+    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    const dialog = await openPublish(user)
+    await user.selectOptions(within(dialog).getByLabelText('Agent to publish'), 'a1')
+    await user.type(within(dialog).getByPlaceholderText('My Agent Pack'), 'Unsaved Pack')
+    await user.type(within(dialog).getByPlaceholderText('What does this agent do?'), 'Does things')
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('QuotaExceededError')
+    })
+
+    await user.click(within(dialog).getByRole('button', { name: 'Publish' }))
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    expect(
+      screen.getByText(/Publishing failed because browser storage is unavailable or full/i)
+    ).toBeInTheDocument()
+    expect(screen.queryByText(/Published "Unsaved Pack"/)).not.toBeInTheDocument()
+    expect(localStorage.getItem(LISTINGS_KEY)).toBeNull()
+  })
+
+  it('reports an import that storage refused without changing the listing count', async () => {
+    localStorage.setItem(LISTINGS_KEY, JSON.stringify([seedListing()]))
+    const user = userEvent.setup()
+    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('QuotaExceededError')
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Import' }))
+
+    expect(
+      screen.getByText(/Import could not be saved because browser storage is unavailable or full/i)
+    ).toBeInTheDocument()
+    expect(screen.getByText('0 imports')).toBeInTheDocument()
+    expect(localStorage.getItem(DRAFTS_KEY)).toBeNull()
+  })
+
+  it('reports an import whose listing disappeared instead of doing nothing', async () => {
+    localStorage.setItem(LISTINGS_KEY, JSON.stringify([seedListing()]))
+    const user = userEvent.setup()
+    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+
+    localStorage.setItem(LISTINGS_KEY, JSON.stringify([]))
+    await user.click(screen.getByRole('button', { name: 'Import' }))
+
+    expect(
+      screen.getByText(/Import failed because the listing is no longer available/i)
+    ).toBeInTheDocument()
+    expect(screen.getByText('The marketplace is empty.')).toBeInTheDocument()
+  })
+
+  it('recognizes an imported listing after remounting and does not duplicate the draft', async () => {
+    localStorage.setItem(LISTINGS_KEY, JSON.stringify([seedListing()]))
+    const user = userEvent.setup()
+    const { unmount } = render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+
+    await user.click(screen.getByRole('button', { name: 'Import' }))
+    expect(screen.getByRole('button', { name: 'Imported' })).toBeDisabled()
+    unmount()
+
+    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    expect(screen.getByRole('button', { name: 'Imported' })).toBeDisabled()
+    expect(screen.getByText('1 import')).toBeInTheDocument()
+    expect(JSON.parse(localStorage.getItem(DRAFTS_KEY))).toHaveLength(1)
+  })
+
+  it('skips a damaged stored record and keeps the valid listings visible', () => {
+    localStorage.setItem(
+      LISTINGS_KEY,
+      JSON.stringify([null, 'broken', 5, [], seedListing({ name: 'Survivor' }), { name: 'No id' }])
+    )
+
+    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+
+    expect(screen.getByRole('heading', { name: 'Survivor' })).toBeInTheDocument()
+    expect(screen.getByText('1 of 1 listing')).toBeInTheDocument()
+  })
 })
 
 describe('MarketplacePage rating display', () => {
@@ -267,6 +350,41 @@ describe('MarketplacePage rating display', () => {
     )
     expect(widths).toEqual(['100%', '100%', '100%', '100%', '40%'])
     expect(screen.getByText('4.4 (5)')).toBeInTheDocument()
+  })
+
+  it('shows a numeric average after re-rating a listing with no stored total', async () => {
+    localStorage.setItem(
+      LISTINGS_KEY,
+      JSON.stringify([seedListing({ ratingTotal: undefined, ratingCount: 1 })])
+    )
+    localStorage.setItem('oa_marketplace_votes', JSON.stringify({ mkt_seed: 5 }))
+    const user = userEvent.setup()
+    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+
+    expect(screen.getByText('5.0 (1)')).toBeInTheDocument()
+    expect(screen.queryByText(/NaN/)).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('radio', { name: '3 stars' }))
+
+    expect(screen.getByText('3.0 (1)')).toBeInTheDocument()
+    expect(screen.queryByText(/NaN/)).not.toBeInTheDocument()
+  })
+
+  it('reports a rating that storage refused instead of showing a false success', async () => {
+    localStorage.setItem(LISTINGS_KEY, JSON.stringify([seedListing()]))
+    const user = userEvent.setup()
+    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('QuotaExceededError')
+    })
+
+    await user.click(screen.getByRole('radio', { name: '4 stars' }))
+
+    expect(
+      screen.getByText(/Rating was not saved because browser storage is unavailable or full/i)
+    ).toBeInTheDocument()
+    expect(screen.getByText('No ratings')).toBeInTheDocument()
+    expect(screen.queryByText('You: 4')).not.toBeInTheDocument()
   })
 })
 
