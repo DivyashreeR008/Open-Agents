@@ -68,10 +68,7 @@ describe('AboutHero', () => {
     const repository = screen.getByRole('link', {
       name: 'Star OpenAgents on GitHub (opens in new tab)',
     })
-    expect(repository).toHaveAttribute(
-      'href',
-      'https://github.com/DivyashreeR008/Open-Agents'
-    )
+    expect(repository).toHaveAttribute('href', 'https://github.com/DivyashreeR008/Open-Agents')
     expect(repository).toHaveAttribute('target', '_blank')
     expect(repository).toHaveAttribute('rel', 'noopener noreferrer')
   })
@@ -81,9 +78,7 @@ describe('AboutHero', () => {
     renderHero()
 
     expect(screen.getByText(/Open Source/)).toBeInTheDocument()
-    expect(
-      screen.getByRole('heading', { level: 2, name: 'Our Mission' })
-    ).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2, name: 'Our Mission' })).toBeInTheDocument()
     expect(screen.getByText('AI Providers')).toBeInTheDocument()
     expect(screen.getByText('Browser Privacy')).toBeInTheDocument()
     expect(screen.getByText('100%')).toBeInTheDocument()

@@ -13,7 +13,11 @@ vi.mock('../lib/useDocumentTitle', () => ({ useDocumentTitle: mocks.useDocumentT
 vi.mock('../components/AgentRunner', () => ({
   default: ({ agent }) => {
     mocks.mounts += 1
-    return <div>{agent.name} mount {mocks.mounts}</div>
+    return (
+      <div>
+        {agent.name} mount {mocks.mounts}
+      </div>
+    )
   },
 }))
 vi.mock('./NotFoundPage', () => ({ default: () => <div>Missing agent page</div> }))

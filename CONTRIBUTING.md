@@ -30,6 +30,7 @@ updated definition; invalid input types, option lists, duplicate IDs, and stale
 What every pull request must pass before it can merge into `main` is formally documented in [MERGE_REQUIREMENTS.md](MERGE_REQUIREMENTS.md).
 
 In summary, every change must satisfy:
+
 - **Automated CI Status Checks**:
   - `CI` workflow (`.github/workflows/ci.yml`): Unit & integration test suite pass, coverage thresholds met, and clean production build.
   - `Build Check` workflow (`.github/workflows/build-check.yml`): Broken registry import validation, contributor security rules scan (`scripts/check-security-rules.mjs`), and clean production build.

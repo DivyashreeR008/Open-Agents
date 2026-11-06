@@ -36,7 +36,12 @@ beforeEach(() => {
 
 describe('AgentPage state branches', () => {
   it('renders an accessible loading status while the catalogue resolves', () => {
-    mocks.useAgents.mockReturnValue({ agents: [], loading: true, error: null, reloadAgents: vi.fn() })
+    mocks.useAgents.mockReturnValue({
+      agents: [],
+      loading: true,
+      error: null,
+      reloadAgents: vi.fn(),
+    })
     renderPage()
 
     expect(screen.getByRole('status')).toBeInTheDocument()
@@ -60,7 +65,12 @@ describe('AgentPage state branches', () => {
   })
 
   it('renders the not-found page for an unknown id', () => {
-    mocks.useAgents.mockReturnValue({ agents: [agent], loading: false, error: null, reloadAgents: vi.fn() })
+    mocks.useAgents.mockReturnValue({
+      agents: [agent],
+      loading: false,
+      error: null,
+      reloadAgents: vi.fn(),
+    })
     renderPage('missing')
 
     expect(screen.getByText('Missing agent page')).toBeInTheDocument()
@@ -68,7 +78,12 @@ describe('AgentPage state branches', () => {
   })
 
   it('renders the runner once the id resolves', () => {
-    mocks.useAgents.mockReturnValue({ agents: [agent], loading: false, error: null, reloadAgents: vi.fn() })
+    mocks.useAgents.mockReturnValue({
+      agents: [agent],
+      loading: false,
+      error: null,
+      reloadAgents: vi.fn(),
+    })
     renderPage()
 
     expect(screen.getByTestId('runner')).toHaveTextContent('Runner for Alpha Agent')

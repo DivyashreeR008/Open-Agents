@@ -207,10 +207,7 @@ describe('workflow data helpers', () => {
 
   it('deletes after the owner check passes with both filters', async () => {
     signedIn('owner-1')
-    queueFrom([
-      { data: { user_id: 'owner-1' }, error: null },
-      { error: null },
-    ])
+    queueFrom([{ data: { user_id: 'owner-1' }, error: null }, { error: null }])
 
     const response = await deleteWorkflow('w1')
 
@@ -234,10 +231,7 @@ describe('workflow data helpers', () => {
   it('falls back to reading and writing the count when the increment function fails', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
     state.rpc.mockResolvedValue({ error: { message: 'function unavailable' } })
-    queueFrom([
-      { data: { usage_count: 4 }, error: null },
-      { error: null },
-    ])
+    queueFrom([{ data: { usage_count: 4 }, error: null }, { error: null }])
 
     await expect(incrementUsage('w1')).resolves.toEqual({ error: null })
 
@@ -263,10 +257,7 @@ describe('workflow data helpers', () => {
   it('returns the fallback update error', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
     state.rpc.mockResolvedValue({ error: { message: 'function unavailable' } })
-    queueFrom([
-      { data: { usage_count: 2 }, error: null },
-      { error: { message: 'write failed' } },
-    ])
+    queueFrom([{ data: { usage_count: 2 }, error: null }, { error: { message: 'write failed' } }])
 
     await expect(incrementUsage('w1')).resolves.toEqual({
       error: { message: 'write failed' },

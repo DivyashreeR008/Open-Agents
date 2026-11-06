@@ -40,9 +40,7 @@ afterEach(() => {
 })
 
 function renderOpen(onClose = vi.fn(), triggerRef) {
-  return render(
-    <RecommendationWizardModal isOpen onClose={onClose} triggerRef={triggerRef} />
-  )
+  return render(<RecommendationWizardModal isOpen onClose={onClose} triggerRef={triggerRef} />)
 }
 
 describe('RecommendationWizardModal dismissal', () => {

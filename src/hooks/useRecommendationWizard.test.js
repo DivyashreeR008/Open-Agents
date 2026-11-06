@@ -3,8 +3,20 @@ import { act, renderHook } from '@testing-library/react'
 import { useRecommendationWizard } from './useRecommendationWizard'
 
 const agents = [
-  { id: 'agent-a', name: 'Agent A', category: 'Engineering', description: 'code review', provider: 'openai' },
-  { id: 'agent-b', name: 'Agent B', category: 'Design', description: 'visual design', provider: 'any' },
+  {
+    id: 'agent-a',
+    name: 'Agent A',
+    category: 'Engineering',
+    description: 'code review',
+    provider: 'openai',
+  },
+  {
+    id: 'agent-b',
+    name: 'Agent B',
+    category: 'Design',
+    description: 'visual design',
+    provider: 'any',
+  },
 ]
 
 describe('useRecommendationWizard', () => {

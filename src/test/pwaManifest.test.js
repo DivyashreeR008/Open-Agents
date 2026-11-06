@@ -56,7 +56,11 @@ describe('PWA Web App Manifest and HTML Installability', () => {
     expect(html).toMatch(/<meta\s+[^>]*name=["']viewport["']/)
 
     // Light and dark theme colors
-    expect(html).toMatch(/<meta\s+[^>]*name=["']theme-color["'][^>]*media=["']\(prefers-color-scheme:\s*dark\)["']/)
-    expect(html).toMatch(/<meta\s+[^>]*name=["']theme-color["'][^>]*media=["']\(prefers-color-scheme:\s*light\)["']/)
+    expect(html).toMatch(
+      /<meta\s+[^>]*name=["']theme-color["'][^>]*media=["']\(prefers-color-scheme:\s*dark\)["']/
+    )
+    expect(html).toMatch(
+      /<meta\s+[^>]*name=["']theme-color["'][^>]*media=["']\(prefers-color-scheme:\s*light\)["']/
+    )
   })
 })

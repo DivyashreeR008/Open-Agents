@@ -15,9 +15,7 @@ describe('AboutCommunity', () => {
         name: 'Community & Contributor Appreciation',
       })
     ).toBeInTheDocument()
-    expect(
-      screen.getByText(/Every contributor who submits an agent/)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/Every contributor who submits an agent/)).toBeInTheDocument()
   })
 
   it('renders the three contributor cards in order', () => {

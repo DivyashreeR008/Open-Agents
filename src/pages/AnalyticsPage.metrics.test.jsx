@@ -35,9 +35,20 @@ const onlineStats = {
     { name: 'Writing', count: 5, pct: 42 },
   ],
   dailyRuns: Array.from({ length: 30 }, (_, i) => ({ date: `2026-10-${i + 1}`, count: i % 4 })),
-  heatmapData: Array.from({ length: 14 }, (_, i) => ({ date: `2026-11-${String(i + 1).padStart(2, '0')}`, count: i % 5 })),
+  heatmapData: Array.from({ length: 14 }, (_, i) => ({
+    date: `2026-11-${String(i + 1).padStart(2, '0')}`,
+    count: i % 5,
+  })),
   recentRuns: [
-    { id: 'a9_run', agentName: 'Chronologist', category: 'Research', provider: 'anthropic', model: 'claude-3-5', duration: 2500, timestamp: Date.UTC(2026, 10, 3, 12) },
+    {
+      id: 'a9_run',
+      agentName: 'Chronologist',
+      category: 'Research',
+      provider: 'anthropic',
+      model: 'claude-3-5',
+      duration: 2500,
+      timestamp: Date.UTC(2026, 10, 3, 12),
+    },
   ],
 }
 
@@ -57,7 +68,9 @@ function AgentMarker() {
   return <div>Agent page {id}</div>
 }
 
-beforeEach(() => { state.stats = onlineStats })
+beforeEach(() => {
+  state.stats = onlineStats
+})
 
 describe('AnalyticsPage populated metrics', () => {
   it('renders the primary and secondary metric cards', () => {

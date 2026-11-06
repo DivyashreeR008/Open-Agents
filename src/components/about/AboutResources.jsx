@@ -43,7 +43,10 @@ export default function AboutResources() {
   return (
     <section aria-labelledby="about-resources-title" className="mb-12">
       <div className="mb-8">
-        <h2 id="about-resources-title" className="text-2xl sm:text-3xl font-bold dark:text-text-primary text-gray-900 tracking-tight mb-2">
+        <h2
+          id="about-resources-title"
+          className="text-2xl sm:text-3xl font-bold dark:text-text-primary text-gray-900 tracking-tight mb-2"
+        >
           Useful Resources & Quick Links
         </h2>
         <p className="text-sm dark:text-text-secondary text-gray-600">
@@ -73,7 +76,11 @@ export default function AboutResources() {
                 </div>
                 <h3 className="text-sm font-bold dark:text-text-primary text-gray-900 mb-1 group-hover:text-black dark:group-hover:text-white transition-colors flex items-center gap-1.5">
                   <span>{res.title}</span>
-                  <ExternalLink size={13} className="opacity-60 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
+                  <ExternalLink
+                    size={13}
+                    className="opacity-60 group-hover:opacity-100 transition-opacity"
+                    aria-hidden="true"
+                  />
                   <span className="sr-only">(opens in new tab)</span>
                 </h3>
                 <p className="text-xs dark:text-text-secondary text-gray-600 leading-relaxed">

@@ -181,7 +181,9 @@ describe('HomePage result collection semantics', () => {
 
     const list = screen.getByRole('list', { name: 'Agent catalogue, index view' })
     expect(within(list).getAllByRole('listitem')).toHaveLength(2)
-    expect(screen.getByRole('status', { name: 'Agent catalogue status' })).toHaveTextContent('2 agents are in the catalogue.')
+    expect(screen.getByRole('status', { name: 'Agent catalogue status' })).toHaveTextContent(
+      '2 agents are in the catalogue.'
+    )
   })
 
   it('switches the list label with the view and keeps item boundaries', () => {
@@ -200,7 +202,9 @@ describe('HomePage result collection semantics', () => {
       target: { value: 'draws' },
     })
 
-    expect(screen.getByRole('status', { name: 'Agent catalogue status' })).toHaveTextContent('1 agent matches the current filters.')
+    expect(screen.getByRole('status', { name: 'Agent catalogue status' })).toHaveTextContent(
+      '1 agent matches the current filters.'
+    )
     expect(
       within(screen.getByRole('list', { name: 'Agent catalogue, index view' })).getAllByRole(
         'listitem'

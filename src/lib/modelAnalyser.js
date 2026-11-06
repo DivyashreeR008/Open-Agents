@@ -1,4 +1,4 @@
-import { streamAgent } from "./llmAdapter";
+import { streamAgent } from './llmAdapter'
 
 const MODELS_INFO = `
 OpenAI Models:
@@ -17,7 +17,7 @@ Gemini Models:
 - Gemini 1.5 Pro: Large 1M token context window, best for long documents and PDFs
 - Gemini 2.0 Flash (Exp): Latest experimental Gemini, fast with improved quality
 - Gemini 2.5 Flash: Fastest and most efficient Gemini model, best for quick outputs
-`;
+`
 
 export async function analyseModels(agent, apiKey, provider) {
   const systemPromptPurpose =
@@ -27,7 +27,7 @@ export async function analyseModels(agent, apiKey, provider) {
     Agent name: ${agent?.name || ''}
     Description: ${agent?.description || ''}
     System prompt purpose: ${systemPromptPurpose}
-  `;
+  `
 
   const systemPrompt = `You are an AI model selection expert. 
 Given an AI agent's purpose, recommend which LLM model is best suited for it.
@@ -53,25 +53,24 @@ Show all 11 models in the table ranked by suitability for this specific agent.
 Available models:
 ${MODELS_INFO}
 
-Be specific and practical. Consider context window, speed, cost and output quality for the agent's specific use case.`;
+Be specific and practical. Consider context window, speed, cost and output quality for the agent's specific use case.`
 
-  const userMessage = `Analyse the best model for this agent:\n${agentContext}`;
+  const userMessage = `Analyse the best model for this agent:\n${agentContext}`
 
   const MODEL_DEFAULTS = {
-    gemini: "gemini-2.5-flash",
-    anthropic: "claude-3-5-haiku-20241022",
-    openai: "gpt-4o-mini",
-
-  };
+    gemini: 'gemini-2.5-flash',
+    anthropic: 'claude-3-5-haiku-20241022',
+    openai: 'gpt-4o-mini',
+  }
 
   const result = await streamAgent({
     provider,
     apiKey,
-    model: MODEL_DEFAULTS[provider] || "gemini-2.5-flash",
+    model: MODEL_DEFAULTS[provider] || 'gemini-2.5-flash',
     systemPrompt,
     userMessage,
     onChunk: () => {},
-  });
+  })
 
-  return result.content;
+  return result.content
 }

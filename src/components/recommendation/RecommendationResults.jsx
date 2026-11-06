@@ -10,10 +10,18 @@ function EmptyResults({ icon: Icon, title, body, primaryAction, secondaryAction 
       <h3 className="text-sm font-semibold text-gray-900 dark:text-text-primary mb-1">{title}</h3>
       <p className="text-xs text-gray-500 dark:text-text-secondary mb-4">{body}</p>
       <div className="flex flex-col sm:flex-row justify-center gap-2">
-        <button type="button" onClick={primaryAction.onClick} className="border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-700 hover:border-zinc-400 dark:bg-surface-input dark:border-border dark:text-text-primary dark:hover:border-zinc-400">
+        <button
+          type="button"
+          onClick={primaryAction.onClick}
+          className="border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-700 hover:border-zinc-400 dark:bg-surface-input dark:border-border dark:text-text-primary dark:hover:border-zinc-400"
+        >
           {primaryAction.label}
         </button>
-        <button type="button" onClick={secondaryAction.onClick} className="bg-black px-3 py-2 text-xs font-semibold text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200">
+        <button
+          type="button"
+          onClick={secondaryAction.onClick}
+          className="bg-black px-3 py-2 text-xs font-semibold text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+        >
           {secondaryAction.label}
         </button>
       </div>
@@ -21,7 +29,13 @@ function EmptyResults({ icon: Icon, title, body, primaryAction, secondaryAction 
   )
 }
 
-export default function RecommendationResults({ agents = [], results = [], onRefine, onStartOver, onClose }) {
+export default function RecommendationResults({
+  agents = [],
+  results = [],
+  onRefine,
+  onStartOver,
+  onClose,
+}) {
   const agentById = new Map(agents.map((agent) => [agent.id, agent]))
   const resolved = results
     .map((result) => ({ result, agent: agentById.get(result.agentId) }))
@@ -68,12 +82,18 @@ export default function RecommendationResults({ agents = [], results = [], onRef
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-bold text-gray-900 dark:text-text-primary">Recommended agents for you</h2>
-        <p className="text-xs text-gray-500 dark:text-text-secondary mt-1">Based on your goal, level, and preferences. Match reflects your answers, not agent quality.</p>
+        <h2 className="text-lg font-bold text-gray-900 dark:text-text-primary">
+          Recommended agents for you
+        </h2>
+        <p className="text-xs text-gray-500 dark:text-text-secondary mt-1">
+          Based on your goal, level, and preferences. Match reflects your answers, not agent
+          quality.
+        </p>
       </div>
       {unresolvedCount > 0 && (
         <p className="border border-gray-200 bg-white px-4 py-3 text-xs leading-relaxed text-gray-600 dark:border-border dark:bg-surface-card dark:text-text-secondary">
-          {unresolvedCount} ranked {unresolvedCount === 1 ? 'entry is' : 'entries are'} no longer in the catalogue and {unresolvedCount === 1 ? 'was' : 'were'} left out.
+          {unresolvedCount} ranked {unresolvedCount === 1 ? 'entry is' : 'entries are'} no longer in
+          the catalogue and {unresolvedCount === 1 ? 'was' : 'were'} left out.
         </p>
       )}
       {!hasConfidentMatch && (
@@ -82,13 +102,39 @@ export default function RecommendationResults({ agents = [], results = [], onRef
         </div>
       )}
       <div className="space-y-3">
-        {resolved.map(({ agent, result }, index) => <RecommendationResultCard key={result.agentId} rank={index + 1} agent={agent} result={result} onOpenAgent={onClose} />)}
+        {resolved.map(({ agent, result }, index) => (
+          <RecommendationResultCard
+            key={result.agentId}
+            rank={index + 1}
+            agent={agent}
+            result={result}
+            onOpenAgent={onClose}
+          />
+        ))}
       </div>
       <div className="flex flex-col sm:flex-row gap-2 sm:justify-between border-t border-gray-200 dark:border-border pt-4">
-        <button type="button" onClick={onStartOver} className=" px-3 py-2 text-xs font-semibold text-gray-500 hover:text-black dark:text-text-secondary dark:hover:text-white">Start over</button>
+        <button
+          type="button"
+          onClick={onStartOver}
+          className=" px-3 py-2 text-xs font-semibold text-gray-500 hover:text-black dark:text-text-secondary dark:hover:text-white"
+        >
+          Start over
+        </button>
         <div className="flex flex-col sm:flex-row gap-2">
-          <button type="button" onClick={onRefine} className=" border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-700 hover:border-zinc-400 dark:bg-surface-input dark:border-border dark:text-text-primary dark:hover:border-zinc-400">Refine answers</button>
-          <button type="button" onClick={onClose} className=" bg-black px-3 py-2 text-xs font-semibold text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200">Browse all agents</button>
+          <button
+            type="button"
+            onClick={onRefine}
+            className=" border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-700 hover:border-zinc-400 dark:bg-surface-input dark:border-border dark:text-text-primary dark:hover:border-zinc-400"
+          >
+            Refine answers
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className=" bg-black px-3 py-2 text-xs font-semibold text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+          >
+            Browse all agents
+          </button>
         </div>
       </div>
     </div>

@@ -255,7 +255,11 @@ describe('MarketplacePage publishing and import', () => {
 
   it('keeps the publish form open and reports when storage refuses the write', async () => {
     const user = userEvent.setup()
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
     const dialog = await openPublish(user)
     await user.selectOptions(within(dialog).getByLabelText('Agent to publish'), 'a1')
     await user.type(within(dialog).getByPlaceholderText('My Agent Pack'), 'Unsaved Pack')
@@ -277,7 +281,11 @@ describe('MarketplacePage publishing and import', () => {
   it('reports an import that storage refused without changing the listing count', async () => {
     localStorage.setItem(LISTINGS_KEY, JSON.stringify([seedListing()]))
     const user = userEvent.setup()
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
       throw new Error('QuotaExceededError')
     })
@@ -294,7 +302,11 @@ describe('MarketplacePage publishing and import', () => {
   it('reports an import whose listing disappeared instead of doing nothing', async () => {
     localStorage.setItem(LISTINGS_KEY, JSON.stringify([seedListing()]))
     const user = userEvent.setup()
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
 
     localStorage.setItem(LISTINGS_KEY, JSON.stringify([]))
     await user.click(screen.getByRole('button', { name: 'Import' }))
@@ -308,13 +320,21 @@ describe('MarketplacePage publishing and import', () => {
   it('recognizes an imported listing after remounting and does not duplicate the draft', async () => {
     localStorage.setItem(LISTINGS_KEY, JSON.stringify([seedListing()]))
     const user = userEvent.setup()
-    const { unmount } = render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    const { unmount } = render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
 
     await user.click(screen.getByRole('button', { name: 'Import' }))
     expect(screen.getByRole('button', { name: 'Imported' })).toBeDisabled()
     unmount()
 
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
     expect(screen.getByRole('button', { name: 'Imported' })).toBeDisabled()
     expect(screen.getByText('1 import')).toBeInTheDocument()
     expect(JSON.parse(localStorage.getItem(DRAFTS_KEY))).toHaveLength(1)
@@ -326,7 +346,11 @@ describe('MarketplacePage publishing and import', () => {
       JSON.stringify([null, 'broken', 5, [], seedListing({ name: 'Survivor' }), { name: 'No id' }])
     )
 
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
 
     expect(screen.getByRole('heading', { name: 'Survivor' })).toBeInTheDocument()
     expect(screen.getByText('1 of 1 listing')).toBeInTheDocument()
@@ -345,20 +369,28 @@ describe('MarketplacePage rating display', () => {
     )
     localStorage.setItem('oa_marketplace_votes', JSON.stringify({ mkt_seed: 2 }))
 
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
 
     expect(screen.getByText('3.7 (3)')).toBeInTheDocument()
     expect(screen.getByText('You: 2')).toBeInTheDocument()
     expect(screen.getByRole('radio', { name: '2 stars' })).toHaveAttribute('aria-checked', 'true')
-    expect(
-      screen.getByRole('radiogroup', { name: /Rate Seed Agent/ })
-    ).toHaveAccessibleName(/Average 3.7 from 3 ratings/)
+    expect(screen.getByRole('radiogroup', { name: /Rate Seed Agent/ })).toHaveAccessibleName(
+      /Average 3.7 from 3 ratings/
+    )
   })
 
   it('toggles the same star off and returns the listing to unrated', async () => {
     localStorage.setItem(LISTINGS_KEY, JSON.stringify([seedListing()]))
     const user = userEvent.setup()
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
 
     await user.click(screen.getByRole('radio', { name: '4 stars' }))
     expect(screen.getByText('4.0 (1)')).toBeInTheDocument()
@@ -376,11 +408,13 @@ describe('MarketplacePage rating display', () => {
     )
     localStorage.setItem('oa_marketplace_votes', JSON.stringify({ mkt_seed: 2 }))
     const user = userEvent.setup()
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
-
-    await user.click(
-      screen.getByRole('button', { name: 'Remove your rating for Seed Agent' })
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
     )
+
+    await user.click(screen.getByRole('button', { name: 'Remove your rating for Seed Agent' }))
 
     expect(screen.getByText('No ratings')).toBeInTheDocument()
     expect(JSON.parse(localStorage.getItem('oa_marketplace_votes'))).toEqual({})
@@ -392,12 +426,14 @@ describe('MarketplacePage rating display', () => {
       JSON.stringify([seedListing({ ratingTotal: 22, ratingCount: 5 })])
     )
 
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
 
     const group = screen.getByRole('radiogroup', { name: /Rate Seed Agent/ })
-    const widths = Array.from(group.querySelectorAll('span[style]')).map(
-      (node) => node.style.width
-    )
+    const widths = Array.from(group.querySelectorAll('span[style]')).map((node) => node.style.width)
     expect(widths).toEqual(['100%', '100%', '100%', '100%', '40%'])
     expect(screen.getByText('4.4 (5)')).toBeInTheDocument()
   })
@@ -411,21 +447,21 @@ describe('MarketplacePage rating display', () => {
         seedListing({ id: 'mkt_three', name: 'Third Agent' }),
       ])
     )
-    localStorage.setItem(
-      VOTES_KEY,
-      JSON.stringify({ mkt_one: 4, mkt_two: 2, mkt_three: 5 })
-    )
+    localStorage.setItem(VOTES_KEY, JSON.stringify({ mkt_one: 4, mkt_two: 2, mkt_three: 5 }))
     const getItem = vi.spyOn(Storage.prototype, 'getItem')
     const user = userEvent.setup()
 
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
 
     expect(screen.getByText('You: 4')).toBeInTheDocument()
     expect(screen.getByText('You: 2')).toBeInTheDocument()
     expect(screen.getByText('You: 5')).toBeInTheDocument()
 
-    const voteReads = () =>
-      getItem.mock.calls.filter(([key]) => key === VOTES_KEY).length
+    const voteReads = () => getItem.mock.calls.filter(([key]) => key === VOTES_KEY).length
     const readsAfterMount = voteReads()
     expect(readsAfterMount).toBeGreaterThan(0)
 
@@ -443,7 +479,11 @@ describe('MarketplacePage rating display', () => {
     )
     localStorage.setItem('oa_marketplace_votes', JSON.stringify({ mkt_seed: 5 }))
     const user = userEvent.setup()
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
 
     expect(screen.getByText('5.0 (1)')).toBeInTheDocument()
     expect(screen.queryByText(/NaN/)).not.toBeInTheDocument()
@@ -457,7 +497,11 @@ describe('MarketplacePage rating display', () => {
   it('reports a rating that storage refused instead of showing a false success', async () => {
     localStorage.setItem(LISTINGS_KEY, JSON.stringify([seedListing()]))
     const user = userEvent.setup()
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
       throw new Error('QuotaExceededError')
     })
@@ -517,7 +561,11 @@ describe('MarketplacePage listing order and dates', () => {
 
   it('shows a readable publication date on every card', () => {
     seedCatalog()
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
 
     expect(screen.getByText('Published Mar 1, 2026')).toBeInTheDocument()
     expect(screen.getByText('Published Feb 1, 2026')).toBeInTheDocument()
@@ -527,7 +575,11 @@ describe('MarketplacePage listing order and dates', () => {
   it('orders by newest, oldest, rating and imports with a labelled active order', async () => {
     seedCatalog()
     const user = userEvent.setup()
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
 
     expect(cardNames()).toEqual(['Alpha', 'Beta', 'Gamma'])
     expect(screen.getByText('Sorted by newest first.')).toBeInTheDocument()
@@ -548,7 +600,11 @@ describe('MarketplacePage listing order and dates', () => {
   it('keeps sorting active while searching and filtering by category', async () => {
     seedCatalog()
     const user = userEvent.setup()
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
 
     await user.selectOptions(screen.getByLabelText('Sort listings'), 'imports')
     await user.type(screen.getByLabelText('Search marketplace'), 'Beta')

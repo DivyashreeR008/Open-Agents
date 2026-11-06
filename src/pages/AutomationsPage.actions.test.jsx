@@ -3,10 +3,14 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 
 const svc = vi.hoisted(() => ({
-  automations: [], runs: [],
-  loadAutomations: vi.fn(), loadRuns: vi.fn(),
-  toggleAutomation: vi.fn(), deleteAutomation: vi.fn(),
-  runAutomationNow: vi.fn(), initAutomationEngine: vi.fn(),
+  automations: [],
+  runs: [],
+  loadAutomations: vi.fn(),
+  loadRuns: vi.fn(),
+  toggleAutomation: vi.fn(),
+  deleteAutomation: vi.fn(),
+  runAutomationNow: vi.fn(),
+  initAutomationEngine: vi.fn(),
 }))
 
 vi.mock('../lib/automationsService', () => ({
@@ -19,9 +23,8 @@ vi.mock('../lib/automationsService', () => ({
 }))
 vi.mock('../lib/useDocumentTitle', () => ({ useDocumentTitle: vi.fn() }))
 vi.mock('../components/CreateAutomationModal', () => ({
-  default: ({ isOpen, initialData }) => (
-    isOpen ? <div role="dialog">Automation form {initialData?.name || 'new'}</div> : null
-  ),
+  default: ({ isOpen, initialData }) =>
+    isOpen ? <div role="dialog">Automation form {initialData?.name || 'new'}</div> : null,
 }))
 
 import AutomationsPage from './AutomationsPage'
@@ -29,14 +32,32 @@ import AutomationsPage from './AutomationsPage'
 const now = Date.now()
 const automations = [
   {
-    id: 'a1', name: 'Daily Digest', agentName: 'Summarizer', category: 'Research',
-    enabled: true, schedule: 'daily', cron: '0 9 * * *', provider: 'openai', model: 'gpt-4o',
-    emailNotification: true, lastRunAt: now - 60000, nextRunAt: now + (3 * 86400000) + (2 * 3600000),
+    id: 'a1',
+    name: 'Daily Digest',
+    agentName: 'Summarizer',
+    category: 'Research',
+    enabled: true,
+    schedule: 'daily',
+    cron: '0 9 * * *',
+    provider: 'openai',
+    model: 'gpt-4o',
+    emailNotification: true,
+    lastRunAt: now - 60000,
+    nextRunAt: now + 3 * 86400000 + 2 * 3600000,
   },
   {
-    id: 'a2', name: 'Weekly Review', agentName: 'Editor', category: 'Writing',
-    enabled: false, schedule: 'weekly', cron: '0 10 * * 1', provider: 'anthropic', model: 'claude',
-    emailNotification: false, lastRunAt: null, nextRunAt: null,
+    id: 'a2',
+    name: 'Weekly Review',
+    agentName: 'Editor',
+    category: 'Writing',
+    enabled: false,
+    schedule: 'weekly',
+    cron: '0 10 * * 1',
+    provider: 'anthropic',
+    model: 'claude',
+    emailNotification: false,
+    lastRunAt: null,
+    nextRunAt: null,
   },
 ]
 const runs = [
@@ -76,15 +97,23 @@ describe('AutomationsPage card actions', () => {
     expect(screen.getByText('daily (0 9 * * *)')).toBeInTheDocument()
     expect(screen.getByText('weekly (0 10 * * 1)')).toBeInTheDocument()
     expect(screen.getByText('Email')).toBeInTheDocument()
-    expect(screen.getAllByText('Next Autopilot Trigger')[0].parentElement).toHaveTextContent(/in 3d/)
-    expect(screen.getAllByText('Next Autopilot Trigger')[1].parentElement).toHaveTextContent('Paused')
+    expect(screen.getAllByText('Next Autopilot Trigger')[0].parentElement).toHaveTextContent(
+      /in 3d/
+    )
+    expect(screen.getAllByText('Next Autopilot Trigger')[1].parentElement).toHaveTextContent(
+      'Paused'
+    )
     expect(screen.getByText('Logs (2)')).toBeInTheDocument()
     expect(screen.getByText('Logs (1)')).toBeInTheDocument()
   })
 
   it('toggles and runs an automation, including the busy state', async () => {
     let finishRun
-    svc.runAutomationNow.mockReturnValue(new Promise((resolve) => { finishRun = resolve }))
+    svc.runAutomationNow.mockReturnValue(
+      new Promise((resolve) => {
+        finishRun = resolve
+      })
+    )
     renderPage()
 
     fireEvent.click(screen.getAllByTitle('Pause Autopilot')[0])
@@ -94,8 +123,12 @@ describe('AutomationsPage card actions', () => {
 
     fireEvent.click(screen.getAllByTitle('Execute Autopilot Run Now')[0])
     expect(screen.getByRole('button', { name: /Running/ })).toBeDisabled()
-    await act(async () => { finishRun() })
-    await waitFor(() => expect(screen.queryByRole('button', { name: /Running/ })).not.toBeInTheDocument())
+    await act(async () => {
+      finishRun()
+    })
+    await waitFor(() =>
+      expect(screen.queryByRole('button', { name: /Running/ })).not.toBeInTheDocument()
+    )
     expect(svc.runAutomationNow).toHaveBeenCalledWith('a1')
   })
 

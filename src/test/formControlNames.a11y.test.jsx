@@ -66,7 +66,7 @@ describe('form controls have a programmatic name', () => {
     for (const file of sourceFiles('src')) {
       const source = readFileSync(file, 'utf8')
       const forIds = new Set(
-        [...source.matchAll(/htmlFor=(?:"([^"]+)"|\{([^}]+)\})/g)].map((m) => m[1] ?? m[2]),
+        [...source.matchAll(/htmlFor=(?:"([^"]+)"|\{([^}]+)\})/g)].map((m) => m[1] ?? m[2])
       )
       for (const { index, text, tag } of controlTags(source)) {
         if (/type=["']hidden["']/.test(text)) continue
@@ -87,18 +87,18 @@ describe('form controls have a programmatic name', () => {
   it('has a name on the API key bar controls, not just a placeholder', () => {
     const { container } = render(
       <MemoryRouter>
-      <ApiKeyBar
-        provider="openai"
-        setProvider={vi.fn()}
-        apiKey=""
-        setApiKey={vi.fn()}
-        saveForSession={false}
-        setSaveForSession={vi.fn()}
-        agentProvider="any"
-        model="gpt-4o"
-        setModel={vi.fn()}
-      />
-      </MemoryRouter>,
+        <ApiKeyBar
+          provider="openai"
+          setProvider={vi.fn()}
+          apiKey=""
+          setApiKey={vi.fn()}
+          saveForSession={false}
+          setSaveForSession={vi.fn()}
+          agentProvider="any"
+          model="gpt-4o"
+          setModel={vi.fn()}
+        />
+      </MemoryRouter>
     )
     expect(unnamedControls(container)).toHaveLength(0)
     expect(screen.getByLabelText('API key')).toBeInTheDocument()
@@ -110,18 +110,18 @@ describe('form controls have a programmatic name', () => {
   it('keeps the name after the user types', () => {
     render(
       <MemoryRouter>
-      <ApiKeyBar
-        provider="openai"
-        setProvider={vi.fn()}
-        apiKey="sk-typed-value"
-        setApiKey={vi.fn()}
-        saveForSession={false}
-        setSaveForSession={vi.fn()}
-        agentProvider="any"
-        model="gpt-4o"
-        setModel={vi.fn()}
-      />
-      </MemoryRouter>,
+        <ApiKeyBar
+          provider="openai"
+          setProvider={vi.fn()}
+          apiKey="sk-typed-value"
+          setApiKey={vi.fn()}
+          saveForSession={false}
+          setSaveForSession={vi.fn()}
+          agentProvider="any"
+          model="gpt-4o"
+          setModel={vi.fn()}
+        />
+      </MemoryRouter>
     )
     const field = screen.getByLabelText('API key')
     expect(field).toHaveValue('sk-typed-value')
@@ -130,7 +130,7 @@ describe('form controls have a programmatic name', () => {
 
   it('names the prompt history search', () => {
     const { container } = render(
-      <PromptHistoryPanel open onClose={vi.fn()} onUsePrompt={vi.fn()} />,
+      <PromptHistoryPanel open onClose={vi.fn()} onUsePrompt={vi.fn()} />
     )
     expect(unnamedControls(container)).toHaveLength(0)
     expect(screen.getByLabelText('Search prompts')).toBeInTheDocument()
@@ -145,7 +145,7 @@ describe('form controls have a programmatic name', () => {
         apiKey=""
         onSchedule={vi.fn()}
         onClose={vi.fn()}
-      />,
+      />
     )
     expect(unnamedControls(container)).toHaveLength(0)
     expect(screen.getByLabelText('Schedule name')).toBeInTheDocument()
@@ -156,7 +156,7 @@ describe('form controls have a programmatic name', () => {
     const { container } = render(
       <MemoryRouter>
         <SettingsPage />
-      </MemoryRouter>,
+      </MemoryRouter>
     )
     expect(unnamedControls(container)).toHaveLength(0)
     expect(screen.getByLabelText('OpenAI API key')).toBeInTheDocument()

@@ -57,10 +57,9 @@ describe('useTokenCounter', () => {
 
   it('keeps the previous count visible while the next estimate is pending', () => {
     vi.useFakeTimers()
-    const { result, rerender } = renderHook(
-      ({ text }) => useTokenCounter(text, 300),
-      { initialProps: { text: 'hello' } }
-    )
+    const { result, rerender } = renderHook(({ text }) => useTokenCounter(text, 300), {
+      initialProps: { text: 'hello' },
+    })
 
     act(() => vi.advanceTimersByTime(300))
     expect(result.current.tokens).toBe(2)
@@ -74,10 +73,9 @@ describe('useTokenCounter', () => {
 
   it('debounces rapid changes and estimates only the final text', () => {
     vi.useFakeTimers()
-    const { result, rerender } = renderHook(
-      ({ text }) => useTokenCounter(text, 200),
-      { initialProps: { text: 'one' } }
-    )
+    const { result, rerender } = renderHook(({ text }) => useTokenCounter(text, 200), {
+      initialProps: { text: 'one' },
+    })
 
     rerender({ text: 'one two' })
     act(() => vi.advanceTimersByTime(100))

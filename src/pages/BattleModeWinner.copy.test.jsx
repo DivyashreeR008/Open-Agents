@@ -39,7 +39,9 @@ describe('BattleModeWinner copy', () => {
   })
 
   it('falls back to a temporary textarea when the clipboard rejects', async () => {
-    Object.assign(navigator, { clipboard: { writeText: vi.fn().mockRejectedValue(new Error('blocked')) } })
+    Object.assign(navigator, {
+      clipboard: { writeText: vi.fn().mockRejectedValue(new Error('blocked')) },
+    })
     const execCommand = vi.fn(() => true)
     Object.defineProperty(document, 'execCommand', { value: execCommand, configurable: true })
     renderWinner()

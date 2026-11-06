@@ -14,7 +14,8 @@ export const MISSED_RUN_POLICIES = [
   {
     value: 'catch_up',
     label: 'Catch up (a few runs)',
-    description: 'Runs the most recent missed runs, up to a limit. Older ones are recorded, not run.',
+    description:
+      'Runs the most recent missed runs, up to a limit. Older ones are recorded, not run.',
   },
   {
     value: 'skip',
@@ -37,7 +38,7 @@ export const MAX_CATCH_UP_RUNS = 3
 export const ON_TIME_GRACE_MS = 10 * 60 * 1000
 
 export function normalizeMissedPolicy(value) {
-  return MISSED_RUN_POLICIES.some(p => p.value === value) ? value : DEFAULT_MISSED_POLICY
+  return MISSED_RUN_POLICIES.some((p) => p.value === value) ? value : DEFAULT_MISSED_POLICY
 }
 
 /**
@@ -90,7 +91,9 @@ export function planDueRuns(due, policy, { maxCatchUp = MAX_CATCH_UP_RUNS } = {}
 
   const missedCount = count - runCount
   const missed =
-    missedCount > 0 ? { count: missedCount, first, last: first + (missedCount - 1) * intervalMs } : null
+    missedCount > 0
+      ? { count: missedCount, first, last: first + (missedCount - 1) * intervalMs }
+      : null
 
   return { runWindows, missed }
 }
@@ -101,7 +104,12 @@ export function isUnexecutedRun(run) {
 }
 
 function formatWindow(ts) {
-  return new Date(ts).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+  return new Date(ts).toLocaleString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }
 
 /**
@@ -114,10 +122,11 @@ export function describeUnexecutedRun(run) {
   const noun = count === 1 ? 'run' : 'runs'
   const first = run?.firstWindow ?? run?.startedAt
   const last = run?.lastWindow ?? run?.startedAt
-  const when = first === last ? formatWindow(first) : `${formatWindow(first)} to ${formatWindow(last)}`
+  const when =
+    first === last ? formatWindow(first) : `${formatWindow(first)} to ${formatWindow(last)}`
 
   if (missed) {
-    const setting = MISSED_RUN_POLICIES.find(p => p.value === run.policy)
+    const setting = MISSED_RUN_POLICIES.find((p) => p.value === run.policy)
     return {
       title: `${count} ${noun} missed`,
       detail:

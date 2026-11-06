@@ -35,7 +35,9 @@ describe('WorkflowBuilder validation and preview', () => {
     expect(screen.getByRole('button', { name: 'Save Workflow' })).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Run Without Saving' })).toBeDisabled()
 
-    fireEvent.change(screen.getByLabelText(/Workflow Title/), { target: { value: 'Research flow' } })
+    fireEvent.change(screen.getByLabelText(/Workflow Title/), {
+      target: { value: 'Research flow' },
+    })
     expect(screen.getByRole('button', { name: 'Save Workflow' })).toBeDisabled()
 
     fireEvent.click(screen.getByRole('button', { name: /Add first agent/ }))
@@ -57,7 +59,9 @@ describe('WorkflowBuilder validation and preview', () => {
 
   it('renders the live preview and estimated runtime', () => {
     renderPage()
-    fireEvent.change(screen.getByLabelText(/Workflow Title/), { target: { value: 'Research flow' } })
+    fireEvent.change(screen.getByLabelText(/Workflow Title/), {
+      target: { value: 'Research flow' },
+    })
     fireEvent.change(screen.getByLabelText(/Description/), { target: { value: 'Find and write' } })
     fireEvent.click(screen.getByRole('button', { name: /Add first agent/ }))
     fireEvent.click(screen.getByRole('button', { name: /Alpha/ }))

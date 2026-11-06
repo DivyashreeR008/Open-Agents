@@ -12,11 +12,7 @@ const LISTINGS_KEY = 'oa_marketplace_listings'
 const DRAFTS_KEY = 'oa_marketplace_drafts'
 const VOTES_KEY = 'oa_marketplace_votes'
 
-export const MARKETPLACE_CATEGORIES = [
-  'Data Processing',
-  'Content Generation',
-  'Research',
-]
+export const MARKETPLACE_CATEGORIES = ['Data Processing', 'Content Generation', 'Research']
 
 export const MARKETPLACE_SORTS = [
   { value: 'newest', label: 'Newest first' },
@@ -71,8 +67,13 @@ export function publishAgent(entry) {
     id: `mkt_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
     name: String(entry.name ?? '').trim(),
     description: String(entry.description ?? '').trim(),
-    tags: (entry.tags ?? []).map((t) => String(t).trim()).filter(Boolean).slice(0, 8),
-    category: MARKETPLACE_CATEGORIES.includes(entry.category) ? entry.category : MARKETPLACE_CATEGORIES[0],
+    tags: (entry.tags ?? [])
+      .map((t) => String(t).trim())
+      .filter(Boolean)
+      .slice(0, 8),
+    category: MARKETPLACE_CATEGORIES.includes(entry.category)
+      ? entry.category
+      : MARKETPLACE_CATEGORIES[0],
     readme: entry.readme ? String(entry.readme) : '',
     author: String(entry.author ?? 'Anonymous').trim() || 'Anonymous',
     config,
@@ -94,9 +95,7 @@ export function publishAgent(entry) {
  */
 export function loadListings() {
   const listings = loadJson(LISTINGS_KEY, [])
-  const normalized = Array.isArray(listings)
-    ? listings.map(normalizeListing).filter(Boolean)
-    : []
+  const normalized = Array.isArray(listings) ? listings.map(normalizeListing).filter(Boolean) : []
   return reconcileListingsWithVotes(normalized)
 }
 
@@ -433,9 +432,7 @@ export function rateAgent(listingId, stars) {
  * @returns {Record<string, number>}
  */
 export function loadUserVotes() {
-  return Object.fromEntries(
-    Object.entries(loadVotes()).filter(([, vote]) => isRating(vote))
-  )
+  return Object.fromEntries(Object.entries(loadVotes()).filter(([, vote]) => isRating(vote)))
 }
 
 /**
@@ -475,8 +472,9 @@ export function filterListings(listings, { search = '', category = '' } = {}) {
     if (!q) return true
     const tags = Array.isArray(l.tags) ? l.tags : []
     return (
-      String(l.name || '').toLowerCase().includes(q) ||
-      tags.some((t) => String(t).toLowerCase().includes(q))
+      String(l.name || '')
+        .toLowerCase()
+        .includes(q) || tags.some((t) => String(t).toLowerCase().includes(q))
     )
   })
 }

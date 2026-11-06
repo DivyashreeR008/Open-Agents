@@ -827,12 +827,18 @@ describe('Recommendation Engine Test Suite (Issue #175)', () => {
     })
 
     it('does not pad a short reason list with generic metadata claims', () => {
-      const customAgent = { id: 'a1', category: 'Productivity', description: 'A productivity helper.' }
+      const customAgent = {
+        id: 'a1',
+        category: 'Productivity',
+        description: 'A productivity helper.',
+      }
       const reasons = buildRecommendationReasons(customAgent, {}, { provider: 'exact' })
 
       expect(reasons).toEqual(['Aligns with your preferred provider.'])
       expect(reasons).not.toContain('Agent metadata identifies its focus as Productivity.')
-      expect(reasons).not.toContain('Its published description is relevant to the selected workflow.')
+      expect(reasons).not.toContain(
+        'Its published description is relevant to the selected workflow.'
+      )
     })
 
     it('deduplicates and limits reasons to maximum of 4', () => {

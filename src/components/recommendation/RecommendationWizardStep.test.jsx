@@ -37,9 +37,10 @@ describe('RecommendationWizardStep', () => {
     ).toBeInTheDocument()
     expect(screen.getByText('Step 1 of 5')).toBeInTheDocument()
     expect(screen.getByRole('alert')).toHaveTextContent('Choose a goal to continue.')
-    expect(
-      screen.getByRole('button', { name: /Coding & Development/ })
-    ).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: /Coding & Development/ })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    )
 
     fireEvent.click(screen.getByRole('button', { name: /Research & Analysis/ }))
     expect(setPreference).toHaveBeenCalledWith('primaryGoal', 'research-analysis')
@@ -99,12 +100,14 @@ describe('RecommendationWizardStep', () => {
     expect(
       screen.getByRole('heading', { level: 2, name: 'Any extra preferences?' })
     ).toBeInTheDocument()
-    expect(
-      screen.getByRole('button', { name: 'Tool Calling' })
-    ).toHaveAttribute('aria-pressed', 'false')
-    expect(
-      screen.getByRole('button', { name: 'Open Source' })
-    ).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'Tool Calling' })).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    )
+    expect(screen.getByRole('button', { name: 'Open Source' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    )
 
     fireEvent.click(screen.getByRole('button', { name: 'Tool Calling' }))
     expect(toggleExtraPreference).toHaveBeenCalledWith('tool-calling')

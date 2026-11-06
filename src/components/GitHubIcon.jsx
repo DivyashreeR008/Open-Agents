@@ -7,12 +7,7 @@
  * instead of pulling in a second icon package. The path is the public GitHub
  * mark from the Simple Icons project (CC0).
  */
-export default function GitHubIcon({
-  size = 24,
-  className,
-  title,
-  ...rest
-}) {
+export default function GitHubIcon({ size = 24, className, title, ...rest }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
