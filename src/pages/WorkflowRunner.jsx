@@ -15,7 +15,7 @@ import {
   ArrowRight,
   GitBranch,
 } from 'lucide-react'
-import * as Icons from 'lucide-react'
+import { resolveAgentIcon } from '../lib/agentIcons'
 import { useAgents } from '../lib/useAgents'
 import OutputRenderer from '../components/OutputRenderer'
 import ApiKeyBar from '../components/ApiKeyBar'
@@ -451,7 +451,7 @@ export default function WorkflowRunner() {
             const IconComponent =
               step.kind === 'conditional'
                 ? GitBranch
-                : (step.agent && Icons[step.agent.icon]) || Icons.Bot
+                : resolveAgentIcon(step.agent?.icon)
             return (
               <div
                 key={step.agentId + index}

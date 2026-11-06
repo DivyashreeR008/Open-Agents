@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Sun, Moon, Github, Menu, X, HelpCircle, DollarSign, RotateCcw, Settings, PanelLeft, ExternalLink } from 'lucide-react'
+import { Sun, Moon, Menu, X, HelpCircle, DollarSign, RotateCcw, Settings, PanelLeft, ExternalLink } from 'lucide-react'
 
+import GitHubIcon from './GitHubIcon'
 import Logo from './Logo'
 import KeyboardShortcutsModal from './KeyboardShortcutsModal'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
@@ -111,7 +112,7 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
               aria-label="Star Open Agents on GitHub (opens in new tab)"
               className="btn-secondary hidden h-8 sm:inline-flex"
             >
-              <Github size={14} aria-hidden="true" />
+              <GitHubIcon size={14} aria-hidden="true" />
               <span className="hidden lg:inline">Star</span>
               <ExternalLink size={12} aria-hidden="true" />
             </a>
@@ -214,7 +215,7 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
                 rel="noopener noreferrer"
                 className="btn-secondary"
               >
-                <Github size={14} aria-hidden="true" />
+                <GitHubIcon size={14} aria-hidden="true" />
                 Star
                 <ExternalLink size={12} aria-hidden="true" />
                 <span className="sr-only">(opens in new tab)</span>

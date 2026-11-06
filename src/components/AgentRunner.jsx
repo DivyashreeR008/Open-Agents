@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { recordAnalyticsRun } from "../lib/useAnalytics";
 import { useNavigate, Link } from "react-router-dom";
-import * as Icons from "lucide-react";
 import CustomSelect from "./CustomSelect";
 import {
   Loader2,
@@ -19,6 +18,7 @@ import {
   Layers,
   History,
 } from "lucide-react";
+import { resolveAgentIcon } from "../lib/agentIcons";
 import ApiKeyBar from "./ApiKeyBar";
 import ApiKeyInfo from "./ApiKeyInfo";
 import OutputRenderer from "./OutputRenderer";
@@ -460,7 +460,7 @@ const handleRun = async () => {
     });
   };
 
-  const IconComponent = Icons[agent.icon] || Icons.Bot;
+  const IconComponent = resolveAgentIcon(agent.icon);
   const supportsBatchMode = agent.inputs.some((i) =>
     ["text", "textarea", "code"].includes(i.type)
   );
