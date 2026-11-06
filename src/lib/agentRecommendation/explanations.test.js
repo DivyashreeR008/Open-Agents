@@ -14,11 +14,7 @@ describe('buildRecommendationReasons', () => {
       exactCategory: true,
     })
 
-    expect(reasons[0]).toBe('Matches your coding and development workflow.')
-    expect(reasons).toContain('Agent metadata identifies its focus as Engineering.')
-    expect(reasons).toContain(
-      'Its published description is relevant to the selected workflow.'
-    )
+    expect(reasons).toEqual(['Matches your coding and development workflow.'])
   })
 
   it('names a related category without repeating the category fallback', () => {
@@ -89,13 +85,10 @@ describe('buildRecommendationReasons', () => {
     )
   })
 
-  it('uses a closest-match fallback when no scoring signal was recorded', () => {
+  it('returns no evidence-free reasons when nothing matched', () => {
     const reasons = buildRecommendationReasons(agent, codingPreferences, {})
 
-    expect(reasons).toContain(
-      'Listed in Engineering; this is one of the closest available matches.'
-    )
-    expect(reasons.length).toBeLessThanOrEqual(4)
+    expect(reasons).toEqual([])
   })
 
   it('still explains an agent that has no category or description', () => {
