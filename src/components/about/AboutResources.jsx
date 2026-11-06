@@ -1,8 +1,6 @@
 import { BookOpen, GitPullRequest, AlertCircle, MessageSquare, ExternalLink } from 'lucide-react'
 import GitHubIcon from '../GitHubIcon'
 
-
-
 export default function AboutResources() {
   const resources = [
     {
