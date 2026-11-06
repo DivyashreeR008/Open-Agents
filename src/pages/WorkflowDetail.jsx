@@ -26,17 +26,19 @@ function AgentRow({ agentId, index, total, agents }) {
     <div className="flex items-center gap-3">
       {/* Connector line */}
       <div className="flex flex-col items-center self-stretch w-6">
-        <div className={`w-px flex-1 dark:bg-border bg-gray-200 ${index === 0 ? 'opacity-0' : ''}`} />
+        <div
+          className={`w-px flex-1 dark:bg-border bg-gray-200 ${index === 0 ? 'opacity-0' : ''}`}
+        />
         <div className="w-6 h-6 bg-zinc-500/10 flex items-center justify-center text-[10px] font-bold text-zinc-600 dark:text-zinc-300 flex-shrink-0">
           {index + 1}
         </div>
-        <div className={`w-px flex-1 dark:bg-border bg-gray-200 ${index === total - 1 ? 'opacity-0' : ''}`} />
+        <div
+          className={`w-px flex-1 dark:bg-border bg-gray-200 ${index === total - 1 ? 'opacity-0' : ''}`}
+        />
       </div>
 
       {/* Agent card */}
-      <div
-        className="flex items-center gap-3 flex-1 p-3 border my-1 dark:bg-surface-card dark:border-border bg-white border-gray-200"
-      >
+      <div className="flex items-center gap-3 flex-1 p-3 border my-1 dark:bg-surface-card dark:border-border bg-white border-gray-200">
         <div className="w-8 h-8 bg-zinc-500/10 flex items-center justify-center flex-shrink-0">
           <IconComponent size={15} className="text-zinc-600 dark:text-zinc-300" />
         </div>
@@ -82,7 +84,9 @@ export default function WorkflowDetail() {
       }
       setLoading(false)
     })
-    return () => { mounted = false }
+    return () => {
+      mounted = false
+    }
   }, [id])
 
   // Realtime usage count subscription
@@ -151,9 +155,7 @@ export default function WorkflowDetail() {
       </button>
 
       {/* Header Card */}
-      <div
-        className=" border p-5 mb-5 dark:bg-surface-card dark:border-border bg-white border-gray-200"
-      >
+      <div className=" border p-5 mb-5 dark:bg-surface-card dark:border-border bg-white border-gray-200">
         <div className="flex items-start gap-4 mb-4">
           <div className="w-12 h-12 bg-zinc-500/10 flex items-center justify-center flex-shrink-0">
             <GitBranch size={22} className="text-zinc-600 dark:text-zinc-300" />
@@ -220,12 +222,8 @@ export default function WorkflowDetail() {
       </div>
 
       {/* Agent Sequence */}
-      <div
-        className=" border p-5 dark:bg-surface-card dark:border-border bg-white border-gray-200"
-      >
-        <h2 className="eyebrow mb-4">
-          Agent Sequence
-        </h2>
+      <div className=" border p-5 dark:bg-surface-card dark:border-border bg-white border-gray-200">
+        <h2 className="eyebrow mb-4">Agent Sequence</h2>
         <div>
           {(workflow.agents ?? []).map((agentId, index) => (
             <AgentRow

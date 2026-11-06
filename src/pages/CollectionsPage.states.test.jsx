@@ -67,7 +67,9 @@ describe('CollectionsPage empty and capacity states', () => {
   })
 
   it('disables create and import at the collection limit', () => {
-    collectionsFixture(Array.from({ length: 10 }, (_, index) => collection(`c${index}`, `Collection ${index}`)))
+    collectionsFixture(
+      Array.from({ length: 10 }, (_, index) => collection(`c${index}`, `Collection ${index}`))
+    )
     renderPage()
     expect(screen.getByRole('button', { name: /new collection/i })).toBeDisabled()
     expect(screen.getByRole('button', { name: /^import$/i })).toBeDisabled()

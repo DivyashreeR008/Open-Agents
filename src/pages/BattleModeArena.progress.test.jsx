@@ -24,10 +24,12 @@ const apiKeys = { openai: 'sk-o', anthropic: 'sk-a', gemini: 'sk-g', openrouter:
 function setup() {
   return render(
     <MemoryRouter
-      initialEntries={[{
-        pathname: '/battle/arena',
-        state: { agent, inputs: { topic: 'AI safety' }, apiKeys },
-      }]}
+      initialEntries={[
+        {
+          pathname: '/battle/arena',
+          state: { agent, inputs: { topic: 'AI safety' }, apiKeys },
+        },
+      ]}
     >
       <BattleModeArena />
     </MemoryRouter>
@@ -39,14 +41,19 @@ function deferredRun() {
   runAgent.mockImplementation(({ provider }) => {
     let resolve
     let reject
-    const promise = new Promise((res, rej) => { resolve = res; reject = rej })
+    const promise = new Promise((res, rej) => {
+      resolve = res
+      reject = rej
+    })
     pending.push({ provider, resolve, reject })
     return promise
   })
   return pending
 }
 
-beforeEach(() => { vi.clearAllMocks() })
+beforeEach(() => {
+  vi.clearAllMocks()
+})
 
 describe('BattleModeArena progress and retry', () => {
   it('keeps the first finisher badge, labels the rest, records analytics, and retries one panel', async () => {
@@ -55,18 +62,22 @@ describe('BattleModeArena progress and retry', () => {
     await waitFor(() => expect(pending).toHaveLength(4))
 
     const openai = pending.find((call) => call.provider === 'openai')
-    await act(async () => { openai.resolve({ content: 'OpenAI answer', duration: 2100 }) })
+    await act(async () => {
+      openai.resolve({ content: 'OpenAI answer', duration: 2100 })
+    })
     expect(await screen.findByText('OpenAI answer')).toBeInTheDocument()
     expect(screen.getByText('First to finish!')).toBeInTheDocument()
     expect(screen.getByText('2.1s')).toBeInTheDocument()
     expect(screen.getAllByText('Still fighting...')).toHaveLength(3)
     expect(recordAnalyticsRun).toHaveBeenCalledTimes(1)
-    expect(recordAnalyticsRun).toHaveBeenCalledWith(expect.objectContaining({
-      agentId: 'debate-agent',
-      provider: 'openai',
-      model: 'gpt-4o',
-      duration: 2100,
-    }))
+    expect(recordAnalyticsRun).toHaveBeenCalledWith(
+      expect.objectContaining({
+        agentId: 'debate-agent',
+        provider: 'openai',
+        model: 'gpt-4o',
+        duration: 2100,
+      })
+    )
 
     const anthropic = pending.find((call) => call.provider === 'anthropic')
     const gemini = pending.find((call) => call.provider === 'gemini')
@@ -90,7 +101,9 @@ describe('BattleModeArena progress and retry', () => {
 
     await waitFor(() => expect(pending).toHaveLength(5))
     const retry = pending[4]
-    await act(async () => { retry.resolve({ content: 'Claude recovered', duration: 800 }) })
+    await act(async () => {
+      retry.resolve({ content: 'Claude recovered', duration: 800 })
+    })
     expect(await screen.findByText('Claude recovered')).toBeInTheDocument()
     expect(screen.getByText('OpenAI answer')).toBeInTheDocument()
     expect(screen.getByText('0.8s')).toBeInTheDocument()

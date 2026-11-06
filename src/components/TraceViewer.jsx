@@ -16,9 +16,7 @@ function TraceStep({ step, index, defaultOpen }) {
   const [open, setOpen] = useState(defaultOpen)
 
   return (
-    <div
-      className=" border overflow-hidden dark:bg-surface-card dark:border-border bg-white border-gray-200"
-    >
+    <div className=" border overflow-hidden dark:bg-surface-card dark:border-border bg-white border-gray-200">
       <button
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
@@ -33,9 +31,7 @@ function TraceStep({ step, index, defaultOpen }) {
           </span>
           <span className="text-[11px] dark:text-text-muted text-gray-400">{step.stepType}</span>
         </div>
-        <span
-          className="flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium dark:bg-surface-hover dark:text-text-secondary bg-gray-100 text-gray-600"
-        >
+        <span className="flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium dark:bg-surface-hover dark:text-text-secondary bg-gray-100 text-gray-600">
           <Timer size={11} />
           {formatDuration(step.durationMs)}
         </span>
@@ -121,11 +117,17 @@ export default function TraceViewer({ trace }) {
               onFocus={() => setActiveStep(step)}
               onClick={() => setActiveStep(step)}
               className={`${BAR_COLORS[step.status] || 'bg-gray-300'} min-w-[4px]`}
-              style={{ width: totalMs > 0 ? `${((step.durationMs || 0) / totalMs) * 100}%` : 'auto', flexGrow: totalMs > 0 ? 0 : 1 }}
+              style={{
+                width: totalMs > 0 ? `${((step.durationMs || 0) / totalMs) * 100}%` : 'auto',
+                flexGrow: totalMs > 0 ? 0 : 1,
+              }}
             />
           ))}
         </div>
-        <p aria-live="polite" className="mt-1 min-h-[1rem] text-[11px] dark:text-text-secondary text-gray-600">
+        <p
+          aria-live="polite"
+          className="mt-1 min-h-[1rem] text-[11px] dark:text-text-secondary text-gray-600"
+        >
           {activeStep ? `${activeStep.stepName}: ${formatDuration(activeStep.durationMs)}` : ''}
         </p>
       </div>

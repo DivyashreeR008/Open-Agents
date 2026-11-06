@@ -2,14 +2,16 @@ export default {
   id: 'docker-container-audit-agent',
   createdAt: '2026-06-28',
   name: 'Docker Container Security & Optimization Audit',
-  description: 'Analyze your Dockerfiles or Docker Compose configurations to discover security vulnerabilities, size bloat, and run-time optimization opportunities, and generate a fully secure, optimized production-ready version.',
+  description:
+    'Analyze your Dockerfiles or Docker Compose configurations to discover security vulnerabilities, size bloat, and run-time optimization opportunities, and generate a fully secure, optimized production-ready version.',
   category: 'DevOps',
   icon: 'Container',
   provider: 'any',
   defaultProvider: 'openai',
   model: 'gpt-4o-mini',
   exampleInputs: {
-    dockerCode: 'FROM node:18\nWORKDIR /app\nCOPY . .\nRUN npm install\nEXPOSE 3000\nCMD ["npm", "start"]',
+    dockerCode:
+      'FROM node:18\nWORKDIR /app\nCOPY . .\nRUN npm install\nEXPOSE 3000\nCMD ["npm", "start"]',
     targetEnv: 'Production',
     strictness: 'High - Strict compliance',
   },
@@ -96,4 +98,4 @@ Rules:
 2. Code blocks must be complete, syntax-valid, and ready to deploy.
 3. Keep explanations clear, technical, and actionable.`,
   outputType: 'markdown',
-};
+}

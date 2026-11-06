@@ -26,10 +26,9 @@ describe('recommendation option contract', () => {
       expect(new Set(options.map((option) => option.id)).size, `${groupName} ids`).toBe(
         options.length
       )
-      expect(
-        new Set(options.map((option) => option.label)).size,
-        `${groupName} labels`
-      ).toBe(options.length)
+      expect(new Set(options.map((option) => option.label)).size, `${groupName} labels`).toBe(
+        options.length
+      )
 
       for (const option of options) {
         expect(option.id.trim().length, `${groupName} id`).toBeGreaterThan(0)

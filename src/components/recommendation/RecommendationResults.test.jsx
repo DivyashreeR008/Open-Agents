@@ -69,7 +69,9 @@ describe('RecommendationResults', () => {
     })
 
     expect(screen.getByText(/No strong match was found/i)).toBeInTheDocument()
-    expect(screen.getByText(/closest agents with at least one matching signal/i)).toBeInTheDocument()
+    expect(
+      screen.getByText(/closest agents with at least one matching signal/i)
+    ).toBeInTheDocument()
   })
 
   it('wires start over, refine, browse all, and card open actions', () => {
@@ -164,7 +166,9 @@ describe('RecommendationResults empty causes', () => {
   })
 
   it('labels a weak list as closest matches instead of a confident recommendation', () => {
-    renderLegacyResults({ results: [{ ...result, isConfident: false, score: 18, matchPercentage: 50 }] })
+    renderLegacyResults({
+      results: [{ ...result, isConfident: false, score: 18, matchPercentage: 50 }],
+    })
 
     expect(screen.getByText(/No strong match was found/i)).toBeInTheDocument()
     expect(screen.getByText(/at least one matching signal/i)).toBeInTheDocument()

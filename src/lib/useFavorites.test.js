@@ -16,9 +16,7 @@ describe('useFavorites', () => {
     })
 
     expect(result.current.favorites).toEqual(['agent-1'])
-    expect(localStorage.getItem('oa_favorites')).toBe(
-      JSON.stringify(['agent-1']),
-    )
+    expect(localStorage.getItem('oa_favorites')).toBe(JSON.stringify(['agent-1']))
   })
 
   it('should not throw when localStorage write fails', () => {

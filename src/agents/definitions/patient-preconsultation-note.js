@@ -1,129 +1,122 @@
 export default {
-  id: "patient-preconsultation-note",
-  createdAt: "2026-05-20",
+  id: 'patient-preconsultation-note',
+  createdAt: '2026-05-20',
 
-  name: "Patient Pre-Consultation Note",
+  name: 'Patient Pre-Consultation Note',
 
   description:
-    "Turn symptom descriptions into a structured pre-consultation summary patients can share with doctors. Includes symptom timeline, relevant history prompts, and helpful questions for the doctor. This tool does not provide medical diagnoses.",
+    'Turn symptom descriptions into a structured pre-consultation summary patients can share with doctors. Includes symptom timeline, relevant history prompts, and helpful questions for the doctor. This tool does not provide medical diagnoses.',
 
-  category: "Healthcare",
+  category: 'Healthcare',
 
-  icon: "HeartPulse",
+  icon: 'HeartPulse',
 
-  provider: "openai",
-  defaultProvider: "openai",
-  model: "gpt-4.1-mini",
+  provider: 'openai',
+  defaultProvider: 'openai',
+  model: 'gpt-4.1-mini',
 
   exampleInputs: {
     symptoms:
-      "I have had headaches, mild fever, and body pain for the last 3 days. The headaches get worse at night.",
+      'I have had headaches, mild fever, and body pain for the last 3 days. The headaches get worse at night.',
 
-    duration: "3 days",
+    duration: '3 days',
 
-    severity: "Moderate — affects daily activities",
+    severity: 'Moderate — affects daily activities',
 
-    progression: "Worsening",
+    progression: 'Worsening',
 
-    age: "24",
+    age: '24',
 
-    sex: "Female",
+    sex: 'Female',
 
-    medicalHistory:
-      "History of migraines. No diabetes or blood pressure issues.",
+    medicalHistory: 'History of migraines. No diabetes or blood pressure issues.',
 
-    medications:
-      "Paracetamol twice daily.",
+    medications: 'Paracetamol twice daily.',
 
-    allergies:
-      "Penicillin",
+    allergies: 'Penicillin',
 
-    additionalNotes:
-      "Recently traveled and had poor sleep.",
+    additionalNotes: 'Recently traveled and had poor sleep.',
   },
 
   inputs: [
     {
-      id: "symptoms",
-      label: "Describe your symptoms",
-      type: "textarea",
-      placeholder:
-        "e.g. I have chest discomfort, fatigue, and dizziness after walking.",
+      id: 'symptoms',
+      label: 'Describe your symptoms',
+      type: 'textarea',
+      placeholder: 'e.g. I have chest discomfort, fatigue, and dizziness after walking.',
       required: true,
     },
 
     {
-      id: "duration",
-      label: "How long have you had these symptoms?",
-      type: "text",
-      placeholder: "e.g. 3 days, 2 weeks, since yesterday",
+      id: 'duration',
+      label: 'How long have you had these symptoms?',
+      type: 'text',
+      placeholder: 'e.g. 3 days, 2 weeks, since yesterday',
       required: true,
     },
 
     {
-      id: "severity",
-      label: "How severe are the symptoms?",
-      type: "select",
+      id: 'severity',
+      label: 'How severe are the symptoms?',
+      type: 'select',
       options: [
-        "Mild — noticeable but manageable",
-        "Moderate — affects daily activities",
-        "Severe — difficult to function normally",
+        'Mild — noticeable but manageable',
+        'Moderate — affects daily activities',
+        'Severe — difficult to function normally',
       ],
-      defaultValue: "Moderate — affects daily activities",
+      defaultValue: 'Moderate — affects daily activities',
       required: true,
     },
 
     {
-      id: "progression",
-      label: "How are the symptoms changing?",
-      type: "select",
-      options: ["Improving", "Worsening", "No major change"],
-      defaultValue: "No major change",
+      id: 'progression',
+      label: 'How are the symptoms changing?',
+      type: 'select',
+      options: ['Improving', 'Worsening', 'No major change'],
+      defaultValue: 'No major change',
     },
 
     {
-      id: "age",
-      label: "Age",
-      type: "text",
-      placeholder: "e.g. 24",
+      id: 'age',
+      label: 'Age',
+      type: 'text',
+      placeholder: 'e.g. 24',
     },
 
     {
-      id: "sex",
-      label: "Biological sex",
-      type: "select",
-      options: ["Female", "Male", "Intersex", "Prefer not to say"],
+      id: 'sex',
+      label: 'Biological sex',
+      type: 'select',
+      options: ['Female', 'Male', 'Intersex', 'Prefer not to say'],
     },
 
     {
-      id: "medicalHistory",
-      label: "Relevant medical history",
-      type: "textarea",
+      id: 'medicalHistory',
+      label: 'Relevant medical history',
+      type: 'textarea',
+      placeholder: 'e.g. asthma, migraines, diabetes, surgeries, previous illnesses',
+    },
+
+    {
+      id: 'medications',
+      label: 'Current medications',
+      type: 'textarea',
+      placeholder: 'e.g. vitamin supplements, prescribed medicines',
+    },
+
+    {
+      id: 'allergies',
+      label: 'Known allergies',
+      type: 'text',
+      placeholder: 'e.g. penicillin, dust, peanuts',
+    },
+
+    {
+      id: 'additionalNotes',
+      label: 'Additional notes',
+      type: 'textarea',
       placeholder:
-        "e.g. asthma, migraines, diabetes, surgeries, previous illnesses",
-    },
-
-    {
-      id: "medications",
-      label: "Current medications",
-      type: "textarea",
-      placeholder:
-        "e.g. vitamin supplements, prescribed medicines",
-    },
-
-    {
-      id: "allergies",
-      label: "Known allergies",
-      type: "text",
-      placeholder: "e.g. penicillin, dust, peanuts",
-    },
-
-    {
-      id: "additionalNotes",
-      label: "Additional notes",
-      type: "textarea",
-      placeholder:
-        "Anything else the doctor should know? lifestyle changes, travel, stress, sleep issues, etc.",
+        'Anything else the doctor should know? lifestyle changes, travel, stress, sleep issues, etc.',
     },
   ],
 
@@ -222,7 +215,5 @@ Rules:
 - Keep the response concise, structured, and professional
 `,
 
-  outputType: "markdown",
-};
-
-
+  outputType: 'markdown',
+}

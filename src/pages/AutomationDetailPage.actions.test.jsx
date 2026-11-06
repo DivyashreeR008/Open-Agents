@@ -25,9 +25,19 @@ vi.mock('../components/CreateAutomationModal', () => ({
 import AutomationDetailPage from './AutomationDetailPage'
 
 const automation = {
-  id: 'a1', name: 'Daily digest', enabled: true, schedule: 'Every day', cron: '0 9 * * *',
-  agentId: 'summarizer', agentName: 'Summarizer', provider: 'openai', model: 'gpt-4.1-mini',
-  createdAt: 1700000000000, notificationEmail: 'ops@example.com', missedPolicy: 'skip', inputs: {},
+  id: 'a1',
+  name: 'Daily digest',
+  enabled: true,
+  schedule: 'Every day',
+  cron: '0 9 * * *',
+  agentId: 'summarizer',
+  agentName: 'Summarizer',
+  provider: 'openai',
+  model: 'gpt-4.1-mini',
+  createdAt: 1700000000000,
+  notificationEmail: 'ops@example.com',
+  missedPolicy: 'skip',
+  inputs: {},
 }
 
 function renderPage() {
@@ -43,7 +53,10 @@ function renderPage() {
 
 beforeEach(() => {
   vi.clearAllMocks()
-  vi.stubGlobal('confirm', vi.fn(() => true))
+  vi.stubGlobal(
+    'confirm',
+    vi.fn(() => true)
+  )
   vi.stubGlobal('alert', vi.fn())
   mocks.getAutomation.mockReturnValue(automation)
   mocks.getRunsForAutomation.mockReturnValue([])
@@ -100,7 +113,9 @@ describe('AutomationDetailPage actions', () => {
     fireEvent.click(screen.getByRole('button', { name: /Email & Delivery Logs/ }))
     fireEvent.click(screen.getByRole('button', { name: 'Send Test Email' }))
     await screen.findByText('Test email dispatched successfully via Resend!')
-    expect(mocks.sendResendNotification).toHaveBeenCalledWith(expect.objectContaining({ to: 'ops@example.com' }))
+    expect(mocks.sendResendNotification).toHaveBeenCalledWith(
+      expect.objectContaining({ to: 'ops@example.com' })
+    )
   })
 
   it('reports a failed test email', async () => {

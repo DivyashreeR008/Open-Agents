@@ -22,9 +22,7 @@ describe('buildRecommendationReasons', () => {
       goalCategory: true,
     })
 
-    expect(reasons).toContain(
-      'Listed in Engineering, a category related to this goal.'
-    )
+    expect(reasons).toContain('Listed in Engineering, a category related to this goal.')
     expect(reasons).not.toContain('Agent metadata identifies its focus as Engineering.')
   })
 
@@ -46,9 +44,7 @@ describe('buildRecommendationReasons', () => {
       freeTextTerms: ['release', 'migration', 'contract', 'ignored'],
     })
 
-    expect(reasons).toContain(
-      'Its metadata suggests relevance to your tool calling preference.'
-    )
+    expect(reasons).toContain('Its metadata suggests relevance to your tool calling preference.')
     expect(reasons).toContain('Aligns with your preferred provider.')
     expect(reasons).toContain('Matched terms from your goal: release, migration, contract.')
     expect(reasons.join(' ')).not.toContain('ignored')
@@ -59,9 +55,7 @@ describe('buildRecommendationReasons', () => {
       provider: 'compatible',
     })
 
-    expect(reasons).toContain(
-      'Uses flexible provider metadata compatible with your preference.'
-    )
+    expect(reasons).toContain('Uses flexible provider metadata compatible with your preference.')
     expect(reasons).not.toContain('Aligns with your preferred provider.')
   })
 
@@ -77,12 +71,8 @@ describe('buildRecommendationReasons', () => {
     expect(fastReasons).toContain(
       'Its focused scope aligns with your fast, lightweight preference.'
     )
-    expect(fastReasons).toContain(
-      'Its metadata aligns with your beginner guidance preference.'
-    )
-    expect(capableReasons).toContain(
-      'Its detailed scope aligns with your capability preference.'
-    )
+    expect(fastReasons).toContain('Its metadata aligns with your beginner guidance preference.')
+    expect(capableReasons).toContain('Its detailed scope aligns with your capability preference.')
   })
 
   it('returns no evidence-free reasons when nothing matched', () => {
@@ -105,9 +95,13 @@ describe('buildRecommendationReasons', () => {
   })
 
   it('uses the generic workflow sentence for an unknown goal', () => {
-    const reasons = buildRecommendationReasons(agent, { primaryGoal: 'unknown' }, {
-      exactCategory: true,
-    })
+    const reasons = buildRecommendationReasons(
+      agent,
+      { primaryGoal: 'unknown' },
+      {
+        exactCategory: true,
+      }
+    )
 
     expect(reasons[0]).toBe('Matches your selected workflow.')
   })

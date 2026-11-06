@@ -32,19 +32,13 @@ describe('AboutCta', () => {
     renderCta()
 
     const issues = screen.getByRole('link', { name: /Explore Open Issues/ })
-    expect(issues).toHaveAttribute(
-      'href',
-      'https://github.com/DivyashreeR008/Open-Agents/issues'
-    )
+    expect(issues).toHaveAttribute('href', 'https://github.com/DivyashreeR008/Open-Agents/issues')
     expect(issues).toHaveAttribute('target', '_blank')
     expect(issues).toHaveAttribute('rel', 'noopener noreferrer')
     expect(issues).toHaveTextContent('(opens in new tab)')
 
     const repository = screen.getByRole('link', { name: /Star on GitHub/ })
-    expect(repository).toHaveAttribute(
-      'href',
-      'https://github.com/DivyashreeR008/Open-Agents'
-    )
+    expect(repository).toHaveAttribute('href', 'https://github.com/DivyashreeR008/Open-Agents')
     expect(repository).toHaveAttribute('target', '_blank')
     expect(repository).toHaveAttribute('rel', 'noopener noreferrer')
     expect(repository).toHaveTextContent('(opens in new tab)')

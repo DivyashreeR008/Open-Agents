@@ -1,39 +1,41 @@
 export default {
-  id: "home-repair-troubleshooter",
-  createdAt: "2026-10-12",
-  name: "Home Repair Troubleshooter",
+  id: 'home-repair-troubleshooter',
+  createdAt: '2026-10-12',
+  name: 'Home Repair Troubleshooter',
   description:
     "Describe what's broken at home to get a safety-first diagnosis: likely causes, DIY fixes in order, and when to call a pro.",
-  category: "Productivity",
-  icon: "Wrench",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  category: 'Productivity',
+  icon: 'Wrench',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    problem: "Bathroom sink drains very slowly, gurgling sound. Started 2 weeks ago, getting worse.",
-    skillLevel: "Beginner DIY",
-    tools: "Plunger, adjustable wrench, basic screwdrivers. No drain snake.",
+    problem:
+      'Bathroom sink drains very slowly, gurgling sound. Started 2 weeks ago, getting worse.',
+    skillLevel: 'Beginner DIY',
+    tools: 'Plunger, adjustable wrench, basic screwdrivers. No drain snake.',
   },
   inputs: [
     {
-      id: "problem",
+      id: 'problem',
       label: "What's wrong",
-      type: "textarea",
-      placeholder: "e.g. Kitchen faucet drips constantly, wall switch sparks sometimes, damp patch growing on ceiling",
+      type: 'textarea',
+      placeholder:
+        'e.g. Kitchen faucet drips constantly, wall switch sparks sometimes, damp patch growing on ceiling',
       required: true,
     },
     {
-      id: "skillLevel",
-      label: "Your DIY level",
-      type: "select",
-      options: ["Beginner DIY", "Comfortable DIY", "Experienced"],
-      defaultValue: "Beginner DIY",
+      id: 'skillLevel',
+      label: 'Your DIY level',
+      type: 'select',
+      options: ['Beginner DIY', 'Comfortable DIY', 'Experienced'],
+      defaultValue: 'Beginner DIY',
     },
     {
-      id: "tools",
-      label: "Tools you own (optional)",
-      type: "textarea",
-      placeholder: "e.g. Drill, multimeter, plunger, ladder",
+      id: 'tools',
+      label: 'Tools you own (optional)',
+      type: 'textarea',
+      placeholder: 'e.g. Drill, multimeter, plunger, ladder',
     },
   ],
   systemPrompt: `You are a careful home-repair advisor. Safety outranks saving
@@ -72,6 +74,6 @@ Rules:
   touching the breaker box beyond flipping a labeled breaker
 - If the description is too vague to diagnose, ask for the 2-3
   observations that would pin it down instead of guessing`,
-  outputType: "markdown",
-  suggestedChainFrom: ["research-agent", "youtube-script-writer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['research-agent', 'youtube-script-writer'],
+}

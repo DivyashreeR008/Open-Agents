@@ -66,7 +66,10 @@ describe('AutomationDetailPage summary', () => {
     mocks.getAutomation.mockReturnValue(null)
     renderPage('gone')
     expect(screen.getByRole('heading', { name: 'Automation Not Found' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Return to Automations' })).toHaveAttribute('href', '/automations')
+    expect(screen.getByRole('link', { name: 'Return to Automations' })).toHaveAttribute(
+      'href',
+      '/automations'
+    )
   })
 
   it('renders enabled metadata and computed summary values', async () => {
@@ -74,7 +77,10 @@ describe('AutomationDetailPage summary', () => {
     expect(await screen.findByRole('heading', { name: 'Daily digest' })).toBeInTheDocument()
     expect(screen.getByText('Active')).toBeInTheDocument()
     expect(screen.getByText(/Every day/)).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Summarizer' })).toHaveAttribute('href', '/agent/summarizer')
+    expect(screen.getByRole('link', { name: 'Summarizer' })).toHaveAttribute(
+      'href',
+      '/agent/summarizer'
+    )
     expect(screen.getByText(/openai/)).toBeInTheDocument()
     expect(screen.getAllByText('2').length).toBeGreaterThan(0)
     expect(screen.getByText('50%')).toBeInTheDocument()

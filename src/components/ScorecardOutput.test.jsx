@@ -18,8 +18,7 @@ describe('parseScorecardText', () => {
   })
 
   it('parses fenced JSON with preamble and postscript', () => {
-    const input =
-      'Here is the scorecard:\n```json\n' + raw + '\n```\nHope this helps!'
+    const input = 'Here is the scorecard:\n```json\n' + raw + '\n```\nHope this helps!'
     expect(parseScorecardText(input)).toEqual(payload)
   })
 
@@ -46,8 +45,7 @@ describe('parseScorecardText', () => {
 
 describe('ScorecardOutput rendering', () => {
   it('renders the gauge when preamble surrounds fenced JSON', () => {
-    const input =
-      'Here is the scorecard:\n```json\n' + raw + '\n```\nThanks!'
+    const input = 'Here is the scorecard:\n```json\n' + raw + '\n```\nThanks!'
     render(<ScorecardOutput data={input} />)
     expect(screen.getByText('85/100')).toBeInTheDocument()
     expect(screen.getByText('Technical skills')).toBeInTheDocument()
@@ -55,8 +53,6 @@ describe('ScorecardOutput rendering', () => {
 
   it('shows fallback card for unparsable text', () => {
     render(<ScorecardOutput data="hello world" />)
-    expect(
-      screen.getByText(/Could not parse the response as a scorecard/i)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/Could not parse the response as a scorecard/i)).toBeInTheDocument()
   })
 })

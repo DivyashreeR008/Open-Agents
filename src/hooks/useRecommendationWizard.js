@@ -19,7 +19,10 @@ export function useRecommendationWizard(agents = []) {
   const [hasCompleted, setHasCompleted] = useState(false)
   const [errors, setErrors] = useState({})
 
-  const results = useMemo(() => hasCompleted ? recommendAgents(agents, preferences) : [], [agents, preferences, hasCompleted])
+  const results = useMemo(
+    () => (hasCompleted ? recommendAgents(agents, preferences) : []),
+    [agents, preferences, hasCompleted]
+  )
 
   const openWizard = () => setIsOpen(true)
   const closeWizard = () => {
@@ -89,5 +92,21 @@ export function useRecommendationWizard(agents = []) {
     setCurrentStepIndex(4)
   }
 
-  return { isOpen, currentStepIndex, preferences, results, hasCompleted, errors, openWizard, closeWizard, setPreference, toggleExtraPreference, nextStep, previousStep, resetWizard, completeWizard, refineAnswers }
+  return {
+    isOpen,
+    currentStepIndex,
+    preferences,
+    results,
+    hasCompleted,
+    errors,
+    openWizard,
+    closeWizard,
+    setPreference,
+    toggleExtraPreference,
+    nextStep,
+    previousStep,
+    resetWizard,
+    completeWizard,
+    refineAnswers,
+  }
 }

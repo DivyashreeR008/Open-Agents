@@ -22,10 +22,8 @@ export default {
     featureDescription:
       'New checkout flow that changes payment confirmation and order creation for web users.',
     riskTolerance: 'Medium',
-    currentRollout:
-      'Currently disabled. Initial rollout will target internal users.',
-    audience:
-      'Web users, approximately 50,000 daily active users. Payments are revenue-critical.',
+    currentRollout: 'Currently disabled. Initial rollout will target internal users.',
+    audience: 'Web users, approximately 50,000 daily active users. Payments are revenue-critical.',
     guardrailMetrics:
       'Payment success rate, checkout error rate, p95 latency, order creation failures, support tickets.',
   },
@@ -53,8 +51,7 @@ export default {
       id: 'currentRollout',
       label: 'Current Rollout',
       type: 'text',
-      placeholder:
-        'e.g. Disabled, 5%, 10% internal users, or 25% of traffic',
+      placeholder: 'e.g. Disabled, 5%, 10% internal users, or 25% of traffic',
       required: false,
     },
 
@@ -234,4 +231,4 @@ Rules:
 - For high-risk features, recommend additional validation and smaller exposure increments.`,
 
   outputType: 'markdown',
-};
+}

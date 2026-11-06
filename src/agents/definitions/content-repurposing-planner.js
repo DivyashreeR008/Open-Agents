@@ -1,40 +1,39 @@
 export default {
-  id: "content-repurposing-planner",
-  createdAt: "2026-10-12",
-  name: "Content Repurposing Planner",
-  description:
-    "Turn one piece of content into a thread, newsletter section, and video outline.",
-  category: "Marketing",
-  icon: "Recycle",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'content-repurposing-planner',
+  createdAt: '2026-10-12',
+  name: 'Content Repurposing Planner',
+  description: 'Turn one piece of content into a thread, newsletter section, and video outline.',
+  category: 'Marketing',
+  icon: 'Recycle',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     source:
-      "Blog post: 7 onboarding emails that cut churn. Covers welcome, setup nudge, first-win celebration, office-hours invite, template gallery, upgrade prompt, offboarding save.",
-    formats: "all-three",
-    voice: "Direct and practical, second person, short sentences.",
+      'Blog post: 7 onboarding emails that cut churn. Covers welcome, setup nudge, first-win celebration, office-hours invite, template gallery, upgrade prompt, offboarding save.',
+    formats: 'all-three',
+    voice: 'Direct and practical, second person, short sentences.',
   },
   inputs: [
     {
-      id: "source",
-      label: "Source content",
-      type: "textarea",
-      placeholder: "e.g. Paste your post outline or summary with the key points to repurpose",
+      id: 'source',
+      label: 'Source content',
+      type: 'textarea',
+      placeholder: 'e.g. Paste your post outline or summary with the key points to repurpose',
       required: true,
     },
     {
-      id: "formats",
-      label: "Target formats",
-      type: "select",
-      options: ["thread-plus-newsletter", "all-three", "video-only"],
-      defaultValue: "all-three",
+      id: 'formats',
+      label: 'Target formats',
+      type: 'select',
+      options: ['thread-plus-newsletter', 'all-three', 'video-only'],
+      defaultValue: 'all-three',
     },
     {
-      id: "voice",
-      label: "Voice notes (optional)",
-      type: "text",
-      placeholder: "e.g. Direct and practical, second person, short sentences",
+      id: 'voice',
+      label: 'Voice notes (optional)',
+      type: 'text',
+      placeholder: 'e.g. Direct and practical, second person, short sentences',
     },
   ],
   systemPrompt: `You are a content strategist who stretches one strong idea across formats without repeating it word for word.
@@ -63,6 +62,6 @@ Rules:
 - Keep each format native to its channel, not a copy-paste.
 - Use neutral language with no emoji.
 - Respect the selected formats and omit the rest.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["blog-post-seo-optimizer", "linkedin-post-writer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['blog-post-seo-optimizer', 'linkedin-post-writer'],
+}

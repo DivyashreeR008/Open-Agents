@@ -13,24 +13,36 @@ vi.mock('../components/SuiteWizard', () => ({ default: () => null }))
 import SuitesPage from './SuitesPage'
 
 function renderPage() {
-  return render(<MemoryRouter><SuitesPage /></MemoryRouter>)
+  return render(
+    <MemoryRouter>
+      <SuitesPage />
+    </MemoryRouter>
+  )
 }
 
 beforeEach(() => {
   vi.clearAllMocks()
   mocks.useApiKey.mockReturnValue({
-    provider: 'openai', setProvider: vi.fn(), apiKey: 'key', setApiKey: vi.fn(),
-    saveForSession: false, setSaveForSession: vi.fn(),
+    provider: 'openai',
+    setProvider: vi.fn(),
+    apiKey: 'key',
+    setApiKey: vi.fn(),
+    saveForSession: false,
+    setSaveForSession: vi.fn(),
   })
 })
 
 describe('SuitesPage generation failures', () => {
   it('shows the retry message and re-enables Generate after a rejection', async () => {
     mocks.generateCustomSuite.mockRejectedValueOnce(new Error('network')).mockResolvedValueOnce({
-      title: 'Retry suite', description: 'Recovered', agents: [{ id: 'a1', reason: 'fits' }],
+      title: 'Retry suite',
+      description: 'Recovered',
+      agents: [{ id: 'a1', reason: 'fits' }],
     })
     renderPage()
-    fireEvent.change(screen.getByLabelText('Goal for the agent suite'), { target: { value: 'Plan' } })
+    fireEvent.change(screen.getByLabelText('Goal for the agent suite'), {
+      target: { value: 'Plan' },
+    })
     fireEvent.click(screen.getByRole('button', { name: /Generate/ }))
 
     await screen.findByText(/Couldn't generate your suite/)
@@ -43,7 +55,9 @@ describe('SuitesPage generation failures', () => {
 
   it('clears the generated suite and goal on Reset', async () => {
     mocks.generateCustomSuite.mockResolvedValue({
-      title: 'Resettable suite', description: 'Done', agents: [{ id: 'a1', reason: 'fits' }],
+      title: 'Resettable suite',
+      description: 'Done',
+      agents: [{ id: 'a1', reason: 'fits' }],
     })
     renderPage()
     const input = screen.getByLabelText('Goal for the agent suite')

@@ -16,7 +16,13 @@ afterEach(() => {
 })
 
 const baseAgents = [
-  { id: 'summarizer', name: 'Summarizer', provider: 'openai', systemPrompt: 'base prompt', inputs: [] },
+  {
+    id: 'summarizer',
+    name: 'Summarizer',
+    provider: 'openai',
+    systemPrompt: 'base prompt',
+    inputs: [],
+  },
 ]
 
 function publish(config = {}) {
@@ -25,7 +31,12 @@ function publish(config = {}) {
     description: 'does things',
     tags: ['a'],
     category: 'Research',
-    config: { baseAgentId: 'summarizer', provider: 'anthropic', systemPrompt: 'custom prompt', ...config },
+    config: {
+      baseAgentId: 'summarizer',
+      provider: 'anthropic',
+      systemPrompt: 'custom prompt',
+      ...config,
+    },
   })
 }
 
@@ -64,7 +75,13 @@ describe('imported drafts', () => {
   it('skips malformed stored drafts instead of throwing', () => {
     localStorage.setItem(
       'oa_marketplace_drafts',
-      JSON.stringify([null, 'x', 5, { name: 'no id' }, { id: 'ok', config: 'bad', pendingCredentialFields: 'bad' }])
+      JSON.stringify([
+        null,
+        'x',
+        5,
+        { name: 'no id' },
+        { id: 'ok', config: 'bad', pendingCredentialFields: 'bad' },
+      ])
     )
     const drafts = loadDrafts()
     expect(drafts).toHaveLength(1)

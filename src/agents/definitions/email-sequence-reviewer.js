@@ -1,35 +1,35 @@
 export default {
-  id: "email-sequence-reviewer",
-  createdAt: "2026-10-20",
-  name: "Email Sequence Reviewer",
+  id: 'email-sequence-reviewer',
+  createdAt: '2026-10-20',
+  name: 'Email Sequence Reviewer',
   description:
-    "Review email drip sequences for timing, messaging flow, CTA effectiveness, and conversion optimization.",
-  category: "Marketing",
-  icon: "Mail",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Review email drip sequences for timing, messaging flow, CTA effectiveness, and conversion optimization.',
+  category: 'Marketing',
+  icon: 'Mail',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {},
   inputs: [
     {
-      id: "sequence",
-      label: "Email sequence",
-      type: "textarea",
+      id: 'sequence',
+      label: 'Email sequence',
+      type: 'textarea',
       placeholder: "Paste each email's subject, body, and send timing...",
       required: true,
     },
     {
-      id: "goal",
-      label: "Sequence goal",
-      type: "text",
-      placeholder: "e.g. onboarding, re-engagement, sales nurture...",
+      id: 'goal',
+      label: 'Sequence goal',
+      type: 'text',
+      placeholder: 'e.g. onboarding, re-engagement, sales nurture...',
       required: true,
     },
     {
-      id: "metrics",
-      label: "Current metrics",
-      type: "text",
-      placeholder: "e.g. 20% open, 2% click...",
+      id: 'metrics',
+      label: 'Current metrics',
+      type: 'text',
+      placeholder: 'e.g. 20% open, 2% click...',
       required: false,
     },
   ],
@@ -56,5 +56,5 @@ Rules:
 - Suggest specific subject line rewrites.
 - Recommend A/B tests for uncertain elements.`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

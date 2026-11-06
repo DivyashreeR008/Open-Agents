@@ -48,7 +48,11 @@ vi.mock('../components/RunRating', () => ({ default: () => null }))
 import WorkflowRunner from './WorkflowRunner'
 
 function setup() {
-  const workflow = { id: 'wf-1', title: 'Two provider chain', agents: ['first-agent', 'second-agent'] }
+  const workflow = {
+    id: 'wf-1',
+    title: 'Two provider chain',
+    agents: ['first-agent', 'second-agent'],
+  }
   render(
     <MemoryRouter initialEntries={[{ pathname: '/workflows/wf-1/run', state: { workflow } }]}>
       <WorkflowRunner />
@@ -65,7 +69,9 @@ describe('WorkflowRunner missing provider key', () => {
 
   it('marks the step failed and shows Retry instead of hanging on Running', async () => {
     setup()
-    fireEvent.change(screen.getByPlaceholderText(/Paste your main input/i), { target: { value: 'hello' } })
+    fireEvent.change(screen.getByPlaceholderText(/Paste your main input/i), {
+      target: { value: 'hello' },
+    })
     fireEvent.click(screen.getByRole('button', { name: /Run Workflow/i }))
 
     expect(
@@ -75,8 +81,6 @@ describe('WorkflowRunner missing provider key', () => {
     // only the first (openai) step actually called the model
     expect(mocks.runAgent).toHaveBeenCalledTimes(1)
     expect(screen.queryByText('Processing...')).not.toBeInTheDocument()
-    await waitFor(() =>
-      expect(screen.getByRole('button', { name: /^Retry$/ })).toBeInTheDocument()
-    )
+    await waitFor(() => expect(screen.getByRole('button', { name: /^Retry$/ })).toBeInTheDocument())
   })
 })

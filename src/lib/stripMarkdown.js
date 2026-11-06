@@ -23,7 +23,7 @@ export function stripMarkdown(text) {
     // fenced code blocks, keep the code, drop the fences
     .replace(
       /^[ \t]{0,3}(`{3,}|~{3,})[^\n]*\n([\s\S]*?)(?:^[ \t]{0,3}\1[`~]*[ \t]*$|(?![\s\S]))/gm,
-      (_, _fence, code) => park(code.replace(/\n$/, '')),
+      (_, _fence, code) => park(code.replace(/\n$/, ''))
     )
     .replace(/`([^`\n]+)`/g, (_, code) => park(code))
     .replace(/\\([\\`*_{}[\]()#+\-.!~>|])/g, (_, ch) => park(ch))

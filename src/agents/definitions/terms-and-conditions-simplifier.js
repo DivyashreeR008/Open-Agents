@@ -1,40 +1,41 @@
 const terms_and_conditions_simplifier = {
-    id: 'terms-and-conditions-simplifier',
-    name: 'Terms and Conditions Simplifier',
-    description: 'Paste a website URL (or its Terms & Conditions link directly) and get the terms explained in plain English, with red flags highlighted.',
-    category: 'Legal',
-    icon: 'FileText',               // from lucide.dev/icons
-    provider: 'any',                // 'openai' | 'anthropic' | 'gemini' | 'any'
-    defaultProvider: 'openai',
-    model: 'gpt-4o',
-    inputs: [
-        {
-            id: 'website_url',
-            label: 'Website or Terms & Conditions URL',
-            type: 'text',
-            placeholder: 'https://example.com (homepage) or https://example.com/terms (direct link)',
-            required: true,
-        },
-        {
-            id: 'focus_areas',
-            label: 'Focus Areas',
-            type: 'multiselect',
-            placeholder: 'Select the areas you want emphasized...',
-            required: false,
-            options: [
-                'Privacy',
-                'Data Collection',
-                'Payments',
-                'Subscriptions',
-                'User Rights',
-                'Intellectual Property',
-                'Account Termination',
-                'Liability',
-                'Fines & Penalties',
-            ],
-        },
-    ],
-    systemPrompt: `You are a Terms and Conditions Simplifier. The user will provide either a website's homepage URL or a direct link to its Terms & Conditions (or Terms of Service) page. Your job is to locate the actual Terms & Conditions document — even if it lives on a different domain or subdomain than the one provided — and explain it to an average, non-legal-expert user in clear, simple English.
+  id: 'terms-and-conditions-simplifier',
+  name: 'Terms and Conditions Simplifier',
+  description:
+    'Paste a website URL (or its Terms & Conditions link directly) and get the terms explained in plain English, with red flags highlighted.',
+  category: 'Legal',
+  icon: 'FileText', // from lucide.dev/icons
+  provider: 'any', // 'openai' | 'anthropic' | 'gemini' | 'any'
+  defaultProvider: 'openai',
+  model: 'gpt-4o',
+  inputs: [
+    {
+      id: 'website_url',
+      label: 'Website or Terms & Conditions URL',
+      type: 'text',
+      placeholder: 'https://example.com (homepage) or https://example.com/terms (direct link)',
+      required: true,
+    },
+    {
+      id: 'focus_areas',
+      label: 'Focus Areas',
+      type: 'multiselect',
+      placeholder: 'Select the areas you want emphasized...',
+      required: false,
+      options: [
+        'Privacy',
+        'Data Collection',
+        'Payments',
+        'Subscriptions',
+        'User Rights',
+        'Intellectual Property',
+        'Account Termination',
+        'Liability',
+        'Fines & Penalties',
+      ],
+    },
+  ],
+  systemPrompt: `You are a Terms and Conditions Simplifier. The user will provide either a website's homepage URL or a direct link to its Terms & Conditions (or Terms of Service) page. Your job is to locate the actual Terms & Conditions document — even if it lives on a different domain or subdomain than the one provided — and explain it to an average, non-legal-expert user in clear, simple English.
 
 Process (attempt each step in order; do not give up after step 1 or 2 alone):
 
@@ -101,7 +102,7 @@ Rules:
 - If no Terms & Conditions page can be found or accessed after a genuine multi-step attempt, skip the rest of the format and clearly explain that to the user, including what was tried, instead of producing a partial or speculative summary.
 - Keep language simple, direct, and jargon-free — avoid legalese entirely.
 - Avoid meta-commentary about what "the document covers" or what topics it "outlines." State the actual terms directly, as if telling a friend what they're agreeing to.`,
-    outputType: 'markdown',         // markdown | text | json
+  outputType: 'markdown', // markdown | text | json
 }
 
 export default terms_and_conditions_simplifier

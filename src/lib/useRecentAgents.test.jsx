@@ -27,7 +27,12 @@ describe('useRecentAgents', () => {
 
   it('maps valid runs into recent agent entries', () => {
     saveHistory([
-      { agentId: 'coding', agentName: 'Coding Agent', agentCategory: 'Development', timestamp: 300 },
+      {
+        agentId: 'coding',
+        agentName: 'Coding Agent',
+        agentCategory: 'Development',
+        timestamp: 300,
+      },
       { agentId: 'writing', agentName: 'Writing Agent', category: 'Content', timestamp: 200 },
     ])
 
@@ -51,11 +56,13 @@ describe('useRecentAgents', () => {
   })
 
   it('caps the result at eight distinct agents', () => {
-    saveHistory(Array.from({ length: 10 }, (_, i) => ({ agentId: `agent-${i}`, timestamp: 10 - i })))
+    saveHistory(
+      Array.from({ length: 10 }, (_, i) => ({ agentId: `agent-${i}`, timestamp: 10 - i }))
+    )
 
     const { result } = renderHook(() => useRecentAgents())
     expect(result.current.recentAgents.map((agent) => agent.id)).toEqual(
-      Array.from({ length: 8 }, (_, i) => `agent-${i}`),
+      Array.from({ length: 8 }, (_, i) => `agent-${i}`)
     )
   })
 
@@ -83,7 +90,14 @@ describe('useRecentAgents', () => {
   })
 
   it('ignores null entries and runs without an agentId', () => {
-    saveHistory([null, false, {}, { agentId: null }, { agentId: '' }, { agentId: 'valid', timestamp: 1 }])
+    saveHistory([
+      null,
+      false,
+      {},
+      { agentId: null },
+      { agentId: '' },
+      { agentId: 'valid', timestamp: 1 },
+    ])
 
     const { result } = renderHook(() => useRecentAgents())
     expect(result.current.recentAgents).toEqual([
@@ -97,7 +111,7 @@ describe('useRecentAgents', () => {
       localStorage.setItem(HISTORY_KEY, raw)
       const { result } = renderHook(() => useRecentAgents())
       expect(result.current.recentAgents).toEqual([])
-    },
+    }
   )
 
   it('returns an empty list if localStorage is unavailable', () => {

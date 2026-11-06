@@ -1,45 +1,45 @@
 export default {
-	id: "game-world-lore-generator",
-	createdAt: "2026-05-24",
-	name: "Game World Lore Generator",
-	description:
-		"Turn a world name, genre, and core conflict into a consistent lore document for game writing and quest design.",
-	category: "Gaming",
-	icon: "ScrollText",
-	provider: "any",
-	defaultProvider: "anthropic",
-	model: "claude-sonnet-4-6",
-	exampleInputs: {
-		worldName: "Ashen Hollow",
-		genre: "Dark fantasy action RPG",
-		coreConflict:
-			"An ancient sealed sun is beginning to fail, causing the dead, the living, and rival factions to compete for control over the relics that keep the realm stable.",
-	},
-	inputs: [
-		{
-			id: "worldName",
-			label: "World name",
-			type: "text",
-			placeholder: "e.g. The Broken Crown, Neon Meridian, Ashen Hollow",
-			required: true,
-		},
-		{
-			id: "genre",
-			label: "Genre",
-			type: "text",
-			placeholder: "e.g. fantasy RPG, sci-fi adventure, post-apocalyptic survival",
-			required: true,
-		},
-		{
-			id: "coreConflict",
-			label: "Core conflict",
-			type: "textarea",
-			placeholder:
-				"Describe the central struggle, stakes, and any important powers, factions, or forces shaping the world.",
-			required: true,
-		},
-	],
-	systemPrompt: `You are an expert game worldbuilder and narrative designer.
+  id: 'game-world-lore-generator',
+  createdAt: '2026-05-24',
+  name: 'Game World Lore Generator',
+  description:
+    'Turn a world name, genre, and core conflict into a consistent lore document for game writing and quest design.',
+  category: 'Gaming',
+  icon: 'ScrollText',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
+  exampleInputs: {
+    worldName: 'Ashen Hollow',
+    genre: 'Dark fantasy action RPG',
+    coreConflict:
+      'An ancient sealed sun is beginning to fail, causing the dead, the living, and rival factions to compete for control over the relics that keep the realm stable.',
+  },
+  inputs: [
+    {
+      id: 'worldName',
+      label: 'World name',
+      type: 'text',
+      placeholder: 'e.g. The Broken Crown, Neon Meridian, Ashen Hollow',
+      required: true,
+    },
+    {
+      id: 'genre',
+      label: 'Genre',
+      type: 'text',
+      placeholder: 'e.g. fantasy RPG, sci-fi adventure, post-apocalyptic survival',
+      required: true,
+    },
+    {
+      id: 'coreConflict',
+      label: 'Core conflict',
+      type: 'textarea',
+      placeholder:
+        'Describe the central struggle, stakes, and any important powers, factions, or forces shaping the world.',
+      required: true,
+    },
+  ],
+  systemPrompt: `You are an expert game worldbuilder and narrative designer.
 
 Given a world name, genre, and core conflict, create a rich but coherent lore document that an indie game developer can use for quests, dialogue, environments, and character backstory.
 
@@ -104,5 +104,5 @@ Style rules:
 If the input is sparse, make reasonable creative choices while preserving the logic of the world.
 If the genre is ambiguous, infer a fitting tone from the world name and core conflict.
 The final result should feel like a usable setting bible rather than a generic summary.`,
-	outputType: "markdown",
-};
+  outputType: 'markdown',
+}

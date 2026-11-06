@@ -303,4 +303,4 @@ RULES (Must obey these strictly):
 - Always call out the #1 most expensive line item and the #1 easiest savings opportunity.`,
 
   outputType: 'markdown',
-};
+}

@@ -1,42 +1,42 @@
 export default {
-  id: "ansible-playbook-generator",
-  createdAt: "2026-10-12",
-  name: "Ansible Playbook Generator",
+  id: 'ansible-playbook-generator',
+  createdAt: '2026-10-12',
+  name: 'Ansible Playbook Generator',
   description:
-    "Describe server setup tasks and get an idempotent Ansible playbook with roles and handlers.",
-  category: "DevOps",
-  icon: "Play",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Describe server setup tasks and get an idempotent Ansible playbook with roles and handlers.',
+  category: 'DevOps',
+  icon: 'Play',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     tasks:
-      "Install nginx, deploy static site to /var/www/app, enable UFW with ports 80/443, set up daily log rotation",
-    distro: "Ubuntu-Debian",
-    managedNodes: "4 web servers, webservers group in inventory",
+      'Install nginx, deploy static site to /var/www/app, enable UFW with ports 80/443, set up daily log rotation',
+    distro: 'Ubuntu-Debian',
+    managedNodes: '4 web servers, webservers group in inventory',
   },
   inputs: [
     {
-      id: "tasks",
-      label: "Server setup tasks",
-      type: "textarea",
+      id: 'tasks',
+      label: 'Server setup tasks',
+      type: 'textarea',
       placeholder:
-        "e.g. Install nginx, deploy static site, enable firewall, configure log rotation",
+        'e.g. Install nginx, deploy static site, enable firewall, configure log rotation',
       required: true,
     },
     {
-      id: "distro",
-      label: "Target distribution",
-      type: "select",
-      options: ["Ubuntu-Debian", "RHEL-Rocky", "Arch"],
-      defaultValue: "Ubuntu-Debian",
+      id: 'distro',
+      label: 'Target distribution',
+      type: 'select',
+      options: ['Ubuntu-Debian', 'RHEL-Rocky', 'Arch'],
+      defaultValue: 'Ubuntu-Debian',
       required: true,
     },
     {
-      id: "managedNodes",
-      label: "Managed nodes",
-      type: "text",
-      placeholder: "e.g. 4 web servers in the webservers inventory group",
+      id: 'managedNodes',
+      label: 'Managed nodes',
+      type: 'text',
+      placeholder: 'e.g. 4 web servers in the webservers inventory group',
     },
   ],
   systemPrompt: `You are an Ansible automation expert who writes clean,
@@ -69,6 +69,6 @@ Rules:
 - Never embed real secrets; use variables and vault placeholders
 - Use neutral, precise language with no emoji
 - Keep YAML valid and indented consistently`,
-  outputType: "markdown",
-  suggestedChainFrom: ["readme-generator", "cicd-pipeline-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['readme-generator', 'cicd-pipeline-generator'],
+}

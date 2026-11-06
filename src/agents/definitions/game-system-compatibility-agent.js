@@ -1,17 +1,18 @@
-const gameCompatibilityAgent= {
-  id: 'game-system-compatibility-agent',           // lowercase, kebab-case, URL safe
+const gameCompatibilityAgent = {
+  id: 'game-system-compatibility-agent', // lowercase, kebab-case, URL safe
   name: 'Game System Compatibility Analyser',
-  description: 'The agent takes in the game you would like to install along with specifications of your system and provides a verdict with explanation regarding whether the game can be run or not.',
-  category: 'Gaming',          // Productivity | Research | Marketing | Engineering | HR | Business | Education | Design | Product | Legal
-  icon: 'MonitorCheck',              // Any icon from lucide.dev/icons
-  provider: 'any',               // 'openai' | 'anthropic' | 'gemini' | 'any'
-  defaultProvider: 'openai',     // Only needed if provider is 'any'
+  description:
+    'The agent takes in the game you would like to install along with specifications of your system and provides a verdict with explanation regarding whether the game can be run or not.',
+  category: 'Gaming', // Productivity | Research | Marketing | Engineering | HR | Business | Education | Design | Product | Legal
+  icon: 'MonitorCheck', // Any icon from lucide.dev/icons
+  provider: 'any', // 'openai' | 'anthropic' | 'gemini' | 'any'
+  defaultProvider: 'openai', // Only needed if provider is 'any'
   model: 'gpt-4o',
   inputs: [
     {
       id: 'game-name',
       label: 'Game Name',
-      type: 'text',          // text | textarea | code | select | multiselect
+      type: 'text', // text | textarea | code | select | multiselect
       placeholder: 'GTA IV',
       required: true,
     },
@@ -19,19 +20,16 @@ const gameCompatibilityAgent= {
     {
       id: 'device-type',
       label: 'Device Type',
-      type: 'select',          // text | textarea | code | select | multiselect
-      options: [
-        "Laptop",
-        "Desktop"
-      ],
-      defaultValue: 'Laptop', 
+      type: 'select', // text | textarea | code | select | multiselect
+      options: ['Laptop', 'Desktop'],
+      defaultValue: 'Laptop',
       required: true,
     },
 
     {
       id: 'cpu',
       label: 'CPU',
-      type: 'text',          // text | textarea | code | select | multiselect
+      type: 'text', // text | textarea | code | select | multiselect
       placeholder: 'Intel i5-10300H',
       required: true,
     },
@@ -39,7 +37,7 @@ const gameCompatibilityAgent= {
     {
       id: 'gpu',
       label: 'GPU',
-      type: 'text',          // text | textarea | code | select | multiselect
+      type: 'text', // text | textarea | code | select | multiselect
       placeholder: 'RTX 3050 Laptop GPU',
       required: true,
     },
@@ -47,24 +45,16 @@ const gameCompatibilityAgent= {
     {
       id: 'ram',
       label: 'RAM',
-      type: 'select',          // text | textarea | code | select | multiselect
-      options: [
-        "4 GB", 
-        "8 GB",
-        "12 GB", 
-        "16 GB",
-        "24 GB", 
-        "32 GB", 
-        "64 GB+"
-      ],
-      defaultValue: '8 GB', 
+      type: 'select', // text | textarea | code | select | multiselect
+      options: ['4 GB', '8 GB', '12 GB', '16 GB', '24 GB', '32 GB', '64 GB+'],
+      defaultValue: '8 GB',
       required: true,
     },
 
     {
       id: 'available-storage',
       label: 'Storage Available',
-      type: 'text',          // text | textarea | code | select | multiselect
+      type: 'text', // text | textarea | code | select | multiselect
       placeholder: '150GB',
       required: true,
     },
@@ -72,32 +62,23 @@ const gameCompatibilityAgent= {
     {
       id: 'storage-type',
       label: 'Storage Type',
-      type: 'select',          // text | textarea | code | select | multiselect
-      options: [
-        "HDD", 
-        "SATA SSD",
-        "NVMe SSD"
-      ],
-      defaultValue: 'HDD', 
+      type: 'select', // text | textarea | code | select | multiselect
+      options: ['HDD', 'SATA SSD', 'NVMe SSD'],
+      defaultValue: 'HDD',
       required: true,
     },
 
     {
       id: 'resolution',
       label: 'Target Resolution',
-      type: 'select',          // text | textarea | code | select | multiselect
-      options: [
-        "720p", 
-        "1080p",
-        "1440p",
-        "4K"
-      ],
-      defaultValue: 'HDD', 
+      type: 'select', // text | textarea | code | select | multiselect
+      options: ['720p', '1080p', '1440p', '4K'],
+      defaultValue: 'HDD',
       required: true,
     },
-],
-  
-systemPrompt: `You are a Game System Compatibility Agent.
+  ],
+
+  systemPrompt: `You are a Game System Compatibility Agent.
 
 Your role is to analyze a user’s PC or laptop specifications against the hardware requirements of a requested game and provide a realistic compatibility and performance assessment.
 
@@ -233,7 +214,7 @@ Never:
 
 `,
 
-  outputType: 'markdown',        // markdown | text | json
-};
+  outputType: 'markdown', // markdown | text | json
+}
 
-export default gameCompatibilityAgent;
+export default gameCompatibilityAgent

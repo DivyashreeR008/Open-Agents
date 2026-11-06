@@ -1,11 +1,12 @@
 const realEstateListingGenerator = {
-  id: 'real-estate-listing-generator',         
+  id: 'real-estate-listing-generator',
   name: 'Real Estate Listing Generator',
-  description: 'Generates compelling real estate listing descriptions for property portals and marketplaces.',
-  category: 'Real Estate',          
-  icon: 'Building2',             
-  provider: 'any',               
-  defaultProvider: 'openai',     
+  description:
+    'Generates compelling real estate listing descriptions for property portals and marketplaces.',
+  category: 'Real Estate',
+  icon: 'Building2',
+  provider: 'any',
+  defaultProvider: 'openai',
   model: 'gpt-4o',
   inputs: [
     {
@@ -21,7 +22,7 @@ const realEstateListingGenerator = {
         'Commercial Property',
         'Plot/Land',
       ],
-      defaultValue: "Apartment",
+      defaultValue: 'Apartment',
       required: true,
     },
     {
@@ -38,7 +39,7 @@ const realEstateListingGenerator = {
       placeholder: '1800 sq ft, 3BHK...',
       required: true,
     },
-     {
+    {
       id: 'features',
       label: 'Key Features',
       type: 'textarea',
@@ -52,7 +53,7 @@ const realEstateListingGenerator = {
       placeholder: 'Near metro, sea view, gated society...',
       required: true,
     },
-    ],
+  ],
   systemPrompt: `
 You are an expert real estate listing copywriter.
 
@@ -81,7 +82,7 @@ Keep the property description concise and avoid unnecessarily long paragraphs.
 
 Return the response in clean markdown format.`,
 
-  outputType: 'markdown',       
-};
+  outputType: 'markdown',
+}
 
-export default realEstateListingGenerator;
+export default realEstateListingGenerator

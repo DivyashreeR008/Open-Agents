@@ -1,39 +1,39 @@
 export default {
-  id: "seo-content-brief-writer",
-  createdAt: "2026-10-12",
-  name: "SEO Content Brief Writer",
-  description:
-    "Write writer-ready SEO briefs: intent, outline, entities, links, and word targets.",
-  category: "Marketing",
-  icon: "Search",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'seo-content-brief-writer',
+  createdAt: '2026-10-12',
+  name: 'SEO Content Brief Writer',
+  description: 'Write writer-ready SEO briefs: intent, outline, entities, links, and word targets.',
+  category: 'Marketing',
+  icon: 'Search',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    keyword: "best project management software for freelancers",
-    intent: "commercial",
-    competitors: "Competitor A covers pricing tables. Competitor B has setup tutorials but thin FAQ.",
+    keyword: 'best project management software for freelancers',
+    intent: 'commercial',
+    competitors:
+      'Competitor A covers pricing tables. Competitor B has setup tutorials but thin FAQ.',
   },
   inputs: [
     {
-      id: "keyword",
-      label: "Target keyword",
-      type: "text",
-      placeholder: "e.g. best project management software for freelancers",
+      id: 'keyword',
+      label: 'Target keyword',
+      type: 'text',
+      placeholder: 'e.g. best project management software for freelancers',
       required: true,
     },
     {
-      id: "intent",
-      label: "Search intent",
-      type: "select",
-      options: ["informational", "commercial", "transactional"],
-      defaultValue: "informational",
+      id: 'intent',
+      label: 'Search intent',
+      type: 'select',
+      options: ['informational', 'commercial', 'transactional'],
+      defaultValue: 'informational',
     },
     {
-      id: "competitors",
-      label: "Competitor notes (optional)",
-      type: "textarea",
-      placeholder: "e.g. What top-ranking pages cover well or miss",
+      id: 'competitors',
+      label: 'Competitor notes (optional)',
+      type: 'textarea',
+      placeholder: 'e.g. What top-ranking pages cover well or miss',
     },
   ],
   systemPrompt: `You are an SEO strategist who writes briefs freelance writers can execute directly.
@@ -59,6 +59,6 @@ Rules:
 - Do not invent rankings, traffic numbers, or quotes.
 - Keep tone neutral and instructional.
 - Never recommend keyword stuffing or deceptive tactics.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["blog-post-seo-optimizer", "research-agent"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['blog-post-seo-optimizer', 'research-agent'],
+}

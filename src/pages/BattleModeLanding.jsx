@@ -5,9 +5,13 @@ import { useDocumentTitle } from '../lib/useDocumentTitle'
 
 const steps = [
   { icon: Crosshair, text: 'Pick any agent', number: '01' },
-  { icon: PenLine,    text: 'Enter your input once', number: '02' },
-  { icon: Cpu,        text: 'GPT-4o vs Claude Sonnet vs Gemini Flash vs OpenRouter generate outputs', number: '03' },
-  { icon: Trophy,     text: 'You pick the winner', number: '04' },
+  { icon: PenLine, text: 'Enter your input once', number: '02' },
+  {
+    icon: Cpu,
+    text: 'GPT-4o vs Claude Sonnet vs Gemini Flash vs OpenRouter generate outputs',
+    number: '03',
+  },
+  { icon: Trophy, text: 'You pick the winner', number: '04' },
 ]
 
 const providers = [
@@ -57,7 +61,8 @@ export default function BattleModeLanding() {
             Battle Mode
           </h1>
           <p className="text-base text-gray-700 dark:text-text-secondary max-w-md mx-auto leading-relaxed font-medium">
-            Pit four AI providers against each other. Same prompt, four outputs, you decide who wins.
+            Pit four AI providers against each other. Same prompt, four outputs, you decide who
+            wins.
           </p>
         </div>
 
@@ -71,7 +76,9 @@ export default function BattleModeLanding() {
           >
             <Bot size={28} className={providers[0].color} />
             <span className={`text-base font-bold ${providers[0].color}`}>{providers[0].name}</span>
-            <span className="text-[10px] text-gray-700 dark:text-text-secondary uppercase tracking-widest">{providers[0].label}</span>
+            <span className="text-[10px] text-gray-700 dark:text-text-secondary uppercase tracking-widest">
+              {providers[0].label}
+            </span>
           </div>
 
           {/* VS */}
@@ -80,7 +87,9 @@ export default function BattleModeLanding() {
             style={{ animationDelay: '400ms' }}
           >
             <Swords size={22} className="text-zinc-600 dark:text-zinc-400" />
-            <span className="text-xs font-extrabold text-zinc-600 dark:text-zinc-400 tracking-widest">VS</span>
+            <span className="text-xs font-extrabold text-zinc-600 dark:text-zinc-400 tracking-widest">
+              VS
+            </span>
           </div>
 
           {/* Claude */}
@@ -91,7 +100,9 @@ export default function BattleModeLanding() {
           >
             <Bot size={28} className={providers[1].color} />
             <span className={`text-sm font-bold ${providers[1].color}`}>{providers[1].name}</span>
-            <span className="text-[10px] text-gray-700 dark:text-text-secondary uppercase tracking-widest">{providers[1].label}</span>
+            <span className="text-[10px] text-gray-700 dark:text-text-secondary uppercase tracking-widest">
+              {providers[1].label}
+            </span>
           </div>
 
           {/* VS */}
@@ -100,7 +111,9 @@ export default function BattleModeLanding() {
             style={{ animationDelay: '400ms' }}
           >
             <Swords size={22} className="text-zinc-600 dark:text-zinc-400" />
-            <span className="text-xs font-extrabold text-zinc-600 dark:text-zinc-400 tracking-widest">VS</span>
+            <span className="text-xs font-extrabold text-zinc-600 dark:text-zinc-400 tracking-widest">
+              VS
+            </span>
           </div>
 
           {/* Gemini */}
@@ -111,7 +124,9 @@ export default function BattleModeLanding() {
           >
             <Bot size={28} className={providers[2].color} />
             <span className={`text-sm font-bold ${providers[2].color}`}>{providers[2].name}</span>
-            <span className="text-[10px] text-gray-700 dark:text-text-secondary uppercase tracking-widest">{providers[2].label}</span>
+            <span className="text-[10px] text-gray-700 dark:text-text-secondary uppercase tracking-widest">
+              {providers[2].label}
+            </span>
           </div>
 
           {/* VS */}
@@ -120,7 +135,9 @@ export default function BattleModeLanding() {
             style={{ animationDelay: '400ms' }}
           >
             <Swords size={22} className="text-zinc-600 dark:text-zinc-400" />
-            <span className="text-xs font-extrabold text-zinc-600 dark:text-zinc-400 tracking-widest">VS</span>
+            <span className="text-xs font-extrabold text-zinc-600 dark:text-zinc-400 tracking-widest">
+              VS
+            </span>
           </div>
 
           {/* OpenRouter */}
@@ -131,7 +148,9 @@ export default function BattleModeLanding() {
           >
             <Bot size={28} className={providers[3].color} />
             <span className={`text-sm font-bold ${providers[3].color}`}>{providers[3].name}</span>
-            <span className="text-[10px] text-gray-700 dark:text-text-secondary uppercase tracking-widest">{providers[3].label}</span>
+            <span className="text-[10px] text-gray-700 dark:text-text-secondary uppercase tracking-widest">
+              {providers[3].label}
+            </span>
           </div>
         </div>
 
@@ -146,7 +165,9 @@ export default function BattleModeLanding() {
                 style={{ animationDelay: `${(idx + 1) * 100}ms` }}
               >
                 <div className="w-14 h-14 bg-zinc-400/10 flex items-center justify-center flex-shrink-0 border border-zinc-400/20">
-                  <span className="text-base sm:text-lg font-bold text-zinc-600 dark:text-zinc-400">{step.number}</span>
+                  <span className="text-base sm:text-lg font-bold text-zinc-600 dark:text-zinc-400">
+                    {step.number}
+                  </span>
                 </div>
                 <div className="flex-1">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-gray-700 dark:text-text-secondary">
@@ -162,7 +183,7 @@ export default function BattleModeLanding() {
           })}
         </div>
 
-       {/* Start Button */}
+        {/* Start Button */}
         <button
           onClick={() => navigate('/battle/setup')}
           className="flex items-center gap-2.5 px-8 py-4 text-base font-bold bg-zinc-500 text-white hover:bg-zinc-400 transition-colors duration-200 battle-fade-in border border-zinc-400/20 hover:border-zinc-300/40 shadow-panel "

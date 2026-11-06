@@ -38,7 +38,10 @@ describe('AgentCard row variant', () => {
 
   it('links to the agent and exposes category and provider labels', () => {
     renderRow({ index: 1 })
-    expect(screen.getByRole('link', { name: /Row Agent/ })).toHaveAttribute('href', '/agent/row-agent')
+    expect(screen.getByRole('link', { name: /Row Agent/ })).toHaveAttribute(
+      'href',
+      '/agent/row-agent'
+    )
     expect(screen.getByText('Research')).toBeInTheDocument()
     expect(screen.getByText('Gemini')).toBeInTheDocument()
   })

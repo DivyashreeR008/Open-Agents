@@ -12,9 +12,7 @@ describe('SectionHeader', () => {
       />
     )
 
-    expect(
-      screen.getByRole('heading', { level: 2, name: 'Featured agents' })
-    ).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2, name: 'Featured agents' })).toBeInTheDocument()
     expect(screen.getByText('12')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Sort' })).toBeInTheDocument()
   })

@@ -1,39 +1,39 @@
 export default {
-  id: "trademark-search-guide",
-  createdAt: "2026-10-12",
-  name: "Trademark Search Guide",
+  id: 'trademark-search-guide',
+  createdAt: '2026-10-12',
+  name: 'Trademark Search Guide',
   description:
-    "Learn how to run a knockout trademark search: classes, databases, and conflict reading.",
-  category: "Legal",
-  icon: "Search",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Learn how to run a knockout trademark search: classes, databases, and conflict reading.',
+  category: 'Legal',
+  icon: 'Search',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    mark: "Northbeam",
-    goods: "Mobile app for budgeting and expense tracking, plus blog and courses",
-    country: "United States",
+    mark: 'Northbeam',
+    goods: 'Mobile app for budgeting and expense tracking, plus blog and courses',
+    country: 'United States',
   },
   inputs: [
     {
-      id: "mark",
-      label: "Proposed mark",
-      type: "text",
-      placeholder: "e.g. Northbeam",
+      id: 'mark',
+      label: 'Proposed mark',
+      type: 'text',
+      placeholder: 'e.g. Northbeam',
       required: true,
     },
     {
-      id: "goods",
-      label: "Goods and services",
-      type: "textarea",
+      id: 'goods',
+      label: 'Goods and services',
+      type: 'textarea',
       placeholder:
-        "e.g. Mobile app for budgeting and expense tracking, plus blog and educational courses...",
+        'e.g. Mobile app for budgeting and expense tracking, plus blog and educational courses...',
     },
     {
-      id: "country",
-      label: "Country of use",
-      type: "text",
-      placeholder: "e.g. United States",
+      id: 'country',
+      label: 'Country of use',
+      type: 'text',
+      placeholder: 'e.g. United States',
     },
   ],
   systemPrompt: `You are a trademark research guide who teaches founders how to run a careful knockout search before filing.
@@ -63,6 +63,6 @@ Rules:
 - Use neutral language and never present the output as legal advice
 - Distinguish observed register-style patterns from conclusions about the reader's mark
 - Remind the reader that a knockout search does not replace full clearance`,
-  outputType: "markdown",
-  suggestedChainFrom: ["competitive-analysis-generator", "research-agent"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['competitive-analysis-generator', 'research-agent'],
+}

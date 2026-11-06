@@ -14,8 +14,7 @@ export default {
       id: 'error',
       label: 'Error / Stack Trace',
       type: 'code',
-      placeholder:
-        'Paste your raw error output, stack trace, or exception log here...',
+      placeholder: 'Paste your raw error output, stack trace, or exception log here...',
       required: true,
     },
 
@@ -24,22 +23,14 @@ export default {
       label: 'Language / Runtime',
       type: 'select',
       required: true,
-      options: [
-        'JavaScript',
-        'Python',
-        'Java',
-        'Go',
-        'Rust',
-        'Other',
-      ],
+      options: ['JavaScript', 'Python', 'Java', 'Go', 'Rust', 'Other'],
     },
 
     {
       id: 'context',
       label: 'Context (optional)',
       type: 'textarea',
-      placeholder:
-        'What was the code trying to do when this error occurred?',
+      placeholder: 'What was the code trying to do when this error occurred?',
       required: false,
     },
   ],

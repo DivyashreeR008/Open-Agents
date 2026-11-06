@@ -1,39 +1,37 @@
 export default {
-  id: "board-deck-outline-builder",
-  createdAt: "2026-10-12",
-  name: "Board Deck Outliner",
-  description:
-    "Outline an investor update deck: wins, metrics, asks, and appendix.",
-  category: "Business",
-  icon: "Presentation",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'board-deck-outline-builder',
+  createdAt: '2026-10-12',
+  name: 'Board Deck Outliner',
+  description: 'Outline an investor update deck: wins, metrics, asks, and appendix.',
+  category: 'Business',
+  icon: 'Presentation',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    period: "Q3 2026 investor update",
-    metrics:
-      "MRR 48k, churn 3.1%, NRR 104%, 12 enterprise trials in progress, burn multiple 1.6.",
-    asks: "Introductions to two design-partner prospects; feedback on pricing pilot.",
+    period: 'Q3 2026 investor update',
+    metrics: 'MRR 48k, churn 3.1%, NRR 104%, 12 enterprise trials in progress, burn multiple 1.6.',
+    asks: 'Introductions to two design-partner prospects; feedback on pricing pilot.',
   },
   inputs: [
     {
-      id: "period",
-      label: "Reporting period",
-      type: "text",
-      placeholder: "e.g. Q3 2026 investor update",
+      id: 'period',
+      label: 'Reporting period',
+      type: 'text',
+      placeholder: 'e.g. Q3 2026 investor update',
       required: true,
     },
     {
-      id: "metrics",
-      label: "Key metrics and progress",
-      type: "textarea",
-      placeholder: "e.g. Revenue, growth, churn, hiring, product milestones",
+      id: 'metrics',
+      label: 'Key metrics and progress',
+      type: 'textarea',
+      placeholder: 'e.g. Revenue, growth, churn, hiring, product milestones',
     },
     {
-      id: "asks",
-      label: "Asks of the board",
-      type: "textarea",
-      placeholder: "e.g. Hiring intros, customer introductions, strategic feedback",
+      id: 'asks',
+      label: 'Asks of the board',
+      type: 'textarea',
+      placeholder: 'e.g. Hiring intros, customer introductions, strategic feedback',
     },
   ],
   systemPrompt: `You are an investor-relations advisor who turns rough updates into a clear board deck outline.
@@ -59,6 +57,6 @@ Rules:
 - Flag any metric that needs clearer definition before presenting.
 - Keep slide count focused, ten or fewer plus appendix.
 - Use neutral, factual language throughout.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["research-agent", "data-analysis-agent"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['research-agent', 'data-analysis-agent'],
+}

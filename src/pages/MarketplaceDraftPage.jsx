@@ -6,12 +6,7 @@ import EmptyState from '../components/layout/EmptyState'
 import PageHeader from '../components/layout/PageHeader'
 import { useAgents } from '../lib/useAgents'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
-import {
-  buildDraftAgent,
-  getDraft,
-  getMissingDraftFields,
-  removeDraft,
-} from '../lib/marketplace'
+import { buildDraftAgent, getDraft, getMissingDraftFields, removeDraft } from '../lib/marketplace'
 
 export default function MarketplaceDraftPage() {
   const { id } = useParams()
@@ -25,10 +20,7 @@ export default function MarketplaceDraftPage() {
 
   useDocumentTitle(draft ? draft.name : 'Draft not found')
 
-  const draftAgent = useMemo(
-    () => (draft ? buildDraftAgent(draft, agents) : null),
-    [draft, agents]
-  )
+  const draftAgent = useMemo(() => (draft ? buildDraftAgent(draft, agents) : null), [draft, agents])
   const missing = draft ? getMissingDraftFields(draft, values) : []
 
   if (!draft) {
@@ -76,16 +68,22 @@ export default function MarketplaceDraftPage() {
           aria-labelledby="draft-fields-heading"
           className="mb-5 border border-zinc-200 p-4 dark:border-border"
         >
-          <h2 id="draft-fields-heading" className="text-[13px] font-semibold text-zinc-900 dark:text-text-primary">
+          <h2
+            id="draft-fields-heading"
+            className="text-[13px] font-semibold text-zinc-900 dark:text-text-primary"
+          >
             Fields to complete
           </h2>
           <p className="mt-1 text-xs text-zinc-500 dark:text-text-secondary">
-            The publisher's values were removed. Enter your own to run this agent. They are kept
-            in this tab only and are not saved.
+            The publisher's values were removed. Enter your own to run this agent. They are kept in
+            this tab only and are not saved.
           </p>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             {draft.pendingCredentialFields.map((field) => (
-              <label key={field} className="block text-xs font-medium text-zinc-700 dark:text-text-secondary">
+              <label
+                key={field}
+                className="block text-xs font-medium text-zinc-700 dark:text-text-secondary"
+              >
                 {field}
                 <input
                   type="password"
@@ -106,7 +104,10 @@ export default function MarketplaceDraftPage() {
           description="The agent it was built from is no longer in the catalogue. You can still remove the draft."
         />
       ) : missing.length > 0 ? (
-        <p role="status" className="border border-dashed border-zinc-300 p-4 text-xs text-zinc-500 dark:border-border-light dark:text-text-secondary">
+        <p
+          role="status"
+          className="border border-dashed border-zinc-300 p-4 text-xs text-zinc-500 dark:border-border-light dark:text-text-secondary"
+        >
           Complete {missing.length} more field{missing.length === 1 ? '' : 's'} above to unlock the
           runner.
         </p>

@@ -1,7 +1,8 @@
 const seoKeywordStrategyPlanner = {
   id: 'seo-keyword-planner',
   name: 'SEO Keyword Strategy Planner',
-  description: 'Helps marketers generate a comprehensive SEO keyword strategy by identifying high-value keywords and content opportunities.',
+  description:
+    'Helps marketers generate a comprehensive SEO keyword strategy by identifying high-value keywords and content opportunities.',
   category: 'Marketing',
   icon: 'Search',
   provider: 'any',
@@ -29,7 +30,7 @@ const seoKeywordStrategyPlanner = {
       options: ['Brand Awareness', 'Lead Generation', 'Sales / Conversions', 'Educational Traffic'],
       defaultValue: 'Lead Generation',
       required: true,
-    }
+    },
   ],
   exampleInputs: {
     nicheTopic: 'B2B SaaS CRM',
@@ -52,6 +53,6 @@ After the table, provide a brief, 3-point action plan on how to execute this str
 Keep your response strictly focused, professional, and well-formatted.`,
   outputType: 'markdown',
   suggestedChainFrom: ['research-agent', 'competitive-analysis-generator'],
-};
+}
 
-export default seoKeywordStrategyPlanner;
+export default seoKeywordStrategyPlanner

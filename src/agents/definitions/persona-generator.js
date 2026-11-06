@@ -1,53 +1,52 @@
 export default {
-  id: "persona-generator",
-  createdAt: "2025-05-06",
-  name: "Persona Generator",
+  id: 'persona-generator',
+  createdAt: '2025-05-06',
+  name: 'Persona Generator',
   description:
-    "Describe your product or service and get detailed, realistic user personas with demographics, goals, frustrations, and behavioral patterns.",
-  category: "Product",
-  icon: "Users",
-  provider: "any",
-  defaultProvider: "openai",
-  model: "gpt-4o",
+    'Describe your product or service and get detailed, realistic user personas with demographics, goals, frustrations, and behavioral patterns.',
+  category: 'Product',
+  icon: 'Users',
+  provider: 'any',
+  defaultProvider: 'openai',
+  model: 'gpt-4o',
   exampleInputs: {
     product:
       "A mobile-first 'habit tracker' that uses gamification and community challenges to help people quit smoking.",
     targetMarket:
-      "Young adults (20-35) who have tried to quit multiple times and find traditional methods boring or isolating.",
-    personaCount: "2",
-    includeScenario: "Yes",
+      'Young adults (20-35) who have tried to quit multiple times and find traditional methods boring or isolating.',
+    personaCount: '2',
+    includeScenario: 'Yes',
   },
   inputs: [
     {
-      id: "product",
-      label: "Describe your product or service",
-      type: "textarea",
+      id: 'product',
+      label: 'Describe your product or service',
+      type: 'textarea',
       placeholder:
-        "e.g. A mobile app that helps people track their daily water intake and sends smart reminders based on activity level and weather.",
+        'e.g. A mobile app that helps people track their daily water intake and sends smart reminders based on activity level and weather.',
       required: true,
     },
     {
-      id: "targetMarket",
-      label: "Target market or audience",
-      type: "text",
-      placeholder:
-        "e.g. Health-conscious millennials, office workers, fitness enthusiasts",
+      id: 'targetMarket',
+      label: 'Target market or audience',
+      type: 'text',
+      placeholder: 'e.g. Health-conscious millennials, office workers, fitness enthusiasts',
       required: true,
     },
     {
-      id: "personaCount",
-      label: "Number of personas",
-      type: "select",
-      options: ["1", "2", "3", "4"],
-      defaultValue: "2",
+      id: 'personaCount',
+      label: 'Number of personas',
+      type: 'select',
+      options: ['1', '2', '3', '4'],
+      defaultValue: '2',
       required: true,
     },
     {
-      id: "includeScenario",
-      label: "Include usage scenarios?",
-      type: "select",
-      options: ["Yes", "No"],
-      defaultValue: "Yes",
+      id: 'includeScenario',
+      label: 'Include usage scenarios?',
+      type: 'select',
+      options: ['Yes', 'No'],
+      defaultValue: 'Yes',
       required: true,
     },
   ],
@@ -118,5 +117,5 @@ Rules:
 - Never use stereotypical names for diverse personas — be natural
 - Frustrations must be specific, not generic complaints
 - Every persona should reveal a different product insight`,
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

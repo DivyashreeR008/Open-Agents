@@ -13,11 +13,14 @@ const automations = [
 
 function seedStorage() {
   localStorage.setItem(AUTOMATIONS_KEY, JSON.stringify(automations))
-  localStorage.setItem(VAULT_KEY, JSON.stringify({
-    'openai-job': 'encrypted-openai',
-    'gemini-job': 'encrypted-gemini',
-    orphaned: 'encrypted-orphan',
-  }))
+  localStorage.setItem(
+    VAULT_KEY,
+    JSON.stringify({
+      'openai-job': 'encrypted-openai',
+      'gemini-job': 'encrypted-gemini',
+      orphaned: 'encrypted-orphan',
+    })
+  )
 }
 
 describe('clearAutomationKeys', () => {
@@ -44,7 +47,7 @@ describe('clearAutomationKeys', () => {
     await expect(clearAutomationKeys()).resolves.toBe(2)
 
     expect(JSON.parse(localStorage.getItem(VAULT_KEY))).toEqual({})
-    expect(loadAutomations().every(automation => !automation.hasKey)).toBe(true)
+    expect(loadAutomations().every((automation) => !automation.hasKey)).toBe(true)
   })
 
   it('tolerates a missing or malformed vault', async () => {

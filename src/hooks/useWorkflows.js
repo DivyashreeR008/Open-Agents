@@ -7,7 +7,10 @@ import { supabase } from '../lib/supabase'
  */
 async function getCurrentUserId() {
   try {
-    const { data: { user }, error } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser()
     if (error || !user) return null
     return user.id
   } catch (err) {
@@ -36,11 +39,7 @@ export async function fetchWorkflows() {
  * @returns {Promise<{ data: object|null, error: object|null }>}
  */
 export async function fetchWorkflowById(id) {
-  const { data, error } = await supabase
-    .from('workflows')
-    .select('*')
-    .eq('id', id)
-    .single()
+  const { data, error } = await supabase.from('workflows').select('*').eq('id', id).single()
 
   return { data: data ?? null, error }
 }
@@ -119,7 +118,8 @@ export async function updateWorkflow(id, updates) {
     return {
       data: null,
       error: {
-        message: 'You do not have permission to update this workflow. Only the owner can make changes.',
+        message:
+          'You do not have permission to update this workflow. Only the owner can make changes.',
       },
     }
   }
@@ -169,17 +169,14 @@ export async function deleteWorkflow(id) {
   if (workflow.user_id !== userId) {
     return {
       error: {
-        message: 'You do not have permission to delete this workflow. Only the owner can delete it.',
+        message:
+          'You do not have permission to delete this workflow. Only the owner can delete it.',
       },
     }
   }
 
   // Proceed with deletion (ownership verified)
-  const { error } = await supabase
-    .from('workflows')
-    .delete()
-    .eq('id', id)
-    .eq('user_id', userId)
+  const { error } = await supabase.from('workflows').delete().eq('id', id).eq('user_id', userId)
 
   return { error }
 }
@@ -218,16 +215,16 @@ export async function incrementUsage(id) {
       .from('workflows')
       .update({ usage_count: (current.usage_count ?? 0) + 1 })
       .eq('id', id)
-    
+
     return { error: updateError }
   }
 
   // 3. THE FIX: If 'current' is null (row not found), return a clear contextual error
   // instead of letting it slip through to return the old rpcError.
-  return { 
-    error: { 
-      message: `Failed to increment usage. Workflow with ID ${id} could not be found during fallback.` 
-    } 
+  return {
+    error: {
+      message: `Failed to increment usage. Workflow with ID ${id} could not be found during fallback.`,
+    },
   }
 }
 

@@ -32,7 +32,9 @@ export function AgentsProvider({ children }) {
   }, [])
 
   return (
-    <AgentsContext.Provider value={{ agents, loading, error, reloadAgents, catalogSize: AGENT_COUNT }}>
+    <AgentsContext.Provider
+      value={{ agents, loading, error, reloadAgents, catalogSize: AGENT_COUNT }}
+    >
       {children}
     </AgentsContext.Provider>
   )

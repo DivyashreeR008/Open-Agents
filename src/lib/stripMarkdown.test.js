@@ -14,7 +14,7 @@ Done.`
 describe('stripMarkdown', () => {
   it('removes the markers but keeps ordinary words intact (issue sample)', () => {
     expect(stripMarkdown(sample)).toBe(
-      'Review\n\nRename maxRetryCount to max_retry_count and keep user_id_list as is. In C# the method is async. Total = 2 * 3 * 4.\n\nSee my_module_name.py for details.\n\nDone.',
+      'Review\n\nRename maxRetryCount to max_retry_count and keep user_id_list as is. In C# the method is async. Total = 2 * 3 * 4.\n\nSee my_module_name.py for details.\n\nDone.'
     )
   })
 
@@ -24,12 +24,18 @@ describe('stripMarkdown', () => {
   })
 
   it('strips emphasis that hugs its text', () => {
-    expect(stripMarkdown('a **bold** b *it* c _it_ d __bold__ e ~~gone~~ f')).toBe('a bold b it c it d bold e gone f')
+    expect(stripMarkdown('a **bold** b *it* c _it_ d __bold__ e ~~gone~~ f')).toBe(
+      'a bold b it c it d bold e gone f'
+    )
   })
 
   it('leaves underscores inside identifiers alone', () => {
-    expect(stripMarkdown('__init__ and snake_case_name and _private_')).toBe('init and snake_case_name and private')
-    expect(stripMarkdown('use get_user_by_id() then set_user_id()')).toBe('use get_user_by_id() then set_user_id()')
+    expect(stripMarkdown('__init__ and snake_case_name and _private_')).toBe(
+      'init and snake_case_name and private'
+    )
+    expect(stripMarkdown('use get_user_by_id() then set_user_id()')).toBe(
+      'use get_user_by_id() then set_user_id()'
+    )
   })
 
   it('leaves spaced out asterisks alone', () => {
@@ -38,7 +44,7 @@ describe('stripMarkdown', () => {
 
   it('removes list, task list, quote and numbered markers at line start', () => {
     expect(stripMarkdown('- one\n* two\n+ three\n- [x] done\n1. first\n2) second\n> quoted')).toBe(
-      'one\ntwo\nthree\ndone\nfirst\nsecond\nquoted',
+      'one\ntwo\nthree\ndone\nfirst\nsecond\nquoted'
     )
   })
 
@@ -53,7 +59,9 @@ describe('stripMarkdown', () => {
 
   it('keeps code content untouched', () => {
     const md = 'Run `my_var_name` first:\n\n```js\nconst a_b = 2 * 3 * 4\n# not a heading\n```\n'
-    expect(stripMarkdown(md)).toBe('Run my_var_name first:\n\nconst a_b = 2 * 3 * 4\n# not a heading')
+    expect(stripMarkdown(md)).toBe(
+      'Run my_var_name first:\n\nconst a_b = 2 * 3 * 4\n# not a heading'
+    )
   })
 
   it('respects backslash escapes', () => {

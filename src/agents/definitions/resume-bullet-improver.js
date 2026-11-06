@@ -1,25 +1,23 @@
 export default {
-  id: "resume-bullet-improver",
-  createdAt: "2026-10-02",
-  name: "Resume Bullet Point Improver",
+  id: 'resume-bullet-improver',
+  createdAt: '2026-10-02',
+  name: 'Resume Bullet Point Improver',
   description:
-    "Rewrites rough resume bullet points into concise, professional statements without inventing details.",
-  category: "HR",
-  icon: "FileText",
-  provider: "any",
-  defaultProvider: "gemini",
-  model: "gemini-3.1-flash-lite",
+    'Rewrites rough resume bullet points into concise, professional statements without inventing details.',
+  category: 'HR',
+  icon: 'FileText',
+  provider: 'any',
+  defaultProvider: 'gemini',
+  model: 'gemini-3.1-flash-lite',
   exampleInputs: {
-    bullet_point:
-      "worked on a website for my college club and made it faster",
+    bullet_point: 'worked on a website for my college club and made it faster',
   },
   inputs: [
     {
-      id: "bullet_point",
-      label: "Resume Bullet Point",
-      type: "textarea",
-      placeholder:
-        "e.g. worked on a website for my college club and made it faster",
+      id: 'bullet_point',
+      label: 'Resume Bullet Point',
+      type: 'textarea',
+      placeholder: 'e.g. worked on a website for my college club and made it faster',
       required: true,
     },
   ],
@@ -36,5 +34,5 @@ Rules:
   "Polishes a rough resume bullet into one concise, professional line while keeping your original facts. Never adds metrics, skills, or achievements.",
 
 Output only the improved bullet point, starting with "• ".`,
-  outputType: "text",
-};
+  outputType: 'text',
+}

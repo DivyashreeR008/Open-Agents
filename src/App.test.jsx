@@ -256,18 +256,54 @@ describe('App Shell and Route Audit (Issue #594)', () => {
       { path: '/agent/summarizer-agent', expectedTestId: 'page-agent', label: 'AgentPage' },
       { path: '/suites', expectedTestId: 'page-suites', label: 'SuitesPage' },
       { path: '/collections', expectedTestId: 'page-collections', label: 'CollectionsPage' },
-      { path: '/collections/custom-col', expectedTestId: 'page-collection-detail', label: 'CollectionDetailPage' },
-      { path: '/scheduler', expectedTestId: 'page-automations', label: 'AutomationsPage (/scheduler alias)' },
-      { path: '/automations', expectedTestId: 'page-automations', label: 'AutomationsPage (/automations canonical)' },
-      { path: '/automations/job-99', expectedTestId: 'page-automation-detail', label: 'AutomationDetailPage' },
+      {
+        path: '/collections/custom-col',
+        expectedTestId: 'page-collection-detail',
+        label: 'CollectionDetailPage',
+      },
+      {
+        path: '/scheduler',
+        expectedTestId: 'page-automations',
+        label: 'AutomationsPage (/scheduler alias)',
+      },
+      {
+        path: '/automations',
+        expectedTestId: 'page-automations',
+        label: 'AutomationsPage (/automations canonical)',
+      },
+      {
+        path: '/automations/job-99',
+        expectedTestId: 'page-automation-detail',
+        label: 'AutomationDetailPage',
+      },
       { path: '/marketplace', expectedTestId: 'page-marketplace', label: 'MarketplacePage' },
-      { path: '/marketplace/drafts', expectedTestId: 'page-marketplace-drafts', label: 'MarketplaceDraftsPage' },
-      { path: '/marketplace/drafts/draft-456', expectedTestId: 'page-marketplace-draft', label: 'MarketplaceDraftPage' },
+      {
+        path: '/marketplace/drafts',
+        expectedTestId: 'page-marketplace-drafts',
+        label: 'MarketplaceDraftsPage',
+      },
+      {
+        path: '/marketplace/drafts/draft-456',
+        expectedTestId: 'page-marketplace-draft',
+        label: 'MarketplaceDraftPage',
+      },
       { path: '/analytics', expectedTestId: 'page-analytics', label: 'AnalyticsPage' },
       { path: '/workflows', expectedTestId: 'page-workflows', label: 'WorkflowLibrary' },
-      { path: '/workflows/build', expectedTestId: 'page-workflow-builder', label: 'WorkflowBuilder' },
-      { path: '/workflows/flow-123', expectedTestId: 'page-workflow-detail', label: 'WorkflowDetail' },
-      { path: '/workflows/flow-123/run', expectedTestId: 'page-workflow-runner', label: 'WorkflowRunner' },
+      {
+        path: '/workflows/build',
+        expectedTestId: 'page-workflow-builder',
+        label: 'WorkflowBuilder',
+      },
+      {
+        path: '/workflows/flow-123',
+        expectedTestId: 'page-workflow-detail',
+        label: 'WorkflowDetail',
+      },
+      {
+        path: '/workflows/flow-123/run',
+        expectedTestId: 'page-workflow-runner',
+        label: 'WorkflowRunner',
+      },
       { path: '/battle', expectedTestId: 'page-battle-landing', label: 'BattleModeLanding' },
       { path: '/battle/setup', expectedTestId: 'page-battle-setup', label: 'BattleModeSetup' },
       { path: '/battle/arena', expectedTestId: 'page-battle-arena', label: 'BattleModeArena' },
@@ -420,7 +456,9 @@ describe('App Shell and Route Audit (Issue #594)', () => {
       renderAppAt('/settings')
 
       // Fallback UI caught by ErrorBoundary
-      expect(await screen.findByRole('heading', { name: /failed to render output/i })).toBeInTheDocument()
+      expect(
+        await screen.findByRole('heading', { name: /failed to render output/i })
+      ).toBeInTheDocument()
       expect(screen.getByText(/crash inside settings page/i)).toBeInTheDocument()
 
       const tryAgainButton = screen.getByRole('button', { name: /try again/i })
@@ -431,7 +469,9 @@ describe('App Shell and Route Audit (Issue #594)', () => {
       await user.click(tryAgainButton)
 
       expect(await screen.findByTestId('page-settings')).toBeInTheDocument()
-      expect(screen.queryByRole('heading', { name: /failed to render output/i })).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('heading', { name: /failed to render output/i })
+      ).not.toBeInTheDocument()
 
       consoleError.mockRestore()
     })

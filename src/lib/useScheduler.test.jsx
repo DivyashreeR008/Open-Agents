@@ -170,9 +170,7 @@ describe('useScheduler', () => {
     const { result } = renderHook(() => useScheduler({ autoRun: false }))
 
     expect(result.current.jobs[0].apiKey).toBe('sk-seeded')
-    expect(JSON.parse(localStorage.getItem('oa_scheduled_jobs'))[0]).not.toHaveProperty(
-      'apiKey'
-    )
+    expect(JSON.parse(localStorage.getItem('oa_scheduled_jobs'))[0]).not.toHaveProperty('apiKey')
   })
 
   it('runs a job, records analytics, stores history, and advances the schedule', async () => {
@@ -196,11 +194,7 @@ describe('useScheduler', () => {
       systemPrompt: 'Review the change carefully.',
     })
     expect(request.userMessage).toBe('Topic: Authentication\n\nFormat: json, markdown')
-    expect(mocks.resolveAgentModel).toHaveBeenCalledWith(
-      agentDefinition,
-      'openai',
-      'saved-model'
-    )
+    expect(mocks.resolveAgentModel).toHaveBeenCalledWith(agentDefinition, 'openai', 'saved-model')
     expect(mocks.recordAnalyticsRun).toHaveBeenCalledWith({
       agentId: 'agent-1',
       agentName: 'Code Reviewer',

@@ -222,10 +222,7 @@ describe('marketplace rating reconciliation', () => {
   })
 
   it('loads all valid votes in one read for list rendering', () => {
-    localStorage.setItem(
-      VOTES_KEY,
-      JSON.stringify({ first: 4, second: '5', third: 0, fourth: 5 })
-    )
+    localStorage.setItem(VOTES_KEY, JSON.stringify({ first: 4, second: '5', third: 0, fourth: 5 }))
 
     expect(loadUserVotes()).toEqual({ first: 4, fourth: 5 })
   })

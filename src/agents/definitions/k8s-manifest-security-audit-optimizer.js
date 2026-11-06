@@ -1,7 +1,8 @@
 const k8sManifestSecurityAuditOptimizer = {
   id: 'k8s-manifest-security-audit-optimizer',
   name: 'Kubernetes Manifest Security Audit & Optimizer Agent',
-  description: 'Audit Kubernetes YAML configurations for security vulnerabilities, container misconfigurations, and performance bottlenecks, and generate optimized manifests.',
+  description:
+    'Audit Kubernetes YAML configurations for security vulnerabilities, container misconfigurations, and performance bottlenecks, and generate optimized manifests.',
   category: 'DevOps',
   icon: 'ShieldCheck',
   provider: 'any',
@@ -57,7 +58,7 @@ spec:
       options: [
         'Strict (Enforce PodSecurityStandards Restricted)',
         'Baseline (Enforce PodSecurityStandards Baseline)',
-        'Insecure/Loose'
+        'Insecure/Loose',
       ],
       defaultValue: 'Baseline (Enforce PodSecurityStandards Baseline)',
       required: true,
@@ -101,6 +102,6 @@ Provide the fully optimized, secure, copy-paste-ready Kubernetes manifest YAML c
 \`\`\`
 `,
   outputType: 'markdown',
-};
+}
 
-export default k8sManifestSecurityAuditOptimizer;
+export default k8sManifestSecurityAuditOptimizer

@@ -1,6 +1,17 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Sun, Moon, Menu, X, HelpCircle, DollarSign, RotateCcw, Settings, PanelLeft, ExternalLink } from 'lucide-react'
+import {
+  Sun,
+  Moon,
+  Menu,
+  X,
+  HelpCircle,
+  DollarSign,
+  RotateCcw,
+  Settings,
+  PanelLeft,
+  ExternalLink,
+} from 'lucide-react'
 
 import GitHubIcon from './GitHubIcon'
 import Logo from './Logo'
@@ -103,7 +114,10 @@ export default function Navbar({ sidebarOpen, setSidebarOpen, onOpenCommandPalet
             <Logo height={20} className="text-zinc-900 dark:text-text-primary" />
           </Link>
 
-          <span className="mx-1 hidden h-4 w-px shrink-0 bg-zinc-200 dark:bg-border sm:block" aria-hidden="true" />
+          <span
+            className="mx-1 hidden h-4 w-px shrink-0 bg-zinc-200 dark:bg-border sm:block"
+            aria-hidden="true"
+          />
 
           {/* Global search / Command Palette trigger */}
           <button
@@ -112,11 +126,20 @@ export default function Navbar({ sidebarOpen, setSidebarOpen, onOpenCommandPalet
             className="group hidden h-8 min-w-0 flex-1 max-w-xs items-center gap-2 border px-2.5 text-left transition-colors sm:flex border-zinc-200 bg-zinc-50/60 hover:border-zinc-300 hover:bg-white dark:border-border dark:bg-surface-card/60 dark:hover:border-border-light dark:hover:bg-surface-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500"
             aria-label="Search agents, workflows, settings (Ctrl+K)"
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 shrink-0 text-zinc-400 dark:text-text-muted" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="h-3.5 w-3.5 shrink-0 text-zinc-400 dark:text-text-muted"
+              aria-hidden="true"
+            >
               <circle cx="11" cy="11" r="7" />
               <path d="m20 20-3.5-3.5" />
             </svg>
-            <span className="truncate text-[13px] text-zinc-400 dark:text-text-muted">Jump to agent, workflow…</span>
+            <span className="truncate text-[13px] text-zinc-400 dark:text-text-muted">
+              Jump to agent, workflow…
+            </span>
             <span className="kbd ml-auto hidden md:inline-flex font-mono">⌘K</span>
           </button>
 
@@ -165,7 +188,10 @@ export default function Navbar({ sidebarOpen, setSidebarOpen, onOpenCommandPalet
                     </div>
                     <div className="mb-2 max-h-32 space-y-1 overflow-y-auto">
                       {runs.slice(0, 10).map((run, i) => (
-                        <div key={i} className="flex justify-between font-mono text-[10px] text-zinc-400 dark:text-text-muted">
+                        <div
+                          key={i}
+                          className="flex justify-between font-mono text-[10px] text-zinc-400 dark:text-text-muted"
+                        >
                           <span className="max-w-[140px] truncate">{run.model || 'Unknown'}</span>
                           <span className="tabular-nums">{formatCost(run.totalCost)}</span>
                         </div>
@@ -195,7 +221,12 @@ export default function Navbar({ sidebarOpen, setSidebarOpen, onOpenCommandPalet
               {darkMode ? <Sun size={16} /> : <Moon size={16} />}
             </button>
 
-            <Link id="nav-settings-link" to="/settings" className="btn-icon hidden sm:inline-flex" aria-label="Settings">
+            <Link
+              id="nav-settings-link"
+              to="/settings"
+              className="btn-icon hidden sm:inline-flex"
+              aria-label="Settings"
+            >
               <Settings size={16} />
             </Link>
 
@@ -222,7 +253,14 @@ export default function Navbar({ sidebarOpen, setSidebarOpen, onOpenCommandPalet
               onClick={handleSearchClick}
               className="field flex items-center gap-2 text-left text-zinc-400 dark:text-text-muted"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="h-3.5 w-3.5"
+                aria-hidden="true"
+              >
                 <circle cx="11" cy="11" r="7" />
                 <path d="m20 20-3.5-3.5" />
               </svg>

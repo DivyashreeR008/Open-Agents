@@ -1,28 +1,28 @@
 export default {
-  id: "iam-policy-auditor",
-  createdAt: "2026-10-20",
-  name: "IAM Policy Auditor",
+  id: 'iam-policy-auditor',
+  createdAt: '2026-10-20',
+  name: 'IAM Policy Auditor',
   description:
-    "Audit IAM policies for over-permissive roles, wildcard actions, and privilege escalation paths.",
-  category: "Cybersecurity",
-  icon: "Shield",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Audit IAM policies for over-permissive roles, wildcard actions, and privilege escalation paths.',
+  category: 'Cybersecurity',
+  icon: 'Shield',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {},
   inputs: [
     {
-      id: "policy",
-      label: "IAM policy JSON",
-      type: "code",
-      placeholder: "Paste AWS IAM, GCP IAM, or Azure RBAC policy...",
+      id: 'policy',
+      label: 'IAM policy JSON',
+      type: 'code',
+      placeholder: 'Paste AWS IAM, GCP IAM, or Azure RBAC policy...',
       required: true,
     },
     {
-      id: "provider",
-      label: "Cloud provider",
-      type: "text",
-      placeholder: "e.g. AWS, GCP, Azure...",
+      id: 'provider',
+      label: 'Cloud provider',
+      type: 'text',
+      placeholder: 'e.g. AWS, GCP, Azure...',
       required: true,
     },
   ],
@@ -53,5 +53,5 @@ Rules:
 - Recommend least privilege access.
 - Do not suggest removing necessary permissions for critical workloads.`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

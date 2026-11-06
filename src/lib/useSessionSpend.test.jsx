@@ -234,10 +234,7 @@ describe('useSessionSpend recording', () => {
   it('resyncs when another tab writes the session key', () => {
     const { result } = renderHook(() => useSessionSpend())
     const other = storedRun('from-other-tab')
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ runs: [other], totalSpend: 0.35 })
-    )
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ runs: [other], totalSpend: 0.35 }))
 
     act(() => fireStorageEvent(STORAGE_KEY, 'changed'))
 
@@ -246,10 +243,7 @@ describe('useSessionSpend recording', () => {
   })
 
   it('clears runs, total, and stored data', () => {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ runs: [storedRun('a')], totalSpend: 0.35 })
-    )
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ runs: [storedRun('a')], totalSpend: 0.35 }))
     const { result } = renderHook(() => useSessionSpend())
 
     act(() => result.current.clearSession())

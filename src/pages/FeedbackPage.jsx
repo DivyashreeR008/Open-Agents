@@ -3,8 +3,7 @@ import PageHeader from '../components/layout/PageHeader'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
 
 const GITHUB_ISSUES_URL = 'https://github.com/DivyashreeR008/Open-Agents/issues/new'
-const SECURITY_REPORT_URL =
-  'https://github.com/DivyashreeR008/Open-Agents/security/advisories/new'
+const SECURITY_REPORT_URL = 'https://github.com/DivyashreeR008/Open-Agents/security/advisories/new'
 
 const feedbackOptions = [
   {

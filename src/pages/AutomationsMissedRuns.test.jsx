@@ -11,7 +11,7 @@ const service = vi.hoisted(() => ({ updateAutomation: vi.fn(), createAutomation:
 vi.mock('../components/OutputRenderer', () => ({ default: ({ content }) => <div>{content}</div> }))
 vi.mock('../lib/useAgents', () => ({ useAgents: () => ({ agents: [] }) }))
 vi.mock('../lib/useApiKey', () => ({ useApiKey: () => ({ apiKey: '' }) }))
-vi.mock('../lib/automationsService', async importOriginal => {
+vi.mock('../lib/automationsService', async (importOriginal) => {
   const actual = await importOriginal()
   return {
     ...actual,
@@ -64,14 +64,37 @@ const run = (overrides = {}) => ({
 })
 
 const missedRecord = run({
-  id: 'r_missed', status: 'missed', missedCount: 3, firstWindow: NOW - 4 * DAY, lastWindow: NOW - 2 * DAY,
-  startedAt: NOW - 2 * DAY, detectedAt: NOW - 60_000, duration: 0, tokens: 0, output: '', policy: 'run_once',
+  id: 'r_missed',
+  status: 'missed',
+  missedCount: 3,
+  firstWindow: NOW - 4 * DAY,
+  lastWindow: NOW - 2 * DAY,
+  startedAt: NOW - 2 * DAY,
+  detectedAt: NOW - 60_000,
+  duration: 0,
+  tokens: 0,
+  output: '',
+  policy: 'run_once',
 })
 const skippedRecord = run({
-  id: 'r_skipped', status: 'skipped', skippedCount: 1, firstWindow: NOW - 3 * DAY, lastWindow: NOW - 3 * DAY,
-  startedAt: NOW - 3 * DAY, detectedAt: NOW - 60_000, duration: 0, tokens: 0, output: '', reason: 'no_key',
+  id: 'r_skipped',
+  status: 'skipped',
+  skippedCount: 1,
+  firstWindow: NOW - 3 * DAY,
+  lastWindow: NOW - 3 * DAY,
+  startedAt: NOW - 3 * DAY,
+  detectedAt: NOW - 60_000,
+  duration: 0,
+  tokens: 0,
+  output: '',
+  reason: 'no_key',
 })
-const catchUpRun = run({ id: 'r_catchup', startedAt: NOW - 60_000, scheduledFor: NOW - 2 * DAY, catchUp: true })
+const catchUpRun = run({
+  id: 'r_catchup',
+  startedAt: NOW - 60_000,
+  scheduledFor: NOW - 2 * DAY,
+  catchUp: true,
+})
 
 function seed(automations, runs) {
   localStorage.setItem('oa_automations_v2', JSON.stringify(automations))
@@ -102,7 +125,16 @@ afterEach(() => {
 
 describe('automation history: ran, skipped and missed', () => {
   beforeEach(() => {
-    seed([automation()], [run({ id: 'r_ok' }), run({ id: 'r_bad', status: 'failed', error: 'x', output: '' }), catchUpRun, missedRecord, skippedRecord])
+    seed(
+      [automation()],
+      [
+        run({ id: 'r_ok' }),
+        run({ id: 'r_bad', status: 'failed', error: 'x', output: '' }),
+        catchUpRun,
+        missedRecord,
+        skippedRecord,
+      ]
+    )
   })
 
   it('shows how many runs ran, were skipped and were missed', () => {
@@ -219,15 +251,34 @@ describe('automations list', () => {
   it('does not count missed or skipped windows in the run totals', () => {
     seed([automation()], [run(), run(), missedRecord, skippedRecord])
     renderPage()
-    expect(screen.getByText('Recorded Runs').parentElement.nextElementSibling).toHaveTextContent('2')
-    expect(screen.getByText('Success Rate').parentElement.nextElementSibling).toHaveTextContent('100%')
+    expect(screen.getByText('Recorded Runs').parentElement.nextElementSibling).toHaveTextContent(
+      '2'
+    )
+    expect(screen.getByText('Success Rate').parentElement.nextElementSibling).toHaveTextContent(
+      '100%'
+    )
   })
 })
 
 describe('the missed-run setting in the create and edit form', () => {
-  const agent = { id: 'a1', name: 'Summarizer', category: 'General', provider: 'openai', systemPrompt: '', inputs: [] }
-  const openForm = props =>
-    render(<CreateAutomationModal isOpen onClose={() => {}} onSuccess={() => {}} preselectedAgent={agent} {...props} />)
+  const agent = {
+    id: 'a1',
+    name: 'Summarizer',
+    category: 'General',
+    provider: 'openai',
+    systemPrompt: '',
+    inputs: [],
+  }
+  const openForm = (props) =>
+    render(
+      <CreateAutomationModal
+        isOpen
+        onClose={() => {}}
+        onSuccess={() => {}}
+        preselectedAgent={agent}
+        {...props}
+      />
+    )
 
   it('defaults to what automations always did: run once', () => {
     openForm()
@@ -237,11 +288,11 @@ describe('the missed-run setting in the create and edit form', () => {
   it('offers all three choices, with the catch-up limit named', () => {
     openForm()
     const select = screen.getByLabelText('If runs are missed')
-    expect(within(select).getAllByRole('option').map(o => o.textContent)).toEqual([
-      'Run once when I come back',
-      'Catch up (up to 3 runs)',
-      'Skip missed runs',
-    ])
+    expect(
+      within(select)
+        .getAllByRole('option')
+        .map((o) => o.textContent)
+    ).toEqual(['Run once when I come back', 'Catch up (up to 3 runs)', 'Skip missed runs'])
   })
 
   it('creates an automation with the chosen setting', async () => {

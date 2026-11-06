@@ -19,8 +19,7 @@ const proposalDocumentGenerator = {
   exampleInputs: {
     clientName: 'BrightPath Healthcare',
     projectType: 'AI-powered CRM implementation',
-    problem:
-      'The client struggles with missed patient follow-ups and manual scheduling workflows.',
+    problem: 'The client struggles with missed patient follow-ups and manual scheduling workflows.',
     solution:
       'Implement an AI-powered CRM platform with automated reminders, appointment scheduling, and workflow dashboards.',
     pricing: '$12,000 implementation + $500/month subscription',
@@ -122,6 +121,6 @@ Do not invent facts, pricing, timelines, guarantees, deliverables, outcomes, or 
 `,
 
   outputType: 'markdown',
-};
+}
 
-export default proposalDocumentGenerator;
+export default proposalDocumentGenerator

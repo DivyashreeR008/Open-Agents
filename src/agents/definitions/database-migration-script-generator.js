@@ -21,16 +21,14 @@ const databaseMigrationScriptGenerator = {
       id: 'current_schema',
       label: 'Current Schema',
       type: 'textarea',
-      placeholder:
-        'Paste existing CREATE TABLE statement or describe the current structure here.',
+      placeholder: 'Paste existing CREATE TABLE statement or describe the current structure here.',
       required: true,
     },
     {
       id: 'desired_change',
       label: 'Desired Change',
       type: 'textarea',
-      placeholder:
-        'e.g. "Add a nullable email_verified boolean column to users table"',
+      placeholder: 'e.g. "Add a nullable email_verified boolean column to users table"',
       required: true,
     },
     {
@@ -86,6 +84,6 @@ The script to revert the changes.
 - 2-3 specific actionable tips for deploying this migration safely to a live production database without causing application errors or locking out reads/writes.`,
 
   outputType: 'markdown',
-};
+}
 
-export default databaseMigrationScriptGenerator;
+export default databaseMigrationScriptGenerator

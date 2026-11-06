@@ -90,17 +90,25 @@ describe('raw agent-definition contract', () => {
         if (!SUPPORTED_INPUT_TYPES.has(input.type)) {
           errors.push(`${inputName}: unsupported type "${input.type}"`)
         }
-        if (['select', 'multiselect'].includes(input.type) &&
-            (!Array.isArray(input.options) || input.options.length === 0)) {
+        if (
+          ['select', 'multiselect'].includes(input.type) &&
+          (!Array.isArray(input.options) || input.options.length === 0)
+        ) {
           errors.push(`${inputName}: ${input.type} requires non-empty options`)
         } else if (['select', 'multiselect'].includes(input.type)) {
           input.options.forEach((option, optionIndex) => {
             const validString = typeof option === 'string' && option.trim()
-            const validObject = option && typeof option === 'object' &&
-              typeof option.value === 'string' && option.value.trim() &&
-              typeof option.label === 'string' && option.label.trim()
+            const validObject =
+              option &&
+              typeof option === 'object' &&
+              typeof option.value === 'string' &&
+              option.value.trim() &&
+              typeof option.label === 'string' &&
+              option.label.trim()
             if (!validString && !validObject) {
-              errors.push(`${inputName}.options[${optionIndex}]: must be a non-empty string or a value/label object`)
+              errors.push(
+                `${inputName}.options[${optionIndex}]: must be a non-empty string or a value/label object`
+              )
             }
           })
         }
@@ -111,7 +119,8 @@ describe('raw agent-definition contract', () => {
           errors.push(`${identity}: exampleInputs must be an object`)
         } else {
           for (const key of Object.keys(agent.exampleInputs)) {
-            if (!inputIds.has(key)) errors.push(`${identity}: exampleInputs has unknown key "${key}"`)
+            if (!inputIds.has(key))
+              errors.push(`${identity}: exampleInputs has unknown key "${key}"`)
           }
         }
       }

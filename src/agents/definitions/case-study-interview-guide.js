@@ -1,40 +1,40 @@
 export default {
-  id: "case-study-interview-guide",
-  createdAt: "2026-10-12",
-  name: "Case Study Interview Guide",
+  id: 'case-study-interview-guide',
+  createdAt: '2026-10-12',
+  name: 'Case Study Interview Guide',
   description:
-    "Get interview questions that extract a compelling customer story plus follow-up probes.",
-  category: "Marketing",
-  icon: "Mic",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Get interview questions that extract a compelling customer story plus follow-up probes.',
+  category: 'Marketing',
+  icon: 'Mic',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     customer:
-      "Mid-size logistics company using our route-planning tool for 8 months; rollout covered 40 drivers across 3 depots.",
-    outcome: "Wants to highlight faster dispatch and fewer missed windows.",
-    length: "30min",
+      'Mid-size logistics company using our route-planning tool for 8 months; rollout covered 40 drivers across 3 depots.',
+    outcome: 'Wants to highlight faster dispatch and fewer missed windows.',
+    length: '30min',
   },
   inputs: [
     {
-      id: "customer",
-      label: "Customer background",
-      type: "textarea",
-      placeholder: "e.g. Logistics company, 8 months on the product, 40 drivers, 3 depots",
+      id: 'customer',
+      label: 'Customer background',
+      type: 'textarea',
+      placeholder: 'e.g. Logistics company, 8 months on the product, 40 drivers, 3 depots',
       required: true,
     },
     {
-      id: "outcome",
-      label: "Story angle or outcome to explore",
-      type: "text",
-      placeholder: "e.g. Faster dispatch and fewer missed delivery windows",
+      id: 'outcome',
+      label: 'Story angle or outcome to explore',
+      type: 'text',
+      placeholder: 'e.g. Faster dispatch and fewer missed delivery windows',
     },
     {
-      id: "length",
-      label: "Interview length",
-      type: "select",
-      options: ["20min", "30min", "45min"],
-      defaultValue: "30min",
+      id: 'length',
+      label: 'Interview length',
+      type: 'select',
+      options: ['20min', '30min', '45min'],
+      defaultValue: '30min',
     },
   ],
   systemPrompt: `You are a customer-story interviewer who draws out concrete, quotable narratives.
@@ -63,6 +63,6 @@ Rules:
 - Keep questions open and neutral with no leading phrasing.
 - Use neutral language with no emoji.
 - Scale the question count to the selected interview length.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["case-study-writer", "research-agent"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['case-study-writer', 'research-agent'],
+}

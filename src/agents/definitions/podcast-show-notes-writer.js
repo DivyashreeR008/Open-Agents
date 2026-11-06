@@ -1,40 +1,39 @@
 export default {
-  id: "podcast-show-notes-writer",
-  createdAt: "2026-10-12",
-  name: "Podcast Show Notes Writer",
-  description:
-    "Turn an episode outline into title, summary, timestamps, quotes, and links.",
-  category: "Marketing",
-  icon: "Podcast",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'podcast-show-notes-writer',
+  createdAt: '2026-10-12',
+  name: 'Podcast Show Notes Writer',
+  description: 'Turn an episode outline into title, summary, timestamps, quotes, and links.',
+  category: 'Marketing',
+  icon: 'Podcast',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     episode:
-      "Episode 42 with guest Priya Nair on pricing experiments: topics include value metrics, grandfathering, and sales handoffs. Key segment 12:40-28:00.",
-    show: "SaaS Momentum, hosted by Alex Chen",
-    tone: "casual",
+      'Episode 42 with guest Priya Nair on pricing experiments: topics include value metrics, grandfathering, and sales handoffs. Key segment 12:40-28:00.',
+    show: 'SaaS Momentum, hosted by Alex Chen',
+    tone: 'casual',
   },
   inputs: [
     {
-      id: "episode",
-      label: "Episode outline or transcript notes",
-      type: "textarea",
-      placeholder: "e.g. Episode 42: guest, topics, key segments with rough timestamps",
+      id: 'episode',
+      label: 'Episode outline or transcript notes',
+      type: 'textarea',
+      placeholder: 'e.g. Episode 42: guest, topics, key segments with rough timestamps',
       required: true,
     },
     {
-      id: "show",
-      label: "Show name and host (optional)",
-      type: "text",
-      placeholder: "e.g. SaaS Momentum, hosted by Alex Chen",
+      id: 'show',
+      label: 'Show name and host (optional)',
+      type: 'text',
+      placeholder: 'e.g. SaaS Momentum, hosted by Alex Chen',
     },
     {
-      id: "tone",
-      label: "Tone",
-      type: "select",
-      options: ["casual", "professional", "energetic"],
-      defaultValue: "casual",
+      id: 'tone',
+      label: 'Tone',
+      type: 'select',
+      options: ['casual', 'professional', 'energetic'],
+      defaultValue: 'casual',
     },
   ],
   systemPrompt: `You are a podcast producer who writes show notes that earn clicks and listens.
@@ -66,6 +65,6 @@ Rules:
 - Label any estimated timestamps as approximate.
 - Use neutral language with no emoji.
 - Keep formatting copy-paste ready for podcast hosts.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["youtube-script-writer", "blog-post-seo-optimizer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['youtube-script-writer', 'blog-post-seo-optimizer'],
+}

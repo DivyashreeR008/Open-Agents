@@ -2,7 +2,8 @@ export default {
   id: 'prompt-engineering-coach',
   name: 'Prompt Engineering Coach',
   category: 'Productivity',
-  description: 'Reviews user prompts and provides actionable suggestions to improve clarity, specificity, structure, context, and overall effectiveness.',
+  description:
+    'Reviews user prompts and provides actionable suggestions to improve clarity, specificity, structure, context, and overall effectiveness.',
   provider: 'openai',
   icon: 'Sparkles',
   inputs: [
@@ -77,4 +78,4 @@ Structure your output precisely as follows:
 
 **Desired Output Style:**
 {outputStyle}`,
-};
+}

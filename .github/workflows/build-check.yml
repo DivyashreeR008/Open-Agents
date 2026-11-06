@@ -45,6 +45,12 @@ jobs:
       - name: Check contributor security rules
         run: node scripts/check-security-rules.mjs
 
+      - name: Run lint check
+        run: npm run lint
+
+      - name: Run format check
+        run: npm run format:check
+
       - name: Run build
         run: npm run build
 

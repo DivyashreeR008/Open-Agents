@@ -5,13 +5,23 @@ import userEvent from '@testing-library/user-event'
 import MarketplacePage from './MarketplacePage'
 
 vi.mock('../lib/useAgents', () => ({
-  useAgents: () => ({ agents: [{ id: 'a1', name: 'Agent One', description: 'd', category: 'Test', provider: 'openai' }], loading: false, error: null }),
+  useAgents: () => ({
+    agents: [
+      { id: 'a1', name: 'Agent One', description: 'd', category: 'Test', provider: 'openai' },
+    ],
+    loading: false,
+    error: null,
+  }),
 }))
 
 describe('Marketplace publish dialog', () => {
   it('takes focus on open, closes on Escape and returns focus to the opener', async () => {
     const user = userEvent.setup()
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
     const opener = screen.getByRole('button', { name: /publish to marketplace/i })
     await user.click(opener)
 
@@ -26,7 +36,11 @@ describe('Marketplace publish dialog', () => {
 
   it('closes from the visible Close button', async () => {
     const user = userEvent.setup()
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
     await user.click(screen.getByRole('button', { name: /publish to marketplace/i }))
     await user.click(screen.getByRole('button', { name: 'Close' }))
     expect(screen.queryByRole('dialog')).toBeNull()

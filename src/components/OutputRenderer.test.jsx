@@ -17,11 +17,12 @@ const copied = async (name) => {
 
 describe('OutputRenderer Copy as Plain Text', () => {
   it('keeps snake_case, C# and multiplication in markdown output', async () => {
-    const md = '## Review\n\nKeep max_retry_count and user_id_list. In C# it is async. Total = 2 * 3 * 4.\n\n---\n\nDone.'
+    const md =
+      '## Review\n\nKeep max_retry_count and user_id_list. In C# it is async. Total = 2 * 3 * 4.\n\n---\n\nDone.'
     render(<OutputRenderer content={md} outputType="markdown" agentName="t" />)
 
     expect(await copied(/Copy as Plain Text/i)).toBe(
-      'Review\n\nKeep max_retry_count and user_id_list. In C# it is async. Total = 2 * 3 * 4.\n\nDone.',
+      'Review\n\nKeep max_retry_count and user_id_list. In C# it is async. Total = 2 * 3 * 4.\n\nDone.'
     )
   })
 
@@ -55,7 +56,9 @@ describe('OutputRenderer scrollable code regions', () => {
   })
 
   it('keeps inline code out of the region landmarks', () => {
-    render(<OutputRenderer content="Use `retryCount` in the loop." outputType="markdown" agentName="t" />)
+    render(
+      <OutputRenderer content="Use `retryCount` in the loop." outputType="markdown" agentName="t" />
+    )
 
     expect(screen.queryByRole('region')).not.toBeInTheDocument()
     expect(screen.getByText('retryCount')).toBeInTheDocument()

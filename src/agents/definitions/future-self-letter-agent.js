@@ -1,92 +1,85 @@
 export default {
-  id: "future-self-letter-agent",
-  createdAt: "2026-05-22",
-  name: "Future Self Letter Agent",
+  id: 'future-self-letter-agent',
+  createdAt: '2026-05-22',
+  name: 'Future Self Letter Agent',
   description:
-    "Based on your current habits and goals, writes a brutally honest letter from your future self.",
-  category: "Productivity",
-  icon: "MailWarning",
-  provider: "any",
-  defaultProvider: "openai",
-  model: "gpt-4o",
+    'Based on your current habits and goals, writes a brutally honest letter from your future self.',
+  category: 'Productivity',
+  icon: 'MailWarning',
+  provider: 'any',
+  defaultProvider: 'openai',
+  model: 'gpt-4o',
   exampleInputs: {
-    currentAge: "21",
-    futureHorizon: "10 years",
+    currentAge: '21',
+    futureHorizon: '10 years',
     currentSituation:
-      "Final-year student who wants to become a software engineer but keeps procrastinating.",
+      'Final-year student who wants to become a software engineer but keeps procrastinating.',
     dailyHabits:
-      "Sleeps late, studies inconsistently, spends too much time on social media, rarely exercises.",
-    goals:
-      "Get a good developer job, build discipline, stay healthy, and launch a side project.",
+      'Sleeps late, studies inconsistently, spends too much time on social media, rarely exercises.',
+    goals: 'Get a good developer job, build discipline, stay healthy, and launch a side project.',
     actualBehavior:
-      "Makes plans but delays action, starts learning and then drops it, avoids difficult tasks.",
+      'Makes plans but delays action, starts learning and then drops it, avoids difficult tasks.',
     fearsAndExcuses:
-      "Afraid of failing, says there is never enough time, waits for motivation to show up.",
+      'Afraid of failing, says there is never enough time, waits for motivation to show up.',
     currentRoutine:
-      "Wake up late, scroll phone, attend classes, study at night, sleep around 2 AM.",
+      'Wake up late, scroll phone, attend classes, study at night, sleep around 2 AM.',
   },
   inputs: [
     {
-      id: "currentAge",
-      label: "Your current age",
-      type: "text",
-      placeholder: "e.g. 21",
+      id: 'currentAge',
+      label: 'Your current age',
+      type: 'text',
+      placeholder: 'e.g. 21',
       required: true,
     },
     {
-      id: "futureHorizon",
-      label: "How far in the future should the letter come from?",
-      type: "select",
-      options: ["5 years", "7 years", "10 years", "15 years"],
-      defaultValue: "10 years",
+      id: 'futureHorizon',
+      label: 'How far in the future should the letter come from?',
+      type: 'select',
+      options: ['5 years', '7 years', '10 years', '15 years'],
+      defaultValue: '10 years',
       required: true,
     },
     {
-      id: "currentSituation",
-      label: "Where you are right now",
-      type: "textarea",
-      placeholder:
-        "Describe your current life, studies, work situation, and what feels stuck...",
+      id: 'currentSituation',
+      label: 'Where you are right now',
+      type: 'textarea',
+      placeholder: 'Describe your current life, studies, work situation, and what feels stuck...',
       required: true,
     },
     {
-      id: "dailyHabits",
-      label: "Your current habits",
-      type: "textarea",
-      placeholder:
-        "Sleep, study, exercise, screen time, eating habits, focus patterns...",
+      id: 'dailyHabits',
+      label: 'Your current habits',
+      type: 'textarea',
+      placeholder: 'Sleep, study, exercise, screen time, eating habits, focus patterns...',
       required: true,
     },
     {
-      id: "goals",
-      label: "Your goals",
-      type: "textarea",
-      placeholder:
-        "What do you say you want to achieve in the future?",
+      id: 'goals',
+      label: 'Your goals',
+      type: 'textarea',
+      placeholder: 'What do you say you want to achieve in the future?',
       required: true,
     },
     {
-      id: "actualBehavior",
-      label: "What you actually do",
-      type: "textarea",
-      placeholder:
-        "Be honest: what does your real behavior look like day to day?",
+      id: 'actualBehavior',
+      label: 'What you actually do',
+      type: 'textarea',
+      placeholder: 'Be honest: what does your real behavior look like day to day?',
       required: true,
     },
     {
-      id: "fearsAndExcuses",
-      label: "Your fears and excuses",
-      type: "textarea",
-      placeholder:
-        "What are you afraid of? What excuses do you keep telling yourself?",
+      id: 'fearsAndExcuses',
+      label: 'Your fears and excuses',
+      type: 'textarea',
+      placeholder: 'What are you afraid of? What excuses do you keep telling yourself?',
       required: true,
     },
     {
-      id: "currentRoutine",
-      label: "Your daily routine",
-      type: "textarea",
-      placeholder:
-        "A rough breakdown of a normal day from wake-up to sleep...",
+      id: 'currentRoutine',
+      label: 'Your daily routine',
+      type: 'textarea',
+      placeholder: 'A rough breakdown of a normal day from wake-up to sleep...',
       required: false,
     },
   ],
@@ -129,5 +122,5 @@ Rules:
 - Do not end with a motivational cliché.
 - Make it feel like a real letter from someone who lived the consequences of today's choices.
 `,
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

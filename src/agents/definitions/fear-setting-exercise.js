@@ -1,43 +1,40 @@
 export default {
-  id: "fear-setting-exercise",
-  createdAt: "2026-10-12",
-  name: "Fear-Setting Exercise",
-  description:
-    "Run the fear-setting protocol: define, prevent, repair — then price inaction.",
-  category: "Personal Development",
-  icon: "TriangleAlert",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'fear-setting-exercise',
+  createdAt: '2026-10-12',
+  name: 'Fear-Setting Exercise',
+  description: 'Run the fear-setting protocol: define, prevent, repair — then price inaction.',
+  category: 'Personal Development',
+  icon: 'TriangleAlert',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    fear:
-      "Quitting my stable job to freelance full-time. Afraid income drops, clients dry up, and I regret leaving benefits.",
-    horizon: "6-months",
-    support:
-      "Partner works part-time, 4 months of savings, one ex-colleague who freelances.",
+    fear: 'Quitting my stable job to freelance full-time. Afraid income drops, clients dry up, and I regret leaving benefits.',
+    horizon: '6-months',
+    support: 'Partner works part-time, 4 months of savings, one ex-colleague who freelances.',
   },
   inputs: [
     {
-      id: "fear",
-      label: "The fear or decision",
-      type: "textarea",
+      id: 'fear',
+      label: 'The fear or decision',
+      type: 'textarea',
       placeholder:
-        "e.g. Quitting my job, moving cities, launching a side business — what is at stake?",
+        'e.g. Quitting my job, moving cities, launching a side business — what is at stake?',
       required: true,
     },
     {
-      id: "horizon",
-      label: "Time horizon",
-      type: "select",
-      options: ["6-months", "1-year", "3-years"],
-      defaultValue: "6-months",
+      id: 'horizon',
+      label: 'Time horizon',
+      type: 'select',
+      options: ['6-months', '1-year', '3-years'],
+      defaultValue: '6-months',
       required: true,
     },
     {
-      id: "support",
-      label: "Support and resources",
-      type: "textarea",
-      placeholder: "e.g. Savings, people who can help, skills, safety nets...",
+      id: 'support',
+      label: 'Support and resources',
+      type: 'textarea',
+      placeholder: 'e.g. Savings, people who can help, skills, safety nets...',
     },
   ],
   systemPrompt: `You are a decision-making facilitator running the fear-setting protocol: define the fear, plan prevention and repair, then price the cost of inaction.
@@ -67,6 +64,6 @@ Rules:
 - Do not give medical, therapeutic, or financial-advice claims
 - Keep language plain and grounded, no motivational slogans
 - Work only with the horizon the user selected`,
-  outputType: "markdown",
-  suggestedChainFrom: ["research-agent", "eli5-explainer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['research-agent', 'eli5-explainer'],
+}

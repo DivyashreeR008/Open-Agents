@@ -1,28 +1,28 @@
 export default {
-  id: "sql-injection-auditor",
-  createdAt: "2026-10-20",
-  name: "SQL Injection Auditor",
+  id: 'sql-injection-auditor',
+  createdAt: '2026-10-20',
+  name: 'SQL Injection Auditor',
   description:
-    "Audit code and queries for SQL injection vulnerabilities with parameterized query fixes.",
-  category: "Cybersecurity",
-  icon: "ShieldAlert",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Audit code and queries for SQL injection vulnerabilities with parameterized query fixes.',
+  category: 'Cybersecurity',
+  icon: 'ShieldAlert',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {},
   inputs: [
     {
-      id: "code",
-      label: "Code or query snippet",
-      type: "code",
-      placeholder: "Paste code containing SQL queries...",
+      id: 'code',
+      label: 'Code or query snippet',
+      type: 'code',
+      placeholder: 'Paste code containing SQL queries...',
       required: true,
     },
     {
-      id: "language",
-      label: "Language/framework",
-      type: "text",
-      placeholder: "e.g. PHP, Python/Django, Node/Sequelize, Java/JDBC...",
+      id: 'language',
+      label: 'Language/framework',
+      type: 'text',
+      placeholder: 'e.g. PHP, Python/Django, Node/Sequelize, Java/JDBC...',
       required: true,
     },
   ],
@@ -50,5 +50,5 @@ Rules:
 - Show exactly how each vulnerability could be exploited.
 - Provide working parameterized query replacements.`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

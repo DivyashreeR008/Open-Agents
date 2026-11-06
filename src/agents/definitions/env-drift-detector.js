@@ -1,41 +1,38 @@
 export default {
-  id: "env-drift-detector",
-  createdAt: "2026-10-12",
-  name: "Env Drift Detector",
-  description:
-    "Compare .env.example against your env to find missing, extra, and stale keys.",
-  category: "Developer Tools",
-  icon: "FileWarning",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'env-drift-detector',
+  createdAt: '2026-10-12',
+  name: 'Env Drift Detector',
+  description: 'Compare .env.example against your env to find missing, extra, and stale keys.',
+  category: 'Developer Tools',
+  icon: 'FileWarning',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    example:
-      "DATABASE_URL=\nREDIS_URL=\nSTRIPE_KEY=\nLOG_LEVEL=info",
-    actual:
-      "DATABASE_URL=postgres://localhost/app\nLOG_LEVEL=debug\nOLD_FLAG=true",
-    strict: "warn",
+    example: 'DATABASE_URL=\nREDIS_URL=\nSTRIPE_KEY=\nLOG_LEVEL=info',
+    actual: 'DATABASE_URL=postgres://localhost/app\nLOG_LEVEL=debug\nOLD_FLAG=true',
+    strict: 'warn',
   },
   inputs: [
     {
-      id: "example",
-      label: ".env.example contents",
-      type: "textarea",
-      placeholder: "e.g. Paste your .env.example file contents",
+      id: 'example',
+      label: '.env.example contents',
+      type: 'textarea',
+      placeholder: 'e.g. Paste your .env.example file contents',
       required: true,
     },
     {
-      id: "actual",
-      label: "Actual env contents",
-      type: "textarea",
-      placeholder: "e.g. Paste your local .env contents with secrets redacted",
+      id: 'actual',
+      label: 'Actual env contents',
+      type: 'textarea',
+      placeholder: 'e.g. Paste your local .env contents with secrets redacted',
     },
     {
-      id: "strict",
-      label: "Strictness",
-      type: "select",
-      options: ["warn", "error"],
-      defaultValue: "warn",
+      id: 'strict',
+      label: 'Strictness',
+      type: 'select',
+      options: ['warn', 'error'],
+      defaultValue: 'warn',
       required: true,
     },
   ],
@@ -67,6 +64,6 @@ Rules:
 - Flag stale keys that look renamed or deprecated
 - Do not invent versions, CVEs, or keys not present in the inputs
 - Keep language neutral and checklist-oriented`,
-  outputType: "markdown",
-  suggestedChainFrom: ["env-doc-generator", "readme-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['env-doc-generator', 'readme-generator'],
+}

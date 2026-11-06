@@ -39,20 +39,14 @@ const featureEngineeringAdvisor = {
       label: 'Problem Type',
       type: 'select',
       required: true,
-      options: [
-        'Classification',
-        'Regression',
-        'Clustering',
-        'Time Series',
-      ],
+      options: ['Classification', 'Regression', 'Clustering', 'Time Series'],
     },
 
     {
       id: 'sample_columns',
       label: 'Sample Columns / Features',
       type: 'textarea',
-      placeholder:
-        'e.g. age, salary, city, signup_date, purchase_count',
+      placeholder: 'e.g. age, salary, city, signup_date, purchase_count',
       required: false,
     },
 
@@ -60,8 +54,7 @@ const featureEngineeringAdvisor = {
       id: 'domain_context',
       label: 'Domain / Context',
       type: 'text',
-      placeholder:
-        'e.g. E-commerce, Finance, Healthcare, Manufacturing',
+      placeholder: 'e.g. E-commerce, Finance, Healthcare, Manufacturing',
       required: false,
     },
   ],
@@ -113,6 +106,6 @@ Keep recommendations concise, practical, and tailored to the dataset.
 `,
 
   outputType: 'markdown',
-};
+}
 
-export default featureEngineeringAdvisor;
+export default featureEngineeringAdvisor

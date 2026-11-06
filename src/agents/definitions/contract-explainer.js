@@ -1,16 +1,16 @@
 export default {
-  id: "contract-explainer",
-  createdAt: "2026-05-25",
-  name: "Smart Contract Explainer",
+  id: 'contract-explainer',
+  createdAt: '2026-05-25',
+  name: 'Smart Contract Explainer',
   description:
-    "Paste a smart contract and get a plain-English explanation of what it does, what each function does, what permissions and roles exist, and any potential red flags.",
-  category: "Web3",
-  icon: "BookOpen",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Paste a smart contract and get a plain-English explanation of what it does, what each function does, what permissions and roles exist, and any potential red flags.',
+  category: 'Web3',
+  icon: 'BookOpen',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    language: "Solidity",
+    language: 'Solidity',
     code: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -33,30 +33,34 @@ contract SimpleToken {
     require(msg.sender == owner, "Not owner");
     balanceOf[to] += amount;
   }
-}`
+}`,
   },
   inputs: [
     {
-      id: "language",
-      label: "Language",
-      type: "select",
-      options: ["Solidity", "Vyper", "Rust (Solana/Near)"],
-      defaultValue: "Solidity",
+      id: 'language',
+      label: 'Language',
+      type: 'select',
+      options: ['Solidity', 'Vyper', 'Rust (Solana/Near)'],
+      defaultValue: 'Solidity',
       required: true,
     },
     {
-      id: "code",
-      label: "Smart Contract Code",
-      type: "code",
-      placeholder: "Paste your smart contract source code here...",
+      id: 'code',
+      label: 'Smart Contract Code',
+      type: 'code',
+      placeholder: 'Paste your smart contract source code here...',
       required: true,
     },
     {
-      id: "detail",
-      label: "Explanation level",
-      type: "select",
-      options: ["High-level summary", "Function-by-function (detailed)", "Permissions & threat summary"],
-      defaultValue: "Function-by-function (detailed)",
+      id: 'detail',
+      label: 'Explanation level',
+      type: 'select',
+      options: [
+        'High-level summary',
+        'Function-by-function (detailed)',
+        'Permissions & threat summary',
+      ],
+      defaultValue: 'Function-by-function (detailed)',
       required: true,
     },
   ],
@@ -99,5 +103,5 @@ Rules:
 - For upgradeable patterns (proxy, delegatecall, admin), clearly state upgrade risks.
 - If the contract imports or references external contracts by address, note that risks depend on those external contracts.
 - End with a short, actionable recommendation for an average user (e.g., avoid interacting, read docs, require multisig for admin, consider whitelisting).`,
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

@@ -17,8 +17,12 @@ vi.mock('../lib/llmAdapter', () => ({ runAgent: mocks.runAgent }))
 vi.mock('../lib/useAgents', () => ({ useAgents: () => ({ agents }) }))
 vi.mock('../lib/useApiKey', () => ({
   useApiKey: () => ({
-    provider: 'openai', setProvider: vi.fn(), apiKey: 'sk-test', setApiKey: vi.fn(),
-    saveForSession: false, setSaveForSession: vi.fn(),
+    provider: 'openai',
+    setProvider: vi.fn(),
+    apiKey: 'sk-test',
+    setApiKey: vi.fn(),
+    saveForSession: false,
+    setSaveForSession: vi.fn(),
   }),
 }))
 vi.mock('../lib/useAnalytics', () => ({ recordAnalyticsRun: mocks.recordAnalyticsRun }))
@@ -39,7 +43,9 @@ const workflow = { id: 'w1', title: 'Research chain', agents: ['a1', 'a2'] }
 function renderPage() {
   return render(
     <MemoryRouter initialEntries={[{ pathname: '/workflows/w1/run', state: { workflow } }]}>
-      <Routes><Route path="/workflows/:id/run" element={<WorkflowRunner />} /></Routes>
+      <Routes>
+        <Route path="/workflows/:id/run" element={<WorkflowRunner />} />
+      </Routes>
     </MemoryRouter>
   )
 }
@@ -71,9 +77,13 @@ describe('WorkflowRunner failure recovery', () => {
     expect(screen.getByRole('button', { name: /Run Workflow/ })).toBeEnabled()
 
     fireEvent.click(screen.getByRole('button', { name: /Run Workflow/ }))
-    expect(await screen.findByText('Workflow complete! All 2 steps finished successfully.')).toBeInTheDocument()
+    expect(
+      await screen.findByText('Workflow complete! All 2 steps finished successfully.')
+    ).toBeInTheDocument()
     expect(mocks.runAgent).toHaveBeenCalledTimes(3)
-    expect(mocks.runAgent).toHaveBeenLastCalledWith(expect.objectContaining({ userMessage: 'Recovered output' }))
+    expect(mocks.runAgent).toHaveBeenLastCalledWith(
+      expect.objectContaining({ userMessage: 'Recovered output' })
+    )
   })
 
   it('keeps the primary run control disabled without input', () => {

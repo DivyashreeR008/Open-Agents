@@ -10,8 +10,10 @@ export default {
   model: 'gpt-4o',
   exampleInputs: {
     task: 'Help me plan my day and prioritize urgent tasks before a team meeting.',
-    context: 'I have 3 client tasks, 1 bug fix, and a 4 PM review call. I also need to prepare notes for tomorrow.',
-    goals: 'Finish the highest-impact work early, avoid distractions, and keep my schedule realistic.',
+    context:
+      'I have 3 client tasks, 1 bug fix, and a 4 PM review call. I also need to prepare notes for tomorrow.',
+    goals:
+      'Finish the highest-impact work early, avoid distractions, and keep my schedule realistic.',
     tone: 'Clear and focused',
   },
   inputs: [
@@ -40,7 +42,12 @@ export default {
       id: 'tone',
       label: 'Tone / style',
       type: 'select',
-      options: ['Clear and focused', 'Professional', 'Friendly and motivating', 'Concise and direct'],
+      options: [
+        'Clear and focused',
+        'Professional',
+        'Friendly and motivating',
+        'Concise and direct',
+      ],
       defaultValue: 'Clear and focused',
       required: false,
     },
@@ -77,4 +84,4 @@ End with the single most valuable action the user should do next.
 
 Keep the tone aligned with the user's requested style and make the guidance immediately usable.`,
   outputType: 'markdown',
-};
+}

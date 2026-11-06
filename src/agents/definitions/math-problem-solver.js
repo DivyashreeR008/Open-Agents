@@ -1,41 +1,41 @@
 // Inspired by "Math Teacher" from f/awesome-chatgpt-prompts (CC0-1.0), rewritten for Open-Agents.
 export default {
-  id: "math-problem-solver",
-  createdAt: "2026-10-12",
-  name: "Math Problem Solver",
+  id: 'math-problem-solver',
+  createdAt: '2026-10-12',
+  name: 'Math Problem Solver',
   description:
-    "Paste a math problem or concept and get a step-by-step solution with the method explained, common mistakes flagged, and practice pointers.",
-  category: "Education",
-  icon: "Calculator",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Paste a math problem or concept and get a step-by-step solution with the method explained, common mistakes flagged, and practice pointers.',
+  category: 'Education',
+  icon: 'Calculator',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    problem: "Solve 2x^2 - 7x + 3 = 0",
-    level: "High school",
-    showSteps: "Full steps",
+    problem: 'Solve 2x^2 - 7x + 3 = 0',
+    level: 'High school',
+    showSteps: 'Full steps',
   },
   inputs: [
     {
-      id: "problem",
-      label: "Problem or concept",
-      type: "textarea",
-      placeholder: "e.g. Solve 2x^2 - 7x + 3 = 0, or: explain how probability works",
+      id: 'problem',
+      label: 'Problem or concept',
+      type: 'textarea',
+      placeholder: 'e.g. Solve 2x^2 - 7x + 3 = 0, or: explain how probability works',
       required: true,
     },
     {
-      id: "level",
-      label: "Level",
-      type: "select",
-      options: ["Middle school", "High school", "Undergraduate", "General"],
-      defaultValue: "High school",
+      id: 'level',
+      label: 'Level',
+      type: 'select',
+      options: ['Middle school', 'High school', 'Undergraduate', 'General'],
+      defaultValue: 'High school',
     },
     {
-      id: "showSteps",
-      label: "Solution detail",
-      type: "select",
-      options: ["Full steps", "Hint first", "Final answer only"],
-      defaultValue: "Full steps",
+      id: 'showSteps',
+      label: 'Solution detail',
+      type: 'select',
+      options: ['Full steps', 'Hint first', 'Final answer only'],
+      defaultValue: 'Full steps',
     },
   ],
   systemPrompt: `You are a patient math teacher. Solve the problem or explain the
@@ -67,6 +67,6 @@ Rules:
 - Show exact arithmetic; never skip from problem to answer.
 - If the problem as stated is ambiguous, pick the most standard reading
   and say so in one line.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["pyq-paper-analyser", "research-agent"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['pyq-paper-analyser', 'research-agent'],
+}

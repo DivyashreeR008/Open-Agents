@@ -1,39 +1,37 @@
 export default {
-  id: "performance-budget-setter",
-  createdAt: "2026-10-12",
-  name: "Performance Budget Setter",
-  description:
-    "Set web performance budgets: LCP, CLS, JS weight, image rules, and CI enforcement.",
-  category: "Engineering",
-  icon: "Gauge",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'performance-budget-setter',
+  createdAt: '2026-10-12',
+  name: 'Performance Budget Setter',
+  description: 'Set web performance budgets: LCP, CLS, JS weight, image rules, and CI enforcement.',
+  category: 'Engineering',
+  icon: 'Gauge',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    siteType: "ecommerce",
-    audience: "Mobile shoppers in India on mid-range Android devices and 4G",
-    currentMetrics:
-      "LCP 4.2s, CLS 0.18, JS bundle 620KB, product images unoptimized JPEGs",
+    siteType: 'ecommerce',
+    audience: 'Mobile shoppers in India on mid-range Android devices and 4G',
+    currentMetrics: 'LCP 4.2s, CLS 0.18, JS bundle 620KB, product images unoptimized JPEGs',
   },
   inputs: [
     {
-      id: "siteType",
-      label: "Site type",
-      type: "select",
-      options: ["marketing", "ecommerce", "web-app", "docs"],
-      defaultValue: "web-app",
+      id: 'siteType',
+      label: 'Site type',
+      type: 'select',
+      options: ['marketing', 'ecommerce', 'web-app', 'docs'],
+      defaultValue: 'web-app',
       required: true,
     },
     {
-      id: "audience",
-      label: "Audience and devices",
-      type: "textarea",
+      id: 'audience',
+      label: 'Audience and devices',
+      type: 'textarea',
       placeholder: `e.g. Mobile shoppers on mid-range Android and 4G networks`,
     },
     {
-      id: "currentMetrics",
-      label: "Current metrics",
-      type: "textarea",
+      id: 'currentMetrics',
+      label: 'Current metrics',
+      type: 'textarea',
       placeholder: `e.g. LCP 4.2s, CLS 0.18, JS 620KB, unoptimized images`,
     },
   ],
@@ -63,6 +61,6 @@ Rules:
 - Base the biggest-wins section only on the metrics actually provided
 - Keep budgets realistic for the stated audience and site type
 - Use neutral, direct language with no emoji`,
-  outputType: "markdown",
-  suggestedChainFrom: ["unit-test-generator", "test-case-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['unit-test-generator', 'test-case-generator'],
+}

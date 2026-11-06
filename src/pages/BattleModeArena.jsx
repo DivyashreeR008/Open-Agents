@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { useTimedState } from "../lib/useTimedState";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { useTimedState } from '../lib/useTimedState'
+import { useNavigate, useLocation } from 'react-router-dom'
 import {
   Cpu,
   Loader2,
@@ -13,127 +13,122 @@ import {
   Check,
   Zap,
   RefreshCw,
-} from "lucide-react";
-import { runAgent } from "../lib/llmAdapter";
-import { recordAnalyticsRun } from "../lib/useAnalytics";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { useDocumentTitle } from "../lib/useDocumentTitle";
+} from 'lucide-react'
+import { runAgent } from '../lib/llmAdapter'
+import { recordAnalyticsRun } from '../lib/useAnalytics'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import { useDocumentTitle } from '../lib/useDocumentTitle'
 
 // Timeout configuration for LLM requests (in milliseconds)
 // Prevents runaway API calls from indefinitely blocking the UI
-const LLM_REQUEST_TIMEOUT_MS = 60000; // 60 seconds - reasonable for most LLM calls
-const TIMEOUT_ERROR_MESSAGE = "Request timed out - the LLM took too long to respond. Please try again.";
+const LLM_REQUEST_TIMEOUT_MS = 60000 // 60 seconds - reasonable for most LLM calls
+const TIMEOUT_ERROR_MESSAGE =
+  'Request timed out - the LLM took too long to respond. Please try again.'
 
 export const PROVIDERS = [
   {
-    id: "openai",
-    label: "GPT-4o",
-    model: "gpt-4o",
-    color: "white",
-    borderClass: "border-zinc-400/40 battle-card-white",
-    headerBg: "bg-zinc-400/10 border-b border-zinc-400/30",
-    textColor: "text-zinc-400",
+    id: 'openai',
+    label: 'GPT-4o',
+    model: 'gpt-4o',
+    color: 'white',
+    borderClass: 'border-zinc-400/40 battle-card-white',
+    headerBg: 'bg-zinc-400/10 border-b border-zinc-400/30',
+    textColor: 'text-zinc-400',
     btnBg:
-      "bg-zinc-400/10 hover:bg-zinc-400/20 text-zinc-400 border-zinc-400/40 border-2 hover:border-zinc-300/60 battle-btn-secondary",
-    loaderColor: "text-zinc-400",
-    glowHex: "#FFFFFF",
+      'bg-zinc-400/10 hover:bg-zinc-400/20 text-zinc-400 border-zinc-400/40 border-2 hover:border-zinc-300/60 battle-btn-secondary',
+    loaderColor: 'text-zinc-400',
+    glowHex: '#FFFFFF',
   },
   {
-    id: "anthropic",
-    label: "Claude Sonnet",
-    model: "claude-3-5-sonnet-20241022",
-    color: "white",
-    borderClass: "border-zinc-400/40 battle-card-white",
-    headerBg: "bg-zinc-400/10 border-b border-zinc-400/30",
-    textColor: "text-zinc-400",
+    id: 'anthropic',
+    label: 'Claude Sonnet',
+    model: 'claude-3-5-sonnet-20241022',
+    color: 'white',
+    borderClass: 'border-zinc-400/40 battle-card-white',
+    headerBg: 'bg-zinc-400/10 border-b border-zinc-400/30',
+    textColor: 'text-zinc-400',
     btnBg:
-      "bg-zinc-400/10 hover:bg-zinc-400/20 text-zinc-400 border-zinc-400/40 border-2 hover:border-zinc-300/60 battle-btn-secondary",
-    loaderColor: "text-zinc-400",
-    glowHex: "#FFFFFF",
+      'bg-zinc-400/10 hover:bg-zinc-400/20 text-zinc-400 border-zinc-400/40 border-2 hover:border-zinc-300/60 battle-btn-secondary',
+    loaderColor: 'text-zinc-400',
+    glowHex: '#FFFFFF',
   },
   {
-    id: "gemini",
-    label: "Gemini Flash",
-    model: "gemini-2.5-flash",
-    color: "white",
-    borderClass: "border-zinc-400/40 battle-card-white",
-    headerBg: "bg-zinc-400/10 border-b border-zinc-400/30",
-    textColor: "text-zinc-400",
+    id: 'gemini',
+    label: 'Gemini Flash',
+    model: 'gemini-2.5-flash',
+    color: 'white',
+    borderClass: 'border-zinc-400/40 battle-card-white',
+    headerBg: 'bg-zinc-400/10 border-b border-zinc-400/30',
+    textColor: 'text-zinc-400',
     btnBg:
-      "bg-zinc-400/10 hover:bg-zinc-400/20 text-zinc-400 border-zinc-400/40 border-2 hover:border-zinc-300/60 battle-btn-secondary",
-    loaderColor: "text-zinc-400",
-    glowHex: "#FFFFFF",
+      'bg-zinc-400/10 hover:bg-zinc-400/20 text-zinc-400 border-zinc-400/40 border-2 hover:border-zinc-300/60 battle-btn-secondary',
+    loaderColor: 'text-zinc-400',
+    glowHex: '#FFFFFF',
   },
   {
-    id: "openrouter",
-    label: "OpenRouter",
-    model: "openai/gpt-4o-mini",
-    color: "white",
-    borderClass: "border-zinc-400/40 battle-card-white",
-    headerBg: "bg-zinc-400/10 border-b border-zinc-400/30",
-    textColor: "text-zinc-400",
+    id: 'openrouter',
+    label: 'OpenRouter',
+    model: 'openai/gpt-4o-mini',
+    color: 'white',
+    borderClass: 'border-zinc-400/40 battle-card-white',
+    headerBg: 'bg-zinc-400/10 border-b border-zinc-400/30',
+    textColor: 'text-zinc-400',
     btnBg:
-      "bg-zinc-400/10 hover:bg-zinc-400/20 text-zinc-400 border-zinc-400/40 border-2 hover:border-zinc-300/60 battle-btn-secondary",
-    loaderColor: "text-zinc-400",
-    glowHex: "#FFFFFF",
+      'bg-zinc-400/10 hover:bg-zinc-400/20 text-zinc-400 border-zinc-400/40 border-2 hover:border-zinc-300/60 battle-btn-secondary',
+    loaderColor: 'text-zinc-400',
+    glowHex: '#FFFFFF',
   },
-];
+]
 
 function buildUserMessage(agent, inputs) {
-  const parts = [];
+  const parts = []
   agent.inputs.forEach((input) => {
-    const val = inputs[input.id];
-    if (!val || (Array.isArray(val) && val.length === 0)) return;
-    parts.push(
-      Array.isArray(val)
-        ? `${input.label}: ${val.join(", ")}`
-        : `${input.label}: ${val}`,
-    );
-  });
-  return parts.join("\n\n");
+    const val = inputs[input.id]
+    if (!val || (Array.isArray(val) && val.length === 0)) return
+    parts.push(Array.isArray(val) ? `${input.label}: ${val.join(', ')}` : `${input.label}: ${val}`)
+  })
+  return parts.join('\n\n')
 }
 
 function handlePaneKeyDown(e) {
-  if (e.target !== e.currentTarget) return;
-  const panes = Array.from(
-    e.currentTarget.parentElement.querySelectorAll("[data-arena-pane]")
-  );
-  const i = panes.indexOf(e.currentTarget);
-  let next = null;
-  if (e.key === "ArrowRight") next = panes[Math.min(i + 1, panes.length - 1)];
-  else if (e.key === "ArrowLeft") next = panes[Math.max(i - 1, 0)];
-  else if (e.key === "Home") next = panes[0];
-  else if (e.key === "End") next = panes[panes.length - 1];
+  if (e.target !== e.currentTarget) return
+  const panes = Array.from(e.currentTarget.parentElement.querySelectorAll('[data-arena-pane]'))
+  const i = panes.indexOf(e.currentTarget)
+  let next = null
+  if (e.key === 'ArrowRight') next = panes[Math.min(i + 1, panes.length - 1)]
+  else if (e.key === 'ArrowLeft') next = panes[Math.max(i - 1, 0)]
+  else if (e.key === 'Home') next = panes[0]
+  else if (e.key === 'End') next = panes[panes.length - 1]
   if (next) {
-    e.preventDefault();
-    next.focus();
+    e.preventDefault()
+    next.focus()
   }
 }
 
 export default function BattleModeArena() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { agent, inputs, apiKeys } = location.state || {};
-  useDocumentTitle(agent?.name ? `${agent.name} Battle` : "Battle Arena");
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { agent, inputs, apiKeys } = location.state || {}
+  useDocumentTitle(agent?.name ? `${agent.name} Battle` : 'Battle Arena')
 
   const [results, setResults] = useState({
     openai: { loading: true, content: null, error: null, duration: null },
     anthropic: { loading: true, content: null, error: null, duration: null },
     gemini: { loading: true, content: null, error: null, duration: null },
     openrouter: { loading: true, content: null, error: null, duration: null },
-  });
+  })
 
-  const [promptViewerOpen, setPromptViewerOpen] = useState(false);
+  const [promptViewerOpen, setPromptViewerOpen] = useState(false)
   const [prompts, setPrompts] = useState({
     openai: null,
     anthropic: null,
     gemini: null,
     openrouter: null,
-  });
+  })
 
-  const [copiedProvider, setCopiedProvider] = useTimedState(null);
-  const [copyAnnouncement, setCopyAnnouncement] = useTimedState("");
+  const [copiedProvider, setCopiedProvider] = useTimedState(null)
+  const [copyAnnouncement, setCopyAnnouncement] = useTimedState('')
 
   // Store AbortControllers for each provider so we can cancel requests if needed
   const abortControllersRef = useRef({
@@ -141,25 +136,25 @@ export default function BattleModeArena() {
     anthropic: new AbortController(),
     gemini: new AbortController(),
     openrouter: new AbortController(),
-  });
+  })
 
   // Tracks which provider finished (success or error) first
-  const [firstFinisher, setFirstFinisher] = useState(null);
+  const [firstFinisher, setFirstFinisher] = useState(null)
   // Flips to true once all four are done, triggers the reveal animation
-  const [revealTriggered, setRevealTriggered] = useState(false);
+  const [revealTriggered, setRevealTriggered] = useState(false)
 
-  const allDone = PROVIDERS.every((p) => !results[p.id].loading);
+  const allDone = PROVIDERS.every((p) => !results[p.id].loading)
 
   useEffect(() => {
-    if (allDone) setRevealTriggered(true);
-  }, [allDone]);
+    if (allDone) setRevealTriggered(true)
+  }, [allDone])
 
   // Redirect if no state
   useEffect(() => {
     if (!agent || !inputs || !apiKeys) {
-      navigate("/battle/setup", { replace: true });
+      navigate('/battle/setup', { replace: true })
     }
-  }, [agent, inputs, apiKeys, navigate]);
+  }, [agent, inputs, apiKeys, navigate])
 
   // Runs (or re-runs) a single provider's request. Shared by the initial
   // fire-all-providers effect and by the per-panel retry button, so a retry
@@ -177,11 +172,11 @@ export default function BattleModeArena() {
             error: `API key for ${prov.label} is not configured. Add it on the setup page to include this provider.`,
             duration: null,
           },
-        }));
+        }))
         return
       }
 
-      const userMessage = buildUserMessage(agent, inputs);
+      const userMessage = buildUserMessage(agent, inputs)
 
       setPrompts((prev) => ({
         ...prev,
@@ -189,28 +184,31 @@ export default function BattleModeArena() {
           systemPrompt: agent.systemPrompt,
           userMessage,
         },
-      }));
+      }))
 
       // Reset AbortController for this request
-      abortControllersRef.current[prov.id] = new AbortController();
-      const controller = abortControllersRef.current[prov.id];
+      abortControllersRef.current[prov.id] = new AbortController()
+      const controller = abortControllersRef.current[prov.id]
 
       // Create a timeout that aborts the request after LLM_REQUEST_TIMEOUT_MS
       const timeoutId = setTimeout(() => {
-        controller.abort();
-      }, LLM_REQUEST_TIMEOUT_MS);
+        controller.abort()
+      }, LLM_REQUEST_TIMEOUT_MS)
 
-      runAgent({
-        provider: prov.id,
-        model: prov.model,
-        apiKey: configuredKey,
-        systemPrompt: agent.systemPrompt,
-        userMessage,
-      }, {
-        signal: controller.signal, // Pass the abort signal to runAgent
-      })
+      runAgent(
+        {
+          provider: prov.id,
+          model: prov.model,
+          apiKey: configuredKey,
+          systemPrompt: agent.systemPrompt,
+          userMessage,
+        },
+        {
+          signal: controller.signal, // Pass the abort signal to runAgent
+        }
+      )
         .then((result) => {
-          clearTimeout(timeoutId);
+          clearTimeout(timeoutId)
           recordAnalyticsRun({
             agentId: agent.id,
             agentName: agent.name,
@@ -218,7 +216,7 @@ export default function BattleModeArena() {
             provider: prov.id,
             model: prov.model,
             duration: result.duration,
-          });
+          })
           setResults((prev) => ({
             ...prev,
             [prov.id]: {
@@ -227,15 +225,15 @@ export default function BattleModeArena() {
               error: null,
               duration: result.duration,
             },
-          }));
-          setFirstFinisher((prev) => prev ?? prov.id);
+          }))
+          setFirstFinisher((prev) => prev ?? prov.id)
         })
         .catch((err) => {
-          clearTimeout(timeoutId);
+          clearTimeout(timeoutId)
           // Handle timeout errors specifically
-          let errorMessage = err.message || "An unknown error occurred";
-          if (err.name === "AbortError" || err.code === "ABORT_ERR") {
-            errorMessage = TIMEOUT_ERROR_MESSAGE;
+          let errorMessage = err.message || 'An unknown error occurred'
+          if (err.name === 'AbortError' || err.code === 'ABORT_ERR') {
+            errorMessage = TIMEOUT_ERROR_MESSAGE
           }
           setResults((prev) => ({
             ...prev,
@@ -245,75 +243,73 @@ export default function BattleModeArena() {
               error: errorMessage,
               duration: null,
             },
-          }));
-        });
+          }))
+        })
     },
-    [agent, inputs, apiKeys],
-  );
+    [agent, inputs, apiKeys]
+  )
 
   // Fire all provider API calls simultaneously
   useEffect(() => {
-    if (!agent || !inputs || !apiKeys) return;
+    if (!agent || !inputs || !apiKeys) return
 
-    PROVIDERS.forEach((prov) => runProvider(prov));
+    PROVIDERS.forEach((prov) => runProvider(prov))
 
     // Cleanup: abort all pending requests when component unmounts
     return () => {
-      Object.values(abortControllersRef.current).forEach(controller => {
-        controller.abort();
-      });
-    };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+      Object.values(abortControllersRef.current).forEach((controller) => {
+        controller.abort()
+      })
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Retry just one provider's panel: clears only that panel's output/error
   // state and re-fires runAgent for that provider alone.
   const handleRetryProvider = (providerId) => {
-    const prov = PROVIDERS.find((p) => p.id === providerId);
-    if (!prov) return;
+    const prov = PROVIDERS.find((p) => p.id === providerId)
+    if (!prov) return
 
     setResults((prev) => ({
       ...prev,
       [providerId]: { loading: true, content: null, error: null, duration: null },
-    }));
+    }))
 
-    runProvider(prov);
-  };
+    runProvider(prov)
+  }
 
   const handlePickWinner = (providerId) => {
-    const prov = PROVIDERS.find((p) => p.id === providerId);
-    navigate("/battle/winner", {
+    const prov = PROVIDERS.find((p) => p.id === providerId)
+    navigate('/battle/winner', {
       state: {
         provider: prov,
         content: results[providerId].content,
         duration: results[providerId].duration,
         agentName: agent?.name,
       },
-    });
-  };
+    })
+  }
 
   const handleCopyPrompt = async (providerId, providerLabel, promptData) => {
-    const copyText = `System Prompt: ${promptData?.systemPrompt || "Not available"}\n\nUser Prompt: ${promptData?.userMessage || "Not available"}`;
+    const copyText = `System Prompt: ${promptData?.systemPrompt || 'Not available'}\n\nUser Prompt: ${promptData?.userMessage || 'Not available'}`
 
     try {
       if (!navigator.clipboard?.writeText) {
-        throw new Error("Clipboard API is unavailable");
+        throw new Error('Clipboard API is unavailable')
       }
 
-      await navigator.clipboard.writeText(copyText);
-      setCopiedProvider(providerId, 2000);
-      setCopyAnnouncement(`${providerLabel} prompt copied to clipboard.`);
+      await navigator.clipboard.writeText(copyText)
+      setCopiedProvider(providerId, 2000)
+      setCopyAnnouncement(`${providerLabel} prompt copied to clipboard.`)
     } catch {
-      setCopiedProvider(null);
-      setCopyAnnouncement(
-        `Unable to copy the ${providerLabel} prompt. Please try again.`,
-      );
+      setCopiedProvider(null)
+      setCopyAnnouncement(`Unable to copy the ${providerLabel} prompt. Please try again.`)
     }
-  };
+  }
 
-  if (!agent) return null;
+  if (!agent) return null
 
   return (
-  <div className="min-h-screen transition-colors duration-300 dark:bg-surface bg-gray-50 dark:text-text-primary text-gray-900 battle-page-transition">
+    <div className="min-h-screen transition-colors duration-300 dark:bg-surface bg-gray-50 dark:text-text-primary text-gray-900 battle-page-transition">
       <style>{`
         @keyframes battleCardPulse {
           0%, 100% { transform: scale(1); box-shadow: 0 0 0px 0px var(--glow-color, transparent); }
@@ -367,7 +363,7 @@ export default function BattleModeArena() {
       <main className="pt-14 px-4 py-8">
         {/* Back */}
         <button
-          onClick={() => navigate("/battle/setup")}
+          onClick={() => navigate('/battle/setup')}
           className="flex items-center gap-1.5 text-xs font-medium dark:text-text-secondary text-gray-700 hover:dark:text-text-primary hover:text-gray-900 transition-all duration-200 hover:gap-2 mb-8"
         >
           <ArrowLeft size={14} />
@@ -380,8 +376,8 @@ export default function BattleModeArena() {
             Battle Arena
           </h1>
           <p className="text-base dark:text-text-primary text-gray-900">
-            Running{" "}
-            <span className="dark:text-text-primary text-gray-900 font-semibold">{agent.name}</span>{" "}
+            Running{' '}
+            <span className="dark:text-text-primary text-gray-900 font-semibold">{agent.name}</span>{' '}
             across your configured providers
           </p>
         </div>
@@ -411,17 +407,13 @@ export default function BattleModeArena() {
                 {/* OpenAI Column */}
                 <div className="min-w-0 border dark:border-border border-gray-200 dark:bg-surface-card bg-white flex flex-col overflow-hidden">
                   <div className="dark:bg-surface-card bg-white border-b dark:border-border border-gray-200 px-4 py-3 flex items-center justify-between">
-                    <span className="text-base font-bold text-zinc-400">
-                      OpenAI
-                    </span>
+                    <span className="text-base font-bold text-zinc-400">OpenAI</span>
                     <button
-                      onClick={() =>
-                        handleCopyPrompt("openai", "OpenAI", prompts.openai)
-                      }
+                      onClick={() => handleCopyPrompt('openai', 'OpenAI', prompts.openai)}
                       className="flex items-center gap-1.5 px-2 py-1 dark:hover:bg-surface hover:bg-gray-100 transition-all duration-200"
                       aria-label="Copy OpenAI prompt"
                     >
-                      {copiedProvider === "openai" ? (
+                      {copiedProvider === 'openai' ? (
                         <>
                           <Check size={14} className="text-zinc-400" />
                           <span className="text-xs text-zinc-400">Copied</span>
@@ -440,8 +432,7 @@ export default function BattleModeArena() {
                         System Prompt
                       </span>
                       <pre className="whitespace-pre-wrap break-words overflow-x-auto mt-2 text-xs dark:text-text-secondary text-gray-800 dark:bg-surface-input bg-gray-50 p-3 border dark:border-border border-gray-200">
-                        {prompts.openai?.systemPrompt ||
-                          "Prompt not available yet."}
+                        {prompts.openai?.systemPrompt || 'Prompt not available yet.'}
                       </pre>
                     </div>
                     <div>
@@ -449,8 +440,7 @@ export default function BattleModeArena() {
                         User Prompt
                       </span>
                       <pre className="whitespace-pre-wrap break-words overflow-x-auto mt-2 text-xs dark:text-text-secondary text-gray-800 dark:bg-surface-input bg-gray-50 p-3 border dark:border-border border-gray-200">
-                        {prompts.openai?.userMessage ||
-                          "Prompt not available yet."}
+                        {prompts.openai?.userMessage || 'Prompt not available yet.'}
                       </pre>
                     </div>
                   </div>
@@ -459,21 +449,13 @@ export default function BattleModeArena() {
                 {/* Claude Column */}
                 <div className="min-w-0 border dark:border-border border-gray-200 dark:bg-surface-card bg-white flex flex-col overflow-hidden">
                   <div className="dark:bg-surface-card bg-white border-b dark:border-border border-gray-200 px-4 py-3 flex items-center justify-between">
-                    <span className="text-base font-bold text-zinc-400">
-                      Claude
-                    </span>
+                    <span className="text-base font-bold text-zinc-400">Claude</span>
                     <button
-                      onClick={() =>
-                        handleCopyPrompt(
-                          "anthropic",
-                          "Claude",
-                          prompts.anthropic,
-                        )
-                      }
+                      onClick={() => handleCopyPrompt('anthropic', 'Claude', prompts.anthropic)}
                       className="flex items-center gap-1.5 px-2 py-1 dark:hover:bg-surface hover:bg-gray-100 transition-all duration-200"
                       aria-label="Copy Claude prompt"
                     >
-                      {copiedProvider === "anthropic" ? (
+                      {copiedProvider === 'anthropic' ? (
                         <>
                           <Check size={14} className="text-zinc-400" />
                           <span className="text-xs text-zinc-400">Copied</span>
@@ -492,8 +474,7 @@ export default function BattleModeArena() {
                         System Prompt
                       </span>
                       <pre className="whitespace-pre-wrap break-words overflow-x-auto mt-2 text-xs dark:text-text-secondary text-gray-800 dark:bg-surface-input bg-gray-50 p-3 border dark:border-border border-gray-200">
-                        {prompts.anthropic?.systemPrompt ||
-                          "Prompt not available yet."}
+                        {prompts.anthropic?.systemPrompt || 'Prompt not available yet.'}
                       </pre>
                     </div>
                     <div>
@@ -501,8 +482,7 @@ export default function BattleModeArena() {
                         User Prompt
                       </span>
                       <pre className="whitespace-pre-wrap break-words overflow-x-auto mt-2 text-xs dark:text-text-secondary text-gray-800 dark:bg-surface-input bg-gray-50 p-3 border dark:border-border border-gray-200">
-                        {prompts.anthropic?.userMessage ||
-                          "Prompt not available yet."}
+                        {prompts.anthropic?.userMessage || 'Prompt not available yet.'}
                       </pre>
                     </div>
                   </div>
@@ -511,17 +491,13 @@ export default function BattleModeArena() {
                 {/* Gemini Column */}
                 <div className="min-w-0 border dark:border-border border-gray-200 dark:bg-surface-card bg-white flex flex-col overflow-hidden">
                   <div className="dark:bg-surface-card bg-white border-b dark:border-border border-gray-200 px-4 py-3 flex items-center justify-between">
-                    <span className="text-base font-bold text-zinc-400">
-                      Gemini
-                    </span>
+                    <span className="text-base font-bold text-zinc-400">Gemini</span>
                     <button
-                      onClick={() =>
-                        handleCopyPrompt("gemini", "Gemini", prompts.gemini)
-                      }
+                      onClick={() => handleCopyPrompt('gemini', 'Gemini', prompts.gemini)}
                       className="flex items-center gap-1.5 px-2 py-1 dark:hover:bg-surface hover:bg-gray-100 transition-all duration-200"
                       aria-label="Copy Gemini prompt"
                     >
-                      {copiedProvider === "gemini" ? (
+                      {copiedProvider === 'gemini' ? (
                         <>
                           <Check size={14} className="text-zinc-400" />
                           <span className="text-xs text-zinc-400">Copied</span>
@@ -540,8 +516,7 @@ export default function BattleModeArena() {
                         System Prompt
                       </span>
                       <pre className="whitespace-pre-wrap break-words overflow-x-auto mt-2 text-base dark:text-text-secondary text-gray-800 dark:bg-surface-input bg-gray-50 p-3 border dark:border-border border-gray-200">
-                        {prompts.gemini?.systemPrompt ||
-                          "Prompt not available yet."}
+                        {prompts.gemini?.systemPrompt || 'Prompt not available yet.'}
                       </pre>
                     </div>
                     <div>
@@ -549,8 +524,7 @@ export default function BattleModeArena() {
                         User Prompt
                       </span>
                       <pre className="whitespace-pre-wrap break-words overflow-x-auto mt-2 text-base dark:text-text-secondary text-gray-800 dark:bg-surface-input bg-gray-50 p-3 border dark:border-border border-gray-200">
-                        {prompts.gemini?.userMessage ||
-                          "Prompt not available yet."}
+                        {prompts.gemini?.userMessage || 'Prompt not available yet.'}
                       </pre>
                     </div>
                   </div>
@@ -559,21 +533,15 @@ export default function BattleModeArena() {
                 {/* OpenRouter Column */}
                 <div className="min-w-0 border dark:border-border border-gray-200 dark:bg-surface-card bg-white flex flex-col overflow-hidden">
                   <div className="dark:bg-surface-card bg-white border-b dark:border-border border-gray-200 px-4 py-3 flex items-center justify-between">
-                    <span className="text-base font-bold text-zinc-400">
-                      OpenRouter
-                    </span>
+                    <span className="text-base font-bold text-zinc-400">OpenRouter</span>
                     <button
                       onClick={() =>
-                        handleCopyPrompt(
-                          "openrouter",
-                          "OpenRouter",
-                          prompts.openrouter,
-                        )
+                        handleCopyPrompt('openrouter', 'OpenRouter', prompts.openrouter)
                       }
                       className="flex items-center gap-1.5 px-2 py-1 dark:hover:bg-surface hover:bg-gray-100 transition-all duration-200"
                       aria-label="Copy OpenRouter prompt"
                     >
-                      {copiedProvider === "openrouter" ? (
+                      {copiedProvider === 'openrouter' ? (
                         <>
                           <Check size={14} className="text-zinc-400" />
                           <span className="text-xs text-zinc-400">Copied</span>
@@ -592,8 +560,7 @@ export default function BattleModeArena() {
                         System Prompt
                       </span>
                       <pre className="whitespace-pre-wrap break-words overflow-x-auto mt-2 text-xs dark:text-text-secondary text-gray-800 dark:bg-surface-input bg-gray-50 p-3 border dark:border-border border-gray-200">
-                        {prompts.openrouter?.systemPrompt ||
-                          "Prompt not available yet."}
+                        {prompts.openrouter?.systemPrompt || 'Prompt not available yet.'}
                       </pre>
                     </div>
                     <div>
@@ -601,8 +568,7 @@ export default function BattleModeArena() {
                         User Prompt
                       </span>
                       <pre className="whitespace-pre-wrap break-words overflow-x-auto mt-2 text-xs dark:text-text-secondary text-gray-800 dark:bg-surface-input bg-gray-50 p-3 border dark:border-border border-gray-200">
-                        {prompts.openrouter?.userMessage ||
-                          "Prompt not available yet."}
+                        {prompts.openrouter?.userMessage || 'Prompt not available yet.'}
                       </pre>
                     </div>
                   </div>
@@ -614,8 +580,8 @@ export default function BattleModeArena() {
 
         {/* Four Columns */}
         <p id="arena-pane-hint" className="sr-only">
-          Each model answer is its own region. Focus a region and press the
-          left or right arrow key, or Home or End, to move between answers.
+          Each model answer is its own region. Focus a region and press the left or right arrow key,
+          or Home or End, to move between answers.
         </p>
         <div
           role="group"
@@ -623,10 +589,9 @@ export default function BattleModeArena() {
           className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-7xl mx-auto"
         >
           {PROVIDERS.map((prov, idx) => {
-            const r = results[prov.id];
-            const isFirstFinisher = firstFinisher === prov.id;
-            const isStillFighting =
-              r.loading && firstFinisher && firstFinisher !== prov.id;
+            const r = results[prov.id]
+            const isFirstFinisher = firstFinisher === prov.id
+            const isStillFighting = r.loading && firstFinisher && firstFinisher !== prov.id
 
             return (
               <section
@@ -643,18 +608,16 @@ export default function BattleModeArena() {
                     focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 style={{
                   animationDelay: `${idx * 100}ms`,
-                  "--glow-color": prov.glowHex,
+                  '--glow-color': prov.glowHex,
                 }}
               >
                 <div
                   className={`flex flex-col flex-1 ${
-                    r.loading ? "battle-card-loading" : ""
-                  } ${revealTriggered && !r.loading ? "battle-card-reveal" : ""}`}
+                    r.loading ? 'battle-card-loading' : ''
+                  } ${revealTriggered && !r.loading ? 'battle-card-reveal' : ''}`}
                 >
                   {/* Column Header */}
-                  <div
-                    className={`flex items-center gap-2.5 px-5 py-4 ${prov.headerBg}`}
-                  >
+                  <div className={`flex items-center gap-2.5 px-5 py-4 ${prov.headerBg}`}>
                     <Cpu size={16} className={prov.textColor} />
                     <h2
                       id={`arena-pane-title-${prov.id}`}
@@ -693,14 +656,9 @@ export default function BattleModeArena() {
                   <div className="flex-1 p-5 overflow-y-auto max-h-[60vh]">
                     {r.loading && (
                       <div className="flex flex-col items-center justify-center py-16 gap-3">
-                        <Loader2
-                          size={28}
-                          className={`animate-spin ${prov.loaderColor}`}
-                        />
+                        <Loader2 size={28} className={`animate-spin ${prov.loaderColor}`} />
                         <span className="text-xs dark:text-text-muted text-gray-700 font-medium">
-                          {isStillFighting
-                            ? "Still fighting..."
-                            : `${prov.label} is generating...`}
+                          {isStillFighting ? 'Still fighting...' : `${prov.label} is generating...`}
                         </span>
                         <div className="relative w-full max-w-[200px] h-1.5 bg-gray-800/60 overflow-hidden mt-1">
                           <div
@@ -726,14 +684,10 @@ export default function BattleModeArena() {
 
                     {r.content && (
                       <div className="markdown-output min-w-0 overflow-x-auto text-base dark:text-text-primary text-gray-900 leading-relaxed">
-                        {agent.outputType === "markdown" ? (
-                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                            {r.content}
-                          </ReactMarkdown>
+                        {agent.outputType === 'markdown' ? (
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{r.content}</ReactMarkdown>
                         ) : (
-                          <pre className="whitespace-pre-wrap font-sans">
-                            {r.content}
-                          </pre>
+                          <pre className="whitespace-pre-wrap font-sans">{r.content}</pre>
                         )}
                       </div>
                     )}
@@ -755,10 +709,10 @@ export default function BattleModeArena() {
                   )}
                 </div>
               </section>
-            );
+            )
           })}
         </div>
       </main>
     </div>
-  );
+  )
 }

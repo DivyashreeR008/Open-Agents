@@ -40,10 +40,7 @@ export function useFavorites() {
     return () => listeners.delete(sync)
   }, [])
 
-  const isFavorite = useCallback(
-    (agentId) => favorites.includes(agentId),
-    [favorites],
-  )
+  const isFavorite = useCallback((agentId) => favorites.includes(agentId), [favorites])
 
   const toggleFavorite = useCallback((agentId) => {
     const current = loadFavorites()

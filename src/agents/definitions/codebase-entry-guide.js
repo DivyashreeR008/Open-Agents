@@ -1,7 +1,8 @@
 const codebaseEntryGuide = {
   id: 'codebase-entry-guide',
   name: 'Codebase Entry Guide Agent',
-  description: 'Understand a new codebase quickly with key files, entry points, and architecture overview.',
+  description:
+    'Understand a new codebase quickly with key files, entry points, and architecture overview.',
   category: 'Engineering',
   icon: 'FileSearch',
   provider: 'any',
@@ -50,6 +51,6 @@ Keep explanations simple, practical, and beginner-friendly.
 Avoid jargon where possible.`,
 
   outputType: 'markdown',
-};
+}
 
-export default codebaseEntryGuide;
+export default codebaseEntryGuide

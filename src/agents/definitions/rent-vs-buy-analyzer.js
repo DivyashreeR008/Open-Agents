@@ -1,39 +1,38 @@
 export default {
-  id: "rent-vs-buy-analyzer",
-  createdAt: "2026-10-12",
-  name: "Rent vs Buy Analyzer",
+  id: 'rent-vs-buy-analyzer',
+  createdAt: '2026-10-12',
+  name: 'Rent vs Buy Analyzer',
   description:
-    "Compare renting vs buying with total-cost math, assumptions shown, break-even year.",
-  category: "Real Estate",
-  icon: "Home",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Compare renting vs buying with total-cost math, assumptions shown, break-even year.',
+  category: 'Real Estate',
+  icon: 'Home',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    market:
-      "Austin TX, plan to stay 5-7 years, 6.8% mortgage rate quote, 2% annual rent growth.",
-    rent: "$2200/mo plus $150 insurance",
-    price: "$450000, 10% down, HOA $200/mo, tax 1.8%",
+    market: 'Austin TX, plan to stay 5-7 years, 6.8% mortgage rate quote, 2% annual rent growth.',
+    rent: '$2200/mo plus $150 insurance',
+    price: '$450000, 10% down, HOA $200/mo, tax 1.8%',
   },
   inputs: [
     {
-      id: "market",
-      label: "Market and plans",
-      type: "textarea",
-      placeholder: "e.g. City, how long you plan to stay, rate quotes, growth guesses...",
+      id: 'market',
+      label: 'Market and plans',
+      type: 'textarea',
+      placeholder: 'e.g. City, how long you plan to stay, rate quotes, growth guesses...',
       required: true,
     },
     {
-      id: "rent",
-      label: "Current rent",
-      type: "text",
-      placeholder: "e.g. $2200/mo plus insurance and fees",
+      id: 'rent',
+      label: 'Current rent',
+      type: 'text',
+      placeholder: 'e.g. $2200/mo plus insurance and fees',
     },
     {
-      id: "price",
-      label: "Target home price",
-      type: "text",
-      placeholder: "e.g. $450000, 10% down, HOA, tax rate...",
+      id: 'price',
+      label: 'Target home price',
+      type: 'text',
+      placeholder: 'e.g. $450000, 10% down, HOA, tax rate...',
     },
   ],
   systemPrompt: `You are a housing analyst comparing renting versus buying using only the user's numbers.
@@ -63,6 +62,6 @@ Rules:
 - Do not recommend buying or renting; present the math neutrally
 - State this is not financial advice
 - Keep a neutral, plain tone`,
-  outputType: "markdown",
-  suggestedChainFrom: ["personal-budget-analyzer", "data-analysis-agent"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['personal-budget-analyzer', 'data-analysis-agent'],
+}

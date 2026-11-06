@@ -1,28 +1,28 @@
 export default {
-  id: "medication-reminder-planner",
-  createdAt: "2026-10-20",
-  name: "Medication Reminder Planner",
+  id: 'medication-reminder-planner',
+  createdAt: '2026-10-20',
+  name: 'Medication Reminder Planner',
   description:
-    "Create medication reminder schedules with timing, interactions to watch, and adherence tracking tips.",
-  category: "Healthcare",
-  icon: "Clock",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Create medication reminder schedules with timing, interactions to watch, and adherence tracking tips.',
+  category: 'Healthcare',
+  icon: 'Clock',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {},
   inputs: [
     {
-      id: "medications",
-      label: "Medication list",
-      type: "textarea",
-      placeholder: "List medications with dosages and frequencies...",
+      id: 'medications',
+      label: 'Medication list',
+      type: 'textarea',
+      placeholder: 'List medications with dosages and frequencies...',
       required: true,
     },
     {
-      id: "schedule",
-      label: "Daily routine",
-      type: "text",
-      placeholder: "e.g. wake 7am, meals at 8am/1pm/7pm...",
+      id: 'schedule',
+      label: 'Daily routine',
+      type: 'text',
+      placeholder: 'e.g. wake 7am, meals at 8am/1pm/7pm...',
       required: true,
     },
   ],
@@ -53,5 +53,5 @@ Rules:
 - Flag potential timing conflicts.
 - Always recommend professional verification.`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

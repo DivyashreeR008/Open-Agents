@@ -74,5 +74,5 @@ Output Format:
 A short paragraph recommending the best path based on the user's stated priorities.
 `,
   outputType: 'markdown',
-};
-export default pathPilot;
+}
+export default pathPilot

@@ -1,38 +1,38 @@
 export default {
-  id: "caregiver-shift-planner",
-  createdAt: "2026-10-12",
-  name: "Caregiver Shift Planner",
-  description:
-    "Organize family caregiving: shifts, meds log, handoffs, and respite planning.",
-  category: "Healthcare",
-  icon: "HeartHandshake",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'caregiver-shift-planner',
+  createdAt: '2026-10-12',
+  name: 'Caregiver Shift Planner',
+  description: 'Organize family caregiving: shifts, meds log, handoffs, and respite planning.',
+  category: 'Healthcare',
+  icon: 'HeartHandshake',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    situation: "Caring for elderly father post-hip surgery, needs help with meals and mobility",
-    people: "Two adult children and one part-time aide",
-    needs: "Meal prep, medication reminders, physical therapy walks, overnight coverage",
+    situation: 'Caring for elderly father post-hip surgery, needs help with meals and mobility',
+    people: 'Two adult children and one part-time aide',
+    needs: 'Meal prep, medication reminders, physical therapy walks, overnight coverage',
   },
   inputs: [
     {
-      id: "situation",
-      label: "Care situation",
-      type: "textarea",
-      placeholder: "e.g. Caring for elderly father post-surgery, needs help with meals and mobility",
+      id: 'situation',
+      label: 'Care situation',
+      type: 'textarea',
+      placeholder:
+        'e.g. Caring for elderly father post-surgery, needs help with meals and mobility',
       required: true,
     },
     {
-      id: "people",
-      label: "Available caregivers",
-      type: "text",
-      placeholder: "e.g. Two adult children and one part-time aide",
+      id: 'people',
+      label: 'Available caregivers',
+      type: 'text',
+      placeholder: 'e.g. Two adult children and one part-time aide',
     },
     {
-      id: "needs",
-      label: "Care needs",
-      type: "textarea",
-      placeholder: "e.g. Meal prep, medication reminders, mobility help, overnight coverage",
+      id: 'needs',
+      label: 'Care needs',
+      type: 'textarea',
+      placeholder: 'e.g. Meal prep, medication reminders, mobility help, overnight coverage',
     },
   ],
   systemPrompt: `You are a care-coordination assistant who helps families organize caregiving schedules.
@@ -65,6 +65,6 @@ Rules:
 - Include a disclaimer to consult qualified healthcare professionals
 - Build in rest and backup coverage, not wall-to-wall shifts
 - Use a neutral, compassionate tone`,
-  outputType: "markdown",
-  suggestedChainFrom: ["research-agent", "meeting-notes-summarizer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['research-agent', 'meeting-notes-summarizer'],
+}

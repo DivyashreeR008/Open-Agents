@@ -122,7 +122,11 @@ describe('importCollection', () => {
     })
     expect(res.ok).toBe(true)
     expect(res.collection.name).toBe('launch (imported)')
-    expect(custom(result).map((c) => c.name).sort()).toEqual(['Launch', 'launch (imported)'])
+    expect(
+      custom(result)
+        .map((c) => c.name)
+        .sort()
+    ).toEqual(['Launch', 'launch (imported)'])
   })
 
   it('does not write when the collection limit is reached', () => {

@@ -1,7 +1,8 @@
 const dsaProgressAnalyzer = {
   id: 'dsa-progress-analyzer',
   name: 'DSA Progress Analyzer',
-  description: 'Analyzes your DSA practice log to find weak topics and suggest what to practice next.',
+  description:
+    'Analyzes your DSA practice log to find weak topics and suggest what to practice next.',
   category: 'Education',
   icon: 'TrendingUp',
   provider: 'any',
@@ -24,7 +25,8 @@ const dsaProgressAnalyzer = {
       id: 'goal',
       label: 'Your current goal (optional)',
       type: 'text',
-      placeholder: 'e.g. Interview in 6 weeks, targeting FAANG-level, or just building fundamentals',
+      placeholder:
+        'e.g. Interview in 6 weeks, targeting FAANG-level, or just building fundamentals',
       required: false,
     },
   ],
@@ -52,6 +54,6 @@ A single, concrete, actionable focus area — not a vague "practice more" but so
 
 Be honest and specific, not generically encouraging. If the log is too short to draw real conclusions, say so plainly and ask for more data rather than inventing insights. If the user gave a goal, tailor urgency and recommendations to it.`,
   outputType: 'markdown',
-};
+}
 
-export default dsaProgressAnalyzer;
+export default dsaProgressAnalyzer

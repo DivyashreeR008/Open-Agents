@@ -1,14 +1,13 @@
 export default {
-  id: "pr-diff-reviewer",
-  createdAt: "2026-05-21",
-  name: "PR Diff Reviewer",
-  description:
-    "Review a raw git/PR diff and get structured feedback on the changed lines only.",
-  category: "Developer Tools",
-  icon: "GitPullRequest",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-opus-4-20250514",
+  id: 'pr-diff-reviewer',
+  createdAt: '2026-05-21',
+  name: 'PR Diff Reviewer',
+  description: 'Review a raw git/PR diff and get structured feedback on the changed lines only.',
+  category: 'Developer Tools',
+  icon: 'GitPullRequest',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-opus-4-20250514',
   exampleInputs: {
     diff: `diff --git a/src/api/users.js b/src/api/users.js
 index 8c1a2b3..d4e5f6a 100644
@@ -30,33 +29,28 @@ index 8c1a2b3..d4e5f6a 100644
 +  const data = await res.json()
 +  return data.user.name
  }`,
-    focus: ["Bugs & Regressions", "Security", "Error Handling & Edge Cases"],
+    focus: ['Bugs & Regressions', 'Security', 'Error Handling & Edge Cases'],
   },
   inputs: [
     {
-      id: "diff",
-      label: "Git / PR Diff",
-      type: "code",
-      placeholder:
-        "Paste a unified diff here (output of `git diff`, or a PR .diff file)...",
+      id: 'diff',
+      label: 'Git / PR Diff',
+      type: 'code',
+      placeholder: 'Paste a unified diff here (output of `git diff`, or a PR .diff file)...',
       required: true,
     },
     {
-      id: "focus",
-      label: "Review focus",
-      type: "multiselect",
+      id: 'focus',
+      label: 'Review focus',
+      type: 'multiselect',
       options: [
-        "Bugs & Regressions",
-        "Security",
-        "Readability & Naming",
-        "Error Handling & Edge Cases",
-        "Performance",
+        'Bugs & Regressions',
+        'Security',
+        'Readability & Naming',
+        'Error Handling & Edge Cases',
+        'Performance',
       ],
-      defaultValue: [
-        "Bugs & Regressions",
-        "Security",
-        "Error Handling & Edge Cases",
-      ],
+      defaultValue: ['Bugs & Regressions', 'Security', 'Error Handling & Edge Cases'],
       required: true,
     },
   ],
@@ -116,5 +110,5 @@ Rules:
 - Severity guide: Critical = data loss / security breach / guaranteed crash;
   High = likely bug or regression; Medium = edge case or maintainability risk;
   Low = style or naming.`,
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

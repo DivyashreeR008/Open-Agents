@@ -1,28 +1,28 @@
 export default {
-  id: "env-doc-generator",
-  createdAt: "2025-05-06",
-  name: "Env Doc Generator",
+  id: 'env-doc-generator',
+  createdAt: '2025-05-06',
+  name: 'Env Doc Generator',
 
   description:
-  "Generate clean markdown documentation tables from .env.example files with descriptions, defaults, and usage examples.",
-  
-  category: "Engineering",
-  icon: "FileText",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Generate clean markdown documentation tables from .env.example files with descriptions, defaults, and usage examples.',
+
+  category: 'Engineering',
+  icon: 'FileText',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
 
   exampleInputs: {
     envFile:
-      "DATABASE_URL=\nJWT_SECRET=\nPORT=3000\nREDIS_HOST=localhost\nNEXT_PUBLIC_API_URL=https://api.example.com",
+      'DATABASE_URL=\nJWT_SECRET=\nPORT=3000\nREDIS_HOST=localhost\nNEXT_PUBLIC_API_URL=https://api.example.com',
   },
 
   inputs: [
     {
-      id: "envFile",
-      label: ".env.example Content",
-      type: "textarea",
-      placeholder: "Paste your .env.example file content here...",
+      id: 'envFile',
+      label: '.env.example Content',
+      type: 'textarea',
+      placeholder: 'Paste your .env.example file content here...',
       required: true,
     },
   ],
@@ -64,5 +64,5 @@ Use this exact markdown table format:
 
 Do not include explanations outside the table.`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

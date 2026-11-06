@@ -1,43 +1,42 @@
 export default {
-  id: "k8s-hpa-tuner",
-  createdAt: "2026-10-12",
-  name: "Kubernetes HPA Tuner",
+  id: 'k8s-hpa-tuner',
+  createdAt: '2026-10-12',
+  name: 'Kubernetes HPA Tuner',
   description:
-    "Tune HorizontalPodAutoscaler settings from your workload metrics: targets, min/max, stabilization.",
-  category: "DevOps",
-  icon: "Activity",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Tune HorizontalPodAutoscaler settings from your workload metrics: targets, min/max, stabilization.',
+  category: 'DevOps',
+  icon: 'Activity',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     workload:
-      "Node.js checkout API, 3 replicas, CPU-bound, traffic spikes 9am-11am from 200 to 1500 rps",
+      'Node.js checkout API, 3 replicas, CPU-bound, traffic spikes 9am-11am from 200 to 1500 rps',
     metrics:
-      "avg CPU 68%, p95 latency 420ms, memory steady at 55%, 2 OOMKills last week during spikes",
-    latencySensitive: "yes",
+      'avg CPU 68%, p95 latency 420ms, memory steady at 55%, 2 OOMKills last week during spikes',
+    latencySensitive: 'yes',
   },
   inputs: [
     {
-      id: "workload",
-      label: "Workload description",
-      type: "textarea",
+      id: 'workload',
+      label: 'Workload description',
+      type: 'textarea',
       placeholder:
-        "e.g. Node.js checkout API, 3 replicas, CPU-bound, spikes 9-11am from 200 to 1500 rps",
+        'e.g. Node.js checkout API, 3 replicas, CPU-bound, spikes 9-11am from 200 to 1500 rps',
       required: true,
     },
     {
-      id: "metrics",
-      label: "Current metrics",
-      type: "textarea",
-      placeholder:
-        "e.g. avg CPU 68%, p95 latency 420ms, memory 55%, any OOMKills or throttling",
+      id: 'metrics',
+      label: 'Current metrics',
+      type: 'textarea',
+      placeholder: 'e.g. avg CPU 68%, p95 latency 420ms, memory 55%, any OOMKills or throttling',
     },
     {
-      id: "latencySensitive",
-      label: "Latency sensitive?",
-      type: "select",
-      options: ["yes", "somewhat", "no"],
-      defaultValue: "somewhat",
+      id: 'latencySensitive',
+      label: 'Latency sensitive?',
+      type: 'select',
+      options: ['yes', 'somewhat', 'no'],
+      defaultValue: 'somewhat',
       required: true,
     },
   ],
@@ -70,6 +69,6 @@ Rules:
 - Prefer conservative scale-down stabilization for latency-sensitive workloads
 - Use neutral, precise language with no emoji
 - If metrics are missing, state assumptions explicitly and mark them as such`,
-  outputType: "markdown",
-  suggestedChainFrom: ["k8s-manifest-generator", "cloud-cost-estimator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['k8s-manifest-generator', 'cloud-cost-estimator'],
+}

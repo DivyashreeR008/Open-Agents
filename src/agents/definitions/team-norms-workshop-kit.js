@@ -1,41 +1,40 @@
 export default {
-  id: "team-norms-workshop-kit",
-  createdAt: "2026-10-12",
-  name: "Team Norms Workshop Kit",
-  description:
-    "Run a working-agreements session: agenda, exercises, and a norms doc template.",
-  category: "HR",
-  icon: "Handshake",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'team-norms-workshop-kit',
+  createdAt: '2026-10-12',
+  name: 'Team Norms Workshop Kit',
+  description: 'Run a working-agreements session: agenda, exercises, and a norms doc template.',
+  category: 'HR',
+  icon: 'Handshake',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    team: "8-person remote product squad across 3 time zones, new manager",
-    pain: "Missed handoffs, unclear response-time expectations, meeting overload",
-    duration: "90min",
+    team: '8-person remote product squad across 3 time zones, new manager',
+    pain: 'Missed handoffs, unclear response-time expectations, meeting overload',
+    duration: '90min',
   },
   inputs: [
     {
-      id: "team",
-      label: "Team context",
-      type: "textarea",
+      id: 'team',
+      label: 'Team context',
+      type: 'textarea',
       placeholder:
-        "e.g. 8-person remote product squad across 3 time zones, newly formed, new manager...",
+        'e.g. 8-person remote product squad across 3 time zones, newly formed, new manager...',
       required: true,
     },
     {
-      id: "pain",
-      label: "Current frictions",
-      type: "textarea",
+      id: 'pain',
+      label: 'Current frictions',
+      type: 'textarea',
       placeholder:
-        "e.g. Missed handoffs, unclear response times, meeting overload, uneven code review turnaround...",
+        'e.g. Missed handoffs, unclear response times, meeting overload, uneven code review turnaround...',
     },
     {
-      id: "duration",
-      label: "Session length",
-      type: "select",
-      options: ["45min", "90min", "half-day"],
-      defaultValue: "90min",
+      id: 'duration',
+      label: 'Session length',
+      type: 'select',
+      options: ['45min', '90min', 'half-day'],
+      defaultValue: '90min',
       required: true,
     },
   ],
@@ -66,6 +65,6 @@ Rules:
 - Keep language neutral and collaborative
 - Make exercises runnable without special tools
 - End with a single accountable owner and review date`,
-  outputType: "markdown",
-  suggestedChainFrom: ["meeting-agenda-builder", "research-agent"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['meeting-agenda-builder', 'research-agent'],
+}

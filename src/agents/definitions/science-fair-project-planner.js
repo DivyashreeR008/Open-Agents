@@ -1,38 +1,39 @@
 export default {
-  id: "science-fair-project-planner",
-  createdAt: "2026-10-12",
-  name: "Science Fair Planner",
+  id: 'science-fair-project-planner',
+  createdAt: '2026-10-12',
+  name: 'Science Fair Planner',
   description:
-    "Plan a winning science fair project: question, hypothesis, method, and board layout.",
-  category: "Education",
-  icon: "FlaskConical",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Plan a winning science fair project: question, hypothesis, method, and board layout.',
+  category: 'Education',
+  icon: 'FlaskConical',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    grade: "8th grade",
-    interests: "Plants and water conservation; curious about which mulch retains soil moisture best",
-    constraints: "3 weeks, $30 budget, no lab access",
+    grade: '8th grade',
+    interests:
+      'Plants and water conservation; curious about which mulch retains soil moisture best',
+    constraints: '3 weeks, $30 budget, no lab access',
   },
   inputs: [
     {
-      id: "grade",
-      label: "Grade level",
-      type: "text",
-      placeholder: "e.g. 8th grade",
+      id: 'grade',
+      label: 'Grade level',
+      type: 'text',
+      placeholder: 'e.g. 8th grade',
       required: true,
     },
     {
-      id: "interests",
-      label: "Interests or topic ideas",
-      type: "textarea",
-      placeholder: "e.g. Plants, water conservation, curious about mulch and soil moisture",
+      id: 'interests',
+      label: 'Interests or topic ideas',
+      type: 'textarea',
+      placeholder: 'e.g. Plants, water conservation, curious about mulch and soil moisture',
     },
     {
-      id: "constraints",
-      label: "Time, budget, and access constraints",
-      type: "textarea",
-      placeholder: "e.g. 3 weeks, $30 budget, no lab access",
+      id: 'constraints',
+      label: 'Time, budget, and access constraints',
+      type: 'textarea',
+      placeholder: 'e.g. 3 weeks, $30 budget, no lab access',
     },
   ],
   systemPrompt: `You are a science fair mentor who helps students design testable, grade-appropriate projects.
@@ -65,6 +66,6 @@ Rules:
 - Never fabricate results or claim the project will win
 - Flag any unsafe procedure and suggest a safer alternative
 - Use a neutral, encouraging tone`,
-  outputType: "markdown",
-  suggestedChainFrom: ["research-agent", "eli5-explainer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['research-agent', 'eli5-explainer'],
+}

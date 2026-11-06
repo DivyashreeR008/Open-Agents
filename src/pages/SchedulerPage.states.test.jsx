@@ -3,9 +3,14 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 
 const scheduler = vi.hoisted(() => ({
-  jobs: [], results: [], running: {},
-  toggleJob: vi.fn(), deleteJob: vi.fn(), runJob: vi.fn(),
-  deleteResult: vi.fn(), clearResultsForJob: vi.fn(),
+  jobs: [],
+  results: [],
+  running: {},
+  toggleJob: vi.fn(),
+  deleteJob: vi.fn(),
+  runJob: vi.fn(),
+  deleteResult: vi.fn(),
+  clearResultsForJob: vi.fn(),
 }))
 const requestPermission = vi.hoisted(() => vi.fn())
 
@@ -19,7 +24,11 @@ vi.mock('../components/OutputRenderer', () => ({ default: ({ content }) => <div>
 import SchedulerPage from './SchedulerPage'
 
 function renderPage() {
-  return render(<MemoryRouter><SchedulerPage /></MemoryRouter>)
+  return render(
+    <MemoryRouter>
+      <SchedulerPage />
+    </MemoryRouter>
+  )
 }
 
 beforeEach(() => {

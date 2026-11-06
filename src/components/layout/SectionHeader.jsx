@@ -10,7 +10,9 @@ export default function SectionHeader({ title, count, action, className = '' }) 
           {title}
         </h2>
         {count != null && (
-          <span className="font-mono text-[11px] tabular-nums text-zinc-400 dark:text-text-muted">{count}</span>
+          <span className="font-mono text-[11px] tabular-nums text-zinc-400 dark:text-text-muted">
+            {count}
+          </span>
         )}
       </div>
       {action}

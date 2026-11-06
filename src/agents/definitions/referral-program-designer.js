@@ -1,39 +1,39 @@
 export default {
-  id: "referral-program-designer",
-  createdAt: "2026-10-12",
-  name: "Referral Program Designer",
+  id: 'referral-program-designer',
+  createdAt: '2026-10-12',
+  name: 'Referral Program Designer',
   description:
-    "Design a referral program: incentives, mechanics, anti-gaming rules, and launch copy.",
-  category: "Marketing",
-  icon: "UserPlus",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Design a referral program: incentives, mechanics, anti-gaming rules, and launch copy.',
+  category: 'Marketing',
+  icon: 'UserPlus',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     product:
-      "Solo-plan note-taking app at 12 dollars per month, strong word of mouth among students and freelancers.",
-    margin: "Can afford roughly one free month per successful referral.",
-    audience: "Students and freelancers aged 18-30",
+      'Solo-plan note-taking app at 12 dollars per month, strong word of mouth among students and freelancers.',
+    margin: 'Can afford roughly one free month per successful referral.',
+    audience: 'Students and freelancers aged 18-30',
   },
   inputs: [
     {
-      id: "product",
-      label: "Product and pricing context",
-      type: "textarea",
-      placeholder: "e.g. Note-taking app, solo plan 12 dollars per month, strong word of mouth",
+      id: 'product',
+      label: 'Product and pricing context',
+      type: 'textarea',
+      placeholder: 'e.g. Note-taking app, solo plan 12 dollars per month, strong word of mouth',
       required: true,
     },
     {
-      id: "margin",
-      label: "Incentive budget / margin",
-      type: "text",
-      placeholder: "e.g. Can afford roughly one free month per referral",
+      id: 'margin',
+      label: 'Incentive budget / margin',
+      type: 'text',
+      placeholder: 'e.g. Can afford roughly one free month per referral',
     },
     {
-      id: "audience",
-      label: "Target audience",
-      type: "text",
-      placeholder: "e.g. Students and freelancers aged 18-30",
+      id: 'audience',
+      label: 'Target audience',
+      type: 'text',
+      placeholder: 'e.g. Students and freelancers aged 18-30',
     },
   ],
   systemPrompt: `You are a growth marketer who designs referral programs that are generous yet sustainable.
@@ -65,6 +65,6 @@ Rules:
 - Keep rewards within the stated budget; flag when the budget is unclear.
 - Use neutral language with no emoji.
 - Note legal and tax review as an open step, not advice.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["competitive-analysis-generator", "email-reply-writer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['competitive-analysis-generator', 'email-reply-writer'],
+}

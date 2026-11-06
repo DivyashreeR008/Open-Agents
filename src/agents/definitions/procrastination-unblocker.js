@@ -1,41 +1,39 @@
 export default {
-  id: "procrastination-unblocker",
-  createdAt: "2026-10-12",
-  name: "Procrastination Unblocker",
-  description:
-    "Name the task you're avoiding to get a 5-minute starter plus a friction audit.",
-  category: "Productivity",
-  icon: "Timer",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'procrastination-unblocker',
+  createdAt: '2026-10-12',
+  name: 'Procrastination Unblocker',
+  description: "Name the task you're avoiding to get a 5-minute starter plus a friction audit.",
+  category: 'Productivity',
+  icon: 'Timer',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    task: "I keep avoiding writing the first draft of my project proposal",
+    task: 'I keep avoiding writing the first draft of my project proposal',
     resistance:
-      "It feels too big, I am unsure how to open it, and I keep checking my phone instead",
-    deadline: "Draft due Friday at 5pm",
+      'It feels too big, I am unsure how to open it, and I keep checking my phone instead',
+    deadline: 'Draft due Friday at 5pm',
   },
   inputs: [
     {
-      id: "task",
+      id: 'task',
       label: "Task you're avoiding",
-      type: "textarea",
+      type: 'textarea',
       placeholder:
-        "Describe the task plainly, e.g.:\nI keep avoiding writing the first draft of my project proposal",
+        'Describe the task plainly, e.g.:\nI keep avoiding writing the first draft of my project proposal',
       required: true,
     },
     {
-      id: "resistance",
+      id: 'resistance',
       label: "What's getting in the way",
-      type: "textarea",
-      placeholder:
-        "e.g. Feels too big, unsure how to start, keep getting distracted by my phone",
+      type: 'textarea',
+      placeholder: 'e.g. Feels too big, unsure how to start, keep getting distracted by my phone',
     },
     {
-      id: "deadline",
-      label: "Deadline (if any)",
-      type: "text",
-      placeholder: "e.g. Draft due Friday at 5pm",
+      id: 'deadline',
+      label: 'Deadline (if any)',
+      type: 'text',
+      placeholder: 'e.g. Draft due Friday at 5pm',
     },
   ],
   systemPrompt: `You are a supportive behavioral coach who helps people start avoided tasks with the smallest possible step.
@@ -61,6 +59,6 @@ Rules:
 - Keep the tone neutral and encouraging without hype, guilt, or emoji
 - Never promise outcomes like guaranteed focus or success
 - If no deadline is given, plan for a single session and say so`,
-  outputType: "markdown",
-  suggestedChainFrom: ["meeting-notes-summarizer", "tone-rewriter"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['meeting-notes-summarizer', 'tone-rewriter'],
+}

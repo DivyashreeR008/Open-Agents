@@ -5,7 +5,11 @@ import AboutResources from './AboutResources'
 const expectedLinks = [
   ['GitHub Repository', 'Source Code', 'https://github.com/DivyashreeR008/Open-Agents'],
   ['Documentation', 'Docs', 'https://github.com/DivyashreeR008/Open-Agents#readme'],
-  ['Contribution Guide', 'Guide', 'https://github.com/DivyashreeR008/Open-Agents/blob/main/CONTRIBUTING.md'],
+  [
+    'Contribution Guide',
+    'Guide',
+    'https://github.com/DivyashreeR008/Open-Agents/blob/main/CONTRIBUTING.md',
+  ],
   ['Issues & Tasks', 'Issues', 'https://github.com/DivyashreeR008/Open-Agents/issues'],
   ['Discussions', 'Community', 'https://github.com/DivyashreeR008/Open-Agents/discussions'],
 ]
@@ -18,7 +22,9 @@ describe('AboutResources', () => {
       screen.getByRole('heading', { level: 2, name: 'Useful Resources & Quick Links' })
     ).toBeInTheDocument()
     expect(
-      screen.getByText('Everything you need to navigate, understand, and contribute to the OpenAgents ecosystem.')
+      screen.getByText(
+        'Everything you need to navigate, understand, and contribute to the OpenAgents ecosystem.'
+      )
     ).toBeInTheDocument()
 
     const links = screen.getAllByRole('link')

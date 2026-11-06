@@ -14,20 +14,14 @@ const medicalResearchSummarizer = {
       id: 'researchText',
       label: 'Medical Research Paper or Abstract',
       type: 'textarea',
-      placeholder:
-        'Paste a medical research abstract or full research paper here...',
+      placeholder: 'Paste a medical research abstract or full research paper here...',
       required: true,
     },
     {
       id: 'targetAudience',
       label: 'Target Audience',
       type: 'select',
-      options: [
-        'General Public',
-        'Patients',
-        'Healthcare Professionals',
-        'Researchers',
-      ],
+      options: ['General Public', 'Patients', 'Healthcare Professionals', 'Researchers'],
       defaultValue: 'General Public',
       required: true,
     },
@@ -76,6 +70,6 @@ Guidelines:
 `,
 
   outputType: 'markdown',
-};
+}
 
-export default medicalResearchSummarizer;
+export default medicalResearchSummarizer

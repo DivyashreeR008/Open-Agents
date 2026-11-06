@@ -1,42 +1,42 @@
 export default {
-  id: "pricing-page-teardown",
-  createdAt: "2026-10-12",
-  name: "Pricing Page Teardown",
+  id: 'pricing-page-teardown',
+  createdAt: '2026-10-12',
+  name: 'Pricing Page Teardown',
   description:
-    "Paste your pricing tiers to get a teardown: anchor logic, decoys, confusion points, fixes.",
-  category: "Product",
-  icon: "Tag",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Paste your pricing tiers to get a teardown: anchor logic, decoys, confusion points, fixes.',
+  category: 'Product',
+  icon: 'Tag',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     tiers:
-      "Starter $19/mo: 3 projects, 5GB storage. Pro $49/mo: unlimited projects, 100GB, priority support. Team $99/mo: everything in Pro plus SSO and audit logs.",
-    model: "subscription",
-    arpu: "$52 current average revenue per account",
+      'Starter $19/mo: 3 projects, 5GB storage. Pro $49/mo: unlimited projects, 100GB, priority support. Team $99/mo: everything in Pro plus SSO and audit logs.',
+    model: 'subscription',
+    arpu: '$52 current average revenue per account',
   },
   inputs: [
     {
-      id: "tiers",
-      label: "Pricing tiers",
-      type: "textarea",
+      id: 'tiers',
+      label: 'Pricing tiers',
+      type: 'textarea',
       placeholder:
-        "Paste tiers, prices, and limits, e.g.:\nStarter $19/mo: 3 projects, 5GB\nPro $49/mo: unlimited projects, 100GB\nTeam $99/mo: SSO, audit logs",
+        'Paste tiers, prices, and limits, e.g.:\nStarter $19/mo: 3 projects, 5GB\nPro $49/mo: unlimited projects, 100GB\nTeam $99/mo: SSO, audit logs',
       required: true,
     },
     {
-      id: "model",
-      label: "Pricing model",
-      type: "select",
-      options: ["subscription", "usage", "seat-based"],
-      defaultValue: "subscription",
+      id: 'model',
+      label: 'Pricing model',
+      type: 'select',
+      options: ['subscription', 'usage', 'seat-based'],
+      defaultValue: 'subscription',
       required: true,
     },
     {
-      id: "arpu",
-      label: "Current ARPU (optional)",
-      type: "text",
-      placeholder: "e.g. $52 average revenue per account",
+      id: 'arpu',
+      label: 'Current ARPU (optional)',
+      type: 'text',
+      placeholder: 'e.g. $52 average revenue per account',
     },
   ],
   systemPrompt: `You are a pricing strategist who teardowns SaaS pricing pages with precision.
@@ -69,6 +69,6 @@ Rules:
 - Keep recommendations specific to the provided tiers
 - Maintain a neutral, analytical tone
 - Use no emoji anywhere in the output`,
-  outputType: "markdown",
-  suggestedChainFrom: ["competitive-analysis-generator", "landing-page-copy-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['competitive-analysis-generator', 'landing-page-copy-generator'],
+}

@@ -1,28 +1,28 @@
 export default {
-  id: "research-methodology-advisor",
-  createdAt: "2026-10-20",
-  name: "Research Methodology Advisor",
+  id: 'research-methodology-advisor',
+  createdAt: '2026-10-20',
+  name: 'Research Methodology Advisor',
   description:
-    "Advise on research methodology including study design, sampling, validity threats, and analysis plans.",
-  category: "Research",
-  icon: "Microscope",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Advise on research methodology including study design, sampling, validity threats, and analysis plans.',
+  category: 'Research',
+  icon: 'Microscope',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {},
   inputs: [
     {
-      id: "question",
-      label: "Research question",
-      type: "text",
-      placeholder: "e.g. Does X cause Y in Z population?",
+      id: 'question',
+      label: 'Research question',
+      type: 'text',
+      placeholder: 'e.g. Does X cause Y in Z population?',
       required: true,
     },
     {
-      id: "resources",
-      label: "Available resources",
-      type: "text",
-      placeholder: "e.g. 200 survey responses, 3 weeks, no budget...",
+      id: 'resources',
+      label: 'Available resources',
+      type: 'text',
+      placeholder: 'e.g. 200 survey responses, 3 weeks, no budget...',
       required: true,
     },
   ],
@@ -51,5 +51,5 @@ Rules:
 - Match methodology to the research question.
 - Recommend realistic designs given constraints.`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

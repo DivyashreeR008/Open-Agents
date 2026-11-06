@@ -1,7 +1,8 @@
 export default {
   id: 'pr-description-generator',
   name: 'Pull Request Description Generator',
-  description: 'Turn a diff summary or bullet points of changes into a full, structured PR description with summary, changes list, testing instructions, and a screenshots section.',
+  description:
+    'Turn a diff summary or bullet points of changes into a full, structured PR description with summary, changes list, testing instructions, and a screenshots section.',
   category: 'Engineering',
   icon: 'GitPullRequest',
   provider: 'any',
@@ -57,4 +58,3 @@ Any caveats, follow-up tasks, or context reviewers should know.
 Be specific and professional. Use the provided PR title and issue reference if given.`,
   outputType: 'markdown',
 }
-

@@ -1,40 +1,41 @@
 // Inspired by "Debater" + "Fallacy Finder" from f/awesome-chatgpt-prompts (CC0-1.0), rewritten for Open-Agents.
 export default {
-  id: "debate-argument-builder",
-  createdAt: "2026-10-12",
-  name: "Debate Argument Builder",
+  id: 'debate-argument-builder',
+  createdAt: '2026-10-12',
+  name: 'Debate Argument Builder',
   description:
-    "Give a motion and your stance to get both sides steelmanned, your argument stress-tested for fallacies, and rebuttals ready.",
-  category: "Education",
-  icon: "MessagesSquare",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Give a motion and your stance to get both sides steelmanned, your argument stress-tested for fallacies, and rebuttals ready.',
+  category: 'Education',
+  icon: 'MessagesSquare',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    motion: "Cities should ban cars from downtown areas",
-    stance: "For the ban",
-    draftArgument: "Cars pollute a lot and everyone I know supports the ban, so opponents just don't care about health.",
+    motion: 'Cities should ban cars from downtown areas',
+    stance: 'For the ban',
+    draftArgument:
+      "Cars pollute a lot and everyone I know supports the ban, so opponents just don't care about health.",
   },
   inputs: [
     {
-      id: "motion",
-      label: "Debate motion",
-      type: "text",
-      placeholder: "e.g. Social media does more harm than good for teenagers",
+      id: 'motion',
+      label: 'Debate motion',
+      type: 'text',
+      placeholder: 'e.g. Social media does more harm than good for teenagers',
       required: true,
     },
     {
-      id: "stance",
-      label: "Your stance",
-      type: "select",
-      options: ["For the motion", "Against the motion", "Undecided — show me both"],
-      defaultValue: "For the motion",
+      id: 'stance',
+      label: 'Your stance',
+      type: 'select',
+      options: ['For the motion', 'Against the motion', 'Undecided — show me both'],
+      defaultValue: 'For the motion',
     },
     {
-      id: "draftArgument",
-      label: "Your draft argument (optional)",
-      type: "textarea",
-      placeholder: "Paste your current case to get it audited for fallacies",
+      id: 'draftArgument',
+      label: 'Your draft argument (optional)',
+      type: 'textarea',
+      placeholder: 'Paste your current case to get it audited for fallacies',
     },
   ],
   systemPrompt: `You are a debate coach who steelmans both sides and never lets a
@@ -75,6 +76,6 @@ Rules:
 - Name fallacies precisely; never cry "fallacy" at a mere disagreement
 - No invented statistics or studies — use qualitative reasoning or
   mark claims [verify]`,
-  outputType: "markdown",
-  suggestedChainFrom: ["essay-outline-generator", "research-agent"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['essay-outline-generator', 'research-agent'],
+}

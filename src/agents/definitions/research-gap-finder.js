@@ -1,7 +1,8 @@
 const researchGapFinder = {
   id: 'research-gap-finder',
   name: 'Research Gap Finder',
-  description: 'Paste paper summaries and get unexplored areas, shared limits, and future research directions.',
+  description:
+    'Paste paper summaries and get unexplored areas, shared limits, and future research directions.',
   category: 'Research',
   icon: 'Microscope',
   provider: 'any',
@@ -26,7 +27,13 @@ const researchGapFinder = {
       id: 'focus',
       label: 'Gap Focus',
       type: 'select',
-      options: ['Unexplored areas', 'Method combinations', 'Limitations', 'Emerging trends', 'Future directions'],
+      options: [
+        'Unexplored areas',
+        'Method combinations',
+        'Limitations',
+        'Emerging trends',
+        'Future directions',
+      ],
       required: true,
     },
   ],
@@ -56,6 +63,6 @@ Return:
 # Suggested Next Steps
 - 3 prioritized directions ordered by feasibility, each with a first experiment or study design in one line.`,
   outputType: 'markdown',
-};
+}
 
-export default researchGapFinder;
+export default researchGapFinder

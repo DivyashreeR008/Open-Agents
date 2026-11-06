@@ -129,15 +129,15 @@ export default function Preloader({ onFinish }) {
       }, PROGRESS_TICK_MS)
     }, BOOT_MS)
 
-    schedule(() => {
-      setProgress(100)
-      setStage('reveal')
-    }, BOOT_MS + PROGRESS_MS + PROGRESS_HOLD_MS)
-
     schedule(
-      () => finish(),
-      BOOT_MS + PROGRESS_MS + PROGRESS_HOLD_MS + REVEAL_MS
+      () => {
+        setProgress(100)
+        setStage('reveal')
+      },
+      BOOT_MS + PROGRESS_MS + PROGRESS_HOLD_MS
     )
+
+    schedule(() => finish(), BOOT_MS + PROGRESS_MS + PROGRESS_HOLD_MS + REVEAL_MS)
 
     return clearTimeline
   }, [clearTimeline, finish, reducedMotion, schedule])
@@ -178,8 +178,7 @@ export default function Preloader({ onFinish }) {
   )
 
   const isDone = stage === 'done'
-  const showBootCard =
-    stage === 'boot' || stage === 'progress' || (isDone && progress < 100)
+  const showBootCard = stage === 'boot' || stage === 'progress' || (isDone && progress < 100)
   const showReveal = stage === 'reveal' || (isDone && progress === 100)
 
   return (
