@@ -1,6 +1,6 @@
 import { useState, Suspense, lazy } from 'react'
-import { Routes, Route, Outlet ,Link} from 'react-router-dom'
-import { Loader2 ,MessageSquare} from 'lucide-react'
+import { Routes, Route, Outlet, Link } from 'react-router-dom'
+import { Loader2, MessageSquare } from 'lucide-react'
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
 import CommandPalette from './components/CommandPalette'
@@ -39,7 +39,7 @@ const AboutPage = lazy(() => import('./pages/AboutPage'))
 const PortfolioPage = lazy(() => import('./pages/PortfolioPage'))
 const FeedbackPage = lazy(() => import('./pages/FeedbackPage'))
 
-function PageLoader() {
+export function PageLoader() {
   return (
     <div
       className="flex flex-col items-center justify-center min-h-[50vh] gap-3"
@@ -52,7 +52,7 @@ function PageLoader() {
   )
 }
 
-function MainLayout({ sidebarOpen, setSidebarOpen, onOpenCommandPalette }) {
+export function MainLayout({ sidebarOpen, setSidebarOpen, onOpenCommandPalette }) {
   return (
     <>
       <SkipToMainContentLink />
@@ -76,7 +76,7 @@ function MainLayout({ sidebarOpen, setSidebarOpen, onOpenCommandPalette }) {
         dark:focus-visible:outline-white"
         aria-label="Give feedback"
       >
-        <MessageSquare size={18} />
+        <MessageSquare size={18} aria-hidden="true" />
         <span>Feedback</span>
       </Link>
       <main id={MAIN_CONTENT_ID} tabIndex={-1} className="pt-12 lg:pl-60 focus:outline-none">
