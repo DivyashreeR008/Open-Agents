@@ -1,18 +1,18 @@
-import React from 'react';
-import { AlertTriangle } from 'lucide-react';
+import React from 'react'
+import { AlertTriangle } from 'lucide-react'
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
-    super(props);
-    this.state = { hasError: false, error: null };
+    super(props)
+    this.state = { hasError: false, error: null }
   }
 
   static getDerivedStateFromError(error) {
-    return { hasError: true, error };
+    return { hasError: true, error }
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    console.error('ErrorBoundary caught an error:', error, errorInfo)
   }
 
   render() {
@@ -34,11 +34,11 @@ class ErrorBoundary extends React.Component {
             Try Again
           </button>
         </div>
-      );
+      )
     }
 
-    return this.props.children;
+    return this.props.children
   }
 }
 
-export default ErrorBoundary;
+export default ErrorBoundary

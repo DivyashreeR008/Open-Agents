@@ -13,7 +13,10 @@ function estimateTokens(text) {
     const char = cleaned[i]
     const code = cleaned.codePointAt(i)
 
-    if (code === undefined) { i++; continue }
+    if (code === undefined) {
+      i++
+      continue
+    }
 
     if (code <= 0x7f) {
       if (/[a-zA-Z0-9]/.test(char)) {

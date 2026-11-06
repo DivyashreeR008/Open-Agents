@@ -11,7 +11,9 @@
  */
 function streamErrorMessage(err) {
   if (typeof err === 'string') return err
-  return err?.message || err?.type || err?.status || 'The provider reported an error while streaming.'
+  return (
+    err?.message || err?.type || err?.status || 'The provider reported an error while streaming.'
+  )
 }
 
 const PROVIDER_CONFIGS = {
@@ -40,9 +42,7 @@ const PROVIDER_CONFIGS = {
     }),
     parseResponse: (data) => ({
       content: data.choices?.[0]?.message?.content || '',
-      tokens:
-        (data.usage?.prompt_tokens || 0) +
-        (data.usage?.completion_tokens || 0),
+      tokens: (data.usage?.prompt_tokens || 0) + (data.usage?.completion_tokens || 0),
     }),
     /**
      * Parse an SSE line from OpenAI streaming.
@@ -90,9 +90,7 @@ const PROVIDER_CONFIGS = {
     }),
     parseResponse: (data) => ({
       content: data.choices?.[0]?.message?.content || '',
-      tokens:
-        (data.usage?.prompt_tokens || 0) +
-        (data.usage?.completion_tokens || 0),
+      tokens: (data.usage?.prompt_tokens || 0) + (data.usage?.completion_tokens || 0),
     }),
     parseStreamChunk: (line) => {
       if (line === 'data: [DONE]') return { content: '', done: true }
@@ -132,9 +130,7 @@ const PROVIDER_CONFIGS = {
     }),
     parseResponse: (data) => ({
       content: data.content?.[0]?.text || '',
-      tokens:
-        (data.usage?.input_tokens || 0) +
-        (data.usage?.output_tokens || 0),
+      tokens: (data.usage?.input_tokens || 0) + (data.usage?.output_tokens || 0),
     }),
     parseStreamChunk: (line) => {
       if (!line.startsWith('data: ')) return null
@@ -180,8 +176,7 @@ const PROVIDER_CONFIGS = {
       ],
     }),
     parseResponse: (data) => ({
-      content:
-        data.candidates?.[0]?.content?.parts?.[0]?.text || '',
+      content: data.candidates?.[0]?.content?.parts?.[0]?.text || '',
       tokens:
         (data.usageMetadata?.promptTokenCount || 0) +
         (data.usageMetadata?.candidatesTokenCount || 0),
@@ -208,7 +203,7 @@ const ERROR_MESSAGES = {
   500: 'The API server encountered an error. Try again shortly.',
   502: 'Bad gateway — the API is temporarily unavailable.',
   503: 'The API service is temporarily unavailable. Try again in a minute.',
-};
+}
 
 // Retry policy for rate limited (429) responses. Only the request itself is
 // retried, which happens before any response body is read, so the streaming
@@ -289,13 +284,13 @@ function describeWait(ms) {
  * @param {string} provider
  * @param {number} retries how many times this request was already retried
  */
-async function handleErrorResponse(response, provider = "unknown", retries = 0) {
-  const errorKey = ERROR_MESSAGES[response.status] || null;
-  let detail = '';
-  let errBody = null;
+async function handleErrorResponse(response, provider = 'unknown', retries = 0) {
+  const errorKey = ERROR_MESSAGES[response.status] || null
+  let detail = ''
+  let errBody = null
   try {
-    errBody = await response.json();
-    detail = errBody?.error?.message || JSON.stringify(errBody);
+    errBody = await response.json()
+    detail = errBody?.error?.message || JSON.stringify(errBody)
   } catch {
     // Could not parse error body
   }
@@ -305,51 +300,47 @@ async function handleErrorResponse(response, provider = "unknown", retries = 0) 
     provider === 'gemini' &&
     response.status === 400 &&
     (errBody?.error?.details?.some?.((d) => d?.reason === 'API_KEY_INVALID') ||
-      /API key not valid|API key expired/i.test(errBody?.error?.message || ''));
+      /API key not valid|API key expired/i.test(errBody?.error?.message || ''))
 
   if (errorKey === 'invalid_api_key' || geminiBadKey) {
     throw {
-      type: "invalid_api_key",
+      type: 'invalid_api_key',
       provider,
       detail: detail || 'No additional details',
-    };
+    }
   }
 
-  const kind = classifyProviderError(response.status, detail, errBody);
+  const kind = classifyProviderError(response.status, detail, errBody)
   if (kind) {
-    const retryAfterMs = getRetryAfterMs(response, detail);
-    let message;
+    const retryAfterMs = getRetryAfterMs(response, detail)
+    let message
     if (kind === 'quota_exhausted') {
       message =
         'Quota used up. This is not a short rate limit, so retrying will not help. ' +
-        'Check your plan and billing with the provider, or use a different API key or provider.';
+        'Check your plan and billing with the provider, or use a different API key or provider.'
     } else {
-      message = 'Rate limit hit.';
+      message = 'Rate limit hit.'
       if (retries > 0) {
-        message += ` Retried ${retries} time${retries === 1 ? '' : 's'} and the provider is still limiting requests.`;
+        message += ` Retried ${retries} time${retries === 1 ? '' : 's'} and the provider is still limiting requests.`
       }
       message += retryAfterMs
         ? ` Wait about ${describeWait(retryAfterMs)} and try again.`
-        : ' Wait a moment and try again.';
+        : ' Wait a moment and try again.'
     }
-    const error = new Error(
-      detail ? `${message}\n\nDetails: ${detail}` : message
-    );
-    error.type = kind;
-    error.status = response.status;
-    error.provider = provider;
-    error.retryAfterMs = retryAfterMs;
-    throw error;
+    const error = new Error(detail ? `${message}\n\nDetails: ${detail}` : message)
+    error.type = kind
+    error.status = response.status
+    error.provider = provider
+    error.retryAfterMs = retryAfterMs
+    throw error
   }
 
   const friendlyMessage =
     typeof ERROR_MESSAGES[response.status] === 'string'
       ? ERROR_MESSAGES[response.status]
-      : `API returned status ${response.status}. Please check your configuration.`;
+      : `API returned status ${response.status}. Please check your configuration.`
 
-  throw new Error(
-    detail ? `${friendlyMessage}\n\nDetails: ${detail}` : friendlyMessage
-  );
+  throw new Error(detail ? `${friendlyMessage}\n\nDetails: ${detail}` : friendlyMessage)
 }
 
 /** setTimeout that rejects with an AbortError as soon as the signal aborts. */
@@ -405,9 +396,12 @@ async function fetchWithRetry(url, init, provider) {
  * @param {string} params.userMessage
  * @returns {Promise<{content: string, tokens: number, duration: number}>}
  */
-export async function runAgent({ provider, model, apiKey, systemPrompt, userMessage }, options = {})  {
+export async function runAgent(
+  { provider, model, apiKey, systemPrompt, userMessage },
+  options = {}
+) {
   const config = PROVIDER_CONFIGS[provider]
-  const { signal } = options || {};
+  const { signal } = options || {}
 
   if (!config) {
     throw new Error(`Unsupported provider: ${provider}`)
@@ -417,10 +411,7 @@ export async function runAgent({ provider, model, apiKey, systemPrompt, userMess
     throw new Error('Please provide an API key to run this agent.')
   }
 
-  const url =
-    typeof config.url === 'function'
-      ? config.url(model, apiKey)
-      : config.url
+  const url = typeof config.url === 'function' ? config.url(model, apiKey) : config.url
 
   const headers = config.buildHeaders(apiKey)
   const body = config.buildBody(model, systemPrompt, userMessage)
@@ -450,9 +441,7 @@ export async function runAgent({ provider, model, apiKey, systemPrompt, userMess
     }
   } catch (error) {
     if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-      throw new Error(
-        "Couldn't reach the API. Check your internet connection and try again."
-      )
+      throw new Error("Couldn't reach the API. Check your internet connection and try again.")
     }
     throw error
   }
@@ -472,7 +461,15 @@ export async function runAgent({ provider, model, apiKey, systemPrompt, userMess
  * @param {AbortSignal} [params.signal] — optional AbortSignal to cancel streaming
  * @returns {Promise<{content: string, duration: number}>}
  */
-export async function streamAgent({ provider, model, apiKey, systemPrompt, userMessage, onChunk, signal }) {
+export async function streamAgent({
+  provider,
+  model,
+  apiKey,
+  systemPrompt,
+  userMessage,
+  onChunk,
+  signal,
+}) {
   const config = PROVIDER_CONFIGS[provider]
 
   if (!config) {
@@ -512,9 +509,7 @@ export async function streamAgent({ provider, model, apiKey, systemPrompt, userM
     )
 
     if (!response.body || typeof response.body.getReader !== 'function') {
-      throw new Error(
-        'Streaming is not supported by this response. Please try again.'
-      )
+      throw new Error('Streaming is not supported by this response. Please try again.')
     }
 
     const reader = response.body.getReader()
@@ -593,9 +588,7 @@ export async function streamAgent({ provider, model, apiKey, systemPrompt, userM
       return { content: fullContent, duration }
     }
     if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-      throw new Error(
-        "Couldn't reach the API. Check your internet connection and try again."
-      )
+      throw new Error("Couldn't reach the API. Check your internet connection and try again.")
     }
     throw error
   }
@@ -609,14 +602,12 @@ export async function streamAgent({ provider, model, apiKey, systemPrompt, userM
  * @returns {Promise<Array<{value: string, label: string}>>}
  */
 export async function fetchGeminiModels(apiKey) {
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`
-  )
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   const data = await res.json()
   return (data.models || [])
-    .filter(m => m.supportedGenerationMethods?.includes('generateContent'))
-    .map(m => ({
+    .filter((m) => m.supportedGenerationMethods?.includes('generateContent'))
+    .map((m) => ({
       value: m.name.replace('models/', ''),
       label: m.displayName || m.name.replace('models/', ''),
     }))

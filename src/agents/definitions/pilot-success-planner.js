@@ -1,41 +1,40 @@
 export default {
-  id: "pilot-success-planner",
-  createdAt: "2026-10-12",
-  name: "Pilot Success Planner",
+  id: 'pilot-success-planner',
+  createdAt: '2026-10-12',
+  name: 'Pilot Success Planner',
   description:
-    "Design paid pilots that convert: success criteria, milestones, and expansion triggers.",
-  category: "Sales",
-  icon: "Plane",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Design paid pilots that convert: success criteria, milestones, and expansion triggers.',
+  category: 'Sales',
+  icon: 'Plane',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    prospect: "Globex support team, 12 agents, struggling with ticket triage",
-    scope: "Pilot our AI triage on one queue, 500 tickets, integrate with Zendesk",
-    length: "30-days",
+    prospect: 'Globex support team, 12 agents, struggling with ticket triage',
+    scope: 'Pilot our AI triage on one queue, 500 tickets, integrate with Zendesk',
+    length: '30-days',
   },
   inputs: [
     {
-      id: "prospect",
-      label: "Prospect and pain",
-      type: "textarea",
-      placeholder: "e.g. Globex support team, 12 agents, struggling with ticket triage",
+      id: 'prospect',
+      label: 'Prospect and pain',
+      type: 'textarea',
+      placeholder: 'e.g. Globex support team, 12 agents, struggling with ticket triage',
       required: true,
     },
     {
-      id: "scope",
-      label: "Pilot scope",
-      type: "textarea",
-      placeholder:
-        "e.g. Pilot AI triage on one queue, 500 tickets, integrate with Zendesk",
+      id: 'scope',
+      label: 'Pilot scope',
+      type: 'textarea',
+      placeholder: 'e.g. Pilot AI triage on one queue, 500 tickets, integrate with Zendesk',
       required: true,
     },
     {
-      id: "length",
-      label: "Pilot length",
-      type: "select",
-      options: ["2-weeks", "30-days", "60-days"],
-      defaultValue: "30-days",
+      id: 'length',
+      label: 'Pilot length',
+      type: 'select',
+      options: ['2-weeks', '30-days', '60-days'],
+      defaultValue: '30-days',
     },
   ],
   systemPrompt: `You are a sales engineer who designs paid pilots with
@@ -67,6 +66,6 @@ Rules:
 - Do not invent metrics, quotes, reviews, or baselines
 - Require paid or resourced commitment where appropriate
 - Keep milestones realistic for the selected pilot length`,
-  outputType: "markdown",
-  suggestedChainFrom: ["cold-email-writer", "meeting-notes-summarizer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['cold-email-writer', 'meeting-notes-summarizer'],
+}

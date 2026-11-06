@@ -1,28 +1,28 @@
 export default {
-  id: "microservice-health-checker",
-  createdAt: "2026-10-20",
-  name: "Microservice Health Checker",
+  id: 'microservice-health-checker',
+  createdAt: '2026-10-20',
+  name: 'Microservice Health Checker',
   description:
-    "Review microservice health check implementations for liveness, readiness, and startup probes.",
-  category: "Engineering",
-  icon: "Heart",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Review microservice health check implementations for liveness, readiness, and startup probes.',
+  category: 'Engineering',
+  icon: 'Heart',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {},
   inputs: [
     {
-      id: "healthCheck",
-      label: "Health check config/code",
-      type: "code",
-      placeholder: "Paste Kubernetes probes, Express middleware, or health endpoints...",
+      id: 'healthCheck',
+      label: 'Health check config/code',
+      type: 'code',
+      placeholder: 'Paste Kubernetes probes, Express middleware, or health endpoints...',
       required: true,
     },
     {
-      id: "orchestrator",
-      label: "Orchestrator",
-      type: "text",
-      placeholder: "e.g. Kubernetes, Docker Swarm, ECS...",
+      id: 'orchestrator',
+      label: 'Orchestrator',
+      type: 'text',
+      placeholder: 'e.g. Kubernetes, Docker Swarm, ECS...',
       required: true,
     },
   ],
@@ -51,5 +51,5 @@ Rules:
 - Follow Kubernetes best practices where applicable.
 - Explain why external dependencies in liveness probes are risky.`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

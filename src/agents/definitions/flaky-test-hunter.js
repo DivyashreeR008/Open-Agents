@@ -1,40 +1,40 @@
 export default {
-  id: "flaky-test-hunter",
-  createdAt: "2026-10-12",
-  name: "Flaky Test Hunter",
+  id: 'flaky-test-hunter',
+  createdAt: '2026-10-12',
+  name: 'Flaky Test Hunter',
   description:
-    "Tame flaky tests: detection queries, quarantine policy, and fix patterns per root cause.",
-  category: "Engineering",
-  icon: "Bug",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Tame flaky tests: detection queries, quarantine policy, and fix patterns per root cause.',
+  category: 'Engineering',
+  icon: 'Bug',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     symptoms:
-      "Checkout spec passes locally but fails on CI 1 in 5 runs with timeout waiting for payment webhook",
-    framework: "Playwright + Vitest",
-    ci: "GitHub Actions with 4 parallel shards",
+      'Checkout spec passes locally but fails on CI 1 in 5 runs with timeout waiting for payment webhook',
+    framework: 'Playwright + Vitest',
+    ci: 'GitHub Actions with 4 parallel shards',
   },
   inputs: [
     {
-      id: "symptoms",
-      label: "Flakiness symptoms",
-      type: "textarea",
+      id: 'symptoms',
+      label: 'Flakiness symptoms',
+      type: 'textarea',
       placeholder:
-        "Describe what fails, how often, and where, e.g. checkout spec fails 1 in 5 CI runs on webhook wait",
+        'Describe what fails, how often, and where, e.g. checkout spec fails 1 in 5 CI runs on webhook wait',
       required: true,
     },
     {
-      id: "framework",
-      label: "Test framework",
-      type: "text",
-      placeholder: "e.g. Playwright + Vitest",
+      id: 'framework',
+      label: 'Test framework',
+      type: 'text',
+      placeholder: 'e.g. Playwright + Vitest',
     },
     {
-      id: "ci",
-      label: "CI setup",
-      type: "text",
-      placeholder: "e.g. GitHub Actions with 4 parallel shards",
+      id: 'ci',
+      label: 'CI setup',
+      type: 'text',
+      placeholder: 'e.g. GitHub Actions with 4 parallel shards',
     },
   ],
   systemPrompt: `You are a test-reliability engineer who triages flaky tests from
@@ -64,6 +64,6 @@ Rules:
 - Label low-confidence guesses as hypotheses needing evidence
 - Prefer deterministic fixes over retries or longer timeouts
 - Keep the tone neutral and evidence-driven`,
-  outputType: "markdown",
-  suggestedChainFrom: ["unit-test-generator", "test-case-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['unit-test-generator', 'test-case-generator'],
+}

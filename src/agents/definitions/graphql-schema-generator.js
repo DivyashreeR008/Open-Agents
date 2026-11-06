@@ -1,59 +1,57 @@
 const graphqlSchemaGenerator = {
-  id: "graphql-schema-generator",
+  id: 'graphql-schema-generator',
 
-  name: "GraphQL Schema Generator",
+  name: 'GraphQL Schema Generator',
 
   description:
     "Describe your application's domain model and generate a production-ready GraphQL schema with object types, queries, mutations, subscriptions, enums, scalars, and input types.",
 
-  category: "Engineering",
+  category: 'Engineering',
 
-  icon: "GitMerge",
+  icon: 'GitMerge',
 
-  provider: "any",
+  provider: 'any',
 
-  defaultProvider: "openai",
+  defaultProvider: 'openai',
 
-  model: "gpt-4o",
+  model: 'gpt-4o',
 
   exampleInputs: {
     domainDescription:
-      "An e-commerce platform with users, products, categories, shopping carts and orders.",
-    entities:
-      "User, Product, Category, Cart, Order, OrderItem",
-    includeMutations: "Yes",
-    includeSubscriptions: "No",
+      'An e-commerce platform with users, products, categories, shopping carts and orders.',
+    entities: 'User, Product, Category, Cart, Order, OrderItem',
+    includeMutations: 'Yes',
+    includeSubscriptions: 'No',
   },
 
   inputs: [
     {
-      id: "domainDescription",
-      label: "Domain Description",
-      type: "textarea",
+      id: 'domainDescription',
+      label: 'Domain Description',
+      type: 'textarea',
       placeholder:
-        "Describe your application, business domain, and relationships between entities.",
+        'Describe your application, business domain, and relationships between entities.',
       required: true,
     },
     {
-      id: "entities",
-      label: "Entities to Include",
-      type: "textarea",
-      placeholder:
-        "User, Product, Order, Category, Payment, Review...",
+      id: 'entities',
+      label: 'Entities to Include',
+      type: 'textarea',
+      placeholder: 'User, Product, Order, Category, Payment, Review...',
       required: true,
     },
     {
-      id: "includeMutations",
-      label: "Include Mutations",
-      type: "select",
-      options: ["Yes", "No", "Read-only"],
+      id: 'includeMutations',
+      label: 'Include Mutations',
+      type: 'select',
+      options: ['Yes', 'No', 'Read-only'],
       required: true,
     },
     {
-      id: "includeSubscriptions",
-      label: "Include Subscriptions",
-      type: "select",
-      options: ["Yes", "No"],
+      id: 'includeSubscriptions',
+      label: 'Include Subscriptions',
+      type: 'select',
+      options: ['Yes', 'No'],
       required: true,
     },
   ],
@@ -165,7 +163,7 @@ Briefly explain:
 Do not include any additional commentary outside these sections.
 `,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}
 
-export default graphqlSchemaGenerator;
+export default graphqlSchemaGenerator

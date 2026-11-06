@@ -1,17 +1,16 @@
 export default {
-  id: "log-analysis-summarizer",
-  createdAt: "2026-06-04",
-  name: "Log Analysis Summarizer",
+  id: 'log-analysis-summarizer',
+  createdAt: '2026-06-04',
+  name: 'Log Analysis Summarizer',
   description:
-    "Paste raw log output and get a structured summary of errors, warnings, patterns, timeline of events, and likely root cause — so you find the 5 lines that matter in 500 lines of noise.",
-  category: "DevOps",
-  icon: "ScrollText",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Paste raw log output and get a structured summary of errors, warnings, patterns, timeline of events, and likely root cause — so you find the 5 lines that matter in 500 lines of noise.',
+  category: 'DevOps',
+  icon: 'ScrollText',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    log_output:
-      `2026-06-04T03:12:01Z INFO  [auth-service] User login attempt: user_id=4821
+    log_output: `2026-06-04T03:12:01Z INFO  [auth-service] User login attempt: user_id=4821
 2026-06-04T03:12:02Z INFO  [auth-service] Token issued: user_id=4821
 2026-06-04T03:12:45Z WARN  [db-pool] Connection pool at 85% capacity (85/100)
 2026-06-04T03:13:10Z WARN  [db-pool] Connection pool at 92% capacity (92/100)
@@ -27,51 +26,51 @@ export default {
 2026-06-04T03:15:10Z INFO  [db-pool] Connections releasing — pool at 60% (60/100)
 2026-06-04T03:15:20Z INFO  [order-service] DB connection acquired successfully
 2026-06-04T03:15:21Z INFO  [order-service] Service recovering — 200 responses resuming`,
-    log_source: "Application (Node.js / Python / Java / etc.)",
-    focus_area: ["Errors & Root Cause"],
-    time_range: "",
+    log_source: 'Application (Node.js / Python / Java / etc.)',
+    focus_area: ['Errors & Root Cause'],
+    time_range: '',
   },
   inputs: [
     {
-      id: "log_output",
-      label: "Raw log output",
-      type: "textarea",
+      id: 'log_output',
+      label: 'Raw log output',
+      type: 'textarea',
       placeholder:
-        "Paste your logs here — any format works:\n\n2026-06-04T03:13:22Z ERROR [db-pool] Connection pool exhausted\n2026-06-04T03:13:23Z ERROR [order-service] 503 Service Unavailable\n...\n\nSupports: application logs, system logs, container logs, nginx/apache access logs, cloud provider logs (CloudWatch, GCP Logging, etc.)",
+        'Paste your logs here — any format works:\n\n2026-06-04T03:13:22Z ERROR [db-pool] Connection pool exhausted\n2026-06-04T03:13:23Z ERROR [order-service] 503 Service Unavailable\n...\n\nSupports: application logs, system logs, container logs, nginx/apache access logs, cloud provider logs (CloudWatch, GCP Logging, etc.)',
       required: true,
     },
     {
-      id: "log_source",
-      label: "Log source / service type",
-      type: "select",
+      id: 'log_source',
+      label: 'Log source / service type',
+      type: 'select',
       options: [
-        "Application (Node.js / Python / Java / etc.)",
-        "Kubernetes / Container (kubectl logs, Docker)",
-        "Web Server (Nginx / Apache)",
-        "Database (PostgreSQL / MySQL / MongoDB)",
-        "Cloud Provider (CloudWatch / GCP / Azure)",
-        "System / OS (syslog, journald)",
-        "Other / Mixed",
+        'Application (Node.js / Python / Java / etc.)',
+        'Kubernetes / Container (kubectl logs, Docker)',
+        'Web Server (Nginx / Apache)',
+        'Database (PostgreSQL / MySQL / MongoDB)',
+        'Cloud Provider (CloudWatch / GCP / Azure)',
+        'System / OS (syslog, journald)',
+        'Other / Mixed',
       ],
       required: true,
     },
     {
-      id: "focus_area",
-      label: "What do you want to focus on?",
-      type: "multiselect",
+      id: 'focus_area',
+      label: 'What do you want to focus on?',
+      type: 'multiselect',
       options: [
-        "Errors & Root Cause",
-        "Warnings & Degradation Signals",
-        "Performance & Latency",
-        "Security & Auth Events",
-        "Full Summary (all of the above)",
+        'Errors & Root Cause',
+        'Warnings & Degradation Signals',
+        'Performance & Latency',
+        'Security & Auth Events',
+        'Full Summary (all of the above)',
       ],
       required: true,
     },
     {
-      id: "time_range",
-      label: "Time range of interest (optional)",
-      type: "text",
+      id: 'time_range',
+      label: 'Time range of interest (optional)',
+      type: 'text',
       placeholder: "e.g. 03:10 – 03:20 UTC, or 'last 5 minutes of logs'",
       required: false,
     },
@@ -197,5 +196,5 @@ Rules:
   any relevant context outside it.
 - If the logs are clean with no errors or warnings, say so clearly and summarise
   what normal operation looks like based on the log content.`,
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

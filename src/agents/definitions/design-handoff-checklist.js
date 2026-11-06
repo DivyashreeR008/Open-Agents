@@ -1,43 +1,43 @@
 export default {
-  id: "design-handoff-checklist",
-  createdAt: "2026-10-12",
-  name: "Design Handoff Checklist",
+  id: 'design-handoff-checklist',
+  createdAt: '2026-10-12',
+  name: 'Design Handoff Checklist',
   description:
-    "Get a design-to-dev handoff checklist: specs, assets, tokens, redlines, and edge states.",
-  category: "Design",
-  icon: "PackageCheck",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Get a design-to-dev handoff checklist: specs, assets, tokens, redlines, and edge states.',
+  category: 'Design',
+  icon: 'PackageCheck',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     project:
-      "Redesign of the checkout flow: cart review, shipping form, payment step, and order confirmation screens in Figma, 12 frames total.",
-    platform: "web",
-    teamSize: "4-10",
+      'Redesign of the checkout flow: cart review, shipping form, payment step, and order confirmation screens in Figma, 12 frames total.',
+    platform: 'web',
+    teamSize: '4-10',
   },
   inputs: [
     {
-      id: "project",
-      label: "Project / screens being handed off",
-      type: "textarea",
+      id: 'project',
+      label: 'Project / screens being handed off',
+      type: 'textarea',
       placeholder:
-        "e.g. Checkout flow redesign: cart, shipping, payment, confirmation — 12 Figma frames",
+        'e.g. Checkout flow redesign: cart, shipping, payment, confirmation — 12 Figma frames',
       required: true,
     },
     {
-      id: "platform",
-      label: "Platform",
-      type: "select",
-      options: ["web", "iOS", "Android", "multi"],
-      defaultValue: "web",
+      id: 'platform',
+      label: 'Platform',
+      type: 'select',
+      options: ['web', 'iOS', 'Android', 'multi'],
+      defaultValue: 'web',
       required: true,
     },
     {
-      id: "teamSize",
-      label: "Team size",
-      type: "select",
-      options: ["1-3", "4-10", "10-plus"],
-      defaultValue: "4-10",
+      id: 'teamSize',
+      label: 'Team size',
+      type: 'select',
+      options: ['1-3', '4-10', '10-plus'],
+      defaultValue: '4-10',
     },
   ],
   systemPrompt: `You are a senior product designer who prepares thorough design-to-development handoffs.
@@ -70,6 +70,6 @@ Rules:
 - Flag missing information instead of guessing it.
 - Use neutral language with no emoji.
 - Match guidance to the stated platform conventions.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["api-doc-generator", "readme-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['api-doc-generator', 'readme-generator'],
+}

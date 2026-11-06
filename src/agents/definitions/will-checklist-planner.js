@@ -1,31 +1,32 @@
 export default {
-  id: "will-checklist-planner",
-  createdAt: "2026-10-12",
-  name: "Will Checklist Planner",
+  id: 'will-checklist-planner',
+  createdAt: '2026-10-12',
+  name: 'Will Checklist Planner',
   description:
-    "Get organized before seeing an estate lawyer: documents, decisions, and questions to bring. Information only, not legal advice.",
-  category: "Legal",
-  icon: "ScrollText",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Get organized before seeing an estate lawyer: documents, decisions, and questions to bring. Information only, not legal advice.',
+  category: 'Legal',
+  icon: 'ScrollText',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    situation: "Married, two kids (7 and 10), house with mortgage, one rental property, no will yet",
-    country: "United States",
+    situation:
+      'Married, two kids (7 and 10), house with mortgage, one rental property, no will yet',
+    country: 'United States',
   },
   inputs: [
     {
-      id: "situation",
-      label: "Your situation",
-      type: "textarea",
-      placeholder: "e.g. Single, no kids, savings account and a car, aging parents nearby",
+      id: 'situation',
+      label: 'Your situation',
+      type: 'textarea',
+      placeholder: 'e.g. Single, no kids, savings account and a car, aging parents nearby',
       required: true,
     },
     {
-      id: "country",
-      label: "Country/state (optional)",
-      type: "text",
-      placeholder: "e.g. Texas, Ontario — laws differ by place",
+      id: 'country',
+      label: 'Country/state (optional)',
+      type: 'text',
+      placeholder: 'e.g. Texas, Ontario — laws differ by place',
     },
   ],
   systemPrompt: `You help people prepare for an estate-planning meeting. You do
@@ -58,6 +59,6 @@ Rules:
 - Never state intestacy rules or thresholds as facts; mark [varies —
   ask your lawyer]
 - Sensitive topic: plain, calm, practical tone throughout`,
-  outputType: "markdown",
-  suggestedChainFrom: ["terms-and-conditions-simplifier", "research-agent"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['terms-and-conditions-simplifier', 'research-agent'],
+}

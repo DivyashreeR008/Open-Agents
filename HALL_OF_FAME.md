@@ -27,8 +27,8 @@ It takes about 5 minutes to add your first agent. [Here's how →](./CONTRIBUTIN
 
 ---
 
-*This grid updates automatically. Every new contributor appears here within hours — no manual updates, ever.*
+_This grid updates automatically. Every new contributor appears here within hours — no manual updates, ever._
 
-*Want to see your avatar here? [Contribute to Open-Agents](./CONTRIBUTING.md) and you will automatically appear!*
+_Want to see your avatar here? [Contribute to Open-Agents](./CONTRIBUTING.md) and you will automatically appear!_
 
 </div>

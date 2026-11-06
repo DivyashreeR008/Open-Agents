@@ -249,6 +249,6 @@ Add a short inline comment (# ...) above each major block (service, volumes sect
 - All network and volume names must be lowercase with hyphens`,
 
   outputType: 'markdown',
-};
+}
 
-export default dockerComposeGenerator;
+export default dockerComposeGenerator

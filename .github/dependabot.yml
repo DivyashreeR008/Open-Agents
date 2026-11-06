@@ -1,20 +1,20 @@
 version: 2
 
 updates:
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
     open-pull-requests-limit: 5
     reviewers:
-      - "DivyashreeR008"
+      - 'DivyashreeR008'
     labels:
-      - "dependencies"
-      - "automated"
+      - 'dependencies'
+      - 'automated'
     commit-message:
-      prefix: "chore"
+      prefix: 'chore'
     cooldown:
       default-days: 7
     # Major updates remain visible, but are grouped so their compatibility
@@ -22,19 +22,19 @@ updates:
     groups:
       major-dependencies:
         update-types:
-          - "major"
+          - 'major'
 
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
     open-pull-requests-limit: 5
     reviewers:
-      - "DivyashreeR008"
+      - 'DivyashreeR008'
     labels:
-      - "dependencies"
-      - "automated"
+      - 'dependencies'
+      - 'automated'
     commit-message:
-      prefix: "chore"
+      prefix: 'chore'

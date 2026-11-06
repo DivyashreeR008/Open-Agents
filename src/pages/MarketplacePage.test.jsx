@@ -63,17 +63,27 @@ describe('MarketplacePage publishing and import', () => {
   })
 
   it('shows the empty state before anything is published', () => {
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
     expect(screen.getByText('The marketplace is empty.')).toBeInTheDocument()
   })
 
   it('opens and closes the publish form', async () => {
     const user = userEvent.setup()
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 
     const dialog = await openPublish(user)
-    expect(within(dialog).getByRole('heading', { name: 'Publish to Marketplace' })).toBeInTheDocument()
+    expect(
+      within(dialog).getByRole('heading', { name: 'Publish to Marketplace' })
+    ).toBeInTheDocument()
 
     await user.click(within(dialog).getByRole('button', { name: 'Close' }))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
@@ -81,7 +91,11 @@ describe('MarketplacePage publishing and import', () => {
 
   it('keeps Publish disabled until agent, name and description are filled', async () => {
     const user = userEvent.setup()
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
     const dialog = await openPublish(user)
     const publish = within(dialog).getByRole('button', { name: 'Publish' })
     expect(publish).toBeDisabled()
@@ -101,7 +115,11 @@ describe('MarketplacePage publishing and import', () => {
 
   it('does not publish when required fields are missing', async () => {
     const user = userEvent.setup()
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
     const dialog = await openPublish(user)
     await user.click(within(dialog).getByRole('button', { name: 'Publish' }))
 
@@ -111,13 +129,20 @@ describe('MarketplacePage publishing and import', () => {
 
   it('publishes a listing, confirms it and closes the form', async () => {
     const user = userEvent.setup()
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
     const dialog = await openPublish(user)
 
     await user.selectOptions(within(dialog).getByLabelText('Agent to publish'), 'a1')
     await user.type(within(dialog).getByPlaceholderText('My Agent Pack'), 'My Pack')
     await user.type(within(dialog).getByPlaceholderText('What does this agent do?'), 'Does things')
-    await user.type(within(dialog).getByPlaceholderText('summarizer, research, markdown'), 'alpha, beta,, ')
+    await user.type(
+      within(dialog).getByPlaceholderText('summarizer, research, markdown'),
+      'alpha, beta,, '
+    )
     await user.type(within(dialog).getByPlaceholderText('Your name'), 'Chanchal')
     await user.click(within(dialog).getByRole('button', { name: 'Publish' }))
 
@@ -139,7 +164,11 @@ describe('MarketplacePage publishing and import', () => {
 
   it('filters the agent picker by search text', async () => {
     const user = userEvent.setup()
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
     const dialog = await openPublish(user)
 
     const filter = within(dialog).getByLabelText('Filter agents to publish')
@@ -156,13 +185,19 @@ describe('MarketplacePage publishing and import', () => {
   it('imports a listing with credential fields and asks for configuration', async () => {
     localStorage.setItem(LISTINGS_KEY, JSON.stringify([seedListing()]))
     const user = userEvent.setup()
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
 
     expect(screen.getByText('0 imports')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Import' }))
 
     expect(
-      screen.getByText('Imported "Seed Agent (imported)". Complete 1 credential field(s) in My drafts before running it.')
+      screen.getByText(
+        'Imported "Seed Agent (imported)". Complete 1 credential field(s) in My drafts before running it.'
+      )
     ).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Imported' })).toBeInTheDocument()
     expect(screen.getByText('1 import')).toBeInTheDocument()
@@ -183,16 +218,26 @@ describe('MarketplacePage publishing and import', () => {
       JSON.stringify([seedListing({ config: { provider: 'openai' }, sanitizedFields: [] })])
     )
     const user = userEvent.setup()
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
     await user.click(screen.getByRole('button', { name: 'Import' }))
 
-    expect(screen.getByText('Imported "Seed Agent (imported)". Open it from My drafts to run it.')).toBeInTheDocument()
+    expect(
+      screen.getByText('Imported "Seed Agent (imported)". Open it from My drafts to run it.')
+    ).toBeInTheDocument()
     expect(JSON.parse(localStorage.getItem(DRAFTS_KEY))[0].readyToRun).toBe(true)
   })
 
   it('shows a published listing again after remounting', async () => {
     const user = userEvent.setup()
-    const { unmount } = render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    const { unmount } = render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
     const dialog = await openPublish(user)
     await user.selectOptions(within(dialog).getByLabelText('Agent to publish'), 'a2')
     await user.type(within(dialog).getByPlaceholderText('My Agent Pack'), 'Persisted')
@@ -200,7 +245,11 @@ describe('MarketplacePage publishing and import', () => {
     await user.click(within(dialog).getByRole('button', { name: 'Publish' }))
     unmount()
 
-    render(<MemoryRouter><MarketplacePage /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <MarketplacePage />
+      </MemoryRouter>
+    )
     expect(screen.getByRole('heading', { name: 'Persisted' })).toBeInTheDocument()
   })
 

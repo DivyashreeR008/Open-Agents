@@ -1,53 +1,54 @@
 export default {
-  id: "linkedin-outreach-message-writer",
-  createdAt: "2026-05-15",
-  name: "LinkedIn Outreach Message Writer",
+  id: 'linkedin-outreach-message-writer',
+  createdAt: '2026-05-15',
+  name: 'LinkedIn Outreach Message Writer',
   description:
     "Paste a prospect's profile summary and your product details to generate personalized connection requests and follow-up messages that feel genuine, not spammy.",
-  category: "Sales",
-  icon: "UserPlus",
-  provider: "any",
-  defaultProvider: "openai",
-  model: "gpt-4o",
+  category: 'Sales',
+  icon: 'UserPlus',
+  provider: 'any',
+  defaultProvider: 'openai',
+  model: 'gpt-4o',
   exampleInputs: {
     prospect_profile:
-      "Sarah Chen — VP of Engineering at ScaleOps (Series B, 120 employees). Previously led platform teams at Stripe and Datadog. Posts frequently about developer productivity and reducing deployment friction. Recently shared an article about how her team cut CI/CD pipeline times by 60%.",
+      'Sarah Chen — VP of Engineering at ScaleOps (Series B, 120 employees). Previously led platform teams at Stripe and Datadog. Posts frequently about developer productivity and reducing deployment friction. Recently shared an article about how her team cut CI/CD pipeline times by 60%.',
     product_details:
-      "DevFlow — an AI-powered developer workflow platform that automates code review, test generation, and deployment pipelines. Integrates with GitHub, GitLab, and Jira. Customers typically see 40% faster release cycles.",
-    outreach_reason: "She's actively solving the exact problem our product addresses and her company is at the right stage to adopt new dev tools.",
-    tone: "Conversational",
+      'DevFlow — an AI-powered developer workflow platform that automates code review, test generation, and deployment pipelines. Integrates with GitHub, GitLab, and Jira. Customers typically see 40% faster release cycles.',
+    outreach_reason:
+      "She's actively solving the exact problem our product addresses and her company is at the right stage to adopt new dev tools.",
+    tone: 'Conversational',
   },
   inputs: [
     {
-      id: "prospect_profile",
+      id: 'prospect_profile',
       label: "Prospect's LinkedIn profile summary",
-      type: "textarea",
+      type: 'textarea',
       placeholder:
-        "Paste key details from their profile:\n\ne.g.\nJohn Park — Head of Sales at CloudMetrics (Series A, 50 employees). Previously at HubSpot for 5 years. Posts about sales automation and pipeline management. Recently promoted.",
+        'Paste key details from their profile:\n\ne.g.\nJohn Park — Head of Sales at CloudMetrics (Series A, 50 employees). Previously at HubSpot for 5 years. Posts about sales automation and pipeline management. Recently promoted.',
       required: true,
     },
     {
-      id: "product_details",
-      label: "Your product or service",
-      type: "textarea",
+      id: 'product_details',
+      label: 'Your product or service',
+      type: 'textarea',
       placeholder:
         "Describe what you're selling:\n\ne.g.\nAI-powered CRM that auto-logs calls, scores leads, and suggests next actions. Integrates with Salesforce and Slack.",
       required: true,
     },
     {
-      id: "outreach_reason",
-      label: "Why are you reaching out to this person?",
-      type: "text",
+      id: 'outreach_reason',
+      label: 'Why are you reaching out to this person?',
+      type: 'text',
       placeholder:
         "e.g. They posted about a pain point our tool solves, their company just raised a round, they're hiring for a role our product could help with.",
       required: true,
     },
     {
-      id: "tone",
-      label: "Message tone",
-      type: "select",
-      options: ["Conversational", "Professional", "Bold & direct"],
-      defaultValue: "Conversational",
+      id: 'tone',
+      label: 'Message tone',
+      type: 'select',
+      options: ['Conversational', 'Professional', 'Bold & direct'],
+      defaultValue: 'Conversational',
       required: true,
     },
   ],
@@ -120,5 +121,5 @@ Rules:
   not repeat the same pitch.
 - Adapt tone based on the selected preference.
 - If the prospect is a C-level executive, be more concise and direct.`,
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

@@ -1,34 +1,32 @@
 export default {
-  id: "jwt-claims-explainer",
-  createdAt: "2026-10-12",
-  name: "JWT Claims Explainer",
-  description:
-    "Paste a JWT to get its header and claims decoded and explained field by field.",
-  category: "Developer Tools",
-  icon: "Fingerprint",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'jwt-claims-explainer',
+  createdAt: '2026-10-12',
+  name: 'JWT Claims Explainer',
+  description: 'Paste a JWT to get its header and claims decoded and explained field by field.',
+  category: 'Developer Tools',
+  icon: 'Fingerprint',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     token:
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
-    context: "debugging",
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+    context: 'debugging',
   },
   inputs: [
     {
-      id: "token",
-      label: "JWT string",
-      type: "textarea",
-      placeholder:
-        "Paste the full JWT (header.payload.signature), e.g. eyJhbGciOi...",
+      id: 'token',
+      label: 'JWT string',
+      type: 'textarea',
+      placeholder: 'Paste the full JWT (header.payload.signature), e.g. eyJhbGciOi...',
       required: true,
     },
     {
-      id: "context",
-      label: "Goal",
-      type: "select",
-      options: ["debugging", "learning", "audit"],
-      defaultValue: "debugging",
+      id: 'context',
+      label: 'Goal',
+      type: 'select',
+      options: ['debugging', 'learning', 'audit'],
+      defaultValue: 'debugging',
       required: true,
     },
   ],
@@ -62,6 +60,6 @@ Rules:
 - Do not attempt to crack or forge signatures
 - State clearly when the signature cannot be verified here
 - Use neutral technical language with no emoji`,
-  outputType: "markdown",
-  suggestedChainFrom: ["api-doc-generator", "readme-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['api-doc-generator', 'readme-generator'],
+}

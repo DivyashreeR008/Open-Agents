@@ -1,42 +1,42 @@
 export default {
-  id: "dataset-description-generator",
-  createdAt: "2026-05-15",
-  name: "Dataset Description Generator",
+  id: 'dataset-description-generator',
+  createdAt: '2026-05-15',
+  name: 'Dataset Description Generator',
   description:
-    "Paste column names, data types, and sample values to generate complete dataset documentation with field definitions, value ranges, null handling notes, and suggested use cases.",
-  category: "Data Science",
-  icon: "FileSpreadsheet",
-  provider: "any",
-  defaultProvider: "openai",
-  model: "gpt-4o",
+    'Paste column names, data types, and sample values to generate complete dataset documentation with field definitions, value ranges, null handling notes, and suggested use cases.',
+  category: 'Data Science',
+  icon: 'FileSpreadsheet',
+  provider: 'any',
+  defaultProvider: 'openai',
+  model: 'gpt-4o',
   exampleInputs: {
     columns:
-      "user_id (int) — 1001, 1002, 1003\nemail (varchar) — alice@example.com, bob@test.org\nsignup_date (date) — 2024-01-15, 2024-03-22\nplan_type (varchar) — free, pro, enterprise\nmonthly_spend (float) — 0.00, 29.99, 199.00\nlast_login (datetime) — 2025-05-01 08:30, NULL, 2025-04-28 14:12\nis_active (boolean) — true, true, false",
-    dataset_name: "SaaS Customer Accounts",
+      'user_id (int) — 1001, 1002, 1003\nemail (varchar) — alice@example.com, bob@test.org\nsignup_date (date) — 2024-01-15, 2024-03-22\nplan_type (varchar) — free, pro, enterprise\nmonthly_spend (float) — 0.00, 29.99, 199.00\nlast_login (datetime) — 2025-05-01 08:30, NULL, 2025-04-28 14:12\nis_active (boolean) — true, true, false',
+    dataset_name: 'SaaS Customer Accounts',
     context:
-      "This dataset tracks customer accounts for a B2B SaaS analytics platform. Used by the growth team for churn analysis and revenue forecasting.",
+      'This dataset tracks customer accounts for a B2B SaaS analytics platform. Used by the growth team for churn analysis and revenue forecasting.',
   },
   inputs: [
     {
-      id: "columns",
-      label: "Column names, data types & sample values",
-      type: "textarea",
+      id: 'columns',
+      label: 'Column names, data types & sample values',
+      type: 'textarea',
       placeholder: `Paste your columns — one per line:\n\ne.g.\nuser_id (int) — 1001, 1002, 1003\nemail (varchar) — alice@example.com, bob@test.org\nsignup_date (date) — 2024-01-15, 2024-03-22\nplan_type (varchar) — free, pro, enterprise\nlast_login (datetime) — 2025-05-01 08:30, NULL`,
       required: true,
     },
     {
-      id: "dataset_name",
-      label: "Dataset name",
-      type: "text",
-      placeholder: "e.g. Customer Transactions, Sensor Readings Q1 2025",
+      id: 'dataset_name',
+      label: 'Dataset name',
+      type: 'text',
+      placeholder: 'e.g. Customer Transactions, Sensor Readings Q1 2025',
       required: true,
     },
     {
-      id: "context",
-      label: "Business context (optional)",
-      type: "textarea",
+      id: 'context',
+      label: 'Business context (optional)',
+      type: 'textarea',
       placeholder:
-        "e.g. This dataset is used by the marketing team for campaign attribution. It refreshes daily from our Snowflake warehouse.",
+        'e.g. This dataset is used by the marketing team for campaign attribution. It refreshes daily from our Snowflake warehouse.',
     },
   ],
   systemPrompt: `You are a senior data scientist and technical documentation specialist.
@@ -92,5 +92,5 @@ Rules:
 - Always suggest at least 3 concrete use cases based on the fields present.
 - If business context is provided, tailor descriptions and use cases to that context.
 - Keep language concise and jargon-free so non-technical stakeholders can understand.`,
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

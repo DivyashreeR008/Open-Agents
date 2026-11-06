@@ -1,51 +1,49 @@
 export default {
-  id: "pyq-paper-analyser",
-  createdAt: "2026-05-31",
-  name: "PYQ Paper Analyser",
+  id: 'pyq-paper-analyser',
+  createdAt: '2026-05-31',
+  name: 'PYQ Paper Analyser',
   description:
-    "Analyzes previous year question papers, identifies recurring concepts, ranks topic importance, and generates a model question paper.",
-  category: "Education",
-  icon: "BookOpen",
-  provider: "any",
-  defaultProvider: "openai",
-  model: "gpt-4o",
+    'Analyzes previous year question papers, identifies recurring concepts, ranks topic importance, and generates a model question paper.',
+  category: 'Education',
+  icon: 'BookOpen',
+  provider: 'any',
+  defaultProvider: 'openai',
+  model: 'gpt-4o',
   exampleInputs: {
-    subjectName: "Database Management Systems",
-    courseName: "B.Tech Computer Science and Engineering",
+    subjectName: 'Database Management Systems',
+    courseName: 'B.Tech Computer Science and Engineering',
     subjectSyllabus:
-      "ER modeling, relational algebra, SQL, normalization, transactions, indexing, concurrency control, and recovery.",
+      'ER modeling, relational algebra, SQL, normalization, transactions, indexing, concurrency control, and recovery.',
     pyqPapersContent:
-      "2024: Explain normalization with examples. Write SQL queries for joins. Discuss ACID properties.\n2023: ER diagram for a library system. SQL joins and subqueries. Transactions and deadlocks.\n2022: Normal forms, relational algebra, indexing, locking protocols.",
+      '2024: Explain normalization with examples. Write SQL queries for joins. Discuss ACID properties.\n2023: ER diagram for a library system. SQL joins and subqueries. Transactions and deadlocks.\n2022: Normal forms, relational algebra, indexing, locking protocols.',
   },
   inputs: [
     {
-      id: "subjectName",
-      label: "Subject Name",
-      type: "text",
-      placeholder: "e.g. Database Management Systems",
+      id: 'subjectName',
+      label: 'Subject Name',
+      type: 'text',
+      placeholder: 'e.g. Database Management Systems',
       required: true,
     },
     {
-      id: "courseName",
-      label: "Course Name",
-      type: "text",
-      placeholder: "e.g. B.Tech Computer Science and Engineering",
+      id: 'courseName',
+      label: 'Course Name',
+      type: 'text',
+      placeholder: 'e.g. B.Tech Computer Science and Engineering',
       required: true,
     },
     {
-      id: "subjectSyllabus",
-      label: "Subject Syllabus",
-      type: "textarea",
-      placeholder:
-        "Paste the syllabus or major units covered in the subject...",
+      id: 'subjectSyllabus',
+      label: 'Subject Syllabus',
+      type: 'textarea',
+      placeholder: 'Paste the syllabus or major units covered in the subject...',
       required: false,
     },
     {
-      id: "pyqPapersContent",
-      label: "PYQ Papers Content",
-      type: "textarea",
-      placeholder:
-        "Paste previous year question papers, questions, or extracted text here...",
+      id: 'pyqPapersContent',
+      label: 'PYQ Papers Content',
+      type: 'textarea',
+      placeholder: 'Paste previous year question papers, questions, or extracted text here...',
       required: true,
     },
   ],
@@ -117,5 +115,5 @@ Rules:
 - Explain why a topic is ranked high, medium, or low importance.
 - Return the entire output in clean markdown format.
 - Keep the tone academic, practical, and student-friendly.`,
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

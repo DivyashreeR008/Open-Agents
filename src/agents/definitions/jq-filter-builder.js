@@ -1,40 +1,40 @@
 export default {
-  id: "jq-filter-builder",
-  createdAt: "2026-10-12",
-  name: "jq Filter Builder",
+  id: 'jq-filter-builder',
+  createdAt: '2026-10-12',
+  name: 'jq Filter Builder',
   description:
-    "Describe the JSON extraction you need and get the jq filter plus a plain-English breakdown.",
-  category: "Developer Tools",
-  icon: "Braces",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Describe the JSON extraction you need and get the jq filter plus a plain-English breakdown.',
+  category: 'Developer Tools',
+  icon: 'Braces',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    goal: "List name and email of users with role admin, sorted by name",
+    goal: 'List name and email of users with role admin, sorted by name',
     sampleJson:
       '{"users": [{"name": "Ava", "email": "ava@x.com", "role": "admin"}, {"name": "Bo", "email": "bo@x.com", "role": "viewer"}]}',
-    outputFormat: "compact",
+    outputFormat: 'compact',
   },
   inputs: [
     {
-      id: "goal",
-      label: "Extraction goal",
-      type: "textarea",
-      placeholder: "e.g. List name and email of users with role admin, sorted by name",
+      id: 'goal',
+      label: 'Extraction goal',
+      type: 'textarea',
+      placeholder: 'e.g. List name and email of users with role admin, sorted by name',
       required: true,
     },
     {
-      id: "sampleJson",
-      label: "Sample JSON",
-      type: "textarea",
+      id: 'sampleJson',
+      label: 'Sample JSON',
+      type: 'textarea',
       placeholder: '{"users": [{"name": "Ava", "role": "admin"}]}',
     },
     {
-      id: "outputFormat",
-      label: "Output format",
-      type: "select",
-      options: ["compact", "pretty", "raw"],
-      defaultValue: "compact",
+      id: 'outputFormat',
+      label: 'Output format',
+      type: 'select',
+      options: ['compact', 'pretty', 'raw'],
+      defaultValue: 'compact',
       required: true,
     },
   ],
@@ -67,6 +67,6 @@ Rules:
 - Keep filters minimal and test-safe; note any jq version needs
 - Use neutral, precise language with no emoji
 - If the sample is missing, state the assumed shape explicitly`,
-  outputType: "markdown",
-  suggestedChainFrom: ["json-schema-generator", "data-analysis-agent"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['json-schema-generator', 'data-analysis-agent'],
+}

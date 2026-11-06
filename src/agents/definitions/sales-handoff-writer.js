@@ -1,40 +1,39 @@
 export default {
-  id: "sales-handoff-writer",
-  createdAt: "2026-10-12",
-  name: "Sales Handoff Writer",
-  description:
-    "Write an AE-to-CSM handoff: context, promises made, risks, and first-30-day plan.",
-  category: "Sales",
-  icon: "ArrowLeftRight",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'sales-handoff-writer',
+  createdAt: '2026-10-12',
+  name: 'Sales Handoff Writer',
+  description: 'Write an AE-to-CSM handoff: context, promises made, risks, and first-30-day plan.',
+  category: 'Sales',
+  icon: 'ArrowLeftRight',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    deal: "Acme Retail, 45 seats, annual plan starting Nov 1. Champion: Priya (Ops lead). Goal: cut onboarding time for seasonal staff.",
+    deal: 'Acme Retail, 45 seats, annual plan starting Nov 1. Champion: Priya (Ops lead). Goal: cut onboarding time for seasonal staff.',
     promises:
-      "Custom onboarding workshop in week 1, Slack integration live before launch, quarterly business reviews, named support contact.",
+      'Custom onboarding workshop in week 1, Slack integration live before launch, quarterly business reviews, named support contact.',
     risks:
-      "IT team short-staffed, rollout overlaps holiday freeze, one stakeholder preferred a competitor.",
+      'IT team short-staffed, rollout overlaps holiday freeze, one stakeholder preferred a competitor.',
   },
   inputs: [
     {
-      id: "deal",
-      label: "Deal context",
-      type: "textarea",
-      placeholder: "e.g. account name, seats, plan, champion, go-live date, goals.",
+      id: 'deal',
+      label: 'Deal context',
+      type: 'textarea',
+      placeholder: 'e.g. account name, seats, plan, champion, go-live date, goals.',
       required: true,
     },
     {
-      id: "promises",
-      label: "Promises made during sales",
-      type: "textarea",
-      placeholder: "e.g. onboarding terms, SLAs, custom work, discounts, timelines.",
+      id: 'promises',
+      label: 'Promises made during sales',
+      type: 'textarea',
+      placeholder: 'e.g. onboarding terms, SLAs, custom work, discounts, timelines.',
     },
     {
-      id: "risks",
-      label: "Known risks and open threads",
-      type: "textarea",
-      placeholder: "e.g. skeptical stakeholders, technical blockers, timing risks.",
+      id: 'risks',
+      label: 'Known risks and open threads',
+      type: 'textarea',
+      placeholder: 'e.g. skeptical stakeholders, technical blockers, timing risks.',
     },
   ],
   systemPrompt: `You are a revenue operations specialist who writes clean AE-to-CSM handoffs.
@@ -67,6 +66,6 @@ Rules:
 - Keep tone neutral and factual; no blame toward sales or the customer.
 - Flag any promise that looks out of policy for manager review.
 - Keep the full handoff scannable in under 5 minutes.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["meeting-notes-summarizer", "email-reply-writer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['meeting-notes-summarizer', 'email-reply-writer'],
+}

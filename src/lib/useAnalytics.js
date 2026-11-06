@@ -35,7 +35,10 @@ function seedFromHistory() {
 
   try {
     const historyRaw = localStorage.getItem('OpenAgents_history')
-    if (!historyRaw) { localStorage.setItem(SEED_FLAG, '1'); return }
+    if (!historyRaw) {
+      localStorage.setItem(SEED_FLAG, '1')
+      return
+    }
 
     const history = JSON.parse(historyRaw)
     if (!Array.isArray(history) || history.length === 0) {
@@ -53,7 +56,7 @@ function seedFromHistory() {
         agentId: run.agentId,
         agentName: run.agentName,
         provider: run.provider || 'unknown',
-        category: '',          // history doesn't store category
+        category: '', // history doesn't store category
         model: '',
         duration: null,
         timestamp: run.timestamp || Date.now(),
@@ -74,7 +77,15 @@ function seedFromHistory() {
 
 // ── Plain function (for use outside React components) ───────────────────────
 
-export function recordAnalyticsRun({ runId, agentId, agentName, category, provider, model, duration }) {
+export function recordAnalyticsRun({
+  runId,
+  agentId,
+  agentName,
+  category,
+  provider,
+  model,
+  duration,
+}) {
   const event = {
     id: runId || `${agentId}_${Date.now()}`,
     agentId,
@@ -180,8 +191,7 @@ export function computeStats(events, timeRange = 'all', now = new Date()) {
   })
   const providerDistribution = allocateRoundedPercentages(
     Object.entries(providerCounts).map(([name, count]) => ({ name, count }))
-  )
-    .sort((a, b) => b.count - a.count)
+  ).sort((a, b) => b.count - a.count)
   const favoriteProvider = providerDistribution[0]?.name || null
 
   // ── Top agents (top 8)
@@ -204,8 +214,7 @@ export function computeStats(events, timeRange = 'all', now = new Date()) {
   })
   const categoryDistribution = allocateRoundedPercentages(
     Object.entries(categoryCounts).map(([name, count]) => ({ name, count }))
-  )
-    .sort((a, b) => b.count - a.count)
+  ).sort((a, b) => b.count - a.count)
 
   // ── Daily runs (last 30 days) for sparkline
   const dailyRuns = []
@@ -241,7 +250,11 @@ export function computeStats(events, timeRange = 'all', now = new Date()) {
   const today = toDateKey(now)
   const yesterday = toDateKey(new Date(now.getTime() - 86400000))
 
-  let startDate = allDayKeys.has(today) ? now : (allDayKeys.has(yesterday) ? new Date(now.getTime() - 86400000) : null)
+  let startDate = allDayKeys.has(today)
+    ? now
+    : allDayKeys.has(yesterday)
+      ? new Date(now.getTime() - 86400000)
+      : null
 
   if (startDate) {
     let cursor = new Date(startDate)
@@ -285,7 +298,8 @@ export function computeStats(events, timeRange = 'all', now = new Date()) {
     dayOfWeekCounts[d.getDay()]++
   })
   const maxDayCount = Math.max(...dayOfWeekCounts)
-  const mostProductiveDay = maxDayCount > 0 ? DAY_LABELS[dayOfWeekCounts.indexOf(maxDayCount)] : null
+  const mostProductiveDay =
+    maxDayCount > 0 ? DAY_LABELS[dayOfWeekCounts.indexOf(maxDayCount)] : null
 
   // ── Recent runs (last 10)
   const recentRuns = filteredEvents.slice(0, 10).map((e) => ({
@@ -333,7 +347,9 @@ export function useAnalytics(timeRange = 'all') {
   // Listen to updates from recordAnalyticsRun (possibly same or other component)
   useEffect(() => {
     const sync = () => setEvents(loadEvents())
-    const handleStorage = (e) => { if (e.key === STORAGE_KEY) sync() }
+    const handleStorage = (e) => {
+      if (e.key === STORAGE_KEY) sync()
+    }
     window.addEventListener('oa_analytics_update', sync)
     window.addEventListener('storage', handleStorage)
     return () => {
@@ -345,13 +361,13 @@ export function useAnalytics(timeRange = 'all') {
   const stats = useMemo(() => computeStats(events, timeRange), [events, timeRange])
 
   const clearAnalytics = useCallback(() => {
-  if (!events.length) {
-  alert("No analytics data to clear.")
-  return
-}
-  localStorage.removeItem(STORAGE_KEY)
-  setEvents([])
-}, [events])
+    if (!events.length) {
+      alert('No analytics data to clear.')
+      return
+    }
+    localStorage.removeItem(STORAGE_KEY)
+    setEvents([])
+  }, [events])
 
   return { events, stats, clearAnalytics }
 }

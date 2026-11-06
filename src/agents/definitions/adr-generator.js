@@ -1,43 +1,43 @@
 export default {
-  id: "adr-generator",
-  createdAt: "2025-07-02",
-  name: "Architecture Decision Record Generator",
+  id: 'adr-generator',
+  createdAt: '2025-07-02',
+  name: 'Architecture Decision Record Generator',
   description:
-    "Turn a rough technical decision into a structured document that captures what was decided, why, and what alternatives were considered — so your team understands the reasoning months later.",
-  category: "Engineering",
-  icon: "FileText",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Turn a rough technical decision into a structured document that captures what was decided, why, and what alternatives were considered — so your team understands the reasoning months later.',
+  category: 'Engineering',
+  icon: 'FileText',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     decisionContext:
       "We need to choose between REST and GraphQL for our public API. Team is small (4 devs), we need fast iteration, and our mobile clients frequently ask for flexible data shapes. We're already using Node.js and Express.",
     alternativesConsidered:
-      "REST: familiar, well-understood, easier to cache. GraphQL: flexible queries, reduces over-fetching, but adds complexity and learning curve. gRPC: fast but not suitable for public-facing APIs.",
-    status: "Accepted",
+      'REST: familiar, well-understood, easier to cache. GraphQL: flexible queries, reduces over-fetching, but adds complexity and learning curve. gRPC: fast but not suitable for public-facing APIs.',
+    status: 'Accepted',
   },
   inputs: [
     {
-      id: "decisionContext",
-      label: "What decision are you making and why?",
-      type: "textarea",
+      id: 'decisionContext',
+      label: 'What decision are you making and why?',
+      type: 'textarea',
       placeholder:
-        "e.g. Choosing between REST and GraphQL for our public API. Team is small, need fast iteration, mobile clients need flexible data shapes.",
+        'e.g. Choosing between REST and GraphQL for our public API. Team is small, need fast iteration, mobile clients need flexible data shapes.',
       required: true,
     },
     {
-      id: "alternativesConsidered",
-      label: "Alternatives considered (optional)",
-      type: "textarea",
+      id: 'alternativesConsidered',
+      label: 'Alternatives considered (optional)',
+      type: 'textarea',
       placeholder:
-        "e.g. REST: simple but over-fetches. gRPC: fast but not public-API friendly. GraphQL: flexible but steeper learning curve.",
+        'e.g. REST: simple but over-fetches. gRPC: fast but not public-API friendly. GraphQL: flexible but steeper learning curve.',
     },
     {
-      id: "status",
-      label: "Decision status",
-      type: "select",
-      options: ["Proposed", "Accepted", "Superseded", "Deprecated"],
-      defaultValue: "Proposed",
+      id: 'status',
+      label: 'Decision status',
+      type: 'select',
+      options: ['Proposed', 'Accepted', 'Superseded', 'Deprecated'],
+      defaultValue: 'Proposed',
       required: true,
     },
   ],
@@ -90,6 +90,6 @@ Rules:
 - Write in plain English, not corporate speak
 - The title should be a statement of the decision, not a question ("Use PostgreSQL" not "Database Selection")
 - Keep the whole document under 400 words — brevity is a feature`,
-  outputType: "markdown",
-  suggestedChainFrom: ["project-architecture-planner"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['project-architecture-planner'],
+}

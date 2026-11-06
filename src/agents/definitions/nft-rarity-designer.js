@@ -1,40 +1,40 @@
 export default {
-  id: "nft-rarity-designer",
-  createdAt: "2026-10-12",
-  name: "NFT Rarity Designer",
+  id: 'nft-rarity-designer',
+  createdAt: '2026-10-12',
+  name: 'NFT Rarity Designer',
   description:
-    "Design trait math for an NFT drop: rarity tiers, distribution curves, and reveal fairness.",
-  category: "Web3",
-  icon: "Dices",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Design trait math for an NFT drop: rarity tiers, distribution curves, and reveal fairness.',
+  category: 'Web3',
+  icon: 'Dices',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    collection: "5,000-item pixel adventurers: 6 trait slots (background, body, gear, eyes, aura, companion). Aura and companion should be the chase traits.",
-    supply: "5000 total, max 4 per wallet, allowlist 1000",
-    reveal: "delayed",
+    collection:
+      '5,000-item pixel adventurers: 6 trait slots (background, body, gear, eyes, aura, companion). Aura and companion should be the chase traits.',
+    supply: '5000 total, max 4 per wallet, allowlist 1000',
+    reveal: 'delayed',
   },
   inputs: [
     {
-      id: "collection",
-      label: "Collection concept",
-      type: "textarea",
-      placeholder:
-        "Describe theme, trait slots, and which traits should feel rare.",
+      id: 'collection',
+      label: 'Collection concept',
+      type: 'textarea',
+      placeholder: 'Describe theme, trait slots, and which traits should feel rare.',
       required: true,
     },
     {
-      id: "supply",
-      label: "Supply and mint limits",
-      type: "text",
-      placeholder: "e.g. 5000 total, max 4 per wallet",
+      id: 'supply',
+      label: 'Supply and mint limits',
+      type: 'text',
+      placeholder: 'e.g. 5000 total, max 4 per wallet',
     },
     {
-      id: "reveal",
-      label: "Reveal style",
-      type: "select",
-      options: ["instant", "delayed"],
-      defaultValue: "delayed",
+      id: 'reveal',
+      label: 'Reveal style',
+      type: 'select',
+      options: ['instant', 'delayed'],
+      defaultValue: 'delayed',
       required: true,
     },
   ],
@@ -64,6 +64,6 @@ Rules:
 - Do not invent chain statistics, marketplace fees, or sales outcomes.
 - Keep probabilities transparent and reproducible.
 - Keep tone neutral and factual.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["readme-generator", "json-schema-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['readme-generator', 'json-schema-generator'],
+}

@@ -1,41 +1,40 @@
 export default {
-  id: "defi-risk-checklist",
-  createdAt: "2026-10-12",
-  name: "DeFi Risk Checklist",
+  id: 'defi-risk-checklist',
+  createdAt: '2026-10-12',
+  name: 'DeFi Risk Checklist',
   description:
-    "Evaluate a DeFi position with a risk framework: contracts, custody, oracle, and exit checks.",
-  category: "Web3",
-  icon: "TrendingDown",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Evaluate a DeFi position with a risk framework: contracts, custody, oracle, and exit checks.',
+  category: 'Web3',
+  icon: 'TrendingDown',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     protocol:
-      "Lending protocol v3 on Ethereum mainnet, audited twice, $200M TVL, offers 4% supply APY on USDC with wstETH collateral looping.",
-    position: "Supply 10k USDC, borrow 5k USDC against it, loop twice into wstETH",
-    size: "experimental",
+      'Lending protocol v3 on Ethereum mainnet, audited twice, $200M TVL, offers 4% supply APY on USDC with wstETH collateral looping.',
+    position: 'Supply 10k USDC, borrow 5k USDC against it, loop twice into wstETH',
+    size: 'experimental',
   },
   inputs: [
     {
-      id: "protocol",
-      label: "Protocol description",
-      type: "textarea",
-      placeholder:
-        "e.g. Protocol name, chain, audits, TVL, mechanism you plan to use...",
+      id: 'protocol',
+      label: 'Protocol description',
+      type: 'textarea',
+      placeholder: 'e.g. Protocol name, chain, audits, TVL, mechanism you plan to use...',
       required: true,
     },
     {
-      id: "position",
-      label: "Planned position",
-      type: "text",
-      placeholder: "e.g. Supply X, borrow Y, stake LP tokens in gauge...",
+      id: 'position',
+      label: 'Planned position',
+      type: 'text',
+      placeholder: 'e.g. Supply X, borrow Y, stake LP tokens in gauge...',
     },
     {
-      id: "size",
-      label: "Position size",
-      type: "select",
-      options: ["play", "experimental", "serious"],
-      defaultValue: "experimental",
+      id: 'size',
+      label: 'Position size',
+      type: 'select',
+      options: ['play', 'experimental', 'serious'],
+      defaultValue: 'experimental',
       required: true,
     },
   ],
@@ -68,6 +67,6 @@ Rules:
 - Never give financial advice or guaranteed outcomes; frame everything as risks and checks.
 - Flag missing information explicitly instead of guessing.
 - Use neutral, instructional tone.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["research-agent", "personal-budget-analyzer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['research-agent', 'personal-budget-analyzer'],
+}

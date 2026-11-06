@@ -49,10 +49,7 @@ export default function Sidebar({ open, onClose }) {
 
   useEffect(() => {
     try {
-      localStorage.setItem(
-        SIDEBAR_CATEGORY_STORAGE_KEY,
-        JSON.stringify(collapsedCategories)
-      )
+      localStorage.setItem(SIDEBAR_CATEGORY_STORAGE_KEY, JSON.stringify(collapsedCategories))
     } catch {
       // localStorage unavailable (e.g. private browsing) — fail silently
     }
@@ -93,16 +90,14 @@ export default function Sidebar({ open, onClose }) {
     return {
       filteredAgents: filtered,
       categories: cats,
-      categoryOrder: Object.keys(cats).sort((a, b) => a.localeCompare(b))
+      categoryOrder: Object.keys(cats).sort((a, b) => a.localeCompare(b)),
     }
   }, [agents, normalizedQuery])
 
   const toggleCategory = (category) => {
     const isActive = activeCategory === category
     setCollapsedCategories((prev) => {
-      const isExpanded = isActive
-        ? prev[category] !== true
-        : prev[category] === false
+      const isExpanded = isActive ? prev[category] !== true : prev[category] === false
       return {
         ...prev,
         [category]: isExpanded,
@@ -119,9 +114,7 @@ export default function Sidebar({ open, onClose }) {
     const result = moveAgentToCollection(agentId, collectionId)
 
     setFeedback(
-      result.ok
-        ? `Moved to ${collection?.name || 'the selected collection'}.`
-        : result.error
+      result.ok ? `Moved to ${collection?.name || 'the selected collection'}.` : result.error
     )
 
     window.setTimeout(() => setFeedback(''), 2200)
@@ -156,12 +149,7 @@ export default function Sidebar({ open, onClose }) {
 
   return (
     <>
-      {open && (
-        <div
-          className="fixed inset-0 z-30 bg-black/50 lg:hidden"
-          onClick={onClose}
-        />
-      )}
+      {open && <div className="fixed inset-0 z-30 bg-black/50 lg:hidden" onClick={onClose} />}
 
       <aside
         className={`fixed top-12 left-0 bottom-0 z-40 flex w-60 flex-col border-r transition-all duration-200
@@ -215,9 +203,7 @@ export default function Sidebar({ open, onClose }) {
                 to={entry.to}
                 id={entry.id}
                 onClick={onClose}
-                className={({ isActive }) =>
-                  `rail-link ${isActive ? 'rail-link-active' : ''}`
-                }
+                className={({ isActive }) => `rail-link ${isActive ? 'rail-link-active' : ''}`}
               >
                 <span className="w-5 shrink-0 font-mono text-[10px] tabular-nums opacity-45">
                   {pad(i + 1)}
@@ -342,10 +328,7 @@ export default function Sidebar({ open, onClose }) {
                 ? collapsedCategories[category] !== true
                 : collapsedCategories[category] === false
               const categoryAgents = categories[category]
-              const visibleCategoryAgents = categoryAgents.slice(
-                0,
-                SIDEBAR_CATEGORY_AGENT_LIMIT
-              )
+              const visibleCategoryAgents = categoryAgents.slice(0, SIDEBAR_CATEGORY_AGENT_LIMIT)
 
               return (
                 <div key={category}>
@@ -400,7 +383,10 @@ export default function Sidebar({ open, onClose }) {
                                 <IconComponent size={13} className="shrink-0" aria-hidden="true" />
                                 <span className="truncate">{agent.name}</span>
                                 {isActive && (
-                                  <span className="ml-auto font-mono text-[10px] opacity-60" aria-hidden="true">
+                                  <span
+                                    className="ml-auto font-mono text-[10px] opacity-60"
+                                    aria-hidden="true"
+                                  >
                                     ●
                                   </span>
                                 )}

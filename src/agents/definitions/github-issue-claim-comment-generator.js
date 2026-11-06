@@ -1,17 +1,18 @@
 const githubIssueClaimCommentGenerator = {
-  id: 'github-issue-claim-comment-generator',           // lowercase, kebab-case, URL safe
+  id: 'github-issue-claim-comment-generator', // lowercase, kebab-case, URL safe
   name: 'Github Issue Claim Comment Generator',
-  description: 'Paste the github issue description and your approach to solve it and any additional notes and get the issue claim comment generated in seconds! ',
-  category: 'Productivity',          // Productivity | Research | Marketing | Engineering | HR | Business | Education | Design | Product | Legal
-  icon: 'MessagesSquare',              // Any icon from lucide.dev/icons
-  provider: 'any',               // 'openai' | 'anthropic' | 'gemini' | 'any'
-  defaultProvider: 'openai',     // Only needed if provider is 'any'
+  description:
+    'Paste the github issue description and your approach to solve it and any additional notes and get the issue claim comment generated in seconds! ',
+  category: 'Productivity', // Productivity | Research | Marketing | Engineering | HR | Business | Education | Design | Product | Legal
+  icon: 'MessagesSquare', // Any icon from lucide.dev/icons
+  provider: 'any', // 'openai' | 'anthropic' | 'gemini' | 'any'
+  defaultProvider: 'openai', // Only needed if provider is 'any'
   model: 'gpt-4o',
   inputs: [
     {
       id: 'issue_description',
       label: 'Issue Description',
-      type: 'textarea',          // text | textarea | code | select | multiselect
+      type: 'textarea', // text | textarea | code | select | multiselect
       placeholder: 'Paste the githun issue description here...',
       required: true,
     },
@@ -19,7 +20,7 @@ const githubIssueClaimCommentGenerator = {
     {
       id: 'relevant_experience',
       label: 'Relevant Experience',
-      type: 'textarea',          // text | textarea | code | select | multiselect
+      type: 'textarea', // text | textarea | code | select | multiselect
       placeholder: 'Optional Relevant experience to solve the issue...',
       required: false,
     },
@@ -27,7 +28,7 @@ const githubIssueClaimCommentGenerator = {
     {
       id: 'approach_for_issue',
       label: 'Issue Approach',
-      type: 'textarea',          // text | textarea | code | select | multiselect
+      type: 'textarea', // text | textarea | code | select | multiselect
       placeholder: 'Write your approach towards solving the issue...',
       required: true,
     },
@@ -35,7 +36,7 @@ const githubIssueClaimCommentGenerator = {
     {
       id: 'additional_notes_for_mentor',
       label: 'Additional Notes',
-      type: 'textarea',          // text | textarea | code | select | multiselect
+      type: 'textarea', // text | textarea | code | select | multiselect
       placeholder: 'Any additional notes you want to add in comment...',
       required: false,
     },
@@ -43,13 +44,11 @@ const githubIssueClaimCommentGenerator = {
     {
       id: 'program_name',
       label: 'Program Name',
-      type: 'select',          // text | textarea | code | select | multiselect
-      options : ["GSSoC", "Hacktoberfest", "NSOC"],
+      type: 'select', // text | textarea | code | select | multiselect
+      options: ['GSSoC', 'Hacktoberfest', 'NSOC'],
       placeholder: 'GSSoC. GSOC, Hacktoberfest, NSoC...',
       required: false,
     },
-
-
   ],
 
   systemPrompt: `
@@ -230,7 +229,7 @@ Please assign this to me.
 - No program mention even if it was provided
   `,
 
-  outputType: 'markdown',        // markdown | text | json
-};
+  outputType: 'markdown', // markdown | text | json
+}
 
-export default githubIssueClaimCommentGenerator;
+export default githubIssueClaimCommentGenerator

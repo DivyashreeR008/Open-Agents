@@ -1,35 +1,35 @@
 export default {
-  id: "nginx-hardening-checklist",
-  createdAt: "2026-10-20",
-  name: "Nginx Hardening Checklist",
+  id: 'nginx-hardening-checklist',
+  createdAt: '2026-10-20',
+  name: 'Nginx Hardening Checklist',
   description:
-    "Get a production-ready Nginx config with TLS, rate limiting, security headers, and upstream hardening.",
-  category: "DevOps",
-  icon: "Server",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Get a production-ready Nginx config with TLS, rate limiting, security headers, and upstream hardening.',
+  category: 'DevOps',
+  icon: 'Server',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {},
   inputs: [
     {
-      id: "useCase",
-      label: "Use case",
-      type: "text",
-      placeholder: "e.g. reverse proxy, static site, API gateway",
+      id: 'useCase',
+      label: 'Use case',
+      type: 'text',
+      placeholder: 'e.g. reverse proxy, static site, API gateway',
       required: true,
     },
     {
-      id: "tls",
-      label: "TLS requirement",
-      type: "text",
+      id: 'tls',
+      label: 'TLS requirement',
+      type: 'text',
       placeholder: "e.g. TLS 1.2+, Let's Encrypt, managed certs",
       required: true,
     },
     {
-      id: "upstream",
-      label: "Upstream backend",
-      type: "text",
-      placeholder: "e.g. Node.js on localhost:3000, multiple upstreams",
+      id: 'upstream',
+      label: 'Upstream backend',
+      type: 'text',
+      placeholder: 'e.g. Node.js on localhost:3000, multiple upstreams',
       required: true,
     },
   ],
@@ -81,5 +81,5 @@ Rules:
 - Include exact cipher strings.
 - Provide both main and snippet file structures.`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

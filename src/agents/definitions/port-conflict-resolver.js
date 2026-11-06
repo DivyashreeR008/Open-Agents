@@ -1,41 +1,41 @@
 export default {
-  id: "port-conflict-resolver",
-  createdAt: "2026-10-12",
-  name: "Port Conflict Resolver",
+  id: 'port-conflict-resolver',
+  createdAt: '2026-10-12',
+  name: 'Port Conflict Resolver',
   description:
-    "Something squatting on your port? Identify it and free, kill, or relocate it safely.",
-  category: "Developer Tools",
-  icon: "Plug",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Something squatting on your port? Identify it and free, kill, or relocate it safely.',
+  category: 'Developer Tools',
+  icon: 'Plug',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    port: "3000",
-    os: "macOS",
-    process: "EADDRINUSE on npm run dev. lsof shows node PID 8123 listening. Docker also maps 3000.",
+    port: '3000',
+    os: 'macOS',
+    process:
+      'EADDRINUSE on npm run dev. lsof shows node PID 8123 listening. Docker also maps 3000.',
   },
   inputs: [
     {
-      id: "port",
-      label: "Blocked port",
-      type: "text",
-      placeholder: "e.g. 3000",
+      id: 'port',
+      label: 'Blocked port',
+      type: 'text',
+      placeholder: 'e.g. 3000',
       required: true,
     },
     {
-      id: "os",
-      label: "Operating system",
-      type: "select",
-      options: ["macOS", "Linux", "Windows"],
-      defaultValue: "macOS",
+      id: 'os',
+      label: 'Operating system',
+      type: 'select',
+      options: ['macOS', 'Linux', 'Windows'],
+      defaultValue: 'macOS',
       required: true,
     },
     {
-      id: "process",
-      label: "Error and process clues",
-      type: "textarea",
-      placeholder:
-        "e.g. Paste the EADDRINUSE error, lsof or netstat output, Docker mappings",
+      id: 'process',
+      label: 'Error and process clues',
+      type: 'textarea',
+      placeholder: 'e.g. Paste the EADDRINUSE error, lsof or netstat output, Docker mappings',
     },
   ],
   systemPrompt: `You are a developer support engineer who resolves local port conflicts quickly and safely.
@@ -66,6 +66,6 @@ Rules:
 - Offer relocate as an option alongside kill
 - Do not invent versions, CVEs, or process details not in the inputs
 - Keep language neutral and procedural`,
-  outputType: "markdown",
-  suggestedChainFrom: ["readme-generator", "curl-command-builder"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['readme-generator', 'curl-command-builder'],
+}

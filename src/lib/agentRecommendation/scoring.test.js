@@ -97,12 +97,23 @@ describe('Recommendation Engine Test Suite (Issue #175)', () => {
     })
 
     it('enforces FREE_TEXT_TOKEN_LIMIT ceiling (12 tokens)', () => {
-      const longInput = 'one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen'
+      const longInput =
+        'one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen'
       const tokens = tokenizeFreeText(longInput)
       expect(tokens).toHaveLength(12)
       expect(tokens).toEqual([
-        'one', 'two', 'three', 'four', 'five', 'six',
-        'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve',
+        'one',
+        'two',
+        'three',
+        'four',
+        'five',
+        'six',
+        'seven',
+        'eight',
+        'nine',
+        'ten',
+        'eleven',
+        'twelve',
       ])
     })
   })
@@ -359,7 +370,8 @@ describe('Recommendation Engine Test Suite (Issue #175)', () => {
       const fullAgent = {
         id: 'agent-full',
         name: 'FullStackDeployer',
-        description: 'Complete kubernetes architecture, automated pipelines, with tool calling and structured json reports.',
+        description:
+          'Complete kubernetes architecture, automated pipelines, with tool calling and structured json reports.',
         category: 'Engineering',
         provider: 'anthropic',
       }
@@ -464,9 +476,27 @@ describe('Recommendation Engine Test Suite (Issue #175)', () => {
   // =========================================================================
   describe('recommendAgents', () => {
     const agentsList = [
-      { id: 'agent-1', name: 'Alpha Agent', category: 'DevOps', provider: 'openai', description: 'kubernetes pipeline' },
-      { id: 'agent-2', name: 'Beta Agent', category: 'Design', provider: 'anthropic', description: 'visual design' },
-      { id: 'agent-3', name: 'Gamma Agent', category: 'Engineering', provider: 'gemini', description: 'code review' },
+      {
+        id: 'agent-1',
+        name: 'Alpha Agent',
+        category: 'DevOps',
+        provider: 'openai',
+        description: 'kubernetes pipeline',
+      },
+      {
+        id: 'agent-2',
+        name: 'Beta Agent',
+        category: 'Design',
+        provider: 'anthropic',
+        description: 'visual design',
+      },
+      {
+        id: 'agent-3',
+        name: 'Gamma Agent',
+        category: 'Engineering',
+        provider: 'gemini',
+        description: 'code review',
+      },
     ]
 
     it('returns empty array when agents array is empty, null, or undefined', () => {
@@ -561,7 +591,11 @@ describe('Recommendation Engine Test Suite (Issue #175)', () => {
         const confidentDefault = recommendAgents([agent], { categories: ['DevOps'] })
         expect(confidentDefault[0].isConfident).toBe(true)
 
-        const nonConfidentCustom = recommendAgents([agent], { categories: ['DevOps'] }, { minScore: 50 })
+        const nonConfidentCustom = recommendAgents(
+          [agent],
+          { categories: ['DevOps'] },
+          { minScore: 50 }
+        )
         expect(nonConfidentCustom[0].isConfident).toBe(false)
       })
     })
@@ -570,7 +604,10 @@ describe('Recommendation Engine Test Suite (Issue #175)', () => {
       it('Level 1: sorts higher scores before lower scores', () => {
         const higher = { id: 'high', name: 'High', category: 'DevOps' } // score 30
         const lower = { id: 'low', name: 'Low', category: 'Other', provider: 'openai' } // score 8
-        const results = recommendAgents([lower, higher], { categories: ['DevOps'], providerPreference: 'openai' })
+        const results = recommendAgents([lower, higher], {
+          categories: ['DevOps'],
+          providerPreference: 'openai',
+        })
         expect(results[0].agentId).toBe('high')
         expect(results[1].agentId).toBe('low')
       })
@@ -606,8 +643,19 @@ describe('Recommendation Engine Test Suite (Issue #175)', () => {
         // Agent B: description freeText 'deploy' (+5) + experience (+3) => score 8, provider: none
         // Alphabetically, 'FreeText Agent' comes before 'Provider Agent' ('F' < 'P'),
         // so Agent A ranking first proves Level 3 tie-breaker broke the tie.
-        const agentA = { id: 'agent-a', name: 'Provider Agent', provider: 'openai', category: 'CatX' }
-        const agentB = { id: 'agent-b', name: 'FreeText Agent', provider: 'other', category: 'CatX', description: 'deploy guide' }
+        const agentA = {
+          id: 'agent-a',
+          name: 'Provider Agent',
+          provider: 'openai',
+          category: 'CatX',
+        }
+        const agentB = {
+          id: 'agent-b',
+          name: 'FreeText Agent',
+          provider: 'other',
+          category: 'CatX',
+          description: 'deploy guide',
+        }
 
         const prefs = {
           providerPreference: 'openai',
@@ -712,11 +760,7 @@ describe('Recommendation Engine Test Suite (Issue #175)', () => {
     })
 
     it('generates specific task type explanations for matched task types', () => {
-      const reasons = buildRecommendationReasons(
-        defaultAgent,
-        {},
-        { taskTypes: ['code', 'debug'] }
-      )
+      const reasons = buildRecommendationReasons(defaultAgent, {}, { taskTypes: ['code', 'debug'] })
       expect(reasons).toContain('Its metadata relates to coding tasks.')
       expect(reasons).toContain('Its stated focus includes debugging or troubleshooting.')
     })
@@ -728,7 +772,9 @@ describe('Recommendation Engine Test Suite (Issue #175)', () => {
         { capabilities: ['tool-calling', 'vision-support'] }
       )
       expect(reasons).toContain('Its metadata suggests relevance to your tool calling preference.')
-      expect(reasons).toContain('Its metadata suggests relevance to your vision support preference.')
+      expect(reasons).toContain(
+        'Its metadata suggests relevance to your vision support preference.'
+      )
     })
 
     it('generates exact provider explanation when provider is exact', () => {
@@ -761,11 +807,23 @@ describe('Recommendation Engine Test Suite (Issue #175)', () => {
     })
 
     it('generates experience guidance explanation in isolation', () => {
-      const beginnerReasons = buildRecommendationReasons(defaultAgent, {}, { experience: 'beginner' })
-      expect(beginnerReasons).toContain('Its metadata aligns with your beginner guidance preference.')
+      const beginnerReasons = buildRecommendationReasons(
+        defaultAgent,
+        {},
+        { experience: 'beginner' }
+      )
+      expect(beginnerReasons).toContain(
+        'Its metadata aligns with your beginner guidance preference.'
+      )
 
-      const advancedReasons = buildRecommendationReasons(defaultAgent, {}, { experience: 'advanced' })
-      expect(advancedReasons).toContain('Its metadata aligns with your advanced guidance preference.')
+      const advancedReasons = buildRecommendationReasons(
+        defaultAgent,
+        {},
+        { experience: 'advanced' }
+      )
+      expect(advancedReasons).toContain(
+        'Its metadata aligns with your advanced guidance preference.'
+      )
     })
 
     it('does not pad a short reason list with generic metadata claims', () => {
@@ -786,7 +844,11 @@ describe('Recommendation Engine Test Suite (Issue #175)', () => {
         capabilities: ['tool-calling'],
         provider: 'exact',
       }
-      const reasons = buildRecommendationReasons(agent, { primaryGoal: 'coding-development' }, matchedSignals)
+      const reasons = buildRecommendationReasons(
+        agent,
+        { primaryGoal: 'coding-development' },
+        matchedSignals
+      )
       expect(reasons).toHaveLength(4)
       const uniqueReasons = new Set(reasons)
       expect(uniqueReasons.size).toBe(reasons.length)

@@ -13,7 +13,9 @@ vi.mock('../components/AgentRunner', () => ({
 vi.mock('../lib/useAgents', () => ({
   useAgents: () => ({
     loading: false,
-    agents: [{ id: 'summarizer', name: 'Summarizer', provider: 'openai', systemPrompt: 'p', inputs: [] }],
+    agents: [
+      { id: 'summarizer', name: 'Summarizer', provider: 'openai', systemPrompt: 'p', inputs: [] },
+    ],
   }),
 }))
 

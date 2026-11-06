@@ -1,41 +1,41 @@
 export default {
-  id: "morning-routine-designer",
-  createdAt: "2026-10-12",
-  name: "Morning Routine Designer",
+  id: 'morning-routine-designer',
+  createdAt: '2026-10-12',
+  name: 'Morning Routine Designer',
   description:
-    "Design a realistic morning routine from your constraints: anchors, order, and ramp-up week.",
-  category: "Personal Development",
-  icon: "Sunrise",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Design a realistic morning routine from your constraints: anchors, order, and ramp-up week.',
+  category: 'Personal Development',
+  icon: 'Sunrise',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     constraints:
-      "I leave for work at 8:15am, have two kids to get ready, dislike exercise before coffee, and want 20 quiet minutes.",
-    wakeTime: "6:30am",
-    goal: "focus",
+      'I leave for work at 8:15am, have two kids to get ready, dislike exercise before coffee, and want 20 quiet minutes.',
+    wakeTime: '6:30am',
+    goal: 'focus',
   },
   inputs: [
     {
-      id: "constraints",
-      label: "Morning constraints",
-      type: "textarea",
+      id: 'constraints',
+      label: 'Morning constraints',
+      type: 'textarea',
       placeholder:
-        "e.g. Leave time, commute, kids, pets, workouts, quiet-time needs, hard limits...",
+        'e.g. Leave time, commute, kids, pets, workouts, quiet-time needs, hard limits...',
       required: true,
     },
     {
-      id: "wakeTime",
-      label: "Wake time",
-      type: "text",
-      placeholder: "e.g. 6:30am",
+      id: 'wakeTime',
+      label: 'Wake time',
+      type: 'text',
+      placeholder: 'e.g. 6:30am',
     },
     {
-      id: "goal",
-      label: "Primary goal",
-      type: "select",
-      options: ["energy", "focus", "calm"],
-      defaultValue: "energy",
+      id: 'goal',
+      label: 'Primary goal',
+      type: 'select',
+      options: ['energy', 'focus', 'calm'],
+      defaultValue: 'energy',
       required: true,
     },
   ],
@@ -66,6 +66,6 @@ Rules:
 - Do not invent facts, statistics, or study claims
 - Keep a neutral, practical tone with no motivational hype
 - Ask nothing back; work with what is given`,
-  outputType: "markdown",
-  suggestedChainFrom: ["research-agent", "meeting-notes-summarizer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['research-agent', 'meeting-notes-summarizer'],
+}

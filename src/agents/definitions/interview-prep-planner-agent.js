@@ -1,87 +1,82 @@
-
 const interview_prep_planner_agent = {
-    id: 'interview-prep-planner-agent',
-    name: 'Interview Preparation Planner Agent',
-    description: 'Creates a personalized interview preparation plan based on your target role, experience level, and available time — with a topic-wise study schedule, daily practice tasks, and a mock interview plan.',
-    category: 'Education',
-    icon: 'ClipboardList',          // from lucide.dev/icons
-    provider: 'any',                // 'openai' | 'anthropic' | 'gemini' |'any'
-    defaultProvider: 'openai',
-    model: 'gpt-4o',
-    inputs: [
-        {
-            id: 'target_role',
-            label: 'Target Role',
-            type: 'text',
-            placeholder: 'e.g. "Senior Backend Engineer"',
-            required: true,
-        },
-        {
-            id: 'experience_level',
-            label: 'Experience Level',
-            type: 'select',
-            required: true,
-            options: [
-                'Entry Level / New Grad',
-                'Junior (1-2 years)',
-                'Mid-Level (3-5 years)',
-                'Senior (6-10 years)',
-                'Staff / Principal (10+ years)',
-            ],
-        },
-        {
-            id: 'target_company',
-            label: 'Target Company (Optional)',
-            type: 'text',
-            placeholder: 'e.g. "Google" — leave blank if general/unknown',
-            required: false,
-        },
-        {
-            id: 'interview_type',
-            label: 'Interview Type',
-            type: 'select',
-            required: true,
-            options: [
-                'Technical',
-                'Behavioral',
-                'System Design',
-                'Mixed',
-            ],
-        },
-        {
-            id: 'preparation_duration',
-            label: 'Preparation Duration',
-            type: 'text',
-            placeholder: 'e.g. "2 weeks", "1 month"',
-            required: true,
-        },
-        {
-            id: 'study_hours_per_day',
-            label: 'Available Study Hours Per Day',
-            type: 'text',
-            placeholder: 'e.g. "2 hours"',
-            required: true,
-        },
-        {
-            id: 'key_skills',
-            label: 'Key Skills / Technologies',
-            type: 'textarea',
-            placeholder: 'e.g. "Python, System Design, SQL, REST APIs, Distributed Systems"',
-            required: true,
-        },
-        {
-            id: 'confidence_level',
-            label: 'Current Confidence Level',
-            type: 'select',
-            required: true,
-            options: [
-                'Low - just starting to prepare',
-                'Moderate - know the basics, need practice',
-                'High - fairly confident, need polish',
-            ],
-        },
-    ],
-    systemPrompt: `You are an Interview Preparation Planner Agent. The user will give you their target role, experience level, optional target company, interview type, preparation duration, daily available study hours, key skills/technologies to focus on, and their current confidence level.
+  id: 'interview-prep-planner-agent',
+  name: 'Interview Preparation Planner Agent',
+  description:
+    'Creates a personalized interview preparation plan based on your target role, experience level, and available time — with a topic-wise study schedule, daily practice tasks, and a mock interview plan.',
+  category: 'Education',
+  icon: 'ClipboardList', // from lucide.dev/icons
+  provider: 'any', // 'openai' | 'anthropic' | 'gemini' |'any'
+  defaultProvider: 'openai',
+  model: 'gpt-4o',
+  inputs: [
+    {
+      id: 'target_role',
+      label: 'Target Role',
+      type: 'text',
+      placeholder: 'e.g. "Senior Backend Engineer"',
+      required: true,
+    },
+    {
+      id: 'experience_level',
+      label: 'Experience Level',
+      type: 'select',
+      required: true,
+      options: [
+        'Entry Level / New Grad',
+        'Junior (1-2 years)',
+        'Mid-Level (3-5 years)',
+        'Senior (6-10 years)',
+        'Staff / Principal (10+ years)',
+      ],
+    },
+    {
+      id: 'target_company',
+      label: 'Target Company (Optional)',
+      type: 'text',
+      placeholder: 'e.g. "Google" — leave blank if general/unknown',
+      required: false,
+    },
+    {
+      id: 'interview_type',
+      label: 'Interview Type',
+      type: 'select',
+      required: true,
+      options: ['Technical', 'Behavioral', 'System Design', 'Mixed'],
+    },
+    {
+      id: 'preparation_duration',
+      label: 'Preparation Duration',
+      type: 'text',
+      placeholder: 'e.g. "2 weeks", "1 month"',
+      required: true,
+    },
+    {
+      id: 'study_hours_per_day',
+      label: 'Available Study Hours Per Day',
+      type: 'text',
+      placeholder: 'e.g. "2 hours"',
+      required: true,
+    },
+    {
+      id: 'key_skills',
+      label: 'Key Skills / Technologies',
+      type: 'textarea',
+      placeholder: 'e.g. "Python, System Design, SQL, REST APIs, Distributed Systems"',
+      required: true,
+    },
+    {
+      id: 'confidence_level',
+      label: 'Current Confidence Level',
+      type: 'select',
+      required: true,
+      options: [
+        'Low - just starting to prepare',
+        'Moderate - know the basics, need practice',
+        'High - fairly confident, need polish',
+      ],
+    },
+  ],
+  systemPrompt: `You are an Interview Preparation Planner Agent. The user will give you their target role, experience level, optional target company, interview type, preparation duration, daily available study hours, key skills/technologies to focus on, and their current confidence level.
 
 Your job is to create a realistic, personalized, day-by-day interview preparation plan that fits within their actual available time — never assume more hours or days than they specified.
 
@@ -122,7 +117,7 @@ Rules:
 - Never fabricate specific interview questions claimed to be from a real company unless they're genuinely well-known/publicly documented; otherwise, describe realistic practice question types instead.
 - If the preparation duration is very short (e.g. under 3 days) relative to the interview type's typical scope, say so plainly and prioritize the highest-impact topics rather than trying to cover everything.
 - Keep the plan realistic and actionable — avoid generic filler like "study hard" or "practice more" without specifics.`,
-    outputType: 'markdown',         // markdown | text | json
+  outputType: 'markdown', // markdown | text | json
 }
 
 export default interview_prep_planner_agent

@@ -6,7 +6,15 @@ import PageHeader from './PageHeader'
  * Service. A single measured column, hairline-divided sections and no
  * decorative chrome, because legal text should read like documentation.
  */
-export default function LegalDoc({ eyebrow, title, updated, intro, sections, footerTitle, footerBody }) {
+export default function LegalDoc({
+  eyebrow,
+  title,
+  updated,
+  intro,
+  sections,
+  footerTitle,
+  footerBody,
+}) {
   const handleBack = () => {
     if (typeof window !== 'undefined') window.history.back()
   }
@@ -29,17 +37,27 @@ export default function LegalDoc({ eyebrow, title, updated, intro, sections, foo
         {sections.map(({ icon: Icon, title: sectionTitle, content }) => (
           <section key={sectionTitle} className="py-5">
             <h2 className="flex items-center gap-2 font-display text-[15px] font-semibold tracking-[-0.01em] text-zinc-900 dark:text-text-primary">
-              <Icon size={14} className="shrink-0 text-zinc-600 dark:text-zinc-300" aria-hidden="true" />
+              <Icon
+                size={14}
+                className="shrink-0 text-zinc-600 dark:text-zinc-300"
+                aria-hidden="true"
+              />
               {sectionTitle}
             </h2>
-            <p className="mt-2 text-[13px] leading-7 text-zinc-600 dark:text-text-secondary">{content}</p>
+            <p className="mt-2 text-[13px] leading-7 text-zinc-600 dark:text-text-secondary">
+              {content}
+            </p>
           </section>
         ))}
       </div>
 
       <div className="mt-8 border border-zinc-200 bg-zinc-50/60 p-4 dark:border-border dark:bg-surface-card">
-        <h2 className="text-[13px] font-semibold text-zinc-900 dark:text-text-primary">{footerTitle}</h2>
-        <p className="mt-1.5 text-[13px] leading-7 text-zinc-600 dark:text-text-secondary">{footerBody}</p>
+        <h2 className="text-[13px] font-semibold text-zinc-900 dark:text-text-primary">
+          {footerTitle}
+        </h2>
+        <p className="mt-1.5 text-[13px] leading-7 text-zinc-600 dark:text-text-secondary">
+          {footerBody}
+        </p>
       </div>
     </div>
   )

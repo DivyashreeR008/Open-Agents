@@ -36,15 +36,21 @@ describe('End-to-End Application Smoke Path', () => {
     sessionStorage.clear()
     // Configure stubbed provider credentials so the agent can execute without real keys
     sessionStorage.setItem('OpenAgents_anthropic_key', 'stubbed-test-key')
-    sessionStorage.setItem('oa_apikey_anthropic', JSON.stringify({
-      key: 'stubbed-test-key',
-      expiresAt: Date.now() + 8 * 60 * 60 * 1000,
-    }))
+    sessionStorage.setItem(
+      'oa_apikey_anthropic',
+      JSON.stringify({
+        key: 'stubbed-test-key',
+        expiresAt: Date.now() + 8 * 60 * 60 * 1000,
+      })
+    )
     sessionStorage.setItem('OpenAgents_openai_key', 'stubbed-test-key')
-    sessionStorage.setItem('oa_apikey_openai', JSON.stringify({
-      key: 'stubbed-test-key',
-      expiresAt: Date.now() + 8 * 60 * 60 * 1000,
-    }))
+    sessionStorage.setItem(
+      'oa_apikey_openai',
+      JSON.stringify({
+        key: 'stubbed-test-key',
+        expiresAt: Date.now() + 8 * 60 * 60 * 1000,
+      })
+    )
   })
 
   it('completes the core user journey: load catalogue -> open agent -> run against stubbed provider -> see output -> find in history', async () => {
@@ -70,14 +76,24 @@ describe('End-to-End Application Smoke Path', () => {
     await user.click(agentLink)
 
     // Wait for the agent runner view to load
-    const heading = await screen.findByRole('heading', { name: /a\/b test analyzer/i }, { timeout: 15000 })
+    const heading = await screen.findByRole(
+      'heading',
+      { name: /a\/b test analyzer/i },
+      { timeout: 15000 }
+    )
     expect(heading).toBeInTheDocument()
 
-    const inputArea = await screen.findByPlaceholderText(/control and variant sample sizes/i, {}, { timeout: 15000 })
+    const inputArea = await screen.findByPlaceholderText(
+      /control and variant sample sizes/i,
+      {},
+      { timeout: 15000 }
+    )
     expect(inputArea).toBeInTheDocument()
 
     // 4. Run against a stubbed provider: fill in required input and trigger run
-    fireEvent.change(inputArea, { target: { value: 'Control: 100 visitors, 10 signups. Variant: 100 visitors, 20 signups.' } })
+    fireEvent.change(inputArea, {
+      target: { value: 'Control: 100 visitors, 10 signups. Variant: 100 visitors, 20 signups.' },
+    })
 
     const runButton = screen.getByRole('button', { name: /run agent/i })
     expect(runButton).not.toBeDisabled()
@@ -85,7 +101,11 @@ describe('End-to-End Application Smoke Path', () => {
     await user.click(runButton)
 
     // 5. See output: verify output renders on screen
-    const outputElement = await screen.findByText(/smoke test output: analysis complete/i, {}, { timeout: 15000 })
+    const outputElement = await screen.findByText(
+      /smoke test output: analysis complete/i,
+      {},
+      { timeout: 15000 }
+    )
     expect(outputElement).toBeInTheDocument()
 
     // 6. Find it in history: verify stored in localStorage and visible in recent history

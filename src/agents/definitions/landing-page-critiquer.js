@@ -1,40 +1,39 @@
 export default {
-  id: "landing-page-critiquer",
-  createdAt: "2026-10-12",
-  name: "Landing Page Critiquer",
+  id: 'landing-page-critiquer',
+  createdAt: '2026-10-12',
+  name: 'Landing Page Critiquer',
   description:
-    "Paste landing copy for a heuristic teardown: hierarchy, friction, clarity fixes in priority order.",
-  category: "Design",
-  icon: "Eye",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Paste landing copy for a heuristic teardown: hierarchy, friction, clarity fixes in priority order.',
+  category: 'Design',
+  icon: 'Eye',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    copy:
-      "Headline: Ship invoices 10x faster. Subhead: TeamPay helps freelancers bill clients. CTA: Start free trial. Section 2: features grid with 8 items and no hierarchy.",
-    goal: "Free trial signups",
-    audience: "Freelancers who bill hourly clients",
+    copy: 'Headline: Ship invoices 10x faster. Subhead: TeamPay helps freelancers bill clients. CTA: Start free trial. Section 2: features grid with 8 items and no hierarchy.',
+    goal: 'Free trial signups',
+    audience: 'Freelancers who bill hourly clients',
   },
   inputs: [
     {
-      id: "copy",
-      label: "Landing page copy",
-      type: "textarea",
+      id: 'copy',
+      label: 'Landing page copy',
+      type: 'textarea',
       placeholder:
-        "Paste headlines, subheads, CTAs, sections, e.g.:\nHeadline: Ship invoices 10x faster\nSubhead: TeamPay helps freelancers bill clients\nCTA: Start free trial",
+        'Paste headlines, subheads, CTAs, sections, e.g.:\nHeadline: Ship invoices 10x faster\nSubhead: TeamPay helps freelancers bill clients\nCTA: Start free trial',
       required: true,
     },
     {
-      id: "goal",
-      label: "Page goal",
-      type: "text",
-      placeholder: "e.g. Free trial signups",
+      id: 'goal',
+      label: 'Page goal',
+      type: 'text',
+      placeholder: 'e.g. Free trial signups',
     },
     {
-      id: "audience",
-      label: "Target audience",
-      type: "text",
-      placeholder: "e.g. Freelancers who bill hourly clients",
+      id: 'audience',
+      label: 'Target audience',
+      type: 'text',
+      placeholder: 'e.g. Freelancers who bill hourly clients',
     },
   ],
   systemPrompt: `You are a conversion-focused design critic who teardowns landing pages heuristically.
@@ -64,6 +63,6 @@ Rules:
 - Rank fixes by expected impact on the stated goal
 - Keep critique direct and neutral in tone
 - Use no emoji anywhere in the output`,
-  outputType: "markdown",
-  suggestedChainFrom: ["landing-page-copy-generator", "competitive-analysis-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['landing-page-copy-generator', 'competitive-analysis-generator'],
+}

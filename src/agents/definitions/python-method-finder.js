@@ -1,24 +1,26 @@
-export default{
-  id: "python-method-finder",
-  createdAt: "2026-06-16",
-  name: "Python Method Finder",
-  description: "Master python methods and improve your coding skills!",
-  category: "Engineering",
-  icon: "Code",
-  provider: "any",
-  defaultProvider:  "gemini", 
-  model: "gemini-3.1-flash",
- exampleInputs: {
-  problem_description: "I have two lists and I want to combine them into one list without duplicates",
-},
+export default {
+  id: 'python-method-finder',
+  createdAt: '2026-06-16',
+  name: 'Python Method Finder',
+  description: 'Master python methods and improve your coding skills!',
+  category: 'Engineering',
+  icon: 'Code',
+  provider: 'any',
+  defaultProvider: 'gemini',
+  model: 'gemini-3.1-flash',
+  exampleInputs: {
+    problem_description:
+      'I have two lists and I want to combine them into one list without duplicates',
+  },
   inputs: [
     {
-      id: "problem_description",
-      label: "Your code query here.",
-      type: "textarea",
-      placeholder: "query here to find the python method you need!",
-      required: true
-    } ],
+      id: 'problem_description',
+      label: 'Your code query here.',
+      type: 'textarea',
+      placeholder: 'query here to find the python method you need!',
+      required: true,
+    },
+  ],
   systemPrompt: `You are an expert Python tutor who helps developers find the exact 
 built-in method, function or technique to solve their problem.
 
@@ -82,6 +84,5 @@ Rules:
   manual loops where appropriate, but mention the loop-based approach too 
   for beginners`,
 
-  outputType: "markdown" 
-
-};
+  outputType: 'markdown',
+}

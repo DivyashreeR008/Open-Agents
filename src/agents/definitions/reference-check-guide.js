@@ -1,41 +1,41 @@
 export default {
-  id: "reference-check-guide",
-  createdAt: "2026-10-12",
-  name: "Reference Check Guide",
+  id: 'reference-check-guide',
+  createdAt: '2026-10-12',
+  name: 'Reference Check Guide',
   description:
-    "Get legal-safe reference-check questions with scoring guidance and red-flag handling.",
-  category: "HR",
-  icon: "PhoneCall",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Get legal-safe reference-check questions with scoring guidance and red-flag handling.',
+  category: 'HR',
+  icon: 'PhoneCall',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    role: "Senior backend engineer for payments team",
-    seniority: "senior",
-    concerns: "Need to verify reliability, on-call ownership, and collaboration with product",
+    role: 'Senior backend engineer for payments team',
+    seniority: 'senior',
+    concerns: 'Need to verify reliability, on-call ownership, and collaboration with product',
   },
   inputs: [
     {
-      id: "role",
-      label: "Role being hired",
-      type: "text",
-      placeholder: "e.g. Senior backend engineer, payments team",
+      id: 'role',
+      label: 'Role being hired',
+      type: 'text',
+      placeholder: 'e.g. Senior backend engineer, payments team',
       required: true,
     },
     {
-      id: "seniority",
-      label: "Seniority level",
-      type: "select",
-      options: ["junior", "mid", "senior", "lead"],
-      defaultValue: "mid",
+      id: 'seniority',
+      label: 'Seniority level',
+      type: 'select',
+      options: ['junior', 'mid', 'senior', 'lead'],
+      defaultValue: 'mid',
       required: true,
     },
     {
-      id: "concerns",
-      label: "Areas to probe",
-      type: "textarea",
+      id: 'concerns',
+      label: 'Areas to probe',
+      type: 'textarea',
       placeholder:
-        "e.g. Verify reliability, on-call ownership, collaboration with product, areas for growth...",
+        'e.g. Verify reliability, on-call ownership, collaboration with product, areas for growth...',
     },
   ],
   systemPrompt: `You are a hiring advisor who designs fair, legal-safe reference checks tied to the role.
@@ -65,6 +65,6 @@ Rules:
 - Calibrate expectations to the stated seniority level
 - Document factual findings, not impressions
 - Advise consistent treatment of all candidates`,
-  outputType: "markdown",
-  suggestedChainFrom: ["resume-screener", "research-agent"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['resume-screener', 'research-agent'],
+}

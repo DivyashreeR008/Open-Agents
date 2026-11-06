@@ -1,39 +1,39 @@
 export default {
-  id: "gatekeeper-navigator",
-  createdAt: "2026-10-12",
-  name: "Gatekeeper Navigator",
+  id: 'gatekeeper-navigator',
+  createdAt: '2026-10-12',
+  name: 'Gatekeeper Navigator',
   description:
-    "Get past assistants to decision-makers respectfully: openers, value drops, and callbacks.",
-  category: "Sales",
-  icon: "DoorClosed",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Get past assistants to decision-makers respectfully: openers, value drops, and callbacks.',
+  category: 'Sales',
+  icon: 'DoorClosed',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    target: "VP of Operations at mid-size logistics firms",
-    company: "Acme Freight, 200 employees, exploring route software",
-    reason: "We cut dispatch planning time for similar fleets and want a 15-minute intro",
+    target: 'VP of Operations at mid-size logistics firms',
+    company: 'Acme Freight, 200 employees, exploring route software',
+    reason: 'We cut dispatch planning time for similar fleets and want a 15-minute intro',
   },
   inputs: [
     {
-      id: "target",
-      label: "Decision-maker target",
-      type: "text",
-      placeholder: "e.g. VP of Operations at mid-size logistics firms",
+      id: 'target',
+      label: 'Decision-maker target',
+      type: 'text',
+      placeholder: 'e.g. VP of Operations at mid-size logistics firms',
       required: true,
     },
     {
-      id: "company",
-      label: "Company context",
-      type: "text",
-      placeholder: "e.g. Acme Freight, 200 employees, exploring route software",
+      id: 'company',
+      label: 'Company context',
+      type: 'text',
+      placeholder: 'e.g. Acme Freight, 200 employees, exploring route software',
     },
     {
-      id: "reason",
-      label: "Reason for calling",
-      type: "textarea",
+      id: 'reason',
+      label: 'Reason for calling',
+      type: 'textarea',
       placeholder:
-        "e.g. We cut dispatch planning time for similar fleets and want a 15-minute intro call",
+        'e.g. We cut dispatch planning time for similar fleets and want a 15-minute intro call',
     },
   ],
   systemPrompt: `You are a respectful enterprise SDR coach who helps sellers
@@ -66,6 +66,6 @@ Rules:
 - Use only facts the user provided about company and reason
 - Do not invent metrics, quotes, reviews, or client names
 - Never suggest deception, name-dropping, or false urgency`,
-  outputType: "markdown",
-  suggestedChainFrom: ["cold-email-writer", "linkedin-outreach-message-writer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['cold-email-writer', 'linkedin-outreach-message-writer'],
+}

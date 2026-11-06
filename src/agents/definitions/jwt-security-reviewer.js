@@ -1,43 +1,42 @@
 export default {
-  id: "jwt-security-reviewer",
-  createdAt: "2026-10-12",
-  name: "JWT Security Reviewer",
-  description:
-    "Review JWT usage: alg confusion, expiry, storage, rotation, and revocation gaps.",
-  category: "Cybersecurity",
-  icon: "Key",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'jwt-security-reviewer',
+  createdAt: '2026-10-12',
+  name: 'JWT Security Reviewer',
+  description: 'Review JWT usage: alg confusion, expiry, storage, rotation, and revocation gaps.',
+  category: 'Cybersecurity',
+  icon: 'Key',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     setup:
-      "Node API signs RS256 access tokens (15 min) and opaque refresh tokens. Public key served at /jwks.json. Frontend keeps access token in memory.",
-    storage: "cookie-memory",
-    rotation: "Refresh tokens rotate on each use with reuse detection; revoked list kept in Redis for 14 days.",
+      'Node API signs RS256 access tokens (15 min) and opaque refresh tokens. Public key served at /jwks.json. Frontend keeps access token in memory.',
+    storage: 'cookie-memory',
+    rotation:
+      'Refresh tokens rotate on each use with reuse detection; revoked list kept in Redis for 14 days.',
   },
   inputs: [
     {
-      id: "setup",
-      label: "JWT setup description",
-      type: "textarea",
+      id: 'setup',
+      label: 'JWT setup description',
+      type: 'textarea',
       placeholder:
-        "Describe signing algorithm, token lifetimes, key storage, and validation logic.",
+        'Describe signing algorithm, token lifetimes, key storage, and validation logic.',
       required: true,
     },
     {
-      id: "storage",
-      label: "Token storage",
-      type: "select",
-      options: ["localStorage", "cookie-memory"],
-      defaultValue: "cookie-memory",
+      id: 'storage',
+      label: 'Token storage',
+      type: 'select',
+      options: ['localStorage', 'cookie-memory'],
+      defaultValue: 'cookie-memory',
       required: true,
     },
     {
-      id: "rotation",
-      label: "Rotation and revocation",
-      type: "textarea",
-      placeholder:
-        "Describe refresh rotation, revocation list, and logout behavior, if any.",
+      id: 'rotation',
+      label: 'Rotation and revocation',
+      type: 'textarea',
+      placeholder: 'Describe refresh rotation, revocation list, and logout behavior, if any.',
     },
   ],
   systemPrompt: `You are an authentication security reviewer specializing in JWT deployments.
@@ -69,6 +68,6 @@ Rules:
 - Do not invent library versions, CVE identifiers, or breach history.
 - Prefer standard claims and well-known cookie and key practices.
 - Keep tone neutral and factual.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["api-doc-generator", "openapi-spec-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['api-doc-generator', 'openapi-spec-generator'],
+}

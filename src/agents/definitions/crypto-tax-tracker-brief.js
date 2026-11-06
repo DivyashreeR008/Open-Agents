@@ -1,39 +1,38 @@
 export default {
-  id: "crypto-tax-tracker-brief",
-  createdAt: "2026-10-12",
-  name: "Crypto Tax Tracker Brief",
+  id: 'crypto-tax-tracker-brief',
+  createdAt: '2026-10-12',
+  name: 'Crypto Tax Tracker Brief',
   description:
-    "Organize wallets and transactions for tax time: cost-basis methods and records to keep.",
-  category: "Finance",
-  icon: "Bitcoin",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Organize wallets and transactions for tax time: cost-basis methods and records to keep.',
+  category: 'Finance',
+  icon: 'Bitcoin',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    activity:
-      "Spot buys on two exchanges, a few ETH-to-stable swaps, one year of staking rewards.",
-    country: "United States",
-    years: "2024-2025",
+    activity: 'Spot buys on two exchanges, a few ETH-to-stable swaps, one year of staking rewards.',
+    country: 'United States',
+    years: '2024-2025',
   },
   inputs: [
     {
-      id: "activity",
-      label: "Crypto activity",
-      type: "textarea",
-      placeholder: "e.g. Exchanges, wallets, trades, staking, transfers",
+      id: 'activity',
+      label: 'Crypto activity',
+      type: 'textarea',
+      placeholder: 'e.g. Exchanges, wallets, trades, staking, transfers',
       required: true,
     },
     {
-      id: "country",
-      label: "Tax country",
-      type: "text",
-      placeholder: "e.g. United States",
+      id: 'country',
+      label: 'Tax country',
+      type: 'text',
+      placeholder: 'e.g. United States',
     },
     {
-      id: "years",
-      label: "Tax years",
-      type: "text",
-      placeholder: "e.g. 2024-2025",
+      id: 'years',
+      label: 'Tax years',
+      type: 'text',
+      placeholder: 'e.g. 2024-2025',
     },
   ],
   systemPrompt: `You are a record-keeping organizer who prepares crypto activity for review by a tax professional.
@@ -59,6 +58,6 @@ Rules:
 - Give general educational information, not tax advice for a specific return.
 - Advise confirming treatment with a qualified professional in the stated country.
 - Keep tone neutral and organized.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["personal-budget-analyzer", "invoice-description-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['personal-budget-analyzer', 'invoice-description-generator'],
+}

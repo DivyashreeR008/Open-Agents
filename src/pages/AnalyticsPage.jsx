@@ -1,9 +1,21 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  BarChart3, Activity, Users, Flame, Zap,
-  TrendingUp, ArrowRight, Trash2, Bot, Trophy,
-  Calendar, Clock, Target, Download, Filter,
+  BarChart3,
+  Activity,
+  Users,
+  Flame,
+  Zap,
+  TrendingUp,
+  ArrowRight,
+  Trash2,
+  Bot,
+  Trophy,
+  Calendar,
+  Clock,
+  Target,
+  Download,
+  Filter,
 } from 'lucide-react'
 import { useAnalytics } from '../lib/useAnalytics'
 import { useSessionSpend } from '../lib/useSessionSpend'
@@ -47,7 +59,7 @@ const DEFAULT_CATEGORY_COLOR = 'bg-zinc-500'
 // ── Time range options ──────────────────────────────────────────────────────
 const TIME_RANGES = [
   { value: 'all', label: 'All Time' },
-  { value: '7d',  label: 'Last 7 Days' },
+  { value: '7d', label: 'Last 7 Days' },
   { value: '30d', label: 'Last 30 Days' },
   { value: '90d', label: 'Last 90 Days' },
 ]
@@ -79,7 +91,12 @@ export default function AnalyticsPage() {
   if (stats.totalRuns === 0 && timeRange === 'all') {
     return (
       <div className="animate-fade-in max-w-4xl mx-auto">
-        <PageHeader onClear={clearAnalytics} hasData={false} timeRange={timeRange} setTimeRange={setTimeRange} />
+        <PageHeader
+          onClear={clearAnalytics}
+          hasData={false}
+          timeRange={timeRange}
+          setTimeRange={setTimeRange}
+        />
         <div className=" border p-12 text-center flex flex-col items-center gap-4 dark:bg-surface-card dark:border-border bg-white border-gray-200">
           <div className="w-16 h-16 bg-zinc-500/10 flex items-center justify-center">
             <BarChart3 size={32} className="text-zinc-900 dark:text-white" />
@@ -88,8 +105,8 @@ export default function AnalyticsPage() {
             No analytics yet
           </h2>
           <p className="text-sm dark:text-text-secondary text-gray-500 max-w-md leading-relaxed">
-            Run a few agents and your usage stats will automatically appear here —
-            top agents, provider breakdown, activity streaks, and more.
+            Run a few agents and your usage stats will automatically appear here — top agents,
+            provider breakdown, activity streaks, and more.
           </p>
           <button
             onClick={() => navigate('/agents')}
@@ -104,7 +121,11 @@ export default function AnalyticsPage() {
         {/* Session spend can exist even with no recorded analytics events
             (e.g. analytics was cleared but session spend wasn't) */}
         {spendRuns.length > 0 && (
-          <SectionCard title="Token Usage & Cost (This Session)" icon={<Zap size={16} />} delay={200}>
+          <SectionCard
+            title="Token Usage & Cost (This Session)"
+            icon={<Zap size={16} />}
+            delay={200}
+          >
             <TokenUsageSection runs={spendRuns} totalTokens={totalTokens} totalSpend={totalSpend} />
           </SectionCard>
         )}
@@ -116,7 +137,12 @@ export default function AnalyticsPage() {
   if (stats.totalRuns === 0 && timeRange !== 'all') {
     return (
       <div className="animate-fade-in max-w-5xl mx-auto">
-        <PageHeader onClear={clearAnalytics} hasData={true} timeRange={timeRange} setTimeRange={setTimeRange} />
+        <PageHeader
+          onClear={clearAnalytics}
+          hasData={true}
+          timeRange={timeRange}
+          setTimeRange={setTimeRange}
+        />
         <div className=" border p-12 text-center flex flex-col items-center gap-4 dark:bg-surface-card dark:border-border bg-white border-gray-200">
           <div className="w-14 h-14 bg-zinc-500/10 flex items-center justify-center">
             <Filter size={28} className="text-zinc-500" />
@@ -125,7 +151,8 @@ export default function AnalyticsPage() {
             No data in this range
           </h2>
           <p className="text-sm dark:text-text-secondary text-gray-500 max-w-md leading-relaxed">
-            No agent runs found in the selected time range. Try selecting a broader range or "All Time".
+            No agent runs found in the selected time range. Try selecting a broader range or "All
+            Time".
           </p>
           <button
             onClick={() => setTimeRange('all')}
@@ -138,7 +165,11 @@ export default function AnalyticsPage() {
         {/* Session spend is not filtered by time range, so it can still
             be shown here even when the selected range has no runs */}
         {spendRuns.length > 0 && (
-          <SectionCard title="Token Usage & Cost (This Session)" icon={<Zap size={16} />} delay={200}>
+          <SectionCard
+            title="Token Usage & Cost (This Session)"
+            icon={<Zap size={16} />}
+            delay={200}
+          >
             <TokenUsageSection runs={spendRuns} totalTokens={totalTokens} totalSpend={totalSpend} />
           </SectionCard>
         )}
@@ -148,7 +179,12 @@ export default function AnalyticsPage() {
 
   return (
     <div className="animate-fade-in max-w-5xl mx-auto">
-      <PageHeader onClear={clearAnalytics} hasData={true} timeRange={timeRange} setTimeRange={setTimeRange} />
+      <PageHeader
+        onClear={clearAnalytics}
+        hasData={true}
+        timeRange={timeRange}
+        setTimeRange={setTimeRange}
+      />
 
       {/* ── Primary Stat Cards ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
@@ -249,14 +285,14 @@ export default function AnalyticsPage() {
       </SectionCard>
 
       {/* ── Token Usage & Cost (current session) ── */}
-        {spendRuns.length > 0 && (
-          <SectionCard title="Token Usage & Cost (This Session)" icon={<Zap size={16} />} delay={760}>
-            <TokenUsageSection runs={spendRuns} totalTokens={totalTokens} totalSpend={totalSpend} />
-          </SectionCard>
-        )}
+      {spendRuns.length > 0 && (
+        <SectionCard title="Token Usage & Cost (This Session)" icon={<Zap size={16} />} delay={760}>
+          <TokenUsageSection runs={spendRuns} totalTokens={totalTokens} totalSpend={totalSpend} />
+        </SectionCard>
+      )}
 
-        {/* ── Export Bar ── */}
-        <ExportBar stats={stats} />
+      {/* ── Export Bar ── */}
+      <ExportBar stats={stats} />
     </div>
   )
 }
@@ -273,8 +309,12 @@ function PageHeader({ onClear, hasData, timeRange, setTimeRange }) {
           <BarChart3 size={20} className="text-zinc-900 dark:text-white" />
         </div>
         <div>
-          <h1 className="font-display text-[17px] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-text-primary">Dashboard</h1>
-          <p className="text-xs dark:text-text-secondary text-gray-500">Your agent usage at a glance</p>
+          <h1 className="font-display text-[17px] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-text-primary">
+            Dashboard
+          </h1>
+          <p className="text-xs dark:text-text-secondary text-gray-500">
+            Your agent usage at a glance
+          </p>
         </div>
       </div>
       <div className="flex items-center gap-2 flex-wrap">
@@ -285,9 +325,10 @@ function PageHeader({ onClear, hasData, timeRange, setTimeRange }) {
               key={range.value}
               onClick={() => setTimeRange(range.value)}
               className={`px-2.5 py-1 text-[10px] font-semibold transition-colors duration-200
-                ${timeRange === range.value
-                  ? 'bg-black text-white dark:bg-white dark:text-black'
-                  : 'text-gray-500 dark:text-text-muted hover:text-gray-700 dark:hover:text-text-primary'
+                ${
+                  timeRange === range.value
+                    ? 'bg-black text-white dark:bg-white dark:text-black'
+                    : 'text-gray-500 dark:text-text-muted hover:text-gray-700 dark:hover:text-text-primary'
                 }`}
             >
               {range.label}
@@ -331,16 +372,12 @@ function MiniStatCard({ icon, label, value, color, delay }) {
       className="flex items-center gap-3 p-3 border dark:bg-surface-card dark:border-border bg-white border-gray-200 animate-fade-in transition-colors duration-200"
       style={{ animationDelay: `${delay}ms` }}
     >
-      <div className={`p-2 bg-zinc-500/10 ${color}`}>
-        {icon}
-      </div>
+      <div className={`p-2 bg-zinc-500/10 ${color}`}>{icon}</div>
       <div className="min-w-0">
         <div className="text-sm font-bold dark:text-text-primary text-gray-900 tabular-nums truncate">
           {value}
         </div>
-        <div className="text-[10px] dark:text-text-muted text-gray-400 font-medium">
-          {label}
-        </div>
+        <div className="text-[10px] dark:text-text-muted text-gray-400 font-medium">{label}</div>
       </div>
     </div>
   )
@@ -354,9 +391,7 @@ function SectionCard({ title, icon, delay, children }) {
     >
       <div className="flex items-center gap-2 mb-4">
         <span className="text-zinc-600 dark:text-zinc-300">{icon}</span>
-        <h2 className="eyebrow">
-          {title}
-        </h2>
+        <h2 className="eyebrow">{title}</h2>
       </div>
       {children}
     </div>
@@ -389,7 +424,10 @@ function ActivityHeatmap({ data }) {
         {/* Day labels */}
         <div className="flex flex-col gap-0.5 mr-1 shrink-0">
           {dayLabels.map((label, i) => (
-            <div key={i} className="h-[14px] w-4 flex items-center justify-center text-[8px] dark:text-text-muted text-gray-400 font-medium">
+            <div
+              key={i}
+              className="h-[14px] w-4 flex items-center justify-center text-[8px] dark:text-text-muted text-gray-400 font-medium"
+            >
               {i % 2 === 1 ? label : ''}
             </div>
           ))}
@@ -410,20 +448,31 @@ function ActivityHeatmap({ data }) {
               />
             ))}
             {/* Pad short weeks */}
-            {week.length < 7 && Array.from({ length: 7 - week.length }).map((_, i) => (
-              <div key={`pad-${i}`} className="h-[14px] w-[14px]" />
-            ))}
+            {week.length < 7 &&
+              Array.from({ length: 7 - week.length }).map((_, i) => (
+                <div key={`pad-${i}`} className="h-[14px] w-[14px]" />
+              ))}
           </div>
         ))}
       </div>
-      <p aria-live="polite" className="mt-1 min-h-[1rem] text-[11px] dark:text-text-secondary text-gray-600">
-        {activeDay ? `${activeDay.date}: ${activeDay.count} run${activeDay.count !== 1 ? 's' : ''}` : ''}
+      <p
+        aria-live="polite"
+        className="mt-1 min-h-[1rem] text-[11px] dark:text-text-secondary text-gray-600"
+      >
+        {activeDay
+          ? `${activeDay.date}: ${activeDay.count} run${activeDay.count !== 1 ? 's' : ''}`
+          : ''}
       </p>
       {/* Legend */}
       <div className="flex items-center gap-2 mt-2">
         <span className="text-[10px] dark:text-text-muted text-gray-400">Less</span>
         <div className="flex gap-0.5">
-          {['bg-gray-100 dark:bg-white/5', 'bg-zinc-200 dark:bg-zinc-500/25', 'bg-zinc-400 dark:bg-zinc-500/50', 'bg-zinc-600 dark:bg-zinc-400/80'].map((cls, i) => (
+          {[
+            'bg-gray-100 dark:bg-white/5',
+            'bg-zinc-200 dark:bg-zinc-500/25',
+            'bg-zinc-400 dark:bg-zinc-500/50',
+            'bg-zinc-600 dark:bg-zinc-400/80',
+          ].map((cls, i) => (
             <div key={i} className={`h-[10px] w-[10px] -[2px] ${cls}`} />
           ))}
         </div>
@@ -500,7 +549,9 @@ function ProviderDonut({ data, total }) {
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
           {/* Background ring */}
           <circle
-            cx={size / 2} cy={size / 2} r={radius}
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
             fill="none"
             stroke="currentColor"
             strokeWidth={strokeWidth}
@@ -510,7 +561,9 @@ function ProviderDonut({ data, total }) {
           {segments.map((seg, i) => (
             <circle
               key={seg.name}
-              cx={size / 2} cy={size / 2} r={radius}
+              cx={size / 2}
+              cy={size / 2}
+              r={radius}
               fill="none"
               stroke={seg.color}
               strokeWidth={strokeWidth}
@@ -524,7 +577,9 @@ function ProviderDonut({ data, total }) {
         </svg>
         {/* Center text */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="font-display text-[17px] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-text-primary tabular-nums">{total}</span>
+          <span className="font-display text-[17px] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-text-primary tabular-nums">
+            {total}
+          </span>
           <span className="text-[9px] dark:text-text-muted text-gray-400 font-medium">RUNS</span>
         </div>
       </div>
@@ -590,7 +645,7 @@ function Sparkline({ data }) {
 
   const points = data.map((d, i) => {
     const x = padding + (i / (data.length - 1)) * (width - padding * 2)
-    const y = height - padding - ((d.count / maxCount) * (height - padding * 2))
+    const y = height - padding - (d.count / maxCount) * (height - padding * 2)
     return { x, y, ...d }
   })
 
@@ -599,7 +654,11 @@ function Sparkline({ data }) {
 
   return (
     <div>
-      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-28 text-black dark:text-white" preserveAspectRatio="none">
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        className="w-full h-28 text-black dark:text-white"
+        preserveAspectRatio="none"
+      >
         {/* Gradient fill */}
         <defs>
           <linearGradient id="sparkline-gradient" x1="0" y1="0" x2="0" y2="1">
@@ -610,18 +669,29 @@ function Sparkline({ data }) {
         {/* Area */}
         <path d={areaPath} fill="url(#sparkline-gradient)" />
         {/* Line */}
-        <path d={linePath} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path
+          d={linePath}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
         {/* Dots for days with runs */}
-        {points.filter((p) => p.count > 0).map((p, i) => (
-          <circle
-            key={i}
-            cx={p.x} cy={p.y} r="3"
-            fill="currentColor"
-            className="transition-all duration-300"
-          >
-            <title>{`${p.date}: ${p.count} run${p.count !== 1 ? 's' : ''}`}</title>
-          </circle>
-        ))}
+        {points
+          .filter((p) => p.count > 0)
+          .map((p, i) => (
+            <circle
+              key={i}
+              cx={p.x}
+              cy={p.y}
+              r="3"
+              fill="currentColor"
+              className="transition-all duration-300"
+            >
+              <title>{`${p.date}: ${p.count} run${p.count !== 1 ? 's' : ''}`}</title>
+            </circle>
+          ))}
       </svg>
       {/* X-axis labels */}
       <div className="flex justify-between mt-1">
@@ -642,8 +712,10 @@ function RecentTimeline({ runs, navigate }) {
       {runs.map((run, i) => {
         const time = new Date(run.timestamp)
         const timeStr = time.toLocaleString(undefined, {
-          month: 'short', day: 'numeric',
-          hour: '2-digit', minute: '2-digit',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
         })
         const providerInfo = PROVIDER_COLORS[run.provider] || PROVIDER_COLORS.unknown
         const durationStr = run.duration ? `${(run.duration / 1000).toFixed(1)}s` : null
@@ -756,7 +828,8 @@ function TokenUsageSection({ runs, totalTokens, totalSpend }) {
                 {run.model || 'Unknown model'}
               </div>
               <div className="text-[10px] dark:text-text-muted text-gray-400">
-                {(run.inputTokens || 0).toLocaleString()} in · {(run.outputTokens || 0).toLocaleString()} out
+                {(run.inputTokens || 0).toLocaleString()} in ·{' '}
+                {(run.outputTokens || 0).toLocaleString()} out
               </div>
             </div>
             <div className="text-xs font-semibold dark:text-text-primary text-gray-900 tabular-nums shrink-0">
@@ -817,16 +890,17 @@ function ExportBar({ stats }) {
 // ── Tiny empty state ────────────────────────────────────────────────────────
 
 function EmptyMini({ text }) {
-  return (
-    <div className="py-6 text-center text-xs dark:text-text-muted text-gray-400">
-      {text}
-    </div>
-  )
+  return <div className="py-6 text-center text-xs dark:text-text-muted text-gray-400">{text}</div>
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatProvider(p) {
-  const labels = { openai: 'OpenAI', anthropic: 'Anthropic', gemini: 'Gemini', openrouter: 'OpenRouter' }
+  const labels = {
+    openai: 'OpenAI',
+    anthropic: 'Anthropic',
+    gemini: 'Gemini',
+    openrouter: 'OpenRouter',
+  }
   return labels[p] || p || '—'
 }

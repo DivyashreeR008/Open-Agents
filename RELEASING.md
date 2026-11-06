@@ -44,12 +44,15 @@ The changelog already contains `1.0.0` and `0.1.0` sections, but no git tag or G
 
 ```markdown
 ## Highlights
+
 - One to three user-facing changes, each linking its PR or issue.
 
 ## Upgrade notes
+
 - Anything users or deployers must do. Write "None" if nothing.
 
 ## Changelog
+
 Full details: https://github.com/DivyashreeR008/Open-Agents/blob/vX.Y.Z/CHANGELOG.md
 
 **Full diff**: https://github.com/DivyashreeR008/Open-Agents/compare/vPREVIOUS...vX.Y.Z

@@ -1,7 +1,8 @@
 const mealPlannerAgent = {
   id: 'meal-planner-agent',
   name: 'Meal Planner Agent',
-  description: 'Creates personalized meal plans based on dietary preferences, health goals, budget, available ingredients, and nutritional requirements.',
+  description:
+    'Creates personalized meal plans based on dietary preferences, health goals, budget, available ingredients, and nutritional requirements.',
   category: 'Productivity',
   icon: 'ChefHat',
   provider: 'any',
@@ -12,7 +13,17 @@ const mealPlannerAgent = {
       id: 'dietary_preference',
       label: 'Dietary Preference',
       type: 'select',
-      options: ['Vegetarian', 'Vegan', 'Non-Vegetarian', 'Keto', 'Paleo', 'Gluten-Free', 'Dairy-Free', 'Mediterranean', 'Other'],
+      options: [
+        'Vegetarian',
+        'Vegan',
+        'Non-Vegetarian',
+        'Keto',
+        'Paleo',
+        'Gluten-Free',
+        'Dairy-Free',
+        'Mediterranean',
+        'Other',
+      ],
       defaultValue: 'Non-Vegetarian',
       required: true,
     },
@@ -20,7 +31,13 @@ const mealPlannerAgent = {
       id: 'health_goal',
       label: 'Health Goal',
       type: 'select',
-      options: ['Weight Loss', 'Muscle Gain', 'Maintenance', 'Healthy Eating / General Health', 'Athletic Performance'],
+      options: [
+        'Weight Loss',
+        'Muscle Gain',
+        'Maintenance',
+        'Healthy Eating / General Health',
+        'Athletic Performance',
+      ],
       defaultValue: 'Healthy Eating / General Health',
       required: true,
     },
@@ -35,7 +52,8 @@ const mealPlannerAgent = {
       id: 'available_ingredients',
       label: 'Available Ingredients (optional)',
       type: 'textarea',
-      placeholder: 'Ingredients you already have and want to use (e.g. chicken, rice, eggs, spinach)',
+      placeholder:
+        'Ingredients you already have and want to use (e.g. chicken, rice, eggs, spinach)',
       required: false,
     },
     {
@@ -120,6 +138,6 @@ Provide an organized shopping list sorted by grocery departments (e.g., Produce,
 
 Format the response using clean, beautiful markdown.`,
   outputType: 'markdown',
-};
+}
 
-export default mealPlannerAgent;
+export default mealPlannerAgent

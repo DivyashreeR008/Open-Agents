@@ -1,35 +1,37 @@
 export default {
-  id: "react-hook-dependency-reviewer",
-  createdAt: "2026-10-20",
-  name: "React Hook Dependency Reviewer",
+  id: 'react-hook-dependency-reviewer',
+  createdAt: '2026-10-20',
+  name: 'React Hook Dependency Reviewer',
   description:
-    "Review useEffect and useCallback dependencies for stale closures, redundant runs, and cleanup bugs.",
-  category: "Engineering",
-  icon: "Repeat",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Review useEffect and useCallback dependencies for stale closures, redundant runs, and cleanup bugs.',
+  category: 'Engineering',
+  icon: 'Repeat',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {},
   inputs: [
     {
-      id: "hooks",
-      label: "Hooks and component code",
-      type: "code",
-      placeholder: "Paste the useEffect, useMemo, and useCallback calls with their surrounding component...",
+      id: 'hooks',
+      label: 'Hooks and component code',
+      type: 'code',
+      placeholder:
+        'Paste the useEffect, useMemo, and useCallback calls with their surrounding component...',
       required: true,
     },
     {
-      id: "reactVersion",
-      label: "React version",
-      type: "text",
-      placeholder: "e.g. 18.3",
+      id: 'reactVersion',
+      label: 'React version',
+      type: 'text',
+      placeholder: 'e.g. 18.3',
       required: true,
     },
     {
-      id: "symptoms",
-      label: "Observed behavior",
-      type: "textarea",
-      placeholder: "e.g. effect fires twice, stale value in handler, memory warning after unmount...",
+      id: 'symptoms',
+      label: 'Observed behavior',
+      type: 'textarea',
+      placeholder:
+        'e.g. effect fires twice, stale value in handler, memory warning after unmount...',
       required: false,
     },
   ],
@@ -61,5 +63,5 @@ Rules:
 - Explain the runtime consequence of every dependency change.
 - Preserve the original behavior unless it is the bug being fixed.`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

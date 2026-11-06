@@ -1,9 +1,6 @@
 import { useMemo, useState } from 'react'
 import CollectionModal from '../CollectionModal'
-import {
-  MAX_COLLECTION_IMPORT_BYTES,
-  parseCollectionImport,
-} from '../../lib/collectionTransfer'
+import { MAX_COLLECTION_IMPORT_BYTES, parseCollectionImport } from '../../lib/collectionTransfer'
 
 export default function ImportCollectionModal({ agents, onImport, onClose }) {
   const [preview, setPreview] = useState(null)
@@ -76,7 +73,8 @@ export default function ImportCollectionModal({ agents, onImport, onClose }) {
           <div className="border border-gray-200 p-3 text-sm dark:border-border" aria-live="polite">
             <p className="font-semibold text-gray-900 dark:text-text-primary">{preview.name}</p>
             <p className="mt-0.5 text-xs text-gray-500 dark:text-text-secondary">
-              {preview.agentIds.length} agent{preview.agentIds.length === 1 ? '' : 's'} will be added
+              {preview.agentIds.length} agent{preview.agentIds.length === 1 ? '' : 's'} will be
+              added
             </p>
             {preview.agentIds.length > 0 && (
               <ul className="mt-2 list-disc pl-5 text-xs text-gray-700 dark:text-text-secondary">

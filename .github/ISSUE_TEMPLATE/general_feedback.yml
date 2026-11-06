@@ -1,7 +1,7 @@
 name: General Feedback
 description: Share your thoughts, experience, or suggestions about Open-Agents
-title: "[Feedback]: "
-labels: ["feedback"]
+title: '[Feedback]: '
+labels: ['feedback']
 body:
   - type: markdown
     attributes:

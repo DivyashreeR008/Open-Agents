@@ -1,40 +1,41 @@
 export default {
-  id: "job-offer-letter-checklist",
-  createdAt: "2026-10-12",
-  name: "Offer Letter Checklist",
+  id: 'job-offer-letter-checklist',
+  createdAt: '2026-10-12',
+  name: 'Offer Letter Checklist',
   description:
-    "Review a job offer before signing: comp, cliff, noncompete, and negotiation points.",
-  category: "HR",
-  icon: "FileCheck",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Review a job offer before signing: comp, cliff, noncompete, and negotiation points.',
+  category: 'HR',
+  icon: 'FileCheck',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     offer:
-      "Senior Frontend Engineer at Nexura. Base 140k, 10% bonus target, 40k RSUs vesting over 4 years with 1-year cliff. Hybrid 3 days onsite. 90-day probation. 12-month noncompete.",
-    level: "Senior IC",
-    concerns: "Worried about the noncompete scope and whether the bonus is guaranteed. Want remote flexibility.",
+      'Senior Frontend Engineer at Nexura. Base 140k, 10% bonus target, 40k RSUs vesting over 4 years with 1-year cliff. Hybrid 3 days onsite. 90-day probation. 12-month noncompete.',
+    level: 'Senior IC',
+    concerns:
+      'Worried about the noncompete scope and whether the bonus is guaranteed. Want remote flexibility.',
   },
   inputs: [
     {
-      id: "offer",
-      label: "Offer letter details",
-      type: "textarea",
+      id: 'offer',
+      label: 'Offer letter details',
+      type: 'textarea',
       placeholder:
-        "Paste the offer terms: role, base, bonus, equity, vesting, location, probation, notice, noncompete",
+        'Paste the offer terms: role, base, bonus, equity, vesting, location, probation, notice, noncompete',
       required: true,
     },
     {
-      id: "level",
-      label: "Role level",
-      type: "text",
-      placeholder: "e.g. Senior IC, Engineering Manager, Junior",
+      id: 'level',
+      label: 'Role level',
+      type: 'text',
+      placeholder: 'e.g. Senior IC, Engineering Manager, Junior',
     },
     {
-      id: "concerns",
-      label: "Your concerns",
-      type: "textarea",
-      placeholder: "e.g. Noncompete scope, bonus wording, remote flexibility",
+      id: 'concerns',
+      label: 'Your concerns',
+      type: 'textarea',
+      placeholder: 'e.g. Noncompete scope, bonus wording, remote flexibility',
     },
   ],
   systemPrompt: `You are an experienced HR advisor and offer-review coach who
@@ -76,6 +77,6 @@ Rules:
 - Never invent offer terms the user did not provide.
 - Keep the tone neutral and practical.
 - Prioritize clarity over completeness when terms are sparse.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["resume-screener", "cover-letter-writer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['resume-screener', 'cover-letter-writer'],
+}

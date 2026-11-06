@@ -109,7 +109,7 @@ describe('usePromptHistory storage failures', () => {
     expect(result.current.prompts).toEqual([])
     expect(localStorage.getItem(PROMPTS_KEY)).toBeNull()
     expect(console.error).toHaveBeenCalledWith(
-      'LocalStorage quota exceeded. Prompt history might be truncated.',
+      'LocalStorage quota exceeded. Prompt history might be truncated.'
     )
   })
 
@@ -190,10 +190,7 @@ describe('useFavorites storage failures', () => {
 
     act(() => result.current.toggleFavorite('a'))
 
-    expect(JSON.parse(localStorage.getItem(FAVORITES_KEY))).toEqual([
-      'a',
-      'from-other-tab',
-    ])
+    expect(JSON.parse(localStorage.getItem(FAVORITES_KEY))).toEqual(['a', 'from-other-tab'])
   })
 })
 
@@ -218,7 +215,7 @@ describe('useRecentAgents storage failures', () => {
   it('skips entries without an agentId and keeps the valid ones', () => {
     localStorage.setItem(
       HISTORY_KEY,
-      JSON.stringify([null, { foo: 1 }, { agentId: 'a', timestamp: 5 }]),
+      JSON.stringify([null, { foo: 1 }, { agentId: 'a', timestamp: 5 }])
     )
     const { result } = renderHook(() => useRecentAgents())
     expect(result.current.recentAgents.map((r) => r.id)).toEqual(['a'])
@@ -257,7 +254,7 @@ describe('collections storage failures', () => {
   it('drops invalid collection entries and keeps valid ones', () => {
     localStorage.setItem(
       COLLECTIONS_STORAGE_KEY,
-      JSON.stringify([null, 42, { id: 'c1', name: 'Mine', agentIds: ['a'] }]),
+      JSON.stringify([null, 42, { id: 'c1', name: 'Mine', agentIds: ['a'] }])
     )
     const ids = loadCollections().map((c) => c.id)
     expect(ids).toEqual([DEFAULT_COLLECTION_ID, 'c1'])

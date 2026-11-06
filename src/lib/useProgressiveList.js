@@ -11,18 +11,14 @@ export const DEFAULT_PAGE_SIZE = 60
  * at the top. The reset is derived during render rather than waiting for an
  * effect, so a new result set never flashes the previous (larger) window.
  */
-export function useProgressiveList(
-  items,
-  { pageSize = DEFAULT_PAGE_SIZE, resetKey = '' } = {}
-) {
+export function useProgressiveList(items, { pageSize = DEFAULT_PAGE_SIZE, resetKey = '' } = {}) {
   const [windowState, setWindowState] = useState({
     resetKey,
     pageSize,
     visibleCount: pageSize,
   })
 
-  const isCurrentWindow =
-    windowState.resetKey === resetKey && windowState.pageSize === pageSize
+  const isCurrentWindow = windowState.resetKey === resetKey && windowState.pageSize === pageSize
   const visibleCount = isCurrentWindow ? windowState.visibleCount : pageSize
 
   // Drop the stale window after a filter change so returning to an old filter

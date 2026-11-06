@@ -1,38 +1,37 @@
 export default {
-  id: "online-course-comparison",
-  createdAt: "2026-10-12",
-  name: "Online Course Comparer",
-  description:
-    "Compare courses, books, and free resources for a learning goal with a study order.",
-  category: "Education",
-  icon: "Laptop",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'online-course-comparison',
+  createdAt: '2026-10-12',
+  name: 'Online Course Comparer',
+  description: 'Compare courses, books, and free resources for a learning goal with a study order.',
+  category: 'Education',
+  icon: 'Laptop',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    goal: "Learn data analysis with Python well enough for a junior analyst role",
-    budget: "Under $100 total",
-    weeklyHours: "6 hours per week",
+    goal: 'Learn data analysis with Python well enough for a junior analyst role',
+    budget: 'Under $100 total',
+    weeklyHours: '6 hours per week',
   },
   inputs: [
     {
-      id: "goal",
-      label: "Learning goal",
-      type: "textarea",
-      placeholder: "e.g. Learn data analysis with Python for a junior analyst role",
+      id: 'goal',
+      label: 'Learning goal',
+      type: 'textarea',
+      placeholder: 'e.g. Learn data analysis with Python for a junior analyst role',
       required: true,
     },
     {
-      id: "budget",
-      label: "Budget",
-      type: "text",
-      placeholder: "e.g. Under $100 total, or free only",
+      id: 'budget',
+      label: 'Budget',
+      type: 'text',
+      placeholder: 'e.g. Under $100 total, or free only',
     },
     {
-      id: "weeklyHours",
-      label: "Hours available per week",
-      type: "text",
-      placeholder: "e.g. 6 hours per week",
+      id: 'weeklyHours',
+      label: 'Hours available per week',
+      type: 'text',
+      placeholder: 'e.g. 6 hours per week',
     },
   ],
   systemPrompt: `You are a learning advisor who compares courses, books, and free resources for a goal.
@@ -66,6 +65,6 @@ Rules:
 - Prefer free or low-cost options when the budget is tight
 - Keep recommendations honest about trade-offs
 - Use a neutral, helpful tone`,
-  outputType: "markdown",
-  suggestedChainFrom: ["research-agent", "grant-proposal-writer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['research-agent', 'grant-proposal-writer'],
+}

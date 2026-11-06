@@ -1,16 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  Plus,
-  Search,
-  Zap,
-  Eye,
-  ArrowRight,
-  GitBranch,
-  Loader2,
-  TrendingUp,
-  X,
-} from 'lucide-react'
+import { Plus, Search, Zap, Eye, ArrowRight, GitBranch, Loader2, TrendingUp, X } from 'lucide-react'
 import { useAgents } from '../lib/useAgents'
 import { fetchWorkflows, subscribeToAllWorkflows } from '../hooks/useWorkflows'
 import { supabase } from '../lib/supabase'
@@ -30,9 +20,7 @@ function WorkflowCard({ workflow, onRun, onView, onFork }) {
   const usageCount = workflow.usage_count ?? 0
 
   return (
-    <div
-      className="flex flex-col border border-zinc-200 bg-white p-3.5 transition-colors hover:border-zinc-400 dark:hover:border-zinc-400 dark:border-border dark:bg-surface-card"
-    >
+    <div className="flex flex-col border border-zinc-200 bg-white p-3.5 transition-colors hover:border-zinc-400 dark:hover:border-zinc-400 dark:border-border dark:bg-surface-card">
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2">
@@ -88,13 +76,13 @@ function WorkflowCard({ workflow, onRun, onView, onFork }) {
           Details
         </button>
         <button
-  id={`fork-workflow-${workflow.id}`}
-  onClick={() => onFork(workflow)}
-  className="btn-secondary h-7 text-[11px]"
->
-  <GitBranch size={12} />
-  Fork
-</button>
+          id={`fork-workflow-${workflow.id}`}
+          onClick={() => onFork(workflow)}
+          className="btn-secondary h-7 text-[11px]"
+        >
+          <GitBranch size={12} />
+          Fork
+        </button>
         <span className="ml-auto text-[11px] dark:text-text-muted text-gray-400">
           {(workflow.agents ?? []).length} agent{workflow.agents?.length !== 1 ? 's' : ''}
         </span>
@@ -125,7 +113,9 @@ export default function WorkflowLibrary() {
       }
       setLoading(false)
     })
-    return () => { mounted = false }
+    return () => {
+      mounted = false
+    }
   }, [])
 
   // Realtime: update usage counts on any workflow update
@@ -141,19 +131,19 @@ export default function WorkflowLibrary() {
   }, [])
 
   const filtered = useMemo(() => {
-      const query = searchQuery.trim().toLowerCase()
-      if (!query) return workflows
+    const query = searchQuery.trim().toLowerCase()
+    if (!query) return workflows
 
-      return workflows.filter((w) => {
-        const titleMatch = w.title?.toLowerCase().includes(query)
-        const descriptionMatch = w.description?.toLowerCase().includes(query)
-        const categoryMatch = (w.agents ?? []).some((agentId) => {
-          const agent = agents.find((a) => a.id === agentId)
-          return agent?.category?.toLowerCase().includes(query)
-        })
-        return titleMatch || descriptionMatch || categoryMatch
+    return workflows.filter((w) => {
+      const titleMatch = w.title?.toLowerCase().includes(query)
+      const descriptionMatch = w.description?.toLowerCase().includes(query)
+      const categoryMatch = (w.agents ?? []).some((agentId) => {
+        const agent = agents.find((a) => a.id === agentId)
+        return agent?.category?.toLowerCase().includes(query)
       })
-    }, [workflows, searchQuery, agents])
+      return titleMatch || descriptionMatch || categoryMatch
+    })
+  }, [workflows, searchQuery, agents])
 
   const handleRun = (workflow) => {
     navigate(`/workflows/${workflow.id}/run`, { state: { workflow } })
@@ -163,12 +153,12 @@ export default function WorkflowLibrary() {
     navigate(`/workflows/${workflow.id}`)
   }
   const handleFork = (workflow) => {
-  navigate('/workflows/build', {
-    state: {
-      forkedWorkflow: workflow,
-    },
-  })
-}
+    navigate('/workflows/build', {
+      state: {
+        forkedWorkflow: workflow,
+      },
+    })
+  }
 
   return (
     <div className="animate-fade-in">
@@ -177,7 +167,11 @@ export default function WorkflowLibrary() {
         meta={workflows.length}
         description="Community-built agent chains"
         actions={
-          <button id="build-workflow-btn" onClick={() => navigate('/workflows/build')} className="btn-primary">
+          <button
+            id="build-workflow-btn"
+            onClick={() => navigate('/workflows/build')}
+            className="btn-primary"
+          >
             <Plus size={14} aria-hidden="true" />
             Build workflow
           </button>
@@ -214,7 +208,11 @@ export default function WorkflowLibrary() {
       {/* States */}
       {loading && (
         <div className="flex flex-col items-center justify-center gap-3 py-20">
-          <Loader2 size={20} className="animate-spin text-zinc-900 dark:text-white" aria-hidden="true" />
+          <Loader2
+            size={20}
+            className="animate-spin text-zinc-900 dark:text-white"
+            aria-hidden="true"
+          />
           <p className="text-[13px] text-zinc-500 dark:text-text-secondary">Loading workflows…</p>
         </div>
       )}

@@ -38,11 +38,10 @@ beforeAll(() => {
 beforeEach(async () => {
   localStorage.clear()
   keyStoreState.error = null
-  keyStoreState.key = await webcrypto.subtle.generateKey(
-    { name: 'AES-GCM', length: 256 },
-    false,
-    ['encrypt', 'decrypt']
-  )
+  keyStoreState.key = await webcrypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, false, [
+    'encrypt',
+    'decrypt',
+  ])
 })
 
 describe('automation credential protection', () => {

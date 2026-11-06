@@ -93,14 +93,19 @@ describe('collections export, duplicate and import', () => {
 
     fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Import' }))
     expect(names()).toEqual(['Shared set'])
-    expect(JSON.parse(localStorage.getItem(COLLECTIONS_STORAGE_KEY)).find((c) => c.name === 'Shared set').agentIds).toEqual(['a1', 'a2'])
+    expect(
+      JSON.parse(localStorage.getItem(COLLECTIONS_STORAGE_KEY)).find((c) => c.name === 'Shared set')
+        .agentIds
+    ).toEqual(['a1', 'a2'])
   })
 
   it('shows an error for a bad file and writes nothing', async () => {
     renderPage()
     fireEvent.click(screen.getByRole('button', { name: 'Import' }))
     chooseFile('{"format":"open-agents.collection","version":9,"collection":{}}')
-    await waitFor(() => expect(screen.getByText(/unsupported collection file version/i)).toBeInTheDocument())
+    await waitFor(() =>
+      expect(screen.getByText(/unsupported collection file version/i)).toBeInTheDocument()
+    )
     expect(screen.queryByText('will be added', { exact: false })).not.toBeInTheDocument()
     expect(localStorage.getItem(COLLECTIONS_STORAGE_KEY)).toBeNull()
   })

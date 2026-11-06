@@ -12,15 +12,18 @@ const activeJobIds = new Set()
 
 // ── Intervals in milliseconds
 export const SCHEDULE_OPTIONS = [
-  { value: 'hourly',    label: 'Every hour',    ms: 60 * 60 * 1000 },
-  { value: 'daily',     label: 'Every day',     ms: 24 * 60 * 60 * 1000 },
-  { value: 'weekly',    label: 'Every week',    ms: 7 * 24 * 60 * 60 * 1000 },
+  { value: 'hourly', label: 'Every hour', ms: 60 * 60 * 1000 },
+  { value: 'daily', label: 'Every day', ms: 24 * 60 * 60 * 1000 },
+  { value: 'weekly', label: 'Every week', ms: 7 * 24 * 60 * 60 * 1000 },
 ]
 
 // ── Read / write helpers
 function getStoredJobKey(jobId) {
-  try { return sessionStorage.getItem(API_KEY_PREFIX + jobId) || '' }
-  catch { return '' }
+  try {
+    return sessionStorage.getItem(API_KEY_PREFIX + jobId) || ''
+  } catch {
+    return ''
+  }
 }
 
 function setStoredJobKey(jobId, apiKey) {
@@ -41,10 +44,13 @@ function stripJobSecret(job) {
 
 function loadJobs() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
-      .map(job => ({ ...job, apiKey: getStoredJobKey(job.id) }))
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]').map((job) => ({
+      ...job,
+      apiKey: getStoredJobKey(job.id),
+    }))
+  } catch {
+    return []
   }
-  catch { return [] }
 }
 
 function saveJobs(jobs) {
@@ -52,8 +58,11 @@ function saveJobs(jobs) {
 }
 
 function loadResults() {
-  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]') }
-  catch { return [] }
+  try {
+    return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]')
+  } catch {
+    return []
+  }
 }
 
 function saveResults(results) {
@@ -107,12 +116,16 @@ export function useScheduler({ autoRun = true } = {}) {
   const [running, setRunning] = useState({}) // jobId → boolean
 
   // ── Persist whenever state changes
-  useEffect(() => { saveJobs(jobs) }, [jobs])
-  useEffect(() => { saveResults(results) }, [results])
+  useEffect(() => {
+    saveJobs(jobs)
+  }, [jobs])
+  useEffect(() => {
+    saveResults(results)
+  }, [results])
 
   // ── Add a new scheduled job
   const addJob = useCallback((jobData) => {
-    const interval = SCHEDULE_OPTIONS.find(s => s.value === jobData.schedule)
+    const interval = SCHEDULE_OPTIONS.find((s) => s.value === jobData.schedule)
     const now = Date.now()
     const { apiKey, ...safeJobData } = jobData
     const job = {
@@ -125,38 +138,36 @@ export function useScheduler({ autoRun = true } = {}) {
       apiKey,
     }
     setStoredJobKey(job.id, apiKey)
-    setJobs(prev => [job, ...prev])
+    setJobs((prev) => [job, ...prev])
     return job
   }, [])
 
   // ── Toggle enabled/disabled
   const toggleJob = useCallback((jobId) => {
-    setJobs(prev => prev.map(j =>
-      j.id === jobId ? { ...j, enabled: !j.enabled } : j
-    ))
+    setJobs((prev) => prev.map((j) => (j.id === jobId ? { ...j, enabled: !j.enabled } : j)))
   }, [])
 
   // ── Delete a job
   const deleteJob = useCallback((jobId) => {
     removeStoredJobKey(jobId)
-    setJobs(prev => prev.filter(j => j.id !== jobId))
+    setJobs((prev) => prev.filter((j) => j.id !== jobId))
   }, [])
 
   // ── Delete a result
   const deleteResult = useCallback((resultId) => {
-    setResults(prev => prev.filter(r => r.id !== resultId))
+    setResults((prev) => prev.filter((r) => r.id !== resultId))
   }, [])
 
   // ── Clear all results for a job
   const clearResultsForJob = useCallback((jobId) => {
-    setResults(prev => prev.filter(r => r.jobId !== jobId))
+    setResults((prev) => prev.filter((r) => r.jobId !== jobId))
   }, [])
 
   // ── Manually run a job right now
   const runJob = useCallback(async (job) => {
     if (activeJobIds.has(job.id)) return null
     activeJobIds.add(job.id)
-    setRunning(prev => ({ ...prev, [job.id]: true }))
+    setRunning((prev) => ({ ...prev, [job.id]: true }))
 
     const startTime = Date.now()
     let output = ''
@@ -173,9 +184,7 @@ export function useScheduler({ autoRun = true } = {}) {
         const val = job.inputs[input.id]
         if (!val || (Array.isArray(val) && val.length === 0)) return
         parts.push(
-          Array.isArray(val)
-            ? `${input.label}: ${val.join(', ')}`
-            : `${input.label}: ${val}`
+          Array.isArray(val) ? `${input.label}: ${val.join(', ')}` : `${input.label}: ${val}`
         )
       })
       const userMessage = parts.join('\n\n')
@@ -204,17 +213,14 @@ export function useScheduler({ autoRun = true } = {}) {
       )
     } catch (err) {
       errorMsg = err.message || 'Unknown error'
-      notify(
-        `Failed: ${job.label} — Agent run failed`,
-        `${job.agentName}: ${errorMsg}`
-      )
+      notify(`Failed: ${job.label} — Agent run failed`, `${job.agentName}: ${errorMsg}`)
     } finally {
       activeJobIds.delete(job.id)
-      setRunning(prev => ({ ...prev, [job.id]: false }))
+      setRunning((prev) => ({ ...prev, [job.id]: false }))
     }
 
     const duration = Date.now() - startTime
-    const interval = SCHEDULE_OPTIONS.find(s => s.value === job.schedule)
+    const interval = SCHEDULE_OPTIONS.find((s) => s.value === job.schedule)
     const now = Date.now()
 
     // Save result
@@ -229,18 +235,20 @@ export function useScheduler({ autoRun = true } = {}) {
       error: errorMsg,
     }
 
-    setResults(prev => [newResult, ...prev].slice(0, MAX_RESULTS))
+    setResults((prev) => [newResult, ...prev].slice(0, MAX_RESULTS))
 
     // Update job timestamps
-    setJobs(prev => prev.map(j =>
-      j.id === job.id
-        ? {
-            ...j,
-            lastRunAt: now,
-            nextRunAt: now + (interval?.ms ?? 86_400_000),
-          }
-        : j
-    ))
+    setJobs((prev) =>
+      prev.map((j) =>
+        j.id === job.id
+          ? {
+              ...j,
+              lastRunAt: now,
+              nextRunAt: now + (interval?.ms ?? 86_400_000),
+            }
+          : j
+      )
+    )
 
     return newResult
   }, [])
@@ -252,7 +260,7 @@ export function useScheduler({ autoRun = true } = {}) {
     const checkDue = () => {
       const currentJobs = loadJobs()
       const now = Date.now()
-      currentJobs.forEach(job => {
+      currentJobs.forEach((job) => {
         if (!job.enabled) return
         if (!job.apiKey) return
         if (activeJobIds.has(job.id)) return

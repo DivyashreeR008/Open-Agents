@@ -21,7 +21,10 @@ export default function CollectionAgentPicker({
 }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [feedback, setFeedback] = useState('')
-  const selectedIds = useMemo(() => new Set((collection?.agentIds || []).filter(Boolean)), [collection])
+  const selectedIds = useMemo(
+    () => new Set((collection?.agentIds || []).filter(Boolean)),
+    [collection]
+  )
   const selectedCount = selectedIds.size
   const isFull = selectedCount >= maxAgents
 
@@ -29,11 +32,12 @@ export default function CollectionAgentPicker({
     const q = searchQuery.trim().toLowerCase()
     if (!q) return agents
 
-    return agents.filter((agent) => (
-      agent.name?.toLowerCase().includes(q) ||
-      agent.description?.toLowerCase().includes(q) ||
-      agent.category?.toLowerCase().includes(q)
-    ))
+    return agents.filter(
+      (agent) =>
+        agent.name?.toLowerCase().includes(q) ||
+        agent.description?.toLowerCase().includes(q) ||
+        agent.category?.toLowerCase().includes(q)
+    )
   }, [agents, searchQuery])
 
   const {
@@ -57,7 +61,9 @@ export default function CollectionAgentPicker({
     }
 
     if (isFull) {
-      setFeedback(`This collection is full. Remove an agent before adding another (${maxAgents} max).`)
+      setFeedback(
+        `This collection is full. Remove an agent before adding another (${maxAgents} max).`
+      )
       return
     }
 
@@ -69,7 +75,9 @@ export default function CollectionAgentPicker({
     <section className="premium-section border border-gray-200 bg-white p-5 dark:border-border dark:bg-surface-card">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-text-primary">Manage agents</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-text-primary">
+            Manage agents
+          </h2>
           <p className="mt-1 text-sm text-gray-500 dark:text-text-secondary">
             Check agents to include them in this collection. Uncheck agents to remove them.
           </p>
@@ -93,10 +101,13 @@ export default function CollectionAgentPicker({
 
       {isFull && (
         <p className="mt-3 border border-zinc-300 bg-zinc-50 px-3 py-2 text-sm text-zinc-800 dark:border-zinc-500/30 dark:bg-zinc-500/10 dark:text-zinc-200">
-          Collection limit reached. Unchecked agents are disabled until you remove one of the selected agents.
+          Collection limit reached. Unchecked agents are disabled until you remove one of the
+          selected agents.
         </p>
       )}
-      {feedback && <p className="mt-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">{feedback}</p>}
+      {feedback && (
+        <p className="mt-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">{feedback}</p>
+      )}
 
       <div className="mt-4 max-h-[32rem] divide-y divide-gray-100 overflow-y-auto border border-gray-200 dark:divide-border dark:border-border">
         {visibleAgents.map((agent) => {
@@ -116,8 +127,12 @@ export default function CollectionAgentPicker({
                 className="mt-1 h-4 w-4 border-gray-300 text-zinc-600 focus:ring-zinc-500 disabled:cursor-not-allowed"
               />
               <span className="min-w-0 flex-1">
-                <span className="block text-sm font-semibold text-gray-900 dark:text-text-primary">{agent.name}</span>
-                <span className="mt-1 line-clamp-2 block text-xs leading-relaxed text-gray-500 dark:text-text-secondary">{agent.description}</span>
+                <span className="block text-sm font-semibold text-gray-900 dark:text-text-primary">
+                  {agent.name}
+                </span>
+                <span className="mt-1 line-clamp-2 block text-xs leading-relaxed text-gray-500 dark:text-text-secondary">
+                  {agent.description}
+                </span>
                 {agent.category && (
                   <span className="mt-2 inline-flex border border-gray-200 px-2 py-0.5 text-[11px] font-medium text-gray-500 dark:border-border dark:text-text-muted">
                     {agent.category}

@@ -1,50 +1,41 @@
-const threatSummariserAgent= {
-  id: 'threat-intelligence-summariser-agent',           // lowercase, kebab-case, URL safe
+const threatSummariserAgent = {
+  id: 'threat-intelligence-summariser-agent', // lowercase, kebab-case, URL safe
   name: 'Threat Intelligence Summariser',
-  description: 'The agent converts threat intelligence reports, CVEs, security advisories, malware analyses, and incident writeups into concise, structured summaries. ',
-  category: 'Cybersecurity',          // Productivity | Research | Marketing | Engineering | HR | Business | Education | Design | Product | Legal
-  icon: 'Radar',              // Any icon from lucide.dev/icons
-  provider: 'any',               // 'openai' | 'anthropic' | 'gemini' | 'any'
-  defaultProvider: 'openai',     // Only needed if provider is 'any'
+  description:
+    'The agent converts threat intelligence reports, CVEs, security advisories, malware analyses, and incident writeups into concise, structured summaries. ',
+  category: 'Cybersecurity', // Productivity | Research | Marketing | Engineering | HR | Business | Education | Design | Product | Legal
+  icon: 'Radar', // Any icon from lucide.dev/icons
+  provider: 'any', // 'openai' | 'anthropic' | 'gemini' | 'any'
+  defaultProvider: 'openai', // Only needed if provider is 'any'
   model: 'gpt-4o',
   inputs: [
     {
       id: 'Report',
       label: 'Report',
-      type: 'textarea',          // text | textarea | code | select | multiselect
+      type: 'textarea', // text | textarea | code | select | multiselect
       sensitive: true,
       placeholder: 'Paste the textual content here',
       required: true,
     },
 
     {
-        id: 'audience',
-        label: 'Target Audience',
-        type: 'select',
-        required: true,
-        options: [
-            'Security Analyst',
-            'Executive',
-            'Developer',
-            'Student'
-            ]
+      id: 'audience',
+      label: 'Target Audience',
+      type: 'select',
+      required: true,
+      options: ['Security Analyst', 'Executive', 'Developer', 'Student'],
     },
 
     {
-            id: 'length',
-            label: 'Summary Length',
-            type: 'select',
-            required: true,
-            options: [
-                'Brief',
-                'Standard',
-                'Detailed'
-        ]
-}
+      id: 'length',
+      label: 'Summary Length',
+      type: 'select',
+      required: true,
+      options: ['Brief', 'Standard', 'Detailed'],
+    },
+  ],
 
-],
-  
-systemPrompt: ` You are a Threat Intelligence Summarizer.
+  systemPrompt: ` You are a Threat Intelligence Summarizer.
 
 Your purpose is to analyze cybersecurity reports and produce concise, accurate summaries.
 
@@ -95,7 +86,7 @@ Rules:
 - Do not include information outside the supplied report.
 `,
 
-  outputType: 'markdown',        // markdown | text | json
-};
+  outputType: 'markdown', // markdown | text | json
+}
 
-export default threatSummariserAgent;
+export default threatSummariserAgent

@@ -18,7 +18,9 @@ export default function PageHeader({ eyebrow, title, meta, description, actions,
         {(meta != null || description) && (
           <p className="mt-1.5 flex flex-wrap items-center gap-2 text-[13px] text-zinc-500 dark:text-text-secondary">
             {meta != null && (
-              <span className="font-mono tabular-nums text-zinc-400 dark:text-text-muted">{meta}</span>
+              <span className="font-mono tabular-nums text-zinc-400 dark:text-text-muted">
+                {meta}
+              </span>
             )}
             {description && <span>{description}</span>}
           </p>

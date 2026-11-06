@@ -45,18 +45,17 @@ const dsaProblemExplainer = {
       id: 'example_explanation',
       label: 'Explanation',
       type: 'textarea',
-      placeholder:
-        'Optional explanation similar to LeetCode examples...',
+      placeholder: 'Optional explanation similar to LeetCode examples...',
       required: false,
     },
 
     {
-  id: 'constraints',
-  label: 'Constraints',
-  type: 'textarea',
-  placeholder: 'Optional problem constraints...',
-  required: false,
-},
+      id: 'constraints',
+      label: 'Constraints',
+      type: 'textarea',
+      placeholder: 'Optional problem constraints...',
+      required: false,
+    },
   ],
 
   systemPrompt: `
@@ -139,6 +138,6 @@ Use markdown formatting throughout the response.
 `,
 
   outputType: 'markdown',
-};
+}
 
-export default dsaProblemExplainer;
+export default dsaProblemExplainer

@@ -1,41 +1,41 @@
 export default {
-  id: "swot-analyzer",
-  createdAt: "2026-10-12",
-  name: "SWOT Analyzer",
+  id: 'swot-analyzer',
+  createdAt: '2026-10-12',
+  name: 'SWOT Analyzer',
   description:
-    "Paste a business or project sketch to get a SWOT plus TOWS actions that turn insight into moves.",
-  category: "Business",
-  icon: "LayoutGrid",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Paste a business or project sketch to get a SWOT plus TOWS actions that turn insight into moves.',
+  category: 'Business',
+  icon: 'LayoutGrid',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     subject:
-      "Neighborhood bakery adding online ordering and subscription bread boxes; strong local brand, thin margins, one oven.",
+      'Neighborhood bakery adding online ordering and subscription bread boxes; strong local brand, thin margins, one oven.',
     context:
-      "Competes with two artisan bakeries and grocery delivery; considering a second location next year.",
-    focus: "growth",
+      'Competes with two artisan bakeries and grocery delivery; considering a second location next year.',
+    focus: 'growth',
   },
   inputs: [
     {
-      id: "subject",
-      label: "Business or project sketch",
-      type: "textarea",
-      placeholder: "e.g. what you sell, to whom, current traction, key constraints.",
+      id: 'subject',
+      label: 'Business or project sketch',
+      type: 'textarea',
+      placeholder: 'e.g. what you sell, to whom, current traction, key constraints.',
       required: true,
     },
     {
-      id: "context",
-      label: "Market context (optional)",
-      type: "textarea",
-      placeholder: "e.g. competitors, trends, regulation, timing.",
+      id: 'context',
+      label: 'Market context (optional)',
+      type: 'textarea',
+      placeholder: 'e.g. competitors, trends, regulation, timing.',
     },
     {
-      id: "focus",
-      label: "Strategic focus",
-      type: "select",
-      options: ["growth", "defense", "fundraising"],
-      defaultValue: "growth",
+      id: 'focus',
+      label: 'Strategic focus',
+      type: 'select',
+      options: ['growth', 'defense', 'fundraising'],
+      defaultValue: 'growth',
       required: true,
     },
   ],
@@ -66,6 +66,6 @@ Rules:
 - Use neutral, analytical language; no hype about outcomes.
 - Tie every action to a specific SWOT item by reference.
 - Keep bullets concrete and falsifiable.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["competitive-analysis-generator", "startup-idea-validator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['competitive-analysis-generator', 'startup-idea-validator'],
+}

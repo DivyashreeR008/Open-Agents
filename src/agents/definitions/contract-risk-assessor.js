@@ -1,28 +1,28 @@
 export default {
-  id: "contract-risk-assessor",
-  createdAt: "2026-10-20",
-  name: "Contract Risk Assessor",
+  id: 'contract-risk-assessor',
+  createdAt: '2026-10-20',
+  name: 'Contract Risk Assessor',
   description:
-    "Assess contract clauses for risk with liability, indemnification, and termination analysis.",
-  category: "Legal",
-  icon: "FileWarning",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Assess contract clauses for risk with liability, indemnification, and termination analysis.',
+  category: 'Legal',
+  icon: 'FileWarning',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {},
   inputs: [
     {
-      id: "contract",
-      label: "Contract text",
-      type: "code",
-      placeholder: "Paste contract clauses...",
+      id: 'contract',
+      label: 'Contract text',
+      type: 'code',
+      placeholder: 'Paste contract clauses...',
       required: true,
     },
     {
-      id: "party",
-      label: "Your position",
-      type: "text",
-      placeholder: "e.g. vendor, customer, licensor...",
+      id: 'party',
+      label: 'Your position',
+      type: 'text',
+      placeholder: 'e.g. vendor, customer, licensor...',
       required: true,
     },
   ],
@@ -52,5 +52,5 @@ Rules:
 - Do not provide definitive legal advice.
 - Recommend specific clause revisions.`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

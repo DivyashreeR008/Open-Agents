@@ -1,7 +1,8 @@
 export default {
   id: 'k8s-manifest-generator',
   name: 'Kubernetes Manifest Generator',
-  description: 'Generates a complete Kubernetes Deployment, Service, and ConfigMap manifest from a few app inputs.',
+  description:
+    'Generates a complete Kubernetes Deployment, Service, and ConfigMap manifest from a few app inputs.',
   category: 'DevOps',
   icon: 'Box',
   provider: 'any',
@@ -117,4 +118,4 @@ QUALITY BAR:
 - Avoid placeholders that make the manifest invalid.
 - Prefer safe defaults and clarity over advanced options.`,
   outputType: 'text',
-};
+}

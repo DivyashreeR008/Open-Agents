@@ -8,7 +8,10 @@ describe('streamAgent response body', () => {
   })
 
   it('throws a clear error when the body is missing', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, body: null })))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({ ok: true, body: null }))
+    )
     await expect(
       streamAgent({
         provider: 'openai',
@@ -22,7 +25,10 @@ describe('streamAgent response body', () => {
   })
 
   it('throws a clear error when getReader is unavailable', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, body: {} })))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({ ok: true, body: {} }))
+    )
     await expect(
       streamAgent({
         provider: 'openai',
@@ -51,9 +57,7 @@ describe('Gemini invalid key', () => {
       code: 400,
       message: 'API key not valid. Please pass a valid API key.',
       status: 'INVALID_ARGUMENT',
-      details: [
-        { '@type': 'type.googleapis.com/google.rpc.ErrorInfo', reason: 'API_KEY_INVALID' },
-      ],
+      details: [{ '@type': 'type.googleapis.com/google.rpc.ErrorInfo', reason: 'API_KEY_INVALID' }],
     },
   }
 
@@ -89,7 +93,9 @@ describe('Gemini invalid key', () => {
   it('also matches on the message when details are missing', async () => {
     vi.stubGlobal(
       'fetch',
-      mockResponse(400, { error: { code: 400, message: 'API key not valid. Please pass a valid API key.' } })
+      mockResponse(400, {
+        error: { code: 400, message: 'API key not valid. Please pass a valid API key.' },
+      })
     )
     await expect(runAgent(geminiArgs)).rejects.toMatchObject({ type: 'invalid_api_key' })
   })
@@ -97,7 +103,9 @@ describe('Gemini invalid key', () => {
   it('still treats other Gemini 400 errors as generic errors', async () => {
     vi.stubGlobal(
       'fetch',
-      mockResponse(400, { error: { code: 400, message: 'Invalid JSON payload received.', status: 'INVALID_ARGUMENT' } })
+      mockResponse(400, {
+        error: { code: 400, message: 'Invalid JSON payload received.', status: 'INVALID_ARGUMENT' },
+      })
     )
     const err = await runAgent(geminiArgs).catch((e) => e)
     expect(err.type).toBeUndefined()
@@ -106,7 +114,9 @@ describe('Gemini invalid key', () => {
 
   it('does not treat a 400 from another provider as an invalid key', async () => {
     vi.stubGlobal('fetch', mockResponse(400, badKeyBody))
-    const err = await runAgent({ ...geminiArgs, provider: 'openai', model: 'gpt-4o-mini' }).catch((e) => e)
+    const err = await runAgent({ ...geminiArgs, provider: 'openai', model: 'gpt-4o-mini' }).catch(
+      (e) => e
+    )
     expect(err.type).toBeUndefined()
   })
 })

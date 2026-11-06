@@ -1,28 +1,28 @@
 export default {
-  id: "rest-api-design-reviewer",
-  createdAt: "2026-10-20",
-  name: "REST API Design Reviewer",
+  id: 'rest-api-design-reviewer',
+  createdAt: '2026-10-20',
+  name: 'REST API Design Reviewer',
   description:
-    "Review REST API designs for consistency, versioning, pagination, error handling, and HATEOAS compliance.",
-  category: "Engineering",
-  icon: "Code",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Review REST API designs for consistency, versioning, pagination, error handling, and HATEOAS compliance.',
+  category: 'Engineering',
+  icon: 'Code',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {},
   inputs: [
     {
-      id: "api",
-      label: "API spec or endpoints",
-      type: "code",
-      placeholder: "Paste OpenAPI spec or endpoint descriptions...",
+      id: 'api',
+      label: 'API spec or endpoints',
+      type: 'code',
+      placeholder: 'Paste OpenAPI spec or endpoint descriptions...',
       required: true,
     },
     {
-      id: "audience",
-      label: "API consumers",
-      type: "text",
-      placeholder: "e.g. internal teams, public developers, mobile apps...",
+      id: 'audience',
+      label: 'API consumers',
+      type: 'text',
+      placeholder: 'e.g. internal teams, public developers, mobile apps...',
       required: true,
     },
   ],
@@ -49,5 +49,5 @@ Rules:
 - Follow Richardson Maturity Model guidance.
 - Provide specific endpoint rewrite examples.`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

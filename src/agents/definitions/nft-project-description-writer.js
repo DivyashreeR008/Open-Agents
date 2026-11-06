@@ -68,6 +68,6 @@ An ultra-short bio or CTA (one line) that fits within Twitter's character limits
 
 Ensure each section is clearly headed with its respective markdown title (e.g., "## OpenSea", "## Website", "## Twitter"). Use a tone that appeals to the specified target audience.`,
   outputType: 'markdown',
-};
+}
 
-export default nftProjectDescriptionWriter;
+export default nftProjectDescriptionWriter

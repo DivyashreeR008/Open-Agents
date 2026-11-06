@@ -110,7 +110,10 @@ export function buildBatchUserMessage(agent, fixedInputs, batchFieldId, itemValu
     )
   })
 
-  return parts.join('\n\n').trim().replace(/\n{3,}/g, '\n\n')
+  return parts
+    .join('\n\n')
+    .trim()
+    .replace(/\n{3,}/g, '\n\n')
 }
 
 /**

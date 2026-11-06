@@ -1,72 +1,72 @@
 export default {
-    id: 'customer-success-checkin',
+  id: 'customer-success-checkin',
 
-    name: 'Customer Success Check-in Generator',
+  name: 'Customer Success Check-in Generator',
 
-    description:
-        'Generates professional customer success follow-up emails based on customer activity and milestones.',
+  description:
+    'Generates professional customer success follow-up emails based on customer activity and milestones.',
 
-    category: 'Marketing',
+  category: 'Marketing',
 
-    icon: 'MessageSquare',
+  icon: 'MessageSquare',
 
-    provider: 'openai',
+  provider: 'openai',
 
-    defaultProvider: 'openai',
+  defaultProvider: 'openai',
 
-    model: 'gpt-4o',
+  model: 'gpt-4o',
 
-    inputs: [
-        {
-            id: 'customerName',
-            label: 'Customer Name',
-            type: 'text',
-            placeholder: 'Acme Corp',
-            required: true,
-        },
+  inputs: [
+    {
+      id: 'customerName',
+      label: 'Customer Name',
+      type: 'text',
+      placeholder: 'Acme Corp',
+      required: true,
+    },
 
-        {
-            id: 'contactName',
-            label: 'Contact Name',
-            type: 'text',
-            placeholder: 'Sarah Johnson',
-            required: true,
-        },
+    {
+      id: 'contactName',
+      label: 'Contact Name',
+      type: 'text',
+      placeholder: 'Sarah Johnson',
+      required: true,
+    },
 
-        {
-            id: 'recentActivity',
-            label: 'Recent Activity',
-            type: 'textarea',
-            placeholder: 'Completed onboarding for 120 employees',
-            required: true,
-        },
+    {
+      id: 'recentActivity',
+      label: 'Recent Activity',
+      type: 'textarea',
+      placeholder: 'Completed onboarding for 120 employees',
+      required: true,
+    },
 
-        {
-            id: 'usageMilestone',
-            label: 'Usage Milestone',
-            type: 'text',
-            placeholder: 'Reached 10,000 API calls',
-            required: true,
-        },
+    {
+      id: 'usageMilestone',
+      label: 'Usage Milestone',
+      type: 'text',
+      placeholder: 'Reached 10,000 API calls',
+      required: true,
+    },
 
-        {
-            id: 'csmGoal',
-            label: 'Customer Success Goal',
-            type: 'textarea',
-            placeholder: 'Encourage feature adoption',
-            required: true,
-        },
+    {
+      id: 'csmGoal',
+      label: 'Customer Success Goal',
+      type: 'textarea',
+      placeholder: 'Encourage feature adoption',
+      required: true,
+    },
 
-        {
-            id: 'tone',
-            label: 'Tone',
-            type: 'text',
-            placeholder: 'Warm and professional',
-            required: true,
-        },
-    ],
+    {
+      id: 'tone',
+      label: 'Tone',
+      type: 'text',
+      placeholder: 'Warm and professional',
+      required: true,
+    },
+  ],
 
-    systemPrompt: `
+  systemPrompt: `
 You are a professional Customer Success Manager.
 
 Generate a concise and professional customer success check-in email using the provided customer details.
@@ -83,5 +83,5 @@ Requirements:
 - Format the response cleanly in markdown
 `,
 
-    outputType: 'markdown',
+  outputType: 'markdown',
 }

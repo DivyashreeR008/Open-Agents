@@ -1,7 +1,8 @@
 const aiInterviewPreparationAgent = {
   id: 'ai-interview-preparation-agent',
   name: 'InterviewAI',
-  description: 'Simulates real software engineering interviews and provides comprehensive performance feedback.',
+  description:
+    'Simulates real software engineering interviews and provides comprehensive performance feedback.',
   category: 'Engineering',
   icon: 'MonitorPlay',
   provider: 'any',
@@ -134,6 +135,6 @@ For single-session runs or when summarizing/concluding:
 
 Always be encouraging but maintain a high standard. Format your output beautifully in Markdown.`,
   outputType: 'markdown',
-};
+}
 
-export default aiInterviewPreparationAgent;
+export default aiInterviewPreparationAgent

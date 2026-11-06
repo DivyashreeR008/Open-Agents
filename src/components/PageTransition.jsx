@@ -37,9 +37,7 @@ export default function PageTransition({ children }) {
       {isTransitioning && (
         <div
           className={`fixed inset-0 z-50 bg-black pointer-events-none ${
-            direction === 'next'
-              ? 'page-transition-overlay-next'
-              : 'page-transition-overlay-prev'
+            direction === 'next' ? 'page-transition-overlay-next' : 'page-transition-overlay-prev'
           }`}
         />
       )}

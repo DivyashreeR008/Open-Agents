@@ -1,66 +1,66 @@
 export default {
-    id: "employee-onboarding-planner",
+  id: 'employee-onboarding-planner',
 
-    createdAt: "2026-05-22",
+  createdAt: '2026-05-22',
 
-    name: "Employee Onboarding Planner",
+  name: 'Employee Onboarding Planner',
 
-    description:
-        "Generate structured onboarding plans and checklists for new hires based on role, department, seniority, and start date.",
+  description:
+    'Generate structured onboarding plans and checklists for new hires based on role, department, seniority, and start date.',
 
-    category: "HR",
+  category: 'HR',
 
-    icon: "Users",
+  icon: 'Users',
 
-    provider: "any",
+  provider: 'any',
 
-    defaultProvider: "openai",
+  defaultProvider: 'openai',
 
-    model: "gpt-4o",
+  model: 'gpt-4o',
 
-    exampleInputs: {
-        role: "Flutter Developer",
-        department: "Engineering",
-        seniority: "Junior",
-        startDate: "10 June 2026",
+  exampleInputs: {
+    role: 'Flutter Developer',
+    department: 'Engineering',
+    seniority: 'Junior',
+    startDate: '10 June 2026',
+  },
+
+  inputs: [
+    {
+      id: 'role',
+      label: 'Role',
+      type: 'text',
+      placeholder: 'e.g. Flutter Developer',
+      required: true,
     },
 
-    inputs: [
-        {
-            id: "role",
-            label: "Role",
-            type: "text",
-            placeholder: "e.g. Flutter Developer",
-            required: true,
-        },
+    {
+      id: 'department',
+      label: 'Department',
+      type: 'text',
+      placeholder: 'e.g. Engineering',
+      required: true,
+    },
 
-        {
-            id: "department",
-            label: "Department",
-            type: "text",
-            placeholder: "e.g. Engineering",
-            required: true,
-        },
+    {
+      id: 'seniority',
+      label: 'Seniority Level',
+      type: 'select',
+      options: ['Intern', 'Junior', 'Mid-Level', 'Senior'],
+      defaultValue: 'Junior',
+      required: true,
+    },
 
-        {
-            id: "seniority",
-            label: "Seniority Level",
-            type: "select",
-            options: ["Intern", "Junior", "Mid-Level", "Senior"],
-            defaultValue: "Junior",
-            required: true,
-        },
+    {
+      id: 'startDate',
+      label: 'Start Date',
+      type: 'text',
+      placeholder: 'e.g. 10 June 2026',
+      required: true,
+    },
+  ],
 
-        {
-            id: "startDate",
-            label: "Start Date",
-            type: "text",
-            placeholder: "e.g. 10 June 2026",
-            required: true,
-        },
-    ],
-
-    systemPrompt: `You are an experienced HR onboarding specialist.
+  systemPrompt: `You are an experienced HR onboarding specialist.
 
 Generate a structured onboarding plan for a new employee.
 
@@ -125,5 +125,5 @@ Rules:
 - Every task must start with "- [ ]"
 - Keep sections clearly separated`,
 
-    outputType: "markdown",
-};
+  outputType: 'markdown',
+}

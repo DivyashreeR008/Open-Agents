@@ -1,43 +1,41 @@
 export default {
-  id: "wallet-security-guide",
-  createdAt: "2026-10-12",
-  name: "Wallet Security Guide",
-  description:
-    "Lock down your wallet: seed hygiene, hardware setup, approvals, and scam patterns.",
-  category: "Web3",
-  icon: "Wallet",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'wallet-security-guide',
+  createdAt: '2026-10-12',
+  name: 'Wallet Security Guide',
+  description: 'Lock down your wallet: seed hygiene, hardware setup, approvals, and scam patterns.',
+  category: 'Web3',
+  icon: 'Wallet',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    setup: "hardware",
-    experience: "comfortable",
+    setup: 'hardware',
+    experience: 'comfortable',
     scare:
-      "Clicked a link from a Discord DM claiming a surprise airdrop and connected my hot wallet. Nothing drained yet but I am worried.",
+      'Clicked a link from a Discord DM claiming a surprise airdrop and connected my hot wallet. Nothing drained yet but I am worried.',
   },
   inputs: [
     {
-      id: "setup",
-      label: "Current wallet setup",
-      type: "select",
-      options: ["hot-only", "hardware", "multisig"],
-      defaultValue: "hot-only",
+      id: 'setup',
+      label: 'Current wallet setup',
+      type: 'select',
+      options: ['hot-only', 'hardware', 'multisig'],
+      defaultValue: 'hot-only',
       required: true,
     },
     {
-      id: "experience",
-      label: "Experience level",
-      type: "select",
-      options: ["new", "comfortable"],
-      defaultValue: "new",
+      id: 'experience',
+      label: 'Experience level',
+      type: 'select',
+      options: ['new', 'comfortable'],
+      defaultValue: 'new',
       required: true,
     },
     {
-      id: "scare",
-      label: "Incident or concern (optional)",
-      type: "textarea",
-      placeholder:
-        "e.g. Clicked a suspicious link, shared a screen, lost a device...",
+      id: 'scare',
+      label: 'Incident or concern (optional)',
+      type: 'textarea',
+      placeholder: 'e.g. Clicked a suspicious link, shared a screen, lost a device...',
     },
   ],
   systemPrompt: `You are a wallet security coach who gives practical, non-alarmist hardening steps.
@@ -69,6 +67,6 @@ Rules:
 - Never ask for or repeat seed phrases, private keys, or personal data.
 - Match depth to experience level without skipping critical warnings.
 - Use neutral, instructional tone.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["research-agent", "readme-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['research-agent', 'readme-generator'],
+}

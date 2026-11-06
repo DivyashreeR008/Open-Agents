@@ -1,43 +1,41 @@
 export default {
-  id: "cofounder-agreement-checklist",
-  createdAt: "2026-10-12",
-  name: "Cofounder Agreement Checklist",
+  id: 'cofounder-agreement-checklist',
+  createdAt: '2026-10-12',
+  name: 'Cofounder Agreement Checklist',
   description:
-    "Cover vesting, IP, roles, and exits before incorporating: checklist plus talk tracks.",
-  category: "Business",
-  icon: "Users",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Cover vesting, IP, roles, and exits before incorporating: checklist plus talk tracks.',
+  category: 'Business',
+  icon: 'Users',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     founders:
-      "Two cofounders: one technical (full-time), one business (part-time until funding). Equal split proposed.",
-    stage: "pre-launch",
-    concerns:
-      "What happens if one founder leaves early; who owns IP created before incorporation.",
+      'Two cofounders: one technical (full-time), one business (part-time until funding). Equal split proposed.',
+    stage: 'pre-launch',
+    concerns: 'What happens if one founder leaves early; who owns IP created before incorporation.',
   },
   inputs: [
     {
-      id: "founders",
-      label: "Founder setup",
-      type: "textarea",
-      placeholder:
-        "e.g. Two cofounders, roles, time commitment, proposed equity split",
+      id: 'founders',
+      label: 'Founder setup',
+      type: 'textarea',
+      placeholder: 'e.g. Two cofounders, roles, time commitment, proposed equity split',
       required: true,
     },
     {
-      id: "stage",
-      label: "Company stage",
-      type: "select",
-      options: ["idea", "pre-launch", "operating"],
-      defaultValue: "pre-launch",
+      id: 'stage',
+      label: 'Company stage',
+      type: 'select',
+      options: ['idea', 'pre-launch', 'operating'],
+      defaultValue: 'pre-launch',
       required: true,
     },
     {
-      id: "concerns",
-      label: "Specific concerns",
-      type: "textarea",
-      placeholder: "e.g. Vesting, IP ownership, decision-making deadlocks",
+      id: 'concerns',
+      label: 'Specific concerns',
+      type: 'textarea',
+      placeholder: 'e.g. Vesting, IP ownership, decision-making deadlocks',
     },
   ],
   systemPrompt: `You are a startup operations advisor who helps cofounders align on key terms before seeing a lawyer.
@@ -63,6 +61,6 @@ Rules:
 - Present options neutrally without favoring any founder.
 - Note that this is general information, not legal advice.
 - Keep language plain and direct.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["terms-and-conditions-simplifier", "research-agent"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['terms-and-conditions-simplifier', 'research-agent'],
+}

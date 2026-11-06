@@ -1,40 +1,39 @@
 export default {
-  id: "demo-script-writer",
-  createdAt: "2026-10-12",
-  name: "Demo Script Writer",
-  description:
-    "Get a product demo script: hook, three wow moments, landmine handling, and close.",
-  category: "Sales",
-  icon: "MonitorPlay",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'demo-script-writer',
+  createdAt: '2026-10-12',
+  name: 'Demo Script Writer',
+  description: 'Get a product demo script: hook, three wow moments, landmine handling, and close.',
+  category: 'Sales',
+  icon: 'MonitorPlay',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     product:
-      "Flowdesk project tracker: boards, automations, and client portals for marketing agencies.",
-    persona: "Agency owner managing 10-20 retainer clients",
-    length: "20min",
+      'Flowdesk project tracker: boards, automations, and client portals for marketing agencies.',
+    persona: 'Agency owner managing 10-20 retainer clients',
+    length: '20min',
   },
   inputs: [
     {
-      id: "product",
-      label: "Product and key capabilities",
-      type: "textarea",
-      placeholder: "e.g. Project tracker with boards, automations, and client portals",
+      id: 'product',
+      label: 'Product and key capabilities',
+      type: 'textarea',
+      placeholder: 'e.g. Project tracker with boards, automations, and client portals',
       required: true,
     },
     {
-      id: "persona",
-      label: "Buyer persona (optional)",
-      type: "text",
-      placeholder: "e.g. Agency owner managing 10-20 retainer clients",
+      id: 'persona',
+      label: 'Buyer persona (optional)',
+      type: 'text',
+      placeholder: 'e.g. Agency owner managing 10-20 retainer clients',
     },
     {
-      id: "length",
-      label: "Demo length",
-      type: "select",
-      options: ["10min", "20min", "30min"],
-      defaultValue: "20min",
+      id: 'length',
+      label: 'Demo length',
+      type: 'select',
+      options: ['10min', '20min', '30min'],
+      defaultValue: '20min',
     },
   ],
   systemPrompt: `You are a sales engineer who runs tight, story-driven product demos.
@@ -66,6 +65,6 @@ Rules:
 - Keep talk tracks concise and speakable, with stage directions in brackets.
 - Use neutral language with no emoji.
 - Scale depth and number of clicks to the selected demo length.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["cold-email-writer", "linkedin-outreach-message-writer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['cold-email-writer', 'linkedin-outreach-message-writer'],
+}

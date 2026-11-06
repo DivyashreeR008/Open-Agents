@@ -20,10 +20,9 @@ describe('useTimedState', () => {
 
   it('cancels pending resets when the surface closes or unmounts', () => {
     vi.useFakeTimers()
-    const { result, rerender, unmount } = renderHook(
-      ({ open }) => useTimedState(false, open),
-      { initialProps: { open: true } }
-    )
+    const { result, rerender, unmount } = renderHook(({ open }) => useTimedState(false, open), {
+      initialProps: { open: true },
+    })
 
     act(() => result.current[1](true, 2000))
     rerender({ open: false })

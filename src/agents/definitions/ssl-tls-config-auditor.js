@@ -1,28 +1,28 @@
 export default {
-  id: "ssl-tls-config-auditor",
-  createdAt: "2026-10-20",
-  name: "SSL/TLS Configuration Auditor",
+  id: 'ssl-tls-config-auditor',
+  createdAt: '2026-10-20',
+  name: 'SSL/TLS Configuration Auditor',
   description:
-    "Audit SSL/TLS configurations for protocol versions, cipher suites, certificate issues, and best practices.",
-  category: "Cybersecurity",
-  icon: "Lock",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Audit SSL/TLS configurations for protocol versions, cipher suites, certificate issues, and best practices.',
+  category: 'Cybersecurity',
+  icon: 'Lock',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {},
   inputs: [
     {
-      id: "config",
-      label: "TLS configuration or scan output",
-      type: "code",
-      placeholder: "Paste nginx/Apache SSL config or test results...",
+      id: 'config',
+      label: 'TLS configuration or scan output',
+      type: 'code',
+      placeholder: 'Paste nginx/Apache SSL config or test results...',
       required: true,
     },
     {
-      id: "server",
-      label: "Server software",
-      type: "text",
-      placeholder: "e.g. nginx 1.24, Apache 2.4, HAProxy, AWS ALB...",
+      id: 'server',
+      label: 'Server software',
+      type: 'text',
+      placeholder: 'e.g. nginx 1.24, Apache 2.4, HAProxy, AWS ALB...',
       required: true,
     },
   ],
@@ -48,5 +48,5 @@ Rules:
 - Recommend TLS 1.2+ minimum, prefer TLS 1.3.
 - Include HSTS and OCSP stapling recommendations.`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

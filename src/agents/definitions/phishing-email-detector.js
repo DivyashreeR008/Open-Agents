@@ -1,22 +1,21 @@
 export default {
-  id: "phishing-email-detector",
+  id: 'phishing-email-detector',
 
-  createdAt: "2026-05-21",
+  createdAt: '2026-05-21',
 
-  name: "Phishing Email Detector",
+  name: 'Phishing Email Detector',
 
-  description:
-    "Analyze emails for phishing indicators, risk scoring, and safety recommendations.",
+  description: 'Analyze emails for phishing indicators, risk scoring, and safety recommendations.',
 
-  category: "Cybersecurity",
+  category: 'Cybersecurity',
 
-  icon: "ShieldAlert",
+  icon: 'ShieldAlert',
 
-  provider: "any",
+  provider: 'any',
 
-  defaultProvider: "gemini",
+  defaultProvider: 'gemini',
 
-  model: "gemini-2.5-flash",
+  model: 'gemini-2.5-flash',
 
   exampleInputs: {
     email: `From: support@secure-update-paypal-com.xyz
@@ -38,11 +37,10 @@ PayPal Security Team`,
 
   inputs: [
     {
-      id: "email",
-      label: "Email Content",
-      type: "textarea",
-      placeholder:
-        "Paste the full email content here, including headers if possible...",
+      id: 'email',
+      label: 'Email Content',
+      type: 'textarea',
+      placeholder: 'Paste the full email content here, including headers if possible...',
       required: true,
     },
   ],
@@ -68,5 +66,5 @@ Rules:
 - Use bold for emphasis on key findings
 - Never ask the user to click any links from the email for verification`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

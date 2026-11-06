@@ -1,40 +1,40 @@
 export default {
-  id: "peer-feedback-guide",
-  createdAt: "2026-10-12",
-  name: "Peer Feedback Guide",
+  id: 'peer-feedback-guide',
+  createdAt: '2026-10-12',
+  name: 'Peer Feedback Guide',
   description:
-    "Write constructive peer feedback: observations, impact, requests — plus receiving guide.",
-  category: "HR",
-  icon: "Star",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Write constructive peer feedback: observations, impact, requests — plus receiving guide.',
+  category: 'HR',
+  icon: 'Star',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    peer: "Priya, backend engineer on my squad. Strong on API design and code reviews, but sometimes goes quiet in planning meetings when timelines are unrealistic.",
-    context: "Quarterly peer review cycle. Feedback will be shared with her manager and used for growth planning.",
-    tone: "gentle",
+    peer: 'Priya, backend engineer on my squad. Strong on API design and code reviews, but sometimes goes quiet in planning meetings when timelines are unrealistic.',
+    context:
+      'Quarterly peer review cycle. Feedback will be shared with her manager and used for growth planning.',
+    tone: 'gentle',
   },
   inputs: [
     {
-      id: "peer",
-      label: "Who is the feedback for",
-      type: "textarea",
-      placeholder:
-        "e.g. Name, role, and 2-3 things you have observed about their work",
+      id: 'peer',
+      label: 'Who is the feedback for',
+      type: 'textarea',
+      placeholder: 'e.g. Name, role, and 2-3 things you have observed about their work',
       required: true,
     },
     {
-      id: "context",
-      label: "Review context",
-      type: "textarea",
-      placeholder: "e.g. Quarterly review, promotion case, project retro",
+      id: 'context',
+      label: 'Review context',
+      type: 'textarea',
+      placeholder: 'e.g. Quarterly review, promotion case, project retro',
     },
     {
-      id: "tone",
-      label: "Feedback tone",
-      type: "select",
-      options: ["direct", "gentle", "formal"],
-      defaultValue: "direct",
+      id: 'tone',
+      label: 'Feedback tone',
+      type: 'select',
+      options: ['direct', 'gentle', 'formal'],
+      defaultValue: 'direct',
       required: true,
     },
   ],
@@ -75,6 +75,6 @@ Rules:
 - Be balanced: acknowledge strengths before raising growth areas.
 - Never invent performance details the user did not provide.
 - Keep language professional and free of bias.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["resume-screener", "research-agent"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['resume-screener', 'research-agent'],
+}
