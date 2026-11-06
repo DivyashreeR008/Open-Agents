@@ -19,50 +19,102 @@ import { useFlashNotice } from '../lib/useFlashNotice'
 import { useDialogFocus } from '../hooks/useDialogFocus'
 import {
   MARKETPLACE_CATEGORIES,
+  MARKETPLACE_SORTS,
   loadListings,
   publishAgent,
   importAgent,
   loadDrafts,
   getImportedListingIds,
   rateAgent,
-  getUserVote,
+  loadUserVotes,
   getAverageRating,
   filterListings,
+  sortListings,
 } from '../lib/marketplace'
 
-function StarRating({ listing, onRate }) {
+const publishedDateFormatter = new Intl.DateTimeFormat('en', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+  timeZone: 'UTC',
+})
+
+function formatPublishedDate(value) {
+  if (!value) return ''
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? '' : publishedDateFormatter.format(date)
+}
+
+function StarRating({ listing, userVote, onRate }) {
   const [hover, setHover] = useState(0)
-  const userVote = getUserVote(listing.id)
   const average = getAverageRating(listing)
+  const ratingCount = listing.ratingCount ?? 0
+  const displayValue = hover || average
+  const hasUserVote = userVote !== null && userVote !== undefined
 
   return (
-    <div className="flex items-center gap-1.5">
-      <div className="flex" role="radiogroup" aria-label={`Rate ${listing.name}`}>
-        {[1, 2, 3, 4, 5].map((star) => (
-          <button
-            key={star}
-            role="radio"
-            aria-checked={userVote === star}
-            aria-label={`${star} star${star > 1 ? 's' : ''}`}
-            onClick={() => onRate(listing.id, star)}
-            onMouseEnter={() => setHover(star)}
-            onMouseLeave={() => setHover(0)}
-            className="p-0.5"
-          >
-            <Star
-              size={13}
-              className={
-                star <= (hover || userVote || Math.round(average))
-                  ? 'text-zinc-400 fill-zinc-400'
-                  : 'dark:text-text-muted text-gray-300'
+    <div className="flex flex-wrap items-center gap-1.5">
+      <div
+        className="flex"
+        role="radiogroup"
+        aria-label={`Rate ${listing.name}. Average ${average > 0 ? average.toFixed(1) : 'not rated yet'} from ${ratingCount} rating${ratingCount === 1 ? '' : 's'}.`}
+      >
+        {[1, 2, 3, 4, 5].map((star) => {
+          const fill = Math.max(0, Math.min(1, displayValue - (star - 1)))
+          return (
+            <button
+              key={star}
+              type="button"
+              role="radio"
+              aria-checked={userVote === star}
+              aria-label={`${star} star${star > 1 ? 's' : ''}`}
+              title={
+                userVote === star
+                  ? `Remove your ${star}-star rating`
+                  : `Rate ${star} star${star > 1 ? 's' : ''}`
               }
-            />
-          </button>
-        ))}
+              onClick={() => onRate(listing.id, userVote === star ? null : star)}
+              onMouseEnter={() => setHover(star)}
+              onMouseLeave={() => setHover(0)}
+              className="p-0.5"
+            >
+              <span className="relative block h-[13px] w-[13px]" aria-hidden="true">
+                <Star
+                  size={13}
+                  className="absolute inset-0 dark:text-text-muted text-gray-300"
+                />
+                <span
+                  className="absolute inset-y-0 left-0 overflow-hidden"
+                  style={{ width: `${Math.round(fill * 10000) / 100}%` }}
+                >
+                  <Star
+                    size={13}
+                    className="absolute left-0 top-0 text-zinc-400 fill-zinc-400"
+                  />
+                </span>
+              </span>
+            </button>
+          )
+        })}
       </div>
       <span className="text-[11px] dark:text-text-muted text-gray-400">
-        {average > 0 ? `${average} (${listing.ratingCount})` : 'No ratings'}
+        {average > 0 ? `${average.toFixed(1)} (${ratingCount})` : 'No ratings'}
       </span>
+      {hasUserVote && (
+        <>
+          <span className="text-[10px] font-medium text-zinc-500">
+            You: {userVote}
+          </span>
+          <button
+            type="button"
+            onClick={() => onRate(listing.id, null)}
+            aria-label={`Remove your rating for ${listing.name}`}
+            className="text-[10px] underline text-zinc-500 transition-colors hover:text-black dark:hover:text-white"
+          >
+            Clear
+          </button>
+        </>
+      )}
     </div>
   )
 }
@@ -265,7 +317,7 @@ function PublishModal({ agents, onClose, onPublished }) {
   )
 }
 
-function ListingCard({ listing, onImport, onRate, imported }) {
+function ListingCard({ listing, onImport, onRate, imported, userVote }) {
   return (
     <div
       className=" border p-4 flex flex-col gap-2.5 transition-colors dark:bg-surface-card dark:border-border dark:hover:border-zinc-400 bg-white border-gray-200 hover:border-zinc-400"
@@ -274,6 +326,9 @@ function ListingCard({ listing, onImport, onRate, imported }) {
         <div className="min-w-0">
           <h3 className="text-sm font-semibold dark:text-text-primary text-gray-900 truncate">{listing.name}</h3>
           <p className="text-[11px] dark:text-text-muted text-gray-400">by {listing.author}</p>
+          <p className="text-[10px] dark:text-text-muted text-gray-400">
+            Published {formatPublishedDate(listing.publishedAt) || 'date unknown'}
+          </p>
         </div>
         <span className="flex-shrink-0 px-2 py-0.5 text-[10px] font-medium bg-zinc-500/10 text-zinc-900 dark:text-white">
           {listing.category}
@@ -297,7 +352,7 @@ function ListingCard({ listing, onImport, onRate, imported }) {
       )}
 
       <div className="flex items-center justify-between mt-auto pt-1">
-        <StarRating listing={listing} onRate={onRate} />
+        <StarRating listing={listing} userVote={userVote} onRate={onRate} />
         <div className="flex items-center gap-2">
           <span className="text-[11px] dark:text-text-muted text-gray-400">
             {listing.importCount} import{listing.importCount === 1 ? '' : 's'}
@@ -329,8 +384,10 @@ export default function MarketplacePage() {
 
   const { agents } = useAgents()
   const [listings, setListings] = useState([])
+  const [userVotes, setUserVotes] = useState(loadUserVotes)
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('')
+  const [sortOrder, setSortOrder] = useState('newest')
   const [showPublish, setShowPublish] = useState(false)
   const [importedIds, setImportedIds] = useState(getImportedListingIds)
   const [draftCount, setDraftCount] = useState(() => loadDrafts().length)
@@ -338,34 +395,67 @@ export default function MarketplacePage() {
 
   useEffect(() => {
     setListings(loadListings())
+    setUserVotes(loadUserVotes())
   }, [])
 
   const visible = useMemo(
-    () => filterListings(listings, { search, category }),
-    [listings, search, category]
+    () => sortListings(filterListings(listings, { search, category }), sortOrder),
+    [listings, search, category, sortOrder]
   )
+  const activeSort =
+    MARKETPLACE_SORTS.find((option) => option.value === sortOrder) || MARKETPLACE_SORTS[0]
 
   const handleImport = (listingId) => {
-    const draft = importAgent(listingId)
-    if (!draft) return
-    setListings(loadListings())
-    setImportedIds(getImportedListingIds())
-    setDraftCount(loadDrafts().length)
-    flash(
-      draft.pendingCredentialFields.length > 0
-        ? `Imported "${draft.name}". Complete ${draft.pendingCredentialFields.length} credential field(s) in My drafts before running it.`
-        : `Imported "${draft.name}". Open it from My drafts to run it.`
-    )
+    try {
+      const draft = importAgent(listingId)
+      setListings(loadListings())
+      setUserVotes(loadUserVotes())
+      setImportedIds(getImportedListingIds())
+      setDraftCount(loadDrafts().length)
+
+      if (!draft) {
+        flash('Import failed because the listing is no longer available. Refresh the marketplace and try again.')
+        return
+      }
+      if (draft.persisted === false) {
+        flash('Import could not be saved because browser storage is unavailable or full. Free space or leave private mode, then try again.')
+        return
+      }
+      if (draft.alreadyImported) {
+        flash(`"${draft.name}" is already in My drafts. Open it from My drafts to continue.`)
+        return
+      }
+      flash(
+        draft.pendingCredentialFields.length > 0
+          ? `Imported "${draft.name}". Complete ${draft.pendingCredentialFields.length} credential field(s) in My drafts before running it.`
+          : `Imported "${draft.name}". Open it from My drafts to run it.`
+      )
+    } catch {
+      setListings(loadListings())
+      setUserVotes(loadUserVotes())
+      setImportedIds(getImportedListingIds())
+      setDraftCount(loadDrafts().length)
+      flash('Import failed because the stored listing could not be read. Refresh the marketplace and try again.')
+    }
   }
 
   const handleRate = (listingId, stars) => {
-    rateAgent(listingId, stars)
+    const outcome = rateAgent(listingId, stars)
     setListings(loadListings())
+    setUserVotes(loadUserVotes())
+    if (!outcome) {
+      flash('Rating was not saved because browser storage is unavailable or full. Free space or leave private mode, then try again.')
+    }
   }
 
   const handlePublished = (listing) => {
+    if (!listing || listing.persisted === false) {
+      flash('Publishing failed because browser storage is unavailable or full. Free space or leave private mode, then try again.')
+      return
+    }
     setShowPublish(false)
     setListings(loadListings())
+    setUserVotes(loadUserVotes())
     flash(`Published "${listing.name}" to the marketplace.`)
   }
 
@@ -430,6 +520,16 @@ export default function MarketplacePage() {
             <option key={c} value={c}>{c}</option>
           ))}
         </select>
+        <select
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value)}
+          aria-label="Sort listings"
+          className={inputClass}
+        >
+          {MARKETPLACE_SORTS.map((option) => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
+        </select>
       </div>
 
       {/* Notice */}
@@ -438,6 +538,13 @@ export default function MarketplacePage() {
           <p className="text-xs font-medium text-zinc-400">{notice}</p>
         </div>
       )}
+
+      <div className="flex items-center justify-between gap-2 mb-2 text-[11px] dark:text-text-muted text-gray-400">
+        <p>
+          {visible.length} of {listings.length} listing{listings.length === 1 ? '' : 's'}
+        </p>
+        <p aria-live="polite">Sorted by {activeSort.label.toLowerCase()}.</p>
+      </div>
 
       {/* Grid */}
       {visible.length > 0 ? (
@@ -449,6 +556,7 @@ export default function MarketplacePage() {
               onImport={handleImport}
               onRate={handleRate}
               imported={importedIds.has(listing.id)}
+              userVote={userVotes[listing.id] ?? null}
             />
           ))}
         </div>
