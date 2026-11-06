@@ -30,13 +30,14 @@ describe('AutomationRunDrawer actions', () => {
   it('copies the output and falls back to the error', () => {
     const writeText = vi.fn().mockResolvedValue(undefined)
     Object.assign(navigator, { clipboard: { writeText } })
-    renderRun()
+    const first = renderRun()
     fireEvent.click(screen.getByRole('button', { name: 'Copy output' }))
     expect(writeText).toHaveBeenLastCalledWith('Hello output')
 
+    first.unmount()
     writeText.mockClear()
     renderRun({ ...base, output: '', error: 'Boom' })
-    fireEvent.click(screen.getAllByRole('button', { name: 'Copy output' })[1])
+    fireEvent.click(screen.getByRole('button', { name: 'Copy output' }))
     expect(writeText).toHaveBeenLastCalledWith('Boom')
   })
 

@@ -19,16 +19,6 @@ function updateThemeMeta(isDark) {
   })
 }
 
-function updateThemeMeta(isDark) {
-  if (typeof document === 'undefined') return
-  const metaTags = document.querySelectorAll('meta[name="theme-color"]')
-  metaTags.forEach((tag) => {
-    if (!tag.hasAttribute('media')) {
-      tag.setAttribute('content', isDark ? '#000000' : '#ffffff')
-    }
-  })
-}
-
 /**
  * App bar. Deliberately thin (48px) and mostly monochrome: the brand, a
  * global search affordance, and the account/utility actions. Primary

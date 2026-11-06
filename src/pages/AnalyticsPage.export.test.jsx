@@ -59,11 +59,11 @@ describe('AnalyticsPage session spend and export', () => {
     renderPage()
     expect(screen.getByText('Token Usage & Cost (This Session)')).toBeInTheDocument()
     expect(screen.getByText('1,800')).toBeInTheDocument()
-    expect(screen.getByText('$0.0080')).toBeInTheDocument()
+    expect(screen.getByText('$0.008')).toBeInTheDocument()
     expect(screen.getByText('1,000 in · 500 out')).toBeInTheDocument()
     expect(screen.getByText('200 in · 100 out')).toBeInTheDocument()
-    expect(screen.getByText('$0.0050')).toBeInTheDocument()
-    expect(screen.getByText('$0.0030')).toBeInTheDocument()
+    expect(screen.getByText('$0.005')).toBeInTheDocument()
+    expect(screen.getByText('$0.003')).toBeInTheDocument()
   })
 
   it('downloads the dashboard payload and revokes the object URL', async () => {
