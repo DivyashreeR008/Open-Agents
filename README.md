@@ -20,7 +20,7 @@ We welcome contributions! Please see the contributing guidelines below.
 2. Create a new branch for your feature
 3. Make your changes
 4. Run `npm run verify` to test and build locally
-5. Submit a pull request
+5. Submit a pull request (see [Merge Requirements](MERGE_REQUIREMENTS.md) for required checks and merge gates)
 
 ### Dependency update policy
 

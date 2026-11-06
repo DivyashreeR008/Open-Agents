@@ -18,12 +18,30 @@ Before picking an issue or proposing a new feature, please review our [Roadmap &
 4. **Verify your changes** - Run `npm run verify` to run the full verification suite (tests and build)
 5. **Commit your changes** - Use clear, descriptive commit messages
 6. **Push to your fork** - `git push origin feature/your-feature-name`
-7. **Submit a Pull Request** - Describe what you changed and why
+7. **Submit a Pull Request** - Describe what you changed, complete the PR template checklist, and target `main`. Automated CI status checks will run immediately; once green, a maintainer/codeowner will review your changes for merge (see [Merge Requirements](MERGE_REQUIREMENTS.md)).
 
 Agent definitions are checked directly from the raw registry modules and mounted
 through `AgentRunner` by the test suite. Run `npm test` before submitting a new or
 updated definition; invalid input types, option lists, duplicate IDs, and stale
 `exampleInputs` keys will fail with the affected agent's file and ID.
+
+## Merge Requirements & Quality Gates
+
+What every pull request must pass before it can merge into `main` is formally documented in [MERGE_REQUIREMENTS.md](MERGE_REQUIREMENTS.md).
+
+In summary, every change must satisfy:
+- **Automated CI Status Checks**:
+  - `CI` workflow (`.github/workflows/ci.yml`): Unit & integration test suite pass, coverage thresholds met, and clean production build.
+  - `Build Check` workflow (`.github/workflows/build-check.yml`): Broken registry import validation, contributor security rules scan (`scripts/check-security-rules.mjs`), and clean production build.
+  - `Smoke Test` workflow (`.github/workflows/smoke-test.yml`): Built output preview test (`scripts/smoke-test.mjs`) verifying server startup and zero missing (404) or empty assets.
+- **Codeowner Review & Approval**:
+  - At least one review approval from the designated maintainer / code owner per `.github/CODEOWNERS` ([@DivyashreeR008](https://github.com/DivyashreeR008)).
+- **Branch Currency**:
+  - Branches should be up to date with `upstream/main` prior to merging to prevent stale-check errors and merge conflicts.
+- **PR Hygiene & Deliverables**:
+  - Completed PR template, linked issue (e.g. `Fixes #<number>`), UI screenshots/recordings for visual changes, and a `CHANGELOG.md` entry under `[Unreleased]` for user-facing changes.
+
+Consult [MERGE_REQUIREMENTS.md](MERGE_REQUIREMENTS.md) for detailed descriptions, local reproduction commands, failure surfaces, and the synchronization policy for configuration changes.
 
 ## Test Coverage
 
@@ -45,6 +63,7 @@ the tests are.
 - Ensure code follows the project's style guidelines
 - Add or update documentation as needed
 - Ensure `npm run verify` passes locally before submitting
+- Review and satisfy all merge requirements in [MERGE_REQUIREMENTS.md](MERGE_REQUIREMENTS.md)
 - Add an axe check for new interactive components or page-level flows. The shared
   `src/test/a11y.js` helper fails on jsdom-supported violations; color contrast
   still requires a real-browser or manual check.
