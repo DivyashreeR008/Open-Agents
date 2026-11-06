@@ -1,4 +1,4 @@
-import { EXTRA_PREFERENCE_OPTIONS, GOAL_OPTIONS } from './constants.js'
+import { EXTRA_PREFERENCE_OPTIONS } from './constants.js'
 
 const GOAL_REASONS = {
   'coding-development': 'Matches your coding and development workflow.',
@@ -36,7 +36,6 @@ const TASK_REASONS = {
 
 export function buildRecommendationReasons(agent, preferences = {}, matchedSignals = {}) {
   const reasons = []
-  const goal = GOAL_OPTIONS.find((option) => option.id === preferences.primaryGoal)
   if (matchedSignals.exactCategory || matchedSignals.goalCategory || matchedSignals.taskTypes?.length) {
     reasons.push(GOAL_REASONS[preferences.primaryGoal] || 'Matches your selected workflow.')
   }
@@ -54,10 +53,7 @@ export function buildRecommendationReasons(agent, preferences = {}, matchedSigna
   if (matchedSignals.preference === 'fast') reasons.push('Its focused scope aligns with your fast, lightweight preference.')
   if (matchedSignals.preference === 'capable') reasons.push('Its detailed scope aligns with your capability preference.')
   if (matchedSignals.experience) reasons.push(`Its metadata aligns with your ${matchedSignals.experience} guidance preference.`)
-  if (!reasons.length && goal && agent?.category) reasons.push(`Listed in ${agent.category}; this is one of the closest available matches.`)
-  if (reasons.length < 3 && agent?.category && !reasons.some((reason) => reason.includes(`Listed in ${agent.category}`))) {
-    reasons.push(`Agent metadata identifies its focus as ${agent.category}.`)
-  }
-  if (reasons.length < 3 && agent?.description) reasons.push('Its published description is relevant to the selected workflow.')
+  // Reasons are evidence. Padding a short list with generic category or
+  // description claims would present filler as personalization.
   return [...new Set(reasons)].slice(0, 4)
 }
