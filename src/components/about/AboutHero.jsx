@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Sparkles, ArrowRight, ExternalLink } from 'lucide-react'
-import GitHubIcon from '../GitHubIcon'
 
+import GitHubIcon from '../GitHubIcon'
 import { useAgents } from '../../lib/useAgents'
 
 export default function AboutHero() {
