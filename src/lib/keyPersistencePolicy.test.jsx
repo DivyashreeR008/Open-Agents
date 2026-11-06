@@ -12,15 +12,16 @@ import { exportWorkflowAsMarkdown } from './exportMarkdown'
 
 // jsdom has no IndexedDB. The policy under test is that the vault stores only
 // ciphertext, so provide a deterministic device key instead of the keystore.
-vi.mock('./automationKeyStore', async importOriginal => {
+vi.mock('./automationKeyStore', async (importOriginal) => {
   const actual = await importOriginal()
   return {
     ...actual,
-    getOrCreateDeviceKey: vi.fn(() => globalThis.crypto.subtle.generateKey(
-      { name: 'AES-GCM', length: 256 },
-      false,
-      ['encrypt', 'decrypt']
-    )),
+    getOrCreateDeviceKey: vi.fn(() =>
+      globalThis.crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, false, [
+        'encrypt',
+        'decrypt',
+      ])
+    ),
   }
 })
 
@@ -49,11 +50,14 @@ describe('credential persistence policy', () => {
     sessionStorage.clear()
     downloads = []
     vi.restoreAllMocks()
-    vi.stubGlobal('Blob', class PolicyBlob {
-      constructor(parts) {
-        downloads.push(parts.join(''))
+    vi.stubGlobal(
+      'Blob',
+      class PolicyBlob {
+        constructor(parts) {
+          downloads.push(parts.join(''))
+        }
       }
-    })
+    )
     vi.stubGlobal('URL', {
       createObjectURL: vi.fn(() => 'blob:policy-test'),
       revokeObjectURL: vi.fn(),
@@ -81,26 +85,30 @@ describe('credential persistence policy', () => {
 
   it('removes credential fields from histories, jobs, and traces', async () => {
     const history = renderHook(() => useHistory())
-    act(() => history.result.current.saveRun({
-      agentId: 'policy-agent',
-      agentName: 'Policy Agent',
-      apiKey: SENTINEL,
-      inputs: { prompt: 'safe', token: SENTINEL },
-      output: 'safe output',
-    }))
+    act(() =>
+      history.result.current.saveRun({
+        agentId: 'policy-agent',
+        agentName: 'Policy Agent',
+        apiKey: SENTINEL,
+        inputs: { prompt: 'safe', token: SENTINEL },
+        output: 'safe output',
+      })
+    )
 
     const scheduler = renderHook(() => useScheduler({ autoRun: false }))
-    act(() => scheduler.result.current.addJob({
-      agentId: 'policy-agent',
-      agentName: 'Policy Agent',
-      agentDefinition: { inputs: [] },
-      inputs: {},
-      provider: 'openai',
-      model: 'gpt-4o-mini',
-      apiKey: SENTINEL,
-      schedule: 'daily',
-      label: 'Policy job',
-    }))
+    act(() =>
+      scheduler.result.current.addJob({
+        agentId: 'policy-agent',
+        agentName: 'Policy Agent',
+        agentDefinition: { inputs: [] },
+        inputs: {},
+        provider: 'openai',
+        model: 'gpt-4o-mini',
+        apiKey: SENTINEL,
+        schedule: 'daily',
+        label: 'Policy job',
+      })
+    )
 
     const trace = createTrace({ workflowId: 'policy-workflow' })
     recordStep(trace, {
@@ -139,12 +147,14 @@ describe('credential persistence policy', () => {
     }
     exportBatchAsCSV('Policy Agent', [result])
     exportBatchAsMarkdown('Policy Agent', [result])
-    exportWorkflowAsMarkdown('Policy Workflow', [{
-      status: 'done',
-      agentName: 'Policy Agent',
-      output: 'safe output',
-      apiKey: SENTINEL,
-    }])
+    exportWorkflowAsMarkdown('Policy Workflow', [
+      {
+        status: 'done',
+        agentName: 'Policy Agent',
+        output: 'safe output',
+        apiKey: SENTINEL,
+      },
+    ])
 
     expect(downloads).toHaveLength(3)
     expect(downloads.join('\n')).not.toContain(SENTINEL)
@@ -152,8 +162,7 @@ describe('credential persistence policy', () => {
 })
 
 function sessionStorageSnapshot() {
-  return Array.from(
-    { length: sessionStorage.length },
-    (_, index) => sessionStorage.getItem(sessionStorage.key(index))
+  return Array.from({ length: sessionStorage.length }, (_, index) =>
+    sessionStorage.getItem(sessionStorage.key(index))
   ).join('\n')
 }

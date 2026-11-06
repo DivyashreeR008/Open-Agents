@@ -50,6 +50,8 @@ describe('AboutOpenSource', () => {
     render(<AboutOpenSource />)
 
     expect(screen.getByText(/Important Requirement Before Opening PR/)).toBeInTheDocument()
-    expect(screen.getByText(/Clean, building code keeps the repository healthy/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Clean, building code keeps the repository healthy/)
+    ).toBeInTheDocument()
   })
 })

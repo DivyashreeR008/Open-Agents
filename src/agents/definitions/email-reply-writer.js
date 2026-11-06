@@ -1,51 +1,51 @@
 export default {
-  id: "email-reply-writer",
-  createdAt: "2025-05-06",
-  name: "Email Reply Writer",
+  id: 'email-reply-writer',
+  createdAt: '2025-05-06',
+  name: 'Email Reply Writer',
   description:
-    "Paste any email you received and describe how you want to respond. Get a polished reply in seconds.",
-  category: "Productivity",
-  icon: "Reply",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Paste any email you received and describe how you want to respond. Get a polished reply in seconds.',
+  category: 'Productivity',
+  icon: 'Reply',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     originalEmail:
       "Hi Alex,\n\nHope you're doing well. We were really impressed with the initial demo of the reporting tool. We'd like to move forward, but our budget for this phase is capped at $5,000. Is there any way we can adjust the scope or the price to fit this?\n\nBest,\nMark",
     intent:
       "Agree to the budget but remove the 'custom integrations' and 'unlimited users' features for this phase.",
-    tone: "Professional",
-    senderName: "Alex",
+    tone: 'Professional',
+    senderName: 'Alex',
   },
   inputs: [
     {
-      id: "originalEmail",
-      label: "Email you received",
-      type: "textarea",
-      placeholder: "Paste the full email here...",
+      id: 'originalEmail',
+      label: 'Email you received',
+      type: 'textarea',
+      placeholder: 'Paste the full email here...',
       required: true,
     },
     {
-      id: "intent",
-      label: "How do you want to respond?",
-      type: "textarea",
+      id: 'intent',
+      label: 'How do you want to respond?',
+      type: 'textarea',
       placeholder:
-        "e.g. Decline politely, agree but push deadline to Friday, ask for clarification on the budget",
+        'e.g. Decline politely, agree but push deadline to Friday, ask for clarification on the budget',
       required: true,
     },
     {
-      id: "tone",
-      label: "Tone",
-      type: "select",
-      options: ["Professional", "Friendly", "Firm", "Apologetic"],
-      defaultValue: "Professional",
+      id: 'tone',
+      label: 'Tone',
+      type: 'select',
+      options: ['Professional', 'Friendly', 'Firm', 'Apologetic'],
+      defaultValue: 'Professional',
       required: true,
     },
     {
-      id: "senderName",
-      label: "Your name (for sign-off)",
-      type: "text",
-      placeholder: "e.g. Alex",
+      id: 'senderName',
+      label: 'Your name (for sign-off)',
+      type: 'text',
+      placeholder: 'e.g. Alex',
     },
   ],
   systemPrompt: `You are an expert business communication writer.
@@ -72,5 +72,5 @@ Rules:
 - Sign off with the sender's name if provided, otherwise no sign-off
 - Never add placeholder text like [Your Name] — leave it blank instead
 - If the intent is to decline, always offer an alternative or a door open`,
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

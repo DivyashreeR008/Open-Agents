@@ -3,9 +3,14 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 
 const scheduler = vi.hoisted(() => ({
-  jobs: [], results: [], running: {},
-  toggleJob: vi.fn(), deleteJob: vi.fn(), runJob: vi.fn(),
-  deleteResult: vi.fn(), clearResultsForJob: vi.fn(),
+  jobs: [],
+  results: [],
+  running: {},
+  toggleJob: vi.fn(),
+  deleteJob: vi.fn(),
+  runJob: vi.fn(),
+  deleteResult: vi.fn(),
+  clearResultsForJob: vi.fn(),
 }))
 
 vi.mock('../lib/useScheduler', () => ({
@@ -20,20 +25,34 @@ vi.mock('../components/OutputRenderer', () => ({ default: ({ content }) => <div>
 
 import SchedulerPage from './SchedulerPage'
 
-const nextRunAt = Date.now() + (3 * 86400000) + (2 * 3600000) + 90000
+const nextRunAt = Date.now() + 3 * 86400000 + 2 * 3600000 + 90000
 const jobs = [
   {
-    id: 'j1', label: 'Morning digest', agentName: 'Summarizer', schedule: 'daily',
-    enabled: true, lastRunAt: 1700000000000, nextRunAt,
+    id: 'j1',
+    label: 'Morning digest',
+    agentName: 'Summarizer',
+    schedule: 'daily',
+    enabled: true,
+    lastRunAt: 1700000000000,
+    nextRunAt,
   },
   {
-    id: 'j2', label: 'Weekly review', agentName: 'Reviewer', schedule: 'custom-weekly',
-    enabled: false, lastRunAt: null, nextRunAt: null,
+    id: 'j2',
+    label: 'Weekly review',
+    agentName: 'Reviewer',
+    schedule: 'custom-weekly',
+    enabled: false,
+    lastRunAt: null,
+    nextRunAt: null,
   },
 ]
 
 function renderPage() {
-  return render(<MemoryRouter><SchedulerPage /></MemoryRouter>)
+  return render(
+    <MemoryRouter>
+      <SchedulerPage />
+    </MemoryRouter>
+  )
 }
 
 beforeEach(() => {

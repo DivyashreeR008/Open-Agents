@@ -26,10 +26,12 @@ const apiKeys = { openai: 'sk-o', anthropic: 'sk-a', gemini: 'sk-g', openrouter:
 function setup() {
   return render(
     <MemoryRouter
-      initialEntries={[{
-        pathname: '/battle/arena',
-        state: { agent, inputs: { topic: 'AI safety', notes: '' }, apiKeys },
-      }]}
+      initialEntries={[
+        {
+          pathname: '/battle/arena',
+          state: { agent, inputs: { topic: 'AI safety', notes: '' }, apiKeys },
+        },
+      ]}
     >
       <BattleModeArena />
     </MemoryRouter>
@@ -41,7 +43,10 @@ function deferredRun() {
   runAgent.mockImplementation(({ provider }) => {
     let resolve
     let reject
-    const promise = new Promise((res, rej) => { resolve = res; reject = rej })
+    const promise = new Promise((res, rej) => {
+      resolve = res
+      reject = rej
+    })
     pending.push({ provider, resolve, reject })
     return promise
   })
@@ -55,7 +60,9 @@ async function finishAll(pending) {
       call.resolve({ content: `${call.provider} answer`, duration: 1200 })
     }
   })
-  await waitFor(() => expect(screen.getAllByRole('button', { name: 'Pick Winner' })).toHaveLength(4))
+  await waitFor(() =>
+    expect(screen.getAllByRole('button', { name: 'Pick Winner' })).toHaveLength(4)
+  )
 }
 
 beforeEach(() => {
@@ -90,10 +97,12 @@ describe('BattleModeArena prompt comparison', () => {
     runAgent.mockResolvedValue({ content: 'answer', duration: 1000 })
     render(
       <MemoryRouter
-        initialEntries={[{
-          pathname: '/battle/arena',
-          state: { agent, inputs: { topic: 'AI safety' }, apiKeys: { ...apiKeys, openai: '' } },
-        }]}
+        initialEntries={[
+          {
+            pathname: '/battle/arena',
+            state: { agent, inputs: { topic: 'AI safety' }, apiKeys: { ...apiKeys, openai: '' } },
+          },
+        ]}
       >
         <BattleModeArena />
       </MemoryRouter>
@@ -101,7 +110,9 @@ describe('BattleModeArena prompt comparison', () => {
     fireEvent.click(screen.getByRole('button', { name: /Prompt Comparison Viewer/ }))
     expect(screen.getAllByText('Prompt not available yet.')).toHaveLength(2)
     expect(screen.getAllByText('System Prompt')).toHaveLength(4)
-    await waitFor(() => expect(screen.getAllByRole('button', { name: 'Pick Winner' })).toHaveLength(3))
+    await waitFor(() =>
+      expect(screen.getAllByRole('button', { name: 'Pick Winner' })).toHaveLength(3)
+    )
   })
 
   it('copies the exact system and user prompts for the selected provider', async () => {
@@ -130,7 +141,9 @@ describe('BattleModeArena prompt comparison', () => {
     fireEvent.click(screen.getByRole('button', { name: /Prompt Comparison Viewer/ }))
 
     fireEvent.click(screen.getByRole('button', { name: 'Copy Claude prompt' }))
-    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(/Unable to copy the Claude prompt/))
+    await waitFor(() =>
+      expect(screen.getByRole('status')).toHaveTextContent(/Unable to copy the Claude prompt/)
+    )
     expect(screen.queryByText('Copied')).not.toBeInTheDocument()
   })
 })

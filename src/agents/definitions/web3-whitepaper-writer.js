@@ -19,8 +19,7 @@ export default {
       'Token: DVT (DecentraVault Token)\nTotal Supply: 100,000,000 DVT\nDistribution:\n- 40% — Storage provider rewards\n- 20% — Team & advisors (2-year vesting)\n- 20% — Public sale\n- 10% — Ecosystem fund\n- 10% — Reserve\nUtility: Pay for storage, stake to become a validator, governance voting.',
     tech_stack:
       'Built on Ethereum L2 (Arbitrum). Smart contracts in Solidity. IPFS-inspired sharding protocol. AES-256 encryption. Node software in Go.',
-    team:
-      'Alice Chen — CEO, ex-AWS engineer, 8 years distributed systems\nBob Patel — CTO, PhD in cryptography, ex-Chainlink\nSara Kim — CMO, previously led growth at Polygon',
+    team: 'Alice Chen — CEO, ex-AWS engineer, 8 years distributed systems\nBob Patel — CTO, PhD in cryptography, ex-Chainlink\nSara Kim — CMO, previously led growth at Polygon',
     target_audience:
       'Individual users, enterprises, and developers who need decentralized, censorship-resistant, affordable cloud storage.',
   },
@@ -60,8 +59,7 @@ export default {
       id: 'tech_stack',
       label: 'Technology Stack',
       type: 'textarea',
-      placeholder:
-        'e.g. Built on Ethereum L2. Smart contracts in Solidity. ZK-proofs for privacy.',
+      placeholder: 'e.g. Built on Ethereum L2. Smart contracts in Solidity. ZK-proofs for privacy.',
       required: false,
     },
     {
@@ -76,8 +74,7 @@ export default {
       id: 'target_audience',
       label: 'Target Audience',
       type: 'text',
-      placeholder:
-        'e.g. DeFi users, enterprises, developers, NFT creators...',
+      placeholder: 'e.g. DeFi users, enterprises, developers, NFT creators...',
       required: false,
     },
   ],
@@ -197,4 +194,4 @@ WRITING RULES:
 - Legal disclaimer must always be included regardless of inputs
 - Output must be clean markdown, ready to paste into a document`,
   outputType: 'markdown',
-};
+}

@@ -2,7 +2,11 @@ import { act, fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 
-const mocks = vi.hoisted(() => ({ fetchWorkflows: vi.fn(), subscribeToAllWorkflows: vi.fn(), removeChannel: vi.fn() }))
+const mocks = vi.hoisted(() => ({
+  fetchWorkflows: vi.fn(),
+  subscribeToAllWorkflows: vi.fn(),
+  removeChannel: vi.fn(),
+}))
 
 vi.mock('../lib/useAgents', () => ({ useAgents: () => ({ agents: [] }) }))
 vi.mock('../hooks/useWorkflows', () => ({
@@ -18,7 +22,12 @@ const workflow = { id: 'w1', title: 'Launch plan', description: 'Ship', agents: 
 
 function Destination({ label }) {
   const location = useLocation()
-  return <div>{label}: {location.pathname} / {location.state?.workflow?.title ?? location.state?.forkedWorkflow?.title}</div>
+  return (
+    <div>
+      {label}: {location.pathname} /{' '}
+      {location.state?.workflow?.title ?? location.state?.forkedWorkflow?.title}
+    </div>
+  )
 }
 
 function renderPage() {

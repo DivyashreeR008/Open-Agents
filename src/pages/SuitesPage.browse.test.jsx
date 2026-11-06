@@ -27,8 +27,12 @@ function renderPage() {
 beforeEach(() => {
   vi.clearAllMocks()
   mocks.useApiKey.mockReturnValue({
-    provider: 'openai', setProvider: vi.fn(), apiKey: 'key', setApiKey: vi.fn(),
-    saveForSession: false, setSaveForSession: vi.fn(),
+    provider: 'openai',
+    setProvider: vi.fn(),
+    apiKey: 'key',
+    setApiKey: vi.fn(),
+    saveForSession: false,
+    setSaveForSession: vi.fn(),
   })
 })
 

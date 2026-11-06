@@ -42,7 +42,8 @@ const STATUS_COLORS = {
 
 function StepStatusIcon({ status }) {
   if (status === 'waiting') return <Clock size={15} className={STATUS_COLORS.waiting} />
-  if (status === 'running') return <Loader2 size={15} className="text-zinc-900 dark:text-white animate-spin" />
+  if (status === 'running')
+    return <Loader2 size={15} className="text-zinc-900 dark:text-white animate-spin" />
   if (status === 'done') return <CheckCircle2 size={15} className={STATUS_COLORS.done} />
   if (status === 'failed') return <XCircle size={15} className={STATUS_COLORS.failed} />
   return null
@@ -86,7 +87,8 @@ export default function WorkflowRunner() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const { provider, setProvider, apiKey, setApiKey, saveForSession, setSaveForSession } = useApiKey()
+  const { provider, setProvider, apiKey, setApiKey, saveForSession, setSaveForSession } =
+    useApiKey()
 
   const [workflow, setWorkflow] = useState(location.state?.workflow ?? null)
   const [loadingWorkflow, setLoadingWorkflow] = useState(!location.state?.workflow)
@@ -180,7 +182,10 @@ export default function WorkflowRunner() {
 
       if (step.kind === 'conditional') {
         const problems = validateConditionalStep(step.stepDef, workflow.agents)
-        const { conditionValue, branchLabel, branchAgents } = evaluateConditionalStep(step.stepDef, context)
+        const { conditionValue, branchLabel, branchAgents } = evaluateConditionalStep(
+          step.stepDef,
+          context
+        )
 
         if (!branchLabel) {
           execSteps[i] = {
@@ -219,7 +224,11 @@ export default function WorkflowRunner() {
       }
 
       if (!step.agent) {
-        execSteps[i] = { ...step, status: 'failed', error: `Agent "${step.agentId}" not found in registry.` }
+        execSteps[i] = {
+          ...step,
+          status: 'failed',
+          error: `Agent "${step.agentId}" not found in registry.`,
+        }
         syncSteps()
         failed = true
         break
@@ -228,17 +237,19 @@ export default function WorkflowRunner() {
       execSteps[i] = { ...step, status: 'running' }
       syncSteps()
 
-      const actualProvider =
-        step.agent.provider === 'any'
-          ? provider
-          : step.agent.provider
+      const actualProvider = step.agent.provider === 'any' ? provider : step.agent.provider
 
-      const keyToUse = actualProvider === provider
-        ? apiKey
-        : (sessionStorage.getItem(`oa_apikey_${actualProvider}`) || '')
+      const keyToUse =
+        actualProvider === provider
+          ? apiKey
+          : sessionStorage.getItem(`oa_apikey_${actualProvider}`) || ''
 
       if (!keyToUse) {
-        execSteps[i] = { ...execSteps[i], status: 'failed', error: `API key for provider "${actualProvider}" is not configured.` }
+        execSteps[i] = {
+          ...execSteps[i],
+          status: 'failed',
+          error: `API key for provider "${actualProvider}" is not configured.`,
+        }
         syncSteps()
         failed = true
         break
@@ -348,7 +359,9 @@ export default function WorkflowRunner() {
           <div className="flex items-center gap-1 mt-0.5 flex-wrap">
             {steps.map((step, i) => (
               <span key={step.agentId + i} className="flex items-center gap-1">
-                <span className="text-[11px] dark:text-text-muted text-gray-400">{step.agentName}</span>
+                <span className="text-[11px] dark:text-text-muted text-gray-400">
+                  {step.agentName}
+                </span>
                 {i < steps.length - 1 && (
                   <ArrowRight size={10} className="dark:text-text-muted text-gray-400" />
                 )}
@@ -373,7 +386,10 @@ export default function WorkflowRunner() {
 
       {/* Input */}
       <div className="mb-4">
-        <label htmlFor="workflow-input" className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1.5">
+        <label
+          htmlFor="workflow-input"
+          className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1.5"
+        >
           Your Input <span className="text-zinc-400">*</span>
           <span className="ml-1 dark:text-text-muted text-gray-400 font-normal">
             — passed to the first agent, then chained through each step
@@ -432,7 +448,7 @@ export default function WorkflowRunner() {
         )}
 
         {allDone && (
-           <>
+          <>
             <CopyAllButton steps={steps} />
             <button
               onClick={() => exportWorkflowAsMarkdown(workflow?.title ?? 'workflow', steps)}
@@ -449,9 +465,7 @@ export default function WorkflowRunner() {
         <div className="space-y-4">
           {steps.map((step, index) => {
             const IconComponent =
-              step.kind === 'conditional'
-                ? GitBranch
-                : resolveAgentIcon(step.agent?.icon)
+              step.kind === 'conditional' ? GitBranch : resolveAgentIcon(step.agent?.icon)
             return (
               <div
                 key={step.agentId + index}
@@ -478,7 +492,9 @@ export default function WorkflowRunner() {
                   </div>
                   <div className="flex items-center gap-1.5">
                     <StepStatusIcon status={step.status} />
-                    <span className={`text-[11px] font-medium capitalize ${STATUS_COLORS[step.status] || ''}`}>
+                    <span
+                      className={`text-[11px] font-medium capitalize ${STATUS_COLORS[step.status] || ''}`}
+                    >
                       {step.status}
                     </span>
                   </div>
@@ -489,7 +505,9 @@ export default function WorkflowRunner() {
                   <div className="p-4 text-center">
                     <div className="flex items-center justify-center gap-2">
                       <Loader2 size={14} className="animate-spin text-zinc-900 dark:text-white" />
-                      <span className="text-xs dark:text-text-secondary text-gray-500">Processing...</span>
+                      <span className="text-xs dark:text-text-secondary text-gray-500">
+                        Processing...
+                      </span>
                     </div>
                   </div>
                 )}
@@ -497,11 +515,20 @@ export default function WorkflowRunner() {
                 {step.kind === 'conditional' && step.status === 'done' && (
                   <div className="p-4">
                     <div className="flex items-start gap-2 p-3 bg-zinc-500/5 border border-zinc-500/20">
-                      <GitBranch size={14} className="text-zinc-900 dark:text-white flex-shrink-0 mt-0.5" />
+                      <GitBranch
+                        size={14}
+                        className="text-zinc-900 dark:text-white flex-shrink-0 mt-0.5"
+                      />
                       <p className="text-xs dark:text-text-secondary text-gray-600">
                         Condition resolved to{' '}
-                        <span className="font-semibold text-zinc-900 dark:text-white">"{step.conditionValue}"</span>, taking the{' '}
-                        <span className="font-semibold text-zinc-900 dark:text-white">{step.branchLabel}</span> branch.
+                        <span className="font-semibold text-zinc-900 dark:text-white">
+                          "{step.conditionValue}"
+                        </span>
+                        , taking the{' '}
+                        <span className="font-semibold text-zinc-900 dark:text-white">
+                          {step.branchLabel}
+                        </span>{' '}
+                        branch.
                       </p>
                     </div>
                   </div>
@@ -526,7 +553,9 @@ export default function WorkflowRunner() {
                             <div className="w-2 h-2 bg-current" />
                           </div>
                           <div className="flex-1">
-                            <div className="font-medium">{label === 'default' ? 'Default' : label}</div>
+                            <div className="font-medium">
+                              {label === 'default' ? 'Default' : label}
+                            </div>
                             <div className="text-[10px] opacity-75 mt-1">
                               {Array.isArray(agents) && agents.length > 0
                                 ? agents.join(' → ')
@@ -547,7 +576,6 @@ export default function WorkflowRunner() {
                       agentName={step.agentName}
                     />
                     <RunRating agentId={step.agent?.id} />
-
                   </div>
                 )}
 
@@ -572,7 +600,9 @@ export default function WorkflowRunner() {
 
                 {step.status === 'waiting' && (
                   <div className="px-4 py-3">
-                    <p className="text-[11px] dark:text-text-muted text-gray-400">Waiting for previous step...</p>
+                    <p className="text-[11px] dark:text-text-muted text-gray-400">
+                      Waiting for previous step...
+                    </p>
                   </div>
                 )}
               </div>

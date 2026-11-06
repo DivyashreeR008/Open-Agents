@@ -1,7 +1,8 @@
 const mlExperimentAutopsy = {
   id: 'ml-experiment-autopsy',
   name: 'Model Meltdown Detective',
-  description: 'Diagnose failed or underperforming ML experiments using model details, dataset context, metrics, hyperparameters, and code snippets.',
+  description:
+    'Diagnose failed or underperforming ML experiments using model details, dataset context, metrics, hyperparameters, and code snippets.',
   category: 'Engineering',
   icon: 'ChartSpline',
 
@@ -80,21 +81,24 @@ X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2)`,
       id: 'problem_description',
       label: 'Problem Description',
       type: 'textarea',
-      placeholder: 'Describe what went wrong or what you were trying to achieve...\n\nExample:\nTrying to classify medical images into 3 categories. Model accuracy stuck at 52% after 20 epochs. Expected at least 85%.',
+      placeholder:
+        'Describe what went wrong or what you were trying to achieve...\n\nExample:\nTrying to classify medical images into 3 categories. Model accuracy stuck at 52% after 20 epochs. Expected at least 85%.',
       required: true,
     },
     {
       id: 'dataset_description',
       label: 'Dataset Description',
       type: 'textarea',
-      placeholder: 'Describe your dataset...\n\nExample:\n- 5,000 images (4,200 train / 800 val)\n- 3 classes: benign, malignant, normal\n- Class distribution: 70% benign, 20% normal, 10% malignant\n- Preprocessed: resized to 224x224, no normalization applied',
+      placeholder:
+        'Describe your dataset...\n\nExample:\n- 5,000 images (4,200 train / 800 val)\n- 3 classes: benign, malignant, normal\n- Class distribution: 70% benign, 20% normal, 10% malignant\n- Preprocessed: resized to 224x224, no normalization applied',
       required: true,
     },
     {
       id: 'training_metrics',
       label: 'Training Metrics / Logs',
       type: 'textarea',
-      placeholder: 'Paste your training logs or metrics per epoch...\n\nExample:\nEpoch 1: train_loss=1.2, val_loss=1.18, val_acc=0.41\nEpoch 5: train_loss=0.4, val_loss=1.35, val_acc=0.49\nEpoch 10: train_loss=0.1, val_loss=1.89, val_acc=0.52',
+      placeholder:
+        'Paste your training logs or metrics per epoch...\n\nExample:\nEpoch 1: train_loss=1.2, val_loss=1.18, val_acc=0.41\nEpoch 5: train_loss=0.4, val_loss=1.35, val_acc=0.49\nEpoch 10: train_loss=0.1, val_loss=1.89, val_acc=0.52',
       required: false,
     },
     {
@@ -108,14 +112,16 @@ X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2)`,
       id: 'hyperparameters',
       label: 'Hyperparameters Used',
       type: 'textarea',
-      placeholder: 'List the hyperparameters you used...\n\nExample:\nlearning_rate: 0.01\nbatch_size: 32\nepochs: 20\noptimizer: SGD\ndropout: 0.0\nweight_decay: 0.0',
+      placeholder:
+        'List the hyperparameters you used...\n\nExample:\nlearning_rate: 0.01\nbatch_size: 32\nepochs: 20\noptimizer: SGD\ndropout: 0.0\nweight_decay: 0.0',
       required: false,
     },
     {
       id: 'code_snippet',
       label: 'Code Snippet (Optional)',
       type: 'code',
-      placeholder: '# Paste relevant code: model definition, training loop, preprocessing steps...\n\n# Example:\nmodel = Sequential([\n  Conv2D(32, (3,3), activation="relu"),\n  Flatten(),\n  Dense(3, activation="softmax")\n])\nmodel.compile(optimizer="sgd", loss="categorical_crossentropy")',
+      placeholder:
+        '# Paste relevant code: model definition, training loop, preprocessing steps...\n\n# Example:\nmodel = Sequential([\n  Conv2D(32, (3,3), activation="relu"),\n  Flatten(),\n  Dense(3, activation="softmax")\n])\nmodel.compile(optimizer="sgd", loss="categorical_crossentropy")',
       required: false,
     },
   ],
@@ -148,13 +154,13 @@ X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2)`,
       label: 'Copy as plain text',
       // Strip: ##, **, *, `, |, leading dashes, table separators
       stripPatterns: [
-        /^#{1,6}\s/gm,       // headings
-        /\*\*(.*?)\*\*/g,    // bold → inner text
-        /\*(.*?)\*/g,        // italic → inner text
+        /^#{1,6}\s/gm, // headings
+        /\*\*(.*?)\*\*/g, // bold → inner text
+        /\*(.*?)\*/g, // italic → inner text
         /`{1,3}[^`]*`{1,3}/g, // inline + fenced code → inner text
-        /^\|.*\|$/gm,        // table rows
-        /^[-|:\s]+$/gm,      // table separators
-        /^-\s/gm,            // bullet dashes
+        /^\|.*\|$/gm, // table rows
+        /^[-|:\s]+$/gm, // table separators
+        /^-\s/gm, // bullet dashes
       ],
     },
   },
@@ -275,6 +281,6 @@ EDGE CASES:
   "Code Bug [CRITICAL]: <description>"`,
 
   outputType: 'markdown',
-};
+}
 
-export default mlExperimentAutopsy;
+export default mlExperimentAutopsy

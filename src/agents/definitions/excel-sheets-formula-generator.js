@@ -1,39 +1,37 @@
 const excel_sheets_formula_generator = {
-    id: 'excel-sheets-formula-generator',
-    name: 'Excel/Sheets Formula Generator',
-    description: 'Describe what you want to calculate or extract in plain English and get a correct, ready-to-paste Excel or Google Sheets formula with a plain-English explanation of how it works.',
-    category: 'Engineering',
-    icon: 'Sigma',                  // from lucide.dev/icons
-    provider: 'any',                // 'openai' | 'anthropic' | 'gemini' |'any'
-    defaultProvider: 'openai',
-    model: 'gpt-4o',
-    inputs: [
-        {
-            id: 'goal_description',
-            label: 'What do you want to calculate/extract?',
-            type: 'textarea',
-            placeholder: 'e.g. "Sum sales in column C where the region in column B is \'West\'"',
-            required: true,
-        },
-        {
-            id: 'target_tool',
-            label: 'Target Tool',
-            type: 'select',
-            required: true,
-            options: [
-                'Excel',
-                'Google Sheets',
-            ],
-        },
-        {
-            id: 'cell_context',
-            label: 'Column/Cell Reference Context',
-            type: 'text',
-            placeholder: 'e.g. "data in A2:A100, headers in row 1"',
-            required: false,
-        },
-    ],
-    systemPrompt: `You are an Excel/Sheets Formula Generator. The user will describe, in plain English, what they want to calculate or extract, which tool they're using (Excel or Google Sheets), and optionally some context about where their data lives (column/cell ranges, headers, etc.).
+  id: 'excel-sheets-formula-generator',
+  name: 'Excel/Sheets Formula Generator',
+  description:
+    'Describe what you want to calculate or extract in plain English and get a correct, ready-to-paste Excel or Google Sheets formula with a plain-English explanation of how it works.',
+  category: 'Engineering',
+  icon: 'Sigma', // from lucide.dev/icons
+  provider: 'any', // 'openai' | 'anthropic' | 'gemini' |'any'
+  defaultProvider: 'openai',
+  model: 'gpt-4o',
+  inputs: [
+    {
+      id: 'goal_description',
+      label: 'What do you want to calculate/extract?',
+      type: 'textarea',
+      placeholder: 'e.g. "Sum sales in column C where the region in column B is \'West\'"',
+      required: true,
+    },
+    {
+      id: 'target_tool',
+      label: 'Target Tool',
+      type: 'select',
+      required: true,
+      options: ['Excel', 'Google Sheets'],
+    },
+    {
+      id: 'cell_context',
+      label: 'Column/Cell Reference Context',
+      type: 'text',
+      placeholder: 'e.g. "data in A2:A100, headers in row 1"',
+      required: false,
+    },
+  ],
+  systemPrompt: `You are an Excel/Sheets Formula Generator. The user will describe, in plain English, what they want to calculate or extract, which tool they're using (Excel or Google Sheets), and optionally some context about where their data lives (column/cell ranges, headers, etc.).
 
 Your job is to produce a single, correct, ready-to-paste formula that accomplishes exactly what they described, along with a clear explanation.
 
@@ -72,7 +70,7 @@ Rules:
 - Only produce a formula for the specified tool — do not give both Excel and Google Sheets versions unless the user's request is ambiguous about which tool, in which case ask for clarification instead of guessing.
 - Never invent cell references that contradict context the user actually gave.
 - If the request is ambiguous or impossible to fulfill with a single formula (e.g. requires multiple steps, a helper column, or a pivot table), say so plainly and explain the simplest viable approach — including a helper-column formula if that's genuinely the best solution — rather than forcing an overly complex one-liner.`,
-    outputType: 'markdown',         // markdown | text | json
+  outputType: 'markdown', // markdown | text | json
 }
 
 export default excel_sheets_formula_generator

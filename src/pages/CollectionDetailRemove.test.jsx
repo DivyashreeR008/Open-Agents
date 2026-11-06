@@ -18,7 +18,17 @@ vi.mock('../lib/useCollections', () => ({
   }),
 }))
 vi.mock('../lib/useAgents', () => {
-  const agents = [{ id: 'a1', name: 'Agent One', description: 'd', category: 'Test', provider: 'openai', icon: 'Bot', inputs: [] }]
+  const agents = [
+    {
+      id: 'a1',
+      name: 'Agent One',
+      description: 'd',
+      category: 'Test',
+      provider: 'openai',
+      icon: 'Bot',
+      inputs: [],
+    },
+  ]
   return { useAgents: () => ({ agents, loading: false, error: null }) }
 })
 vi.mock('../lib/useFavorites', () => ({

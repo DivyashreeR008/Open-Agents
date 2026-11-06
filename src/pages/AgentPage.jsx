@@ -10,88 +10,66 @@ import { useAgents } from '../lib/useAgents'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
 
 export default function AgentPage() {
-const { id } = useParams()
+  const { id } = useParams()
 
-const {
-agents,
-loading: isLoading,
-error,
-reloadAgents,
-} = useAgents()
+  const { agents, loading: isLoading, error, reloadAgents } = useAgents()
 
-const agent = agents.find((a) => a.id === id)
+  const agent = agents.find((a) => a.id === id)
 
-useDocumentTitle(agent?.name ?? 'Agent')
+  useDocumentTitle(agent?.name ?? 'Agent')
 
-useEffect(() => {
-if (!agent) return
+  useEffect(() => {
+    if (!agent) return
 
-let existing = []
+    let existing = []
 
-try {
-  const parsed = JSON.parse(localStorage.getItem('recentAgents') || '[]')
-  existing = Array.isArray(parsed)
-    ? parsed.filter((item) => typeof item === 'string')
-    : []
-} catch {
-  existing = []
-}
+    try {
+      const parsed = JSON.parse(localStorage.getItem('recentAgents') || '[]')
+      existing = Array.isArray(parsed) ? parsed.filter((item) => typeof item === 'string') : []
+    } catch {
+      existing = []
+    }
 
-const updated = [
-  agent.id,
-  ...existing.filter((item) => item !== agent.id),
-].slice(0, 5)
+    const updated = [agent.id, ...existing.filter((item) => item !== agent.id)].slice(0, 5)
 
-try {
-  localStorage.setItem('recentAgents', JSON.stringify(updated))
-} catch {
-  // Recent tracking is optional; storage can be blocked or full.
-}
+    try {
+      localStorage.setItem('recentAgents', JSON.stringify(updated))
+    } catch {
+      // Recent tracking is optional; storage can be blocked or full.
+    }
+  }, [agent])
 
-}, [agent])
+  if (isLoading) {
+    return (
+      <div
+        className="flex min-h-[70vh] flex-col items-center justify-center gap-3"
+        role="status"
+        aria-live="polite"
+      >
+        <Loader2 size={28} className="animate-spin text-zinc-500" aria-hidden="true" />
 
-if (isLoading) {
-return (
-<div className="flex min-h-[70vh] flex-col items-center justify-center gap-3" role="status" aria-live="polite" >
-<Loader2 size={28} className="animate-spin text-zinc-500" aria-hidden="true" />
+        <p className="text-sm text-zinc-500 dark:text-text-secondary">Loading agent...</p>
 
-    <p className="text-sm text-zinc-500 dark:text-text-secondary">
-      Loading agent...
-    </p>
+        <span className="sr-only">Please wait while the agent loads.</span>
+      </div>
+    )
+  }
 
-    <span className="sr-only">
-      Please wait while the agent loads.
-    </span>
-  </div>
-)
+  if (error) {
+    return (
+      <div className="mx-auto w-full max-w-3xl p-6">
+        <ErrorCard message={error.message || 'Unable to load agents. Please try again.'} />
 
-}
+        <button type="button" onClick={reloadAgents} className="btn-primary mt-4">
+          Try again
+        </button>
+      </div>
+    )
+  }
 
-if (error) {
-return (
-<div className="mx-auto w-full max-w-3xl p-6">
-<ErrorCard
-message={
-error.message ||
-'Unable to load agents. Please try again.'
-}
-/>
+  if (!agent) {
+    return <NotFoundPage />
+  }
 
-    <button
-      type="button"
-      onClick={reloadAgents}
-      className="btn-primary mt-4"
-    >
-      Try again
-    </button>
-  </div>
-)
-
-}
-
-if (!agent) {
-return <NotFoundPage />
-}
-
-return <AgentRunner key={agent.id} agent={agent} />
+  return <AgentRunner key={agent.id} agent={agent} />
 }

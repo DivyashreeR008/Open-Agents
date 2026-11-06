@@ -295,10 +295,7 @@ export default function CommandPalette({ isOpen, onClose }) {
   }, [allItems, query])
 
   // Ensure selectedIndex is always in bounds
-  const clampedIndex = Math.min(
-    Math.max(0, selectedIndex),
-    Math.max(0, filteredItems.length - 1)
-  )
+  const clampedIndex = Math.min(Math.max(0, selectedIndex), Math.max(0, filteredItems.length - 1))
 
   const activeOptionId =
     filteredItems.length > 0 && clampedIndex >= 0
@@ -333,9 +330,7 @@ export default function CommandPalette({ isOpen, onClose }) {
     } else if (event.key === 'ArrowUp') {
       event.preventDefault()
       if (filteredItems.length > 0) {
-        setSelectedIndex(
-          (prev) => (prev - 1 + filteredItems.length) % filteredItems.length
-        )
+        setSelectedIndex((prev) => (prev - 1 + filteredItems.length) % filteredItems.length)
       }
     } else if (event.key === 'Enter') {
       event.preventDefault()

@@ -1,7 +1,8 @@
 const helmChartGenerator = {
   id: 'helm-chart-generator',
   name: 'Helm Chart Generator',
-  description: 'Describe your app and get a complete Helm chart with Chart.yaml, values.yaml, and templated manifests ready to install.',
+  description:
+    'Describe your app and get a complete Helm chart with Chart.yaml, values.yaml, and templated manifests ready to install.',
   category: 'DevOps',
   icon: 'Ship',
   provider: 'any',
@@ -76,6 +77,6 @@ Rules:
 - If env vars are empty, render an empty env block, not broken YAML.
 - Keep comments brief and useful for a first time chart author.`,
   outputType: 'markdown',
-};
+}
 
-export default helmChartGenerator;
+export default helmChartGenerator

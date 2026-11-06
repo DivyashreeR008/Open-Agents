@@ -14,8 +14,7 @@ export default {
       id: 'project_idea',
       label: 'Project Idea',
       type: 'textarea',
-      placeholder:
-        'Describe the application you want to build and its main purpose...',
+      placeholder: 'Describe the application you want to build and its main purpose...',
       required: true,
     },
     {
@@ -38,24 +37,14 @@ export default {
       label: 'Team Size',
       type: 'select',
       required: true,
-      options: [
-        'Solo Developer',
-        '2-5 Developers',
-        '6-15 Developers',
-        '15+ Developers',
-      ],
+      options: ['Solo Developer', '2-5 Developers', '6-15 Developers', '15+ Developers'],
     },
     {
       id: 'budget',
       label: 'Budget',
       type: 'select',
       required: true,
-      options: [
-        'Free / Student',
-        'Low Budget',
-        'Moderate Budget',
-        'Enterprise Budget',
-      ],
+      options: ['Free / Student', 'Low Budget', 'Moderate Budget', 'Enterprise Budget'],
     },
   ],
 
@@ -152,4 +141,4 @@ Summarize the recommended architecture in a concise paragraph.
 `,
 
   outputType: 'markdown',
-};
+}

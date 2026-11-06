@@ -1,41 +1,41 @@
 export default {
-  id: "grpc-service-designer",
-  createdAt: "2026-10-12",
-  name: "gRPC Service Designer",
+  id: 'grpc-service-designer',
+  createdAt: '2026-10-12',
+  name: 'gRPC Service Designer',
   description:
-    "Design gRPC services: proto layout, streaming choices, error details, and deadlines.",
-  category: "Engineering",
-  icon: "Zap",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Design gRPC services: proto layout, streaming choices, error details, and deadlines.',
+  category: 'Engineering',
+  icon: 'Zap',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     service:
-      "RoutePlanner service: GetRoute, ListRoutes, StreamTrafficUpdates between mobile and dispatch backend",
-    clients: "Go backend, Kotlin mobile, TypeScript web",
-    streaming: "server",
+      'RoutePlanner service: GetRoute, ListRoutes, StreamTrafficUpdates between mobile and dispatch backend',
+    clients: 'Go backend, Kotlin mobile, TypeScript web',
+    streaming: 'server',
   },
   inputs: [
     {
-      id: "service",
-      label: "Service and methods",
-      type: "textarea",
+      id: 'service',
+      label: 'Service and methods',
+      type: 'textarea',
       placeholder:
-        "Describe the service and operations, e.g. RoutePlanner with GetRoute and traffic updates",
+        'Describe the service and operations, e.g. RoutePlanner with GetRoute and traffic updates',
       required: true,
     },
     {
-      id: "clients",
-      label: "Client platforms",
-      type: "text",
-      placeholder: "e.g. Go backend, Kotlin mobile, TypeScript web",
+      id: 'clients',
+      label: 'Client platforms',
+      type: 'text',
+      placeholder: 'e.g. Go backend, Kotlin mobile, TypeScript web',
     },
     {
-      id: "streaming",
-      label: "Streaming pattern",
-      type: "select",
-      options: ["unary", "server", "client", "bidi"],
-      defaultValue: "server",
+      id: 'streaming',
+      label: 'Streaming pattern',
+      type: 'select',
+      options: ['unary', 'server', 'client', 'bidi'],
+      defaultValue: 'server',
       required: true,
     },
   ],
@@ -67,6 +67,6 @@ Rules:
 - Mark uncertain requirements as questions for the service owner
 - Keep proto style consistent and idiomatic
 - Use neutral, specification-style language`,
-  outputType: "markdown",
-  suggestedChainFrom: ["api-doc-generator", "readme-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['api-doc-generator', 'readme-generator'],
+}

@@ -4,10 +4,7 @@ import { ArrowLeft, FolderPlus, Trash2, X } from 'lucide-react'
 import AgentCard from '../components/AgentCard'
 import CollectionAgentPicker from '../components/collections/CollectionAgentPicker'
 import { useAgents } from '../lib/useAgents'
-import {
-  MAX_AGENTS_PER_COLLECTION,
-  useCollections,
-} from '../lib/useCollections'
+import { MAX_AGENTS_PER_COLLECTION, useCollections } from '../lib/useCollections'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
 import PageHeader from '../components/layout/PageHeader'
 import SectionHeader from '../components/layout/SectionHeader'
@@ -17,31 +14,20 @@ export default function CollectionDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
 
-  const {
-    getCollectionById,
-    deleteCollection,
-    addAgentToCollection,
-    removeAgentFromCollection,
-  } = useCollections()
+  const { getCollectionById, deleteCollection, addAgentToCollection, removeAgentFromCollection } =
+    useCollections()
   const { agents, loading, error } = useAgents()
 
   const collection = getCollectionById(id)
 
-  useDocumentTitle(
-    collection ? `${collection.name} Collection` : 'Collection not found'
-  )
+  useDocumentTitle(collection ? `${collection.name} Collection` : 'Collection not found')
 
-  const agentById = useMemo(
-    () => new Map(agents.map((agent) => [agent.id, agent])),
-    [agents]
-  )
+  const agentById = useMemo(() => new Map(agents.map((agent) => [agent.id, agent])), [agents])
 
   const collectionAgents = useMemo(() => {
     if (!collection) return []
 
-    return collection.agentIds
-      .map((agentId) => agentById.get(agentId))
-      .filter(Boolean)
+    return collection.agentIds.map((agentId) => agentById.get(agentId)).filter(Boolean)
   }, [agentById, collection])
 
   if (!collection) {
@@ -106,12 +92,13 @@ export default function CollectionDetailPage() {
         title={collection.name}
         meta={`${collectionAgents.length} / ${MAX_AGENTS_PER_COLLECTION}`}
         description={
-          staleCount > 0
-            ? `runnable agents · ${staleCount} unavailable hidden`
-            : 'runnable agents'
+          staleCount > 0 ? `runnable agents · ${staleCount} unavailable hidden` : 'runnable agents'
         }
         actions={
-          <button onClick={handleDelete} className="btn-ghost hover:text-black dark:hover:text-white">
+          <button
+            onClick={handleDelete}
+            className="btn-ghost hover:text-black dark:hover:text-white"
+          >
             <Trash2 size={14} aria-hidden="true" />
             Delete
           </button>

@@ -1,38 +1,38 @@
 export default {
-  id: "startup-idea-brainstormer",
-  createdAt: "2026-10-12",
-  name: "Startup Idea Brainstormer",
+  id: 'startup-idea-brainstormer',
+  createdAt: '2026-10-12',
+  name: 'Startup Idea Brainstormer',
   description:
-    "Give your skills, interests, and constraints to get 10 concrete startup ideas with the problem, buyer, and why-you angle for each.",
-  category: "Business",
-  icon: "Lightbulb",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Give your skills, interests, and constraints to get 10 concrete startup ideas with the problem, buyer, and why-you angle for each.',
+  category: 'Business',
+  icon: 'Lightbulb',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    background: "5 years as a backend engineer (Python/Postgres), comfortable with B2B sales calls",
-    interests: "Developer tools, automation, indie hacking",
-    constraints: "Solo founder, nights and weekends, under $500/mo spend",
+    background: '5 years as a backend engineer (Python/Postgres), comfortable with B2B sales calls',
+    interests: 'Developer tools, automation, indie hacking',
+    constraints: 'Solo founder, nights and weekends, under $500/mo spend',
   },
   inputs: [
     {
-      id: "background",
-      label: "Your background & skills",
-      type: "textarea",
-      placeholder: "e.g. Ex-accountant, great at spreadsheets, knows restaurant owners",
+      id: 'background',
+      label: 'Your background & skills',
+      type: 'textarea',
+      placeholder: 'e.g. Ex-accountant, great at spreadsheets, knows restaurant owners',
       required: true,
     },
     {
-      id: "interests",
-      label: "Interests & markets you care about",
-      type: "textarea",
-      placeholder: "e.g. Climate, education, dev tools",
+      id: 'interests',
+      label: 'Interests & markets you care about',
+      type: 'textarea',
+      placeholder: 'e.g. Climate, education, dev tools',
     },
     {
-      id: "constraints",
-      label: "Constraints (optional)",
-      type: "textarea",
-      placeholder: "e.g. Solo, no fundraising, must be profitable in 6 months",
+      id: 'constraints',
+      label: 'Constraints (optional)',
+      type: 'textarea',
+      placeholder: 'e.g. Solo, no fundraising, must be profitable in 6 months',
     },
   ],
   systemPrompt: `You brainstorm startup ideas tailored to the founder — not
@@ -65,6 +65,6 @@ Rules:
   "everyone" is banned
 - No invented market sizes or revenue projections
 - Pair with the Startup Idea Validator next for the top pick`,
-  outputType: "markdown",
-  suggestedChainFrom: ["startup-idea-validator", "competitive-analysis-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['startup-idea-validator', 'competitive-analysis-generator'],
+}

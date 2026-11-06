@@ -39,17 +39,9 @@ export function exportBatchAsCSV(agentName, results) {
   const filename = `${slugifyFilename(agentName)}-batch-results.csv`
 
   const header = ['#', 'Input', 'Status', 'Output', 'Error']
-  const rows = results.map((r, i) => [
-    i + 1,
-    r.input,
-    r.status,
-    r.output || '',
-    r.error || '',
-  ])
+  const rows = results.map((r, i) => [i + 1, r.input, r.status, r.output || '', r.error || ''])
 
-  const csv = [header, ...rows]
-    .map((row) => row.map(csvEscape).join(','))
-    .join('\n')
+  const csv = [header, ...rows].map((row) => row.map(csvEscape).join(',')).join('\n')
 
   downloadBlob(csv, 'text/csv', filename)
 }

@@ -88,12 +88,12 @@ export function useAgentRatings() {
     const agentData = ratings[agentId] || { up: 0, down: 0 }
     const total = agentData.up + agentData.down
     const percentage = total > 0 ? Math.round((agentData.up / total) * 100) : 0
-    
+
     return {
       up: agentData.up,
       down: agentData.down,
       total,
-      percentage
+      percentage,
     }
   }
 

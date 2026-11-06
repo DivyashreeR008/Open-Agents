@@ -30,7 +30,12 @@ function renderPage(id = 'alpha') {
 
 beforeEach(() => {
   localStorage.clear()
-  mocks.useAgents.mockReturnValue({ agents: [agent], loading: false, error: null, reloadAgents: vi.fn() })
+  mocks.useAgents.mockReturnValue({
+    agents: [agent],
+    loading: false,
+    error: null,
+    reloadAgents: vi.fn(),
+  })
 })
 
 afterEach(() => {

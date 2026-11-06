@@ -22,44 +22,46 @@ Copy everything below this line into your GitHub Issue:
 
 ### Agent Name
 
-*(Give your agent a clear, concise name — e.g. "Blog Post Generator", "SQL Query Builder")*
+_(Give your agent a clear, concise name — e.g. "Blog Post Generator", "SQL Query Builder")_
 
 ### Description
 
-*(One or two sentences explaining what this agent does)*
+_(One or two sentences explaining what this agent does)_
 
 ### Category
 
-*(Pick one: `Productivity` · `Research` · `Marketing` · `Engineering` · `HR` — or suggest a new one)*
+_(Pick one: `Productivity` · `Research` · `Marketing` · `Engineering` · `HR` — or suggest a new one)_
 
 ### Problem It Solves
 
-*(What pain point does this agent address? Who would use it and why?)*
+_(What pain point does this agent address? Who would use it and why?)_
 
 ### Example Usage
 
 **Sample input:**
-> *(What would a user type or paste into this agent?)*
+
+> _(What would a user type or paste into this agent?)_
 
 **Expected output:**
-> *(What kind of response should the agent produce? Give a brief example.)*
+
+> _(What kind of response should the agent produce? Give a brief example.)_
 
 ### Suggested Provider & Model
 
-| Field | Value |
-|-------|-------|
-| Provider | *(openai / anthropic / gemini / any)* |
-| Model | *(e.g. gpt-4o, claude-sonnet-4-0, gemini-2.0-flash)* |
+| Field    | Value                                                |
+| -------- | ---------------------------------------------------- |
+| Provider | _(openai / anthropic / gemini / any)_                |
+| Model    | _(e.g. gpt-4o, claude-sonnet-4-0, gemini-2.0-flash)_ |
 
 ### Input Fields
 
-*(List the inputs your agent would need. You don't need to write code — just describe them.)*
+_(List the inputs your agent would need. You don't need to write code — just describe them.)_
 
-| Label | Type | Required? | Notes |
-|-------|------|-----------|-------|
-| *(e.g. "Topic")* | *(text / textarea / code / select / multiselect)* | *(Yes / No)* | *(Any options, placeholder text, or defaults)* |
-| | | | |
-| | | | |
+| Label            | Type                                              | Required?    | Notes                                          |
+| ---------------- | ------------------------------------------------- | ------------ | ---------------------------------------------- |
+| _(e.g. "Topic")_ | _(text / textarea / code / select / multiselect)_ | _(Yes / No)_ | _(Any options, placeholder text, or defaults)_ |
+|                  |                                                   |              |                                                |
+|                  |                                                   |              |                                                |
 
 ### Output Format
 
@@ -69,7 +71,7 @@ Copy everything below this line into your GitHub Issue:
 
 ### Anything Else?
 
-*(Optional: edge cases, limitations, similar tools for inspiration, links, references, etc.)*
+_(Optional: edge cases, limitations, similar tools for inspiration, links, references, etc.)_
 
 ---
 

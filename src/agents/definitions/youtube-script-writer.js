@@ -1,7 +1,8 @@
 const youtubeScriptWriter = {
   id: 'youtube-script-writer',
   name: 'YouTube Script Writer',
-  description: 'Turn any topic into a ready-to-record YouTube script with intro hook, sections, and outro.',
+  description:
+    'Turn any topic into a ready-to-record YouTube script with intro hook, sections, and outro.',
   category: 'Marketing',
   icon: 'Video',
   provider: 'any',
@@ -19,7 +20,13 @@ const youtubeScriptWriter = {
       id: 'tone',
       label: 'Tone',
       type: 'select',
-      options: ['Casual & Conversational', 'Educational', 'Motivational', 'Entertaining', 'Professional'],
+      options: [
+        'Casual & Conversational',
+        'Educational',
+        'Motivational',
+        'Entertaining',
+        'Professional',
+      ],
       required: true,
     },
     {
@@ -44,6 +51,6 @@ Guidelines:
 - Match the tone exactly as specified
 - Adjust total word count to roughly match the target video length (1 minute ≈ 130 words)`,
   outputType: 'markdown',
-};
+}
 
-export default youtubeScriptWriter;
+export default youtubeScriptWriter

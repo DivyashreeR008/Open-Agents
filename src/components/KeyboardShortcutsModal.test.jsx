@@ -4,9 +4,7 @@ import KeyboardShortcutsModal from './KeyboardShortcutsModal'
 
 describe('KeyboardShortcutsModal', () => {
   it('does not render when isOpen is false', () => {
-    const { container } = render(
-      <KeyboardShortcutsModal isOpen={false} onClose={vi.fn()} />
-    )
+    const { container } = render(<KeyboardShortcutsModal isOpen={false} onClose={vi.fn()} />)
     expect(container.firstChild).toBeNull()
   })
 
@@ -16,10 +14,7 @@ describe('KeyboardShortcutsModal', () => {
     const dialog = screen.getByRole('dialog')
     expect(dialog).toBeInTheDocument()
     expect(dialog).toHaveAttribute('aria-modal', 'true')
-    expect(dialog).toHaveAttribute(
-      'aria-labelledby',
-      'keyboard-shortcuts-title'
-    )
+    expect(dialog).toHaveAttribute('aria-labelledby', 'keyboard-shortcuts-title')
 
     expect(screen.getByText('Keyboard Shortcuts')).toBeInTheDocument()
     expect(screen.getByText('Open Command Palette')).toBeInTheDocument()

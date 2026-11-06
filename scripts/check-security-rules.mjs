@@ -12,22 +12,43 @@ const ALLOWED_LLM_HOSTS = new Set([
 ])
 
 const ANALYTICS_PATTERNS = [
-  { name: 'Google Analytics / Tag Manager', regex: /\b(googletagmanager\.com|google-analytics\.com|gtag\s*\(|_gaq\b)/i },
-  { name: 'Analytics & Tracking Services (Mixpanel, PostHog, Amplitude, Hotjar, Clarity, Plausible)', regex: /\b(mixpanel\.(?:init|track)|posthog\.(?:init|capture)|amplitude\.getInstance|clarity\.ms|hotjar\.com|plausible\.io)\b/i },
-  { name: 'Segment Analytics', regex: /\b(cdn\.segment\.com|api\.segment\.io|\banalytics\.track\s*\(|\banalytics\.page\s*\()/i },
+  {
+    name: 'Google Analytics / Tag Manager',
+    regex: /\b(googletagmanager\.com|google-analytics\.com|gtag\s*\(|_gaq\b)/i,
+  },
+  {
+    name: 'Analytics & Tracking Services (Mixpanel, PostHog, Amplitude, Hotjar, Clarity, Plausible)',
+    regex:
+      /\b(mixpanel\.(?:init|track)|posthog\.(?:init|capture)|amplitude\.getInstance|clarity\.ms|hotjar\.com|plausible\.io)\b/i,
+  },
+  {
+    name: 'Segment Analytics',
+    regex: /\b(cdn\.segment\.com|api\.segment\.io|\banalytics\.track\s*\(|\banalytics\.page\s*\()/i,
+  },
   { name: 'Telemetry Beacon', regex: /\bnavigator\.sendBeacon\s*\(/i },
 ]
 
 const CREDENTIAL_STORAGE_PATTERNS = [
-  { name: 'Logging credentials / API key', regex: /\bconsole\.(?:log|info|warn|error|debug)\s*\([^)]*\b(apiKey|api_key|apiSecret|api_secret|privateKey|private_key)\b/i },
-  { name: 'Persisting credential in document.cookie', regex: /\bdocument\.cookie\s*=.*(?:apiKey|api_key|password|secretKey)/i },
-  { name: 'Persisting API key in localStorage', regex: /\blocalStorage\.setItem\s*\([^,]*,\s*(?:JSON\.stringify\([^)]*)?\b(?:apiKey|api_key|plainKey|secretKey)\b/i },
+  {
+    name: 'Logging credentials / API key',
+    regex:
+      /\bconsole\.(?:log|info|warn|error|debug)\s*\([^)]*\b(apiKey|api_key|apiSecret|api_secret|privateKey|private_key)\b/i,
+  },
+  {
+    name: 'Persisting credential in document.cookie',
+    regex: /\bdocument\.cookie\s*=.*(?:apiKey|api_key|password|secretKey)/i,
+  },
+  {
+    name: 'Persisting API key in localStorage',
+    regex:
+      /\blocalStorage\.setItem\s*\([^,]*,\s*(?:JSON\.stringify\([^)]*)?\b(?:apiKey|api_key|plainKey|secretKey)\b/i,
+  },
 ]
 
 export function checkSecurityRules(options = {}) {
   const rootDir = options.rootDir || process.cwd()
   const exceptionsFile = path.join(rootDir, 'security-exceptions.json')
-  
+
   let exceptions = []
   if (fs.existsSync(exceptionsFile)) {
     try {
@@ -65,7 +86,12 @@ export function checkSecurityRules(options = {}) {
       for (const pattern of ANALYTICS_PATTERNS) {
         if (pattern.regex.test(line)) {
           if (isException('no-analytics', filePath, line)) {
-            matchedExceptions.push({ rule: 'no-analytics', file: relativePath, line: lineNum, reason: pattern.name })
+            matchedExceptions.push({
+              rule: 'no-analytics',
+              file: relativePath,
+              line: lineNum,
+              reason: pattern.name,
+            })
           } else {
             violations.push({
               rule: 'no-analytics',
@@ -82,7 +108,12 @@ export function checkSecurityRules(options = {}) {
       for (const pattern of CREDENTIAL_STORAGE_PATTERNS) {
         if (pattern.regex.test(line)) {
           if (isException('no-storing-credentials', filePath, line)) {
-            matchedExceptions.push({ rule: 'no-storing-credentials', file: relativePath, line: lineNum, reason: pattern.name })
+            matchedExceptions.push({
+              rule: 'no-storing-credentials',
+              file: relativePath,
+              line: lineNum,
+              reason: pattern.name,
+            })
           } else {
             violations.push({
               rule: 'no-storing-credentials',
@@ -103,7 +134,12 @@ export function checkSecurityRules(options = {}) {
         const host = fetchMatch[2].toLowerCase()
         if (!ALLOWED_LLM_HOSTS.has(host)) {
           if (isException('no-third-party-data', filePath, line)) {
-            matchedExceptions.push({ rule: 'no-third-party-data', file: relativePath, line: lineNum, reason: `Allowed URL: ${url}` })
+            matchedExceptions.push({
+              rule: 'no-third-party-data',
+              file: relativePath,
+              line: lineNum,
+              reason: `Allowed URL: ${url}`,
+            })
           } else {
             violations.push({
               rule: 'no-third-party-data',
@@ -123,7 +159,12 @@ export function checkSecurityRules(options = {}) {
           const url = scriptMatch[1]
           const host = scriptMatch[2].toLowerCase()
           if (isException('no-third-party-data', filePath, line)) {
-            matchedExceptions.push({ rule: 'no-third-party-data', file: relativePath, line: lineNum, reason: `Allowed script: ${url}` })
+            matchedExceptions.push({
+              rule: 'no-third-party-data',
+              file: relativePath,
+              line: lineNum,
+              reason: `Allowed script: ${url}`,
+            })
           } else {
             violations.push({
               rule: 'no-third-party-data',
@@ -143,12 +184,22 @@ export function checkSecurityRules(options = {}) {
     for (const entry of entries) {
       const fullPath = path.join(dir, entry.name)
       if (entry.isDirectory()) {
-        if (entry.name === 'node_modules' || entry.name === '.git' || entry.name === 'dist' || entry.name === 'test' || entry.name === 'definitions') {
+        if (
+          entry.name === 'node_modules' ||
+          entry.name === '.git' ||
+          entry.name === 'dist' ||
+          entry.name === 'test' ||
+          entry.name === 'definitions'
+        ) {
           continue
         }
         walkDir(fullPath)
       } else if (entry.isFile()) {
-        if (/\.(jsx?|tsx?|html)$/.test(entry.name) && !entry.name.includes('.test.') && !entry.name.includes('.spec.')) {
+        if (
+          /\.(jsx?|tsx?|html)$/.test(entry.name) &&
+          !entry.name.includes('.test.') &&
+          !entry.name.includes('.spec.')
+        ) {
           scanFile(fullPath)
         }
       }
@@ -171,10 +222,10 @@ export function checkSecurityRules(options = {}) {
 }
 
 // CLI execution
-const isMain = process.argv[1] && (
-  process.argv[1].endsWith('check-security-rules.mjs') ||
-  process.argv[1].endsWith('check-security-rules.js')
-)
+const isMain =
+  process.argv[1] &&
+  (process.argv[1].endsWith('check-security-rules.mjs') ||
+    process.argv[1].endsWith('check-security-rules.js'))
 
 if (isMain) {
   console.log('[security-check] Scanning project against contributor security rules...')
@@ -183,7 +234,9 @@ if (isMain) {
   console.log(`[security-check] Scanned ${filesScanned} file(s).`)
 
   if (matchedExceptions.length > 0) {
-    console.log(`[security-check] Verified ${matchedExceptions.length} deliberately recorded exception(s):`)
+    console.log(
+      `[security-check] Verified ${matchedExceptions.length} deliberately recorded exception(s):`
+    )
     matchedExceptions.forEach((ex) => {
       console.log(`  ✓ [${ex.rule}] ${ex.file}:${ex.line} (${ex.reason})`)
     })
@@ -196,11 +249,12 @@ if (isMain) {
       console.error(`    ${v.description}`)
       console.error(`    Code: ${v.content}\n`)
     })
-    console.error('If an exception was accepted by maintainers, record it deliberately in security-exceptions.json.\n')
+    console.error(
+      'If an exception was accepted by maintainers, record it deliberately in security-exceptions.json.\n'
+    )
     process.exit(1)
   }
 
   console.log('✅ [security-check] All security rule checks passed!')
   process.exit(0)
 }
-

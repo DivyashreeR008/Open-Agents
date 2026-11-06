@@ -1,11 +1,6 @@
 import { act, renderHook } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import {
-  formatCost,
-  formatExactTime,
-  formatRelativeTime,
-  useNow,
-} from './formatting'
+import { formatCost, formatExactTime, formatRelativeTime, useNow } from './formatting'
 
 const NOW = Date.UTC(2026, 0, 15, 12, 0, 0)
 

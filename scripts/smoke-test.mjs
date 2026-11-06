@@ -109,8 +109,7 @@ async function main() {
       fail('No main JS bundle script tag found in built index.html')
     }
     const { body: mainBundle } = await checkAsset(mainScript[1])
-    const looksLikeReactApp =
-      /React|createRoot|hydrateRoot|_react/i.test(mainBundle)
+    const looksLikeReactApp = /React|createRoot|hydrateRoot|_react/i.test(mainBundle)
     if (!looksLikeReactApp) {
       fail('Main JS bundle does not appear to contain the React application')
     }

@@ -1,35 +1,35 @@
 export default {
-  id: "mongodb-schema-migrator",
-  createdAt: "2026-10-20",
-  name: "MongoDB Schema Migrator",
+  id: 'mongodb-schema-migrator',
+  createdAt: '2026-10-20',
+  name: 'MongoDB Schema Migrator',
   description:
-    "Generate safe migration scripts for schema changes with rollback steps and data transformation logic.",
-  category: "Engineering",
-  icon: "GitMerge",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Generate safe migration scripts for schema changes with rollback steps and data transformation logic.',
+  category: 'Engineering',
+  icon: 'GitMerge',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {},
   inputs: [
     {
-      id: "change",
-      label: "Schema change description",
-      type: "textarea",
+      id: 'change',
+      label: 'Schema change description',
+      type: 'textarea',
       placeholder: "e.g. Add 'emailVerified' boolean to users collection",
       required: true,
     },
     {
-      id: "collections",
-      label: "Collections affected",
-      type: "text",
-      placeholder: "e.g. users, orders, sessions",
+      id: 'collections',
+      label: 'Collections affected',
+      type: 'text',
+      placeholder: 'e.g. users, orders, sessions',
       required: true,
     },
     {
-      id: "driver",
-      label: "ODM / driver",
-      type: "text",
-      placeholder: "e.g. Mongoose, native Node driver, Motor",
+      id: 'driver',
+      label: 'ODM / driver',
+      type: 'text',
+      placeholder: 'e.g. Mongoose, native Node driver, Motor',
       required: true,
     },
   ],
@@ -76,5 +76,5 @@ Rules:
 - Include $set with upsert for idempotency.
 - Warn about collection locking on large datasets.`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

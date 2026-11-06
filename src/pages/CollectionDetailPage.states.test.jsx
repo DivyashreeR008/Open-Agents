@@ -56,7 +56,10 @@ describe('CollectionDetailPage state branches', () => {
     setCollection(null)
     renderPage('missing')
     expect(screen.getByRole('heading', { name: 'Collection not found' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Back to collections' })).toHaveAttribute('href', '/collections')
+    expect(screen.getByRole('link', { name: 'Back to collections' })).toHaveAttribute(
+      'href',
+      '/collections'
+    )
   })
 
   it('renders the loading state while agents resolve', () => {
@@ -84,6 +87,8 @@ describe('CollectionDetailPage state branches', () => {
   it('renders the empty collection copy when every id is valid but absent', () => {
     setCollection({ id: 'c1', name: 'Launch', agentIds: [] })
     renderPage()
-    expect(screen.getByRole('heading', { name: 'No agents in this collection yet' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: 'No agents in this collection yet' })
+    ).toBeInTheDocument()
   })
 })

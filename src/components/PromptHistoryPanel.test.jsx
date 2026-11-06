@@ -42,14 +42,7 @@ function makePrompt(overrides = {}) {
 }
 
 function renderPanel(overrides = {}) {
-  return render(
-    <PromptHistoryPanel
-      open
-      onClose={vi.fn()}
-      onUsePrompt={vi.fn()}
-      {...overrides}
-    />
-  )
+  return render(<PromptHistoryPanel open onClose={vi.fn()} onUsePrompt={vi.fn()} {...overrides} />)
 }
 
 describe('PromptHistoryPanel', () => {
@@ -64,9 +57,7 @@ describe('PromptHistoryPanel', () => {
     state.setCopiedId.mockReset()
     state.searchPrompts.mockReset()
     state.searchPrompts.mockImplementation((query) =>
-      state.prompts.filter((prompt) =>
-        prompt.text.toLowerCase().includes(query.toLowerCase())
-      )
+      state.prompts.filter((prompt) => prompt.text.toLowerCase().includes(query.toLowerCase()))
     )
     Object.defineProperty(navigator, 'clipboard', {
       configurable: true,
@@ -114,14 +105,14 @@ describe('PromptHistoryPanel', () => {
 
   it('truncates long prompt text and formats the relative time', () => {
     const longText = 'x'.repeat(160)
-    state.prompts = [
-      makePrompt({ id: 'long', text: longText, createdAt: now - 5 * 60_000 }),
-    ]
+    state.prompts = [makePrompt({ id: 'long', text: longText, createdAt: now - 5 * 60_000 })]
 
     renderPanel()
 
     expect(
-      screen.getByText((content) => content.startsWith('x'.repeat(140)) && content.endsWith('\u2026'))
+      screen.getByText(
+        (content) => content.startsWith('x'.repeat(140)) && content.endsWith('\u2026')
+      )
     ).toBeInTheDocument()
     expect(screen.getByText('5m ago')).toBeInTheDocument()
   })
@@ -180,9 +171,7 @@ describe('PromptHistoryPanel', () => {
       fireEvent.click(screen.getByTitle('Copy to clipboard'))
     })
 
-    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-      'Review the authentication flow.'
-    )
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith('Review the authentication flow.')
     expect(state.setCopiedId).toHaveBeenCalledWith('prompt-1', 1500)
   })
 

@@ -1,28 +1,28 @@
 export default {
-  id: "documentation-readability-scorer",
-  createdAt: "2026-10-20",
-  name: "Documentation Readability Scorer",
+  id: 'documentation-readability-scorer',
+  createdAt: '2026-10-20',
+  name: 'Documentation Readability Scorer',
   description:
-    "Score technical documentation for readability, clarity, and accessibility with improvement suggestions.",
-  category: "Engineering",
-  icon: "FileText",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Score technical documentation for readability, clarity, and accessibility with improvement suggestions.',
+  category: 'Engineering',
+  icon: 'FileText',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {},
   inputs: [
     {
-      id: "content",
-      label: "Documentation content",
-      type: "textarea",
-      placeholder: "Paste README, API docs, or guide content...",
+      id: 'content',
+      label: 'Documentation content',
+      type: 'textarea',
+      placeholder: 'Paste README, API docs, or guide content...',
       required: true,
     },
     {
-      id: "audience",
-      label: "Target audience",
-      type: "text",
-      placeholder: "e.g. developers, end users, stakeholders...",
+      id: 'audience',
+      label: 'Target audience',
+      type: 'text',
+      placeholder: 'e.g. developers, end users, stakeholders...',
       required: true,
     },
   ],
@@ -48,5 +48,5 @@ Rules:
 - Use plain language principles.
 - Provide specific rewrite examples.`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

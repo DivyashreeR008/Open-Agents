@@ -8,11 +8,7 @@ import Privacy from './Privacy'
 import TermsOfService from './TermsOfService'
 
 function renderWithRouter(ui, initialEntries = ['/']) {
-  return render(
-    <MemoryRouter initialEntries={initialEntries}>
-      {ui}
-    </MemoryRouter>
-  )
+  return render(<MemoryRouter initialEntries={initialEntries}>{ui}</MemoryRouter>)
 }
 
 afterEach(() => {
@@ -28,9 +24,7 @@ describe('AboutPage', () => {
       </AgentsProvider>
     )
 
-    expect(
-      screen.getByRole('heading', { name: /welcome to openagents/i })
-    ).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /welcome to openagents/i })).toBeInTheDocument()
     expect(document.title).toBe('About \u2014 Open Agents')
   })
 })
@@ -72,10 +66,7 @@ describe('NotFoundPage', () => {
     renderWithRouter(
       <Routes>
         <Route path="*" element={<NotFoundPage />} />
-        <Route
-          path="/agents"
-          element={<input aria-label="Search agents" id="agent-search" />}
-        />
+        <Route path="/agents" element={<input aria-label="Search agents" id="agent-search" />} />
       </Routes>,
       ['/missing']
     )

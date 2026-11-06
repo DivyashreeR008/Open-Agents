@@ -1,42 +1,39 @@
 export default {
-  id: "incident-severity-classifier",
-  createdAt: "2026-10-12",
-  name: "Incident Severity Classifier",
-  description:
-    "Define SEV1-SEV4 with examples, paging rules, and commander duties for your team.",
-  category: "DevOps",
-  icon: "Flame",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'incident-severity-classifier',
+  createdAt: '2026-10-12',
+  name: 'Incident Severity Classifier',
+  description: 'Define SEV1-SEV4 with examples, paging rules, and commander duties for your team.',
+  category: 'DevOps',
+  icon: 'Flame',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    service:
-      "SaaS billing API, 500 tenants, downtime blocks invoice generation, p99 SLO 300ms",
-    teamSize: "6-20",
-    onCall: "One primary + one secondary, PagerDuty, EU/US coverage, 15-min ack SLA",
+    service: 'SaaS billing API, 500 tenants, downtime blocks invoice generation, p99 SLO 300ms',
+    teamSize: '6-20',
+    onCall: 'One primary + one secondary, PagerDuty, EU/US coverage, 15-min ack SLA',
   },
   inputs: [
     {
-      id: "service",
-      label: "Service description",
-      type: "textarea",
-      placeholder:
-        "e.g. SaaS billing API, 500 tenants, downtime blocks invoicing, p99 SLO 300ms",
+      id: 'service',
+      label: 'Service description',
+      type: 'textarea',
+      placeholder: 'e.g. SaaS billing API, 500 tenants, downtime blocks invoicing, p99 SLO 300ms',
       required: true,
     },
     {
-      id: "teamSize",
-      label: "Team size",
-      type: "select",
-      options: ["1-5", "6-20", "20-plus"],
-      defaultValue: "6-20",
+      id: 'teamSize',
+      label: 'Team size',
+      type: 'select',
+      options: ['1-5', '6-20', '20-plus'],
+      defaultValue: '6-20',
       required: true,
     },
     {
-      id: "onCall",
-      label: "On-call setup",
-      type: "textarea",
-      placeholder: "e.g. Primary + secondary rotation, paging tool, ack SLA, coverage hours",
+      id: 'onCall',
+      label: 'On-call setup',
+      type: 'textarea',
+      placeholder: 'e.g. Primary + secondary rotation, paging tool, ack SLA, coverage hours',
     },
   ],
   systemPrompt: `You are an incident-management consultant who designs clear,
@@ -68,6 +65,6 @@ Rules:
 - Keep paging expectations proportional to the stated team size
 - Use neutral, precise language with no emoji
 - Emphasize blameless response and clear ownership`,
-  outputType: "markdown",
-  suggestedChainFrom: ["incident-runbook-generator", "incident-postmortem-writer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['incident-runbook-generator', 'incident-postmortem-writer'],
+}

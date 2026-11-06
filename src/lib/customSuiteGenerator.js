@@ -1,12 +1,12 @@
-import { streamAgent } from "./llmAdapter";
-import { recordAnalyticsRun } from "./useAnalytics";
-import { suites } from "../suites/suitesData";
+import { streamAgent } from './llmAdapter'
+import { recordAnalyticsRun } from './useAnalytics'
+import { suites } from '../suites/suitesData'
 
 const MODEL_DEFAULTS = {
-  gemini: "gemini-2.5-flash",
-  anthropic: "claude-3-5-haiku-20241022",
-  openai: "gpt-4o-mini",
-};
+  gemini: 'gemini-2.5-flash',
+  anthropic: 'claude-3-5-haiku-20241022',
+  openai: 'gpt-4o-mini',
+}
 
 export async function generateCustomSuite(goal, apiKey, provider) {
   // Building a flat list of all agents across all suites
@@ -14,11 +14,9 @@ export async function generateCustomSuite(goal, apiKey, provider) {
     suiteId: suite.id,
     suiteName: suite.name,
     agents: suite.agents,
-  }));
+  }))
 
-  const agentContext = agentList
-    .map((s) => `${s.suiteName}: ${s.agents.join(", ")}`)
-    .join("\n");
+  const agentContext = agentList.map((s) => `${s.suiteName}: ${s.agents.join(', ')}`).join('\n')
 
   const systemPrompt = `You are an AI assistant that helps users find the best combination of agents for their goal.
 
@@ -42,29 +40,29 @@ Rules:
 - Pick 4-6 agents maximum
 - Order them logically — what should the user do first, second, etc.
 - Keep reasons short and specific to the user's goal
-- Return ONLY valid JSON, no markdown, no extra text`;
+- Return ONLY valid JSON, no markdown, no extra text`
 
-  const userMessage = `My goal is: ${goal}`;
+  const userMessage = `My goal is: ${goal}`
 
   const result = await streamAgent({
     provider,
     apiKey,
-    model: MODEL_DEFAULTS[provider] || "gemini-2.5-flash",
+    model: MODEL_DEFAULTS[provider] || 'gemini-2.5-flash',
     systemPrompt,
     userMessage,
     onChunk: () => {},
-  });
+  })
 
   recordAnalyticsRun({
     agentId: 'custom-suite-generator',
     agentName: 'Custom Suite Generator',
     category: 'Suites',
     provider,
-    model: MODEL_DEFAULTS[provider] || "gemini-2.5-flash",
+    model: MODEL_DEFAULTS[provider] || 'gemini-2.5-flash',
     duration: result.duration,
-  });
+  })
 
   // Parse the JSON response
-  const clean = result.content.replace(/```json|```/g, "").trim();
-  return JSON.parse(clean);
+  const clean = result.content.replace(/```json|```/g, '').trim()
+  return JSON.parse(clean)
 }

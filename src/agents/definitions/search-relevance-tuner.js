@@ -1,43 +1,42 @@
 export default {
-  id: "search-relevance-tuner",
-  createdAt: "2026-10-12",
-  name: "Search Relevance Tuner",
-  description:
-    "Tune Elasticsearch/OpenSearch relevance: analyzers, BM25 boosts, and eval queries.",
-  category: "Engineering",
-  icon: "Search",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'search-relevance-tuner',
+  createdAt: '2026-10-12',
+  name: 'Search Relevance Tuner',
+  description: 'Tune Elasticsearch/OpenSearch relevance: analyzers, BM25 boosts, and eval queries.',
+  category: 'Engineering',
+  icon: 'Search',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     index:
-      "Products index: 40k SKUs with title, brand, description, category; title should rank highest",
+      'Products index: 40k SKUs with title, brand, description, category; title should rank highest',
     complaints:
       "Searching 'red running shoes' returns accessories first and exact title matches rank too low",
-    engine: "elasticsearch",
+    engine: 'elasticsearch',
   },
   inputs: [
     {
-      id: "index",
-      label: "Index and fields",
-      type: "textarea",
+      id: 'index',
+      label: 'Index and fields',
+      type: 'textarea',
       placeholder:
-        "Describe index size and fields, e.g. 40k SKUs with title, brand, description, category",
+        'Describe index size and fields, e.g. 40k SKUs with title, brand, description, category',
       required: true,
     },
     {
-      id: "complaints",
-      label: "Relevance complaints",
-      type: "textarea",
+      id: 'complaints',
+      label: 'Relevance complaints',
+      type: 'textarea',
       placeholder:
-        "Describe failing queries and expected order, e.g. exact title match ranks too low",
+        'Describe failing queries and expected order, e.g. exact title match ranks too low',
     },
     {
-      id: "engine",
-      label: "Search engine",
-      type: "select",
-      options: ["elasticsearch", "opensearch", "typesense"],
-      defaultValue: "elasticsearch",
+      id: 'engine',
+      label: 'Search engine',
+      type: 'select',
+      options: ['elasticsearch', 'opensearch', 'typesense'],
+      defaultValue: 'elasticsearch',
       required: true,
     },
   ],
@@ -69,6 +68,6 @@ Rules:
 - Present boost values as starting points to validate, not guarantees
 - Flag data-quality issues separately from ranking issues
 - Keep language neutral and measurement-focused`,
-  outputType: "markdown",
-  suggestedChainFrom: ["api-doc-generator", "readme-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['api-doc-generator', 'readme-generator'],
+}

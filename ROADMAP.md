@@ -9,6 +9,7 @@ Welcome to the Open-Agents roadmap! This document publicly communicates the proj
 ---
 
 ## Table of Contents
+
 1. [Vision & Guiding Principles](#vision--guiding-principles)
 2. [Roadmap Status Legend](#roadmap-status-legend)
 3. [Current Priorities & Subsystem Roadmaps](#current-priorities--subsystem-roadmaps)
@@ -29,6 +30,7 @@ Welcome to the Open-Agents roadmap! This document publicly communicates the proj
 Open-Agents is an open-source, client-first platform for discovering, running, and orchestrating specialized AI agents directly in the browser.
 
 Our technical direction is anchored in three core principles:
+
 1. **Privacy First (Client-Side Isolation):** For core executions, API keys never leave the user's browser. There is no middleman storing keys or logging requests.
 2. **Modularity & Open Standards:** Every agent, workflow, and model adapter adheres to clean, extensible interfaces that anyone can inspect, test, and improve.
 3. **Accessibility & Inclusivity:** The platform should be accessible to all usersâ€”including assistive technology usersâ€”and welcoming to contributors of all experience levels.
@@ -37,18 +39,19 @@ Our technical direction is anchored in three core principles:
 
 ## Roadmap Status Legend
 
-| Status | Meaning |
-|---|---|
-| ðŸŸ¢ **Now** | Active focus for the current season (NSoC 2026). Highest review priority. |
-| ðŸŸ¡ **Next** | Planned for upcoming cycles once current milestones land. |
-| ðŸ”µ **Later** | Exploratory or community-requested features under investigation. |
-| ðŸŸ£ **Help Wanted** | High-priority area explicitly seeking community contributors. |
+| Status               | Meaning                                                                   |
+| -------------------- | ------------------------------------------------------------------------- |
+| ðŸŸ¢ **Now**         | Active focus for the current season (NSoC 2026). Highest review priority. |
+| ðŸŸ¡ **Next**        | Planned for upcoming cycles once current milestones land.                 |
+| ðŸ”µ **Later**       | Exploratory or community-requested features under investigation.          |
+| ðŸŸ£ **Help Wanted** | High-priority area explicitly seeking community contributors.             |
 
 ---
 
 ## Current Priorities & Subsystem Roadmaps
 
 ### 1. Agent Registry & Ecosystem
+
 Open-Agents hosts over 200 specialized agents across engineering, design, marketing, data science, and productivity.
 
 - ðŸŸ¢ **Strict Registry Validation (Now):** Maintain automated tests ensuring every definition in `src/agents/definitions/` matches `AGENTS.md` in schema, categories, and documentation.
@@ -57,6 +60,7 @@ Open-Agents hosts over 200 specialized agents across engineering, design, market
 - ðŸ”µ **Domain Extension Packs (Later):** Curated packs for specialized verticals (e.g., healthcare compliance, localized legal frameworks).
 
 ### 2. Multi-Agent Workflows & Automation
+
 Enabling users to chain multiple agents together into repeatable pipelines via `WorkflowBuilder` and `WorkflowRunner`.
 
 - ðŸŸ¢ **Workflow Execution State & Visualization (Now):** Enhance step-by-step progress tracking, live token streaming per node, and error recovery when an individual step fails.
@@ -65,6 +69,7 @@ Enabling users to chain multiple agents together into repeatable pipelines via `
 - ðŸ”µ **Workflow Import/Export (Later):** Shareable workflow templates via JSON/YAML export and deep links.
 
 ### 3. Battle Mode & Model Evaluation
+
 Allowing users to pit multiple models or agents against each other simultaneously with `BattleModeArena`.
 
 - ðŸŸ¢ **OpenRouter & Multi-Provider Arena (Now):** Enable simultaneous generation across OpenAI, Anthropic, Gemini, and OpenRouter models with side-by-side diffing.
@@ -73,6 +78,7 @@ Allowing users to pit multiple models or agents against each other simultaneousl
 - ðŸ”µ **Community Battle Leaderboards (Later):** Opt-in crowdsourced leaderboard for agent performance across task categories.
 
 ### 4. Provider Integrations & Offline Development
+
 Executing inference while respecting user privacy and facilitating open-source development.
 
 - ðŸŸ¢ **Mock Provider for Local Development (Now - ðŸŸ£ Help Wanted):** Add a built-in mock LLM provider so new contributors can test agents and UI flows without needing private API keys.
@@ -81,6 +87,7 @@ Executing inference while respecting user privacy and facilitating open-source d
 - ðŸ”µ **Custom Endpoint Configuration (Later):** Allow users to specify custom OpenAI-compatible API base URLs.
 
 ### 5. Accessibility, UX & Frontend Polish
+
 Ensuring Open-Agents delivers a top-tier user experience for everyone.
 
 - ðŸŸ¢ **WCAG 2.1 AA Compliance (Now - ðŸŸ£ Help Wanted):** Comprehensive audit and fixes for contrast ratios, keyboard navigation order, ARIA attributes, and screen-reader announcements on dynamic streams.
@@ -89,6 +96,7 @@ Ensuring Open-Agents delivers a top-tier user experience for everyone.
 - ðŸŸ¡ **Keyboard Shortcut Command Palette (Next):** Global quick-search palette (`Cmd/Ctrl + K`) to launch agents and switch workflows instantly.
 
 ### 6. Testing, CI/CD & Developer Experience (DX)
+
 Building a reliable foundation where contributors can ship code with high confidence.
 
 - ðŸŸ¢ **Comprehensive Vitest Test Suite (Now - ðŸŸ£ Help Wanted):** Expand unit and integration test coverage across untested components, hooks, and pages.

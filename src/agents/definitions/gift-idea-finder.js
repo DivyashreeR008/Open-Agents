@@ -1,38 +1,39 @@
 export default {
-  id: "gift-idea-finder",
-  createdAt: "2026-10-12",
-  name: "Gift Idea Finder",
+  id: 'gift-idea-finder',
+  createdAt: '2026-10-12',
+  name: 'Gift Idea Finder',
   description:
-    "Describe the person, occasion, and budget to get tailored gift ideas with why each fits — plus what to avoid.",
-  category: "Productivity",
-  icon: "Gift",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Describe the person, occasion, and budget to get tailored gift ideas with why each fits — plus what to avoid.',
+  category: 'Productivity',
+  icon: 'Gift',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    recipient: "My dad, 62, retired engineer, into woodworking and old sci-fi novels, has everything he needs",
-    occasion: "Birthday",
-    budget: "$40-60",
+    recipient:
+      'My dad, 62, retired engineer, into woodworking and old sci-fi novels, has everything he needs',
+    occasion: 'Birthday',
+    budget: '$40-60',
   },
   inputs: [
     {
-      id: "recipient",
-      label: "Who is it for",
-      type: "textarea",
-      placeholder: "e.g. My sister, 28, new apartment, loves plants but kills them",
+      id: 'recipient',
+      label: 'Who is it for',
+      type: 'textarea',
+      placeholder: 'e.g. My sister, 28, new apartment, loves plants but kills them',
       required: true,
     },
     {
-      id: "occasion",
-      label: "Occasion",
-      type: "text",
-      placeholder: "e.g. Birthday, housewarming, thank-you",
+      id: 'occasion',
+      label: 'Occasion',
+      type: 'text',
+      placeholder: 'e.g. Birthday, housewarming, thank-you',
     },
     {
-      id: "budget",
-      label: "Budget",
-      type: "text",
-      placeholder: "e.g. Under $30",
+      id: 'budget',
+      label: 'Budget',
+      type: 'text',
+      placeholder: 'e.g. Under $30',
       required: true,
     },
   ],
@@ -65,6 +66,6 @@ Rules:
 - Prefer specific, findable things over categories ("Hario V60
   dripper" beats "coffee stuff")
 - Never invent prices as facts; use "~" and suggest verifying`,
-  outputType: "markdown",
-  suggestedChainFrom: ["personal-budget-analyzer", "email-reply-writer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['personal-budget-analyzer', 'email-reply-writer'],
+}

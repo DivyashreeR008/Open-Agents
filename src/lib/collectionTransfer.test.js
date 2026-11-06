@@ -94,7 +94,9 @@ describe('parseCollectionImport', () => {
   })
 
   it('strips control characters from the name', () => {
-    const result = parseCollectionImport(file({ collection: { name: '  Re\u0000ads\n ', agentIds: [] } }))
+    const result = parseCollectionImport(
+      file({ collection: { name: '  Re\u0000ads\n ', agentIds: [] } })
+    )
     expect(result.name).toBe('Reads')
   })
 
@@ -140,7 +142,10 @@ describe('parseCollectionImport', () => {
   })
 
   it('rejects oversized input', () => {
-    const big = file({ collection: { name: 'a', agentIds: [] }, pad: 'x'.repeat(MAX_COLLECTION_IMPORT_BYTES) })
+    const big = file({
+      collection: { name: 'a', agentIds: [] },
+      pad: 'x'.repeat(MAX_COLLECTION_IMPORT_BYTES),
+    })
     const result = parseCollectionImport(big)
     expect(result.ok).toBe(false)
     expect(result.error).toMatch(/too large/i)

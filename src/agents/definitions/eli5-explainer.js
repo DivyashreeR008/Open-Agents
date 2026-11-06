@@ -1,48 +1,47 @@
 export default {
-  id: "eli5-explainer",
-  createdAt: "2025-05-06",
-  name: "ELI5 Explainer",
+  id: 'eli5-explainer',
+  createdAt: '2025-05-06',
+  name: 'ELI5 Explainer',
   description:
-    "Explains complex topics in plain language at your chosen difficulty level — from 5-year-old to expert.",
-  category: "Education",
-  icon: "GraduationCap",
-  provider: "any",
-  defaultProvider: "openai",
-  model: "gpt-4o",
+    'Explains complex topics in plain language at your chosen difficulty level — from 5-year-old to expert.',
+  category: 'Education',
+  icon: 'GraduationCap',
+  provider: 'any',
+  defaultProvider: 'openai',
+  model: 'gpt-4o',
   exampleInputs: {
-    topic: "Zero-Knowledge Proofs in Cryptography",
-    level: "High school student",
-    context: "I know basic math and have heard about Bitcoin.",
+    topic: 'Zero-Knowledge Proofs in Cryptography',
+    level: 'High school student',
+    context: 'I know basic math and have heard about Bitcoin.',
   },
   inputs: [
     {
-      id: "topic",
-      label: "What do you want explained?",
-      type: "textarea",
+      id: 'topic',
+      label: 'What do you want explained?',
+      type: 'textarea',
       placeholder:
-        "e.g. How does HTTPS encryption work? / What is quantum entanglement? / Explain the Federal Reserve...",
+        'e.g. How does HTTPS encryption work? / What is quantum entanglement? / Explain the Federal Reserve...',
       required: true,
     },
     {
-      id: "level",
-      label: "Explanation level",
-      type: "select",
+      id: 'level',
+      label: 'Explanation level',
+      type: 'select',
       options: [
-        "5-year-old",
-        "High school student",
-        "College student",
-        "Working professional",
-        "Expert (with nuance)",
+        '5-year-old',
+        'High school student',
+        'College student',
+        'Working professional',
+        'Expert (with nuance)',
       ],
-      defaultValue: "High school student",
+      defaultValue: 'High school student',
       required: true,
     },
     {
-      id: "context",
-      label: "Your background (optional)",
-      type: "text",
-      placeholder:
-        "e.g. I am a web developer, I know basic physics, I work in finance...",
+      id: 'context',
+      label: 'Your background (optional)',
+      type: 'text',
+      placeholder: 'e.g. I am a web developer, I know basic physics, I work in finance...',
     },
   ],
   systemPrompt: `You are a world-class educator who can explain anything to anyone. You adapt your language, analogies, and depth to match the audience level precisely.
@@ -76,5 +75,5 @@ Rules:
 - Never condescend — be clear without being patronizing
 - If the topic has multiple valid perspectives, acknowledge them
 - Use concrete examples, not abstract definitions`,
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

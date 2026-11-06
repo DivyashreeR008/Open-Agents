@@ -53,7 +53,9 @@ describe('WorkflowLibrary states', () => {
   })
 
   it('restores the full list when a search is cleared', async () => {
-    mocks.fetchWorkflows.mockResolvedValue({ data: [{ id: 'w1', title: 'Launch', description: 'ship', agents: [], usage_count: 0 }] })
+    mocks.fetchWorkflows.mockResolvedValue({
+      data: [{ id: 'w1', title: 'Launch', description: 'ship', agents: [], usage_count: 0 }],
+    })
     renderPage()
     await screen.findByRole('heading', { name: 'Launch' })
     const input = screen.getByLabelText('Search workflows')

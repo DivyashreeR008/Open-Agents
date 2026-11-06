@@ -1,40 +1,39 @@
 export default {
-  id: "sunset-announcement-writer",
-  createdAt: "2026-10-12",
-  name: "Sunset Announcement Writer",
-  description:
-    "Announce a feature shutdown gracefully: timeline, migration path, and FAQ.",
-  category: "Product",
-  icon: "Sunset",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'sunset-announcement-writer',
+  createdAt: '2026-10-12',
+  name: 'Sunset Announcement Writer',
+  description: 'Announce a feature shutdown gracefully: timeline, migration path, and FAQ.',
+  category: 'Product',
+  icon: 'Sunset',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     feature:
-      "Legacy CSV scheduled exports. Shutting down because usage is under 2% and maintenance blocks the new reporting API. Affects 40 workspaces.",
-    date: "2026-12-31",
+      'Legacy CSV scheduled exports. Shutting down because usage is under 2% and maintenance blocks the new reporting API. Affects 40 workspaces.',
+    date: '2026-12-31',
     alternative:
-      "New reporting API with saved views and scheduled email digests. Migration guide and import script provided.",
+      'New reporting API with saved views and scheduled email digests. Migration guide and import script provided.',
   },
   inputs: [
     {
-      id: "feature",
-      label: "Feature being sunset",
-      type: "textarea",
-      placeholder: "e.g. Legacy CSV exports: what it does, why it is closing, who is affected",
+      id: 'feature',
+      label: 'Feature being sunset',
+      type: 'textarea',
+      placeholder: 'e.g. Legacy CSV exports: what it does, why it is closing, who is affected',
       required: true,
     },
     {
-      id: "date",
-      label: "Shutdown date",
-      type: "text",
-      placeholder: "e.g. 2026-12-31",
+      id: 'date',
+      label: 'Shutdown date',
+      type: 'text',
+      placeholder: 'e.g. 2026-12-31',
     },
     {
-      id: "alternative",
-      label: "Alternative or migration path",
-      type: "textarea",
-      placeholder: "e.g. New reporting API, migration guide, import tooling",
+      id: 'alternative',
+      label: 'Alternative or migration path',
+      type: 'textarea',
+      placeholder: 'e.g. New reporting API, migration guide, import tooling',
     },
   ],
   systemPrompt: `You are a product manager who writes respectful, clear sunset announcements.
@@ -61,6 +60,6 @@ Rules:
 - Keep the tone neutral and empathetic without overpromising
 - If the date or alternative is missing, mark it as TBD explicitly
 - Avoid jargon and keep sentences short`,
-  outputType: "markdown",
-  suggestedChainFrom: ["email-reply-writer", "changelog-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['email-reply-writer', 'changelog-generator'],
+}

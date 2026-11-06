@@ -1,40 +1,40 @@
 export default {
-  id: "freelancer-contract-checklist",
-  createdAt: "2026-10-12",
-  name: "Freelancer Contract Checklist",
+  id: 'freelancer-contract-checklist',
+  createdAt: '2026-10-12',
+  name: 'Freelancer Contract Checklist',
   description:
-    "Review a client contract before signing: payment, IP, kill-fee, and red-flag clauses.",
-  category: "Legal",
-  icon: "FileSignature",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Review a client contract before signing: payment, IP, kill-fee, and red-flag clauses.',
+  category: 'Legal',
+  icon: 'FileSignature',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     contract:
-      "Client services agreement: 3-month web redesign, net-30 payment, IP transfers on final payment, no kill fee, unlimited revisions clause...",
-    engagement: "3-month fixed-fee website redesign",
-    country: "India, client in the US",
+      'Client services agreement: 3-month web redesign, net-30 payment, IP transfers on final payment, no kill fee, unlimited revisions clause...',
+    engagement: '3-month fixed-fee website redesign',
+    country: 'India, client in the US',
   },
   inputs: [
     {
-      id: "contract",
-      label: "Contract text or summary",
-      type: "textarea",
+      id: 'contract',
+      label: 'Contract text or summary',
+      type: 'textarea',
       placeholder:
-        "Paste the contract or key clauses, e.g.:\nScope: 3-month redesign...\nPayment: net-30...\nIP: transfers on final payment...\nTermination: ...",
+        'Paste the contract or key clauses, e.g.:\nScope: 3-month redesign...\nPayment: net-30...\nIP: transfers on final payment...\nTermination: ...',
       required: true,
     },
     {
-      id: "engagement",
-      label: "Engagement type",
-      type: "text",
-      placeholder: "e.g. 3-month fixed-fee website redesign",
+      id: 'engagement',
+      label: 'Engagement type',
+      type: 'text',
+      placeholder: 'e.g. 3-month fixed-fee website redesign',
     },
     {
-      id: "country",
-      label: "Jurisdiction",
-      type: "text",
-      placeholder: "e.g. India, client based in the US",
+      id: 'country',
+      label: 'Jurisdiction',
+      type: 'text',
+      placeholder: 'e.g. India, client based in the US',
     },
   ],
   systemPrompt: `You are a contracts reviewer who helps freelancers spot risks in client agreements before signing.
@@ -64,6 +64,6 @@ Rules:
 - Use neutral language and never present the output as legal advice
 - Quote or paraphrase the provided text rather than inventing clauses
 - Prioritize payment and IP risks first`,
-  outputType: "markdown",
-  suggestedChainFrom: ["terms-and-conditions-simplifier", "rti-application-writer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['terms-and-conditions-simplifier', 'rti-application-writer'],
+}

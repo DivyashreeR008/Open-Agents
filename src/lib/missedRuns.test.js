@@ -23,7 +23,11 @@ describe('dueWindows', () => {
 
   it('has one on-time window when the app was open', () => {
     expect(dueWindows({ nextRunAt: NOW - 30_000, intervalMs: DAY, now: NOW })).toEqual({
-      count: 1, first: NOW - 30_000, last: NOW - 30_000, lastOnTime: true, intervalMs: DAY,
+      count: 1,
+      first: NOW - 30_000,
+      last: NOW - 30_000,
+      lastOnTime: true,
+      intervalMs: DAY,
     })
   })
 
@@ -35,13 +39,22 @@ describe('dueWindows', () => {
   it('counts every window that passed while the app was closed', () => {
     // daily, first window 3.5 days ago: windows at -3.5d, -2.5d, -1.5d and -0.5d
     const due = dueWindows({ nextRunAt: NOW - 3.5 * DAY, intervalMs: DAY, now: NOW })
-    expect(due).toMatchObject({ count: 4, first: NOW - 3.5 * DAY, last: NOW - 0.5 * DAY, lastOnTime: false })
+    expect(due).toMatchObject({
+      count: 4,
+      first: NOW - 3.5 * DAY,
+      last: NOW - 0.5 * DAY,
+      lastOnTime: false,
+    })
   })
 
   it('treats a newest window within the grace period as on time', () => {
     const due = dueWindows({ nextRunAt: NOW - DAY - ON_TIME_GRACE_MS, intervalMs: DAY, now: NOW })
     expect(due).toMatchObject({ count: 2, lastOnTime: true })
-    const late = dueWindows({ nextRunAt: NOW - DAY - ON_TIME_GRACE_MS - 1, intervalMs: DAY, now: NOW })
+    const late = dueWindows({
+      nextRunAt: NOW - DAY - ON_TIME_GRACE_MS - 1,
+      intervalMs: DAY,
+      now: NOW,
+    })
     expect(late).toMatchObject({ count: 2, lastOnTime: false })
   })
 
@@ -153,7 +166,8 @@ describe('normalizeMissedPolicy', () => {
   it('keeps known policies and defaults the rest', () => {
     expect(DEFAULT_MISSED_POLICY).toBe('run_once')
     for (const { value } of MISSED_RUN_POLICIES) expect(normalizeMissedPolicy(value)).toBe(value)
-    for (const bad of [undefined, null, '', 'always', 3]) expect(normalizeMissedPolicy(bad)).toBe('run_once')
+    for (const bad of [undefined, null, '', 'always', 3])
+      expect(normalizeMissedPolicy(bad)).toBe('run_once')
   })
 })
 
@@ -174,7 +188,11 @@ describe('history helpers', () => {
 
   it('describes a missed range in plain words', () => {
     const { title, detail } = describeUnexecutedRun({
-      status: 'missed', missedCount: 3, firstWindow: NOW - 3 * DAY, lastWindow: NOW - DAY, policy: 'run_once',
+      status: 'missed',
+      missedCount: 3,
+      firstWindow: NOW - 3 * DAY,
+      lastWindow: NOW - DAY,
+      policy: 'run_once',
     })
     expect(title).toBe('3 runs missed')
     expect(detail).toContain('while the app was not running')
@@ -183,17 +201,29 @@ describe('history helpers', () => {
   })
 
   it('uses the singular and a single time for one missed window', () => {
-    const { title, detail } = describeUnexecutedRun({ status: 'missed', missedCount: 1, firstWindow: NOW, lastWindow: NOW })
+    const { title, detail } = describeUnexecutedRun({
+      status: 'missed',
+      missedCount: 1,
+      firstWindow: NOW,
+      lastWindow: NOW,
+    })
     expect(title).toBe('1 run missed')
     expect(detail).not.toContain(' to ')
     expect(detail).toContain('it was not run')
   })
 
   it('says why runs were skipped', () => {
-    const noKey = describeUnexecutedRun({ status: 'skipped', skippedCount: 2, startedAt: NOW, reason: 'no_key' })
+    const noKey = describeUnexecutedRun({
+      status: 'skipped',
+      skippedCount: 2,
+      startedAt: NOW,
+      reason: 'no_key',
+    })
     expect(noKey.title).toBe('2 runs skipped')
     expect(noKey.detail).toContain('no API key')
-    expect(describeUnexecutedRun({ status: 'skipped', startedAt: NOW }).detail).toContain('could not start')
+    expect(describeUnexecutedRun({ status: 'skipped', startedAt: NOW }).detail).toContain(
+      'could not start'
+    )
   })
 
   it('summarises what ran, what was skipped and what was missed', () => {

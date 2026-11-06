@@ -1,28 +1,28 @@
 export default {
-  id: "spreadsheet-formula-reviewer",
-  createdAt: "2026-10-20",
-  name: "Spreadsheet Formula Reviewer",
+  id: 'spreadsheet-formula-reviewer',
+  createdAt: '2026-10-20',
+  name: 'Spreadsheet Formula Reviewer',
   description:
-    "Review spreadsheet formulas for correctness, errors, edge cases, and suggest cleaner alternatives.",
-  category: "Productivity",
-  icon: "Grid",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Review spreadsheet formulas for correctness, errors, edge cases, and suggest cleaner alternatives.',
+  category: 'Productivity',
+  icon: 'Grid',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {},
   inputs: [
     {
-      id: "formulas",
-      label: "Spreadsheet formulas",
-      type: "textarea",
-      placeholder: "Paste your formulas and describe the data layout...",
+      id: 'formulas',
+      label: 'Spreadsheet formulas',
+      type: 'textarea',
+      placeholder: 'Paste your formulas and describe the data layout...',
       required: true,
     },
     {
-      id: "purpose",
-      label: "Purpose",
-      type: "text",
-      placeholder: "e.g. summing conditional data, lookups, date calculations...",
+      id: 'purpose',
+      label: 'Purpose',
+      type: 'text',
+      placeholder: 'e.g. summing conditional data, lookups, date calculations...',
       required: true,
     },
   ],
@@ -49,5 +49,5 @@ Rules:
 - Provide formulas compatible with Excel and Google Sheets.
 - Suggest error handling wrappers.`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

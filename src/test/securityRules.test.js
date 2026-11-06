@@ -21,4 +21,3 @@ describe('Contributor Security Rules', () => {
     })
   })
 })
-

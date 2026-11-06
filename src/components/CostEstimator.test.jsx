@@ -14,9 +14,7 @@ afterEach(() => {
 
 describe('CostEstimator', () => {
   it('renders nothing for a model without published pricing', () => {
-    const { container } = render(
-      <CostEstimator inputText="hello" modelId="unknown-model" />
-    )
+    const { container } = render(<CostEstimator inputText="hello" modelId="unknown-model" />)
 
     expect(container).toBeEmptyDOMElement()
   })

@@ -92,9 +92,7 @@ describe('useRecommendationWizard', () => {
     expect(result.current.currentStepIndex).toBe(1)
 
     expect(runStep(() => result.current.nextStep())).toBe(false)
-    expect(result.current.errors.experienceLevel).toBe(
-      'Choose how much guidance you want.'
-    )
+    expect(result.current.errors.experienceLevel).toBe('Choose how much guidance you want.')
 
     act(() => result.current.setPreference('experienceLevel', 'intermediate'))
     expect(result.current.errors.experienceLevel).toBeUndefined()
@@ -155,10 +153,7 @@ describe('useRecommendationWizard', () => {
 
     act(() => result.current.toggleExtraPreference('tool-calling'))
     act(() => result.current.toggleExtraPreference('vision-support'))
-    expect(result.current.preferences.extraPreferences).toEqual([
-      'tool-calling',
-      'vision-support',
-    ])
+    expect(result.current.preferences.extraPreferences).toEqual(['tool-calling', 'vision-support'])
 
     act(() => result.current.toggleExtraPreference('tool-calling'))
     expect(result.current.preferences.extraPreferences).toEqual(['vision-support'])

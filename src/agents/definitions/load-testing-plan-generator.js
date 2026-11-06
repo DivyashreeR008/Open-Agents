@@ -6,7 +6,7 @@ export default {
   name: 'Load Testing Plan Generator',
 
   description:
-    "Describe your app or API and get a complete load testing plan with ready-to-run scripts for k6, JMeter, Locust, Artillery, or ab.",
+    'Describe your app or API and get a complete load testing plan with ready-to-run scripts for k6, JMeter, Locust, Artillery, or ab.',
 
   category: 'Engineering',
 
@@ -50,8 +50,7 @@ export default {
       id: 'targetLoad',
       label: 'Target Load',
       type: 'text',
-      placeholder:
-        'e.g. 500 concurrent users, 10,000 requests/min',
+      placeholder: 'e.g. 500 concurrent users, 10,000 requests/min',
       required: true,
     },
 
@@ -59,8 +58,7 @@ export default {
       id: 'testDuration',
       label: 'Test Duration',
       type: 'text',
-      placeholder:
-        'e.g. 10 minutes ramp-up, 30 minutes sustained',
+      placeholder: 'e.g. 10 minutes ramp-up, 30 minutes sustained',
       required: false,
     },
 
@@ -130,4 +128,4 @@ Rules:
 - Tailor thresholds to the target load — don't use defaults for everything.
 - The script must be ready to copy, paste, and run with zero modifications (except API keys/secrets).`,
   outputType: 'markdown',
-};
+}

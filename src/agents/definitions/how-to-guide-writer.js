@@ -1,39 +1,39 @@
 export default {
-  id: "how-to-guide-writer",
-  createdAt: "2026-10-12",
-  name: "How-To Guide Writer",
+  id: 'how-to-guide-writer',
+  createdAt: '2026-10-12',
+  name: 'How-To Guide Writer',
   description:
     "Describe a task and who it's for to get a complete how-to: prerequisites, numbered steps, expected results, and troubleshooting.",
-  category: "Engineering",
-  icon: "BookOpen",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  category: 'Engineering',
+  icon: 'BookOpen',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    task: "Set up automatic Postgres backups to S3 on Ubuntu",
-    audience: "Backend developers comfortable with the terminal",
-    environment: "Ubuntu 22.04, Postgres 15, AWS CLI already configured",
+    task: 'Set up automatic Postgres backups to S3 on Ubuntu',
+    audience: 'Backend developers comfortable with the terminal',
+    environment: 'Ubuntu 22.04, Postgres 15, AWS CLI already configured',
   },
   inputs: [
     {
-      id: "task",
-      label: "Task to explain",
-      type: "text",
-      placeholder: "e.g. Connect a custom domain to a Vercel project",
+      id: 'task',
+      label: 'Task to explain',
+      type: 'text',
+      placeholder: 'e.g. Connect a custom domain to a Vercel project',
       required: true,
     },
     {
-      id: "audience",
-      label: "Audience",
-      type: "text",
-      placeholder: "e.g. Junior developers, non-technical founders",
+      id: 'audience',
+      label: 'Audience',
+      type: 'text',
+      placeholder: 'e.g. Junior developers, non-technical founders',
       required: true,
     },
     {
-      id: "environment",
-      label: "Environment / starting point (optional)",
-      type: "textarea",
-      placeholder: "e.g. macOS, Node 20 installed, empty project folder",
+      id: 'environment',
+      label: 'Environment / starting point (optional)',
+      type: 'textarea',
+      placeholder: 'e.g. macOS, Node 20 installed, empty project folder',
     },
   ],
   systemPrompt: `You write task-based how-to guides a stranger can follow to
@@ -74,6 +74,6 @@ Rules:
   guides fail
 - If the task depends on the unstated environment, state your
   assumptions up top`,
-  outputType: "markdown",
-  suggestedChainFrom: ["api-doc-generator", "readme-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['api-doc-generator', 'readme-generator'],
+}

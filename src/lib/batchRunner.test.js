@@ -6,12 +6,7 @@ const analytics = vi.hoisted(() => ({ recordAnalyticsRun: vi.fn() }))
 vi.mock('./llmAdapter', () => ({ runAgent: provider.runAgent }))
 vi.mock('./useAnalytics', () => ({ recordAnalyticsRun: analytics.recordAnalyticsRun }))
 
-import {
-  buildBatchUserMessage,
-  parseCSV,
-  parsePastedLines,
-  runBatch,
-} from './batchRunner'
+import { buildBatchUserMessage, parseCSV, parsePastedLines, runBatch } from './batchRunner'
 
 const agent = {
   id: 'a1',
@@ -26,11 +21,7 @@ const agent = {
 
 describe('parsePastedLines', () => {
   it('trims lines and drops blanks', () => {
-    expect(parsePastedLines('  one  \n\n two \n   \nthree')).toEqual([
-      'one',
-      'two',
-      'three',
-    ])
+    expect(parsePastedLines('  one  \n\n two \n   \nthree')).toEqual(['one', 'two', 'three'])
   })
 
   it('returns no items for empty or whitespace-only text', () => {
@@ -79,9 +70,9 @@ describe('buildBatchUserMessage', () => {
   })
 
   it('omits blank and empty values and collapses surplus newlines', () => {
-    expect(
-      buildBatchUserMessage(agent, { tone: '   ', keywords: [] }, 'topic', 'launch')
-    ).toBe('Topic: launch')
+    expect(buildBatchUserMessage(agent, { tone: '   ', keywords: [] }, 'topic', 'launch')).toBe(
+      'Topic: launch'
+    )
     expect(buildBatchUserMessage(agent, {}, 'missing', '')).toBe('')
   })
 })
@@ -121,7 +112,9 @@ describe('runBatch', () => {
     expect(maxActive).toBe(2)
     expect(updates.filter((update) => update.status === 'running')).toHaveLength(3)
     expect(updates.filter((update) => update.status === 'done')).toHaveLength(3)
-    expect(updates.filter((update) => update.status === 'done').map((update) => update.output)).toEqual(
+    expect(
+      updates.filter((update) => update.status === 'done').map((update) => update.output)
+    ).toEqual(
       expect.arrayContaining([
         'out:Topic: first\n\nTone: dry',
         'out:Topic: second\n\nTone: dry',
@@ -194,10 +187,7 @@ describe('runBatch', () => {
       onItemUpdate,
     })
 
-    expect(errors).toEqual([
-      'provider overloaded',
-      'Failed to process this item.',
-    ])
+    expect(errors).toEqual(['provider overloaded', 'Failed to process this item.'])
   })
 
   it('stops before calling the provider when the signal is already aborted', async () => {

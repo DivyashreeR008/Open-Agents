@@ -1,48 +1,51 @@
 export default {
-  id: "ai-guardrail-policy-writer",
-  createdAt: "2026-10-06",
-  name: "AI Agent Guardrail Policy Writer",
+  id: 'ai-guardrail-policy-writer',
+  createdAt: '2026-10-06',
+  name: 'AI Agent Guardrail Policy Writer',
   description:
-    "Describe an AI agent and its available actions to get a complete guardrail policy: risk assessment per action, approval requirements, spending/usage limits, blocked actions, and human-in-the-loop escalation rules.",
-  category: "Engineering",
-  icon: "ShieldAlert",
-  provider: "any",
-  defaultProvider: "openai",
-  model: "gpt-4o-mini",
-  outputType: "markdown",
+    'Describe an AI agent and its available actions to get a complete guardrail policy: risk assessment per action, approval requirements, spending/usage limits, blocked actions, and human-in-the-loop escalation rules.',
+  category: 'Engineering',
+  icon: 'ShieldAlert',
+  provider: 'any',
+  defaultProvider: 'openai',
+  model: 'gpt-4o-mini',
+  outputType: 'markdown',
   exampleInputs: {
-    agent_description: "Customer support AI agent that handles order issues, refunds, and escalations for an e-commerce platform. Used by 50+ support reps.",
-    actions: "1. Look up customer order history\n2. Issue partial refund up to $50\n3. Issue full refund\n4. Cancel an order\n5. Send promotional coupon\n6. Escalate ticket to human agent\n7. Update customer contact info",
-    risk_tolerance: "Balanced",
-    domain: "Customer support",
+    agent_description:
+      'Customer support AI agent that handles order issues, refunds, and escalations for an e-commerce platform. Used by 50+ support reps.',
+    actions:
+      '1. Look up customer order history\n2. Issue partial refund up to $50\n3. Issue full refund\n4. Cancel an order\n5. Send promotional coupon\n6. Escalate ticket to human agent\n7. Update customer contact info',
+    risk_tolerance: 'Balanced',
+    domain: 'Customer support',
   },
   inputs: [
     {
-      id: "agent_description",
-      label: "Agent description",
-      type: "textarea",
-      placeholder: "What does this agent do? Who uses it? What systems does it have access to?",
+      id: 'agent_description',
+      label: 'Agent description',
+      type: 'textarea',
+      placeholder: 'What does this agent do? Who uses it? What systems does it have access to?',
       required: true,
     },
     {
-      id: "actions",
-      label: "Tools / actions the agent can take",
-      type: "textarea",
-      placeholder: "List the actions line by line, e.g.:\n- Send email to customer\n- Issue refund up to $100\n- Execute SQL query\n- Call external API",
+      id: 'actions',
+      label: 'Tools / actions the agent can take',
+      type: 'textarea',
+      placeholder:
+        'List the actions line by line, e.g.:\n- Send email to customer\n- Issue refund up to $100\n- Execute SQL query\n- Call external API',
       required: true,
     },
     {
-      id: "risk_tolerance",
-      label: "Risk tolerance",
-      type: "select",
-      options: ["Strict", "Balanced", "Permissive"],
+      id: 'risk_tolerance',
+      label: 'Risk tolerance',
+      type: 'select',
+      options: ['Strict', 'Balanced', 'Permissive'],
       required: true,
     },
     {
-      id: "domain",
-      label: "Domain (optional)",
-      type: "select",
-      options: ["Customer support", "Finance", "DevOps", "Sales", "Healthcare", "Legal", "General"],
+      id: 'domain',
+      label: 'Domain (optional)',
+      type: 'select',
+      options: ['Customer support', 'Finance', 'DevOps', 'Sales', 'Healthcare', 'Legal', 'General'],
       required: false,
     },
   ],
@@ -113,4 +116,4 @@ What to do if the agent acts unexpectedly or outside policy:
 ---
 
 Calibrate strictness to the stated risk tolerance. Strict = approve most medium and all high-risk actions, block anything irreversible. Balanced = approve only high-risk actions. Permissive = approve only catastrophic or legally sensitive actions. Flag any domain-specific regulations (GDPR, HIPAA, PCI-DSS, SOX) that apply.`,
-};
+}

@@ -38,15 +38,11 @@ describe('LegalDoc', () => {
   it('renders the page heading, updated date, intro, and footer', () => {
     renderDoc()
 
-    expect(
-      screen.getByRole('heading', { level: 1, name: 'Privacy Policy' })
-    ).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: 'Privacy Policy' })).toBeInTheDocument()
     expect(screen.getByText('Updated January 2026')).toBeInTheDocument()
     expect(screen.getByText('This policy explains what the service stores.')).toBeInTheDocument()
     expect(screen.getByText('Questions')).toBeInTheDocument()
-    expect(
-      screen.getByText('Contact the maintainers if anything is unclear.')
-    ).toBeInTheDocument()
+    expect(screen.getByText('Contact the maintainers if anything is unclear.')).toBeInTheDocument()
   })
 
   it('renders every section in order with hidden decorative icons', () => {

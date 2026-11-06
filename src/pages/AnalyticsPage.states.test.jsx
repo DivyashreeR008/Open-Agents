@@ -24,10 +24,19 @@ vi.mock('../lib/useDocumentTitle', () => ({ useDocumentTitle: vi.fn() }))
 import AnalyticsPage from './AnalyticsPage'
 
 const emptyStats = {
-  totalRuns: 0, uniqueAgents: 0, favoriteProvider: null, currentStreak: 0,
-  longestStreak: 0, avgRunsPerDay: 0, mostProductiveDay: null,
-  topAgents: [], providerDistribution: [], categoryDistribution: [],
-  dailyRuns: [], heatmapData: [], recentRuns: [],
+  totalRuns: 0,
+  uniqueAgents: 0,
+  favoriteProvider: null,
+  currentStreak: 0,
+  longestStreak: 0,
+  avgRunsPerDay: 0,
+  mostProductiveDay: null,
+  topAgents: [],
+  providerDistribution: [],
+  categoryDistribution: [],
+  dailyRuns: [],
+  heatmapData: [],
+  recentRuns: [],
 }
 
 function renderPage() {
@@ -69,7 +78,9 @@ describe('AnalyticsPage empty and filtered states', () => {
     renderPage()
     expect(screen.getByText('Token Usage & Cost (This Session)')).toBeInTheDocument()
     expect(screen.getByText('1,500')).toBeInTheDocument()
-    expect(screen.getByText('Estimated cost (session)').previousElementSibling).toHaveTextContent('$0.004')
+    expect(screen.getByText('Estimated cost (session)').previousElementSibling).toHaveTextContent(
+      '$0.004'
+    )
     expect(screen.getByText('1,000 in · 500 out')).toBeInTheDocument()
   })
 

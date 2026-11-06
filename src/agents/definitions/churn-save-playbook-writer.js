@@ -1,41 +1,41 @@
 export default {
-  id: "churn-save-playbook-writer",
-  createdAt: "2026-10-12",
-  name: "Churn Save Playbook",
+  id: 'churn-save-playbook-writer',
+  createdAt: '2026-10-12',
+  name: 'Churn Save Playbook',
   description:
-    "Build a save play for at-risk accounts: warning signals, outreach sequences, and win-back offers.",
-  category: "Sales",
-  icon: "LifeBuoy",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Build a save play for at-risk accounts: warning signals, outreach sequences, and win-back offers.',
+  category: 'Sales',
+  icon: 'LifeBuoy',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     segment:
-      "Mid-market SaaS customers on annual plans, 20-100 seats, low feature adoption in first 60 days.",
+      'Mid-market SaaS customers on annual plans, 20-100 seats, low feature adoption in first 60 days.',
     churnReasons:
-      "Common reasons: onboarding gaps, missing integration with Slack, price sensitivity at renewal, support delays.",
-    contractType: "annual",
+      'Common reasons: onboarding gaps, missing integration with Slack, price sensitivity at renewal, support delays.',
+    contractType: 'annual',
   },
   inputs: [
     {
-      id: "segment",
-      label: "At-risk segment",
-      type: "textarea",
-      placeholder: "e.g. SMB accounts with declining usage in the last 30 days.",
+      id: 'segment',
+      label: 'At-risk segment',
+      type: 'textarea',
+      placeholder: 'e.g. SMB accounts with declining usage in the last 30 days.',
       required: true,
     },
     {
-      id: "churnReasons",
-      label: "Known churn reasons",
-      type: "textarea",
-      placeholder: "e.g. onboarding gaps, pricing, missing features, support delays.",
+      id: 'churnReasons',
+      label: 'Known churn reasons',
+      type: 'textarea',
+      placeholder: 'e.g. onboarding gaps, pricing, missing features, support delays.',
     },
     {
-      id: "contractType",
-      label: "Contract type",
-      type: "select",
-      options: ["monthly", "annual", "enterprise"],
-      defaultValue: "annual",
+      id: 'contractType',
+      label: 'Contract type',
+      type: 'select',
+      options: ['monthly', 'annual', 'enterprise'],
+      defaultValue: 'annual',
       required: true,
     },
   ],
@@ -69,6 +69,6 @@ Rules:
 - Use a neutral, helpful tone; no pressure tactics or misleading claims.
 - Tailor urgency and legal steps to the contract type given.
 - End with 3 follow-up actions for the account owner.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["cold-email-writer", "email-reply-writer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['cold-email-writer', 'email-reply-writer'],
+}

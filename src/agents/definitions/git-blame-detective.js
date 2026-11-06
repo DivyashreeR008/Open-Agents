@@ -1,39 +1,37 @@
 export default {
-  id: "git-blame-detective",
-  createdAt: "2026-10-12",
-  name: "Git Blame Detective",
-  description:
-    "Trace who changed a line and why: blame walkthrough plus how to ask them about it.",
-  category: "Developer Tools",
-  icon: "History",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'git-blame-detective',
+  createdAt: '2026-10-12',
+  name: 'Git Blame Detective',
+  description: 'Trace who changed a line and why: blame walkthrough plus how to ask them about it.',
+  category: 'Developer Tools',
+  icon: 'History',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    file: "src/auth/session.js",
-    lines: "42-58",
-    repo: "Blame shows line 51 changed in commit a3f9c1 by Priya: fix session refresh race. Tests in auth.test.js.",
+    file: 'src/auth/session.js',
+    lines: '42-58',
+    repo: 'Blame shows line 51 changed in commit a3f9c1 by Priya: fix session refresh race. Tests in auth.test.js.',
   },
   inputs: [
     {
-      id: "file",
-      label: "File path",
-      type: "text",
-      placeholder: "e.g. src/auth/session.js",
+      id: 'file',
+      label: 'File path',
+      type: 'text',
+      placeholder: 'e.g. src/auth/session.js',
       required: true,
     },
     {
-      id: "lines",
-      label: "Line range",
-      type: "text",
-      placeholder: "e.g. 42-58",
+      id: 'lines',
+      label: 'Line range',
+      type: 'text',
+      placeholder: 'e.g. 42-58',
     },
     {
-      id: "repo",
-      label: "Blame or log context",
-      type: "textarea",
-      placeholder:
-        "e.g. Paste git blame output, relevant commits, or PR links for these lines",
+      id: 'repo',
+      label: 'Blame or log context',
+      type: 'textarea',
+      placeholder: 'e.g. Paste git blame output, relevant commits, or PR links for these lines',
     },
   ],
   systemPrompt: `You are a senior engineer who teaches developers to read git history effectively.
@@ -64,6 +62,6 @@ Rules:
 - Keep the author-contact template respectful and specific
 - Do not invent commit hashes, versions, or CVE identifiers
 - Keep language neutral and collaborative`,
-  outputType: "markdown",
-  suggestedChainFrom: ["code-reviewer", "git-error-decoder"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['code-reviewer', 'git-error-decoder'],
+}

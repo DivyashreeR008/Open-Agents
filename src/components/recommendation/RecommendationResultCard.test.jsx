@@ -15,7 +15,13 @@ const agent = {
 const recommendation = {
   agentId: 'agent-1',
   matchPercentage: 92,
-  reasons: ['Strong category match', 'Matches your goal', 'Provider preference', 'Experience level', 'Extra reason'],
+  reasons: [
+    'Strong category match',
+    'Matches your goal',
+    'Provider preference',
+    'Experience level',
+    'Extra reason',
+  ],
 }
 
 function renderCard(overrides = {}) {

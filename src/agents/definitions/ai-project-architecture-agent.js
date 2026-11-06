@@ -1,7 +1,8 @@
 const aiProjectArchitectureAgent = {
   id: 'ai-project-architecture-agent',
   name: 'AI Project Architecture Agent',
-  description: 'Analyzes software or AI project ideas and recommends the most suitable frontend, backend, database, AI tools, and deployment stack.',
+  description:
+    'Analyzes software or AI project ideas and recommends the most suitable frontend, backend, database, AI tools, and deployment stack.',
   category: 'Engineering',
   icon: 'Layers',
   provider: 'any',
@@ -12,14 +13,23 @@ const aiProjectArchitectureAgent = {
       id: 'project_idea',
       label: 'Project Idea',
       type: 'textarea',
-      placeholder: 'Describe what you want to build (e.g. A real-time chat app with AI translation, a collaborative whiteboard, etc.)',
+      placeholder:
+        'Describe what you want to build (e.g. A real-time chat app with AI translation, a collaborative whiteboard, etc.)',
       required: true,
     },
     {
       id: 'project_type',
       label: 'Project Type',
       type: 'select',
-      options: ['SaaS Application', 'AI Agent / Chatbot', 'E-commerce Store', 'Real-time Dashboard', 'Social Network', 'Content Platform / Blog', 'Other'],
+      options: [
+        'SaaS Application',
+        'AI Agent / Chatbot',
+        'E-commerce Store',
+        'Real-time Dashboard',
+        'Social Network',
+        'Content Platform / Blog',
+        'Other',
+      ],
       defaultValue: 'SaaS Application',
       required: true,
     },
@@ -27,7 +37,12 @@ const aiProjectArchitectureAgent = {
       id: 'expected_users',
       label: 'Expected Number of Users',
       type: 'select',
-      options: ['1 - 1,000 (Low Scale)', '1,000 - 100,000 (Medium Scale)', '100,000+ (High Scale)', 'Enterprise Scale'],
+      options: [
+        '1 - 1,000 (Low Scale)',
+        '1,000 - 100,000 (Medium Scale)',
+        '100,000+ (High Scale)',
+        'Enterprise Scale',
+      ],
       defaultValue: '1 - 1,000 (Low Scale)',
       required: true,
     },
@@ -35,7 +50,16 @@ const aiProjectArchitectureAgent = {
       id: 'preferred_language',
       label: 'Preferred Programming Language',
       type: 'select',
-      options: ['JavaScript/TypeScript', 'Python', 'Go', 'Rust', 'Java/Kotlin', 'C#', 'Python & TypeScript', 'No Preference'],
+      options: [
+        'JavaScript/TypeScript',
+        'Python',
+        'Go',
+        'Rust',
+        'Java/Kotlin',
+        'C#',
+        'Python & TypeScript',
+        'No Preference',
+      ],
       defaultValue: 'JavaScript/TypeScript',
       required: true,
     },
@@ -43,7 +67,12 @@ const aiProjectArchitectureAgent = {
       id: 'budget_level',
       label: 'Budget Level',
       type: 'select',
-      options: ['Free Tier / Hobbyist', 'Low Cost (Shared/Serverless)', 'Professional (Scale-ready)', 'Enterprise / High Budget'],
+      options: [
+        'Free Tier / Hobbyist',
+        'Low Cost (Shared/Serverless)',
+        'Professional (Scale-ready)',
+        'Enterprise / High Budget',
+      ],
       defaultValue: 'Free Tier / Hobbyist',
       required: true,
     },
@@ -51,7 +80,8 @@ const aiProjectArchitectureAgent = {
       id: 'ai_features',
       label: 'AI Features Required',
       type: 'textarea',
-      placeholder: 'e.g. Chat interface, image generation, semantic search, vector embeddings, fine-tuning, automated summarization, none',
+      placeholder:
+        'e.g. Chat interface, image generation, semantic search, vector embeddings, fine-tuning, automated summarization, none',
       required: false,
     },
     {
@@ -114,6 +144,6 @@ Provide a concise, 1-2 paragraph description of how these components connect, ho
 
 Format the response using clean, beautiful markdown.`,
   outputType: 'markdown',
-};
+}
 
-export default aiProjectArchitectureAgent;
+export default aiProjectArchitectureAgent

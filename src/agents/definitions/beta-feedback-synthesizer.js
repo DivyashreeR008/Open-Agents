@@ -1,40 +1,39 @@
 export default {
-  id: "beta-feedback-synthesizer",
-  createdAt: "2026-10-12",
-  name: "Beta Feedback Synthesizer",
-  description:
-    "Paste raw beta feedback to get themes, severity-ranked issues, and quote bank.",
-  category: "Product",
-  icon: "Inbox",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'beta-feedback-synthesizer',
+  createdAt: '2026-10-12',
+  name: 'Beta Feedback Synthesizer',
+  description: 'Paste raw beta feedback to get themes, severity-ranked issues, and quote bank.',
+  category: 'Product',
+  icon: 'Inbox',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     feedback:
-      "User 4: export took 2 min for 10k rows. User 7: love the new dashboard but filters reset on refresh. User 9: app crashed twice on Safari. User 12: onboarding tooltip blocked the save button.",
-    users: "30 beta users, mix of Chrome and Safari, 2 weeks into beta",
-    focus: "Stability and export performance",
+      'User 4: export took 2 min for 10k rows. User 7: love the new dashboard but filters reset on refresh. User 9: app crashed twice on Safari. User 12: onboarding tooltip blocked the save button.',
+    users: '30 beta users, mix of Chrome and Safari, 2 weeks into beta',
+    focus: 'Stability and export performance',
   },
   inputs: [
     {
-      id: "feedback",
-      label: "Raw beta feedback",
-      type: "textarea",
+      id: 'feedback',
+      label: 'Raw beta feedback',
+      type: 'textarea',
       placeholder:
-        "Paste raw notes, tickets, or survey rows, e.g.:\nUser 4: export took 2 min for 10k rows\nUser 9: app crashed twice on Safari\nUser 12: tooltip blocked save button",
+        'Paste raw notes, tickets, or survey rows, e.g.:\nUser 4: export took 2 min for 10k rows\nUser 9: app crashed twice on Safari\nUser 12: tooltip blocked save button',
       required: true,
     },
     {
-      id: "users",
-      label: "Beta cohort",
-      type: "text",
-      placeholder: "e.g. 30 beta users, Chrome and Safari mix",
+      id: 'users',
+      label: 'Beta cohort',
+      type: 'text',
+      placeholder: 'e.g. 30 beta users, Chrome and Safari mix',
     },
     {
-      id: "focus",
-      label: "Focus area",
-      type: "text",
-      placeholder: "e.g. Stability and export performance",
+      id: 'focus',
+      label: 'Focus area',
+      type: 'text',
+      placeholder: 'e.g. Stability and export performance',
     },
   ],
   systemPrompt: `You are a product analyst who synthesizes messy beta feedback into decisions.
@@ -64,6 +63,6 @@ Rules:
 - State mention counts only from the provided text
 - Keep tone neutral and factual
 - Use no emoji anywhere in the output`,
-  outputType: "markdown",
-  suggestedChainFrom: ["research-agent", "meeting-notes-summarizer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['research-agent', 'meeting-notes-summarizer'],
+}

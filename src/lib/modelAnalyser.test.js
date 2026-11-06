@@ -63,9 +63,7 @@ describe('analyseModels', () => {
   })
 
   it('returns the streamed content and provides a chunk callback', async () => {
-    await expect(analyseModels(agent, 'key', 'openai')).resolves.toBe(
-      '## Model Recommendations'
-    )
+    await expect(analyseModels(agent, 'key', 'openai')).resolves.toBe('## Model Recommendations')
 
     const options = streamAgent.mock.calls[0][0]
     expect(options.onChunk).toEqual(expect.any(Function))

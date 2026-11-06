@@ -36,7 +36,9 @@ const openaiDelta = (text) => sse({ choices: [{ delta: { content: text } }] })
 const anthropicDelta = (text) =>
   `event: content_block_delta\n${sse({ type: 'content_block_delta', delta: { text } })}`
 const geminiText = (text, finishReason) =>
-  sse({ candidates: [{ content: { parts: [{ text }] }, ...(finishReason ? { finishReason } : {}) }] })
+  sse({
+    candidates: [{ content: { parts: [{ text }] }, ...(finishReason ? { finishReason } : {}) }],
+  })
 
 describe('streamAgent provider error sent inside the stream', () => {
   afterEach(() => {
@@ -50,7 +52,9 @@ describe('streamAgent provider error sent inside the stream', () => {
       `event: error\n${sse({ type: 'error', error: { type: 'overloaded_error', message: 'Overloaded' } })}`,
     ])
     const chunks = []
-    const err = await streamAgent(args('anthropic', { onChunk: (c) => chunks.push(c) })).catch((e) => e)
+    const err = await streamAgent(args('anthropic', { onChunk: (c) => chunks.push(c) })).catch(
+      (e) => e
+    )
     expect(err).toBeInstanceOf(Error)
     expect(err.message).toBe('Overloaded')
     expect(err.type).toBe('stream_error')
@@ -61,7 +65,12 @@ describe('streamAgent provider error sent inside the stream', () => {
   it('openai: throws on a data: {"error": ...} chunk', async () => {
     stubStream([
       openaiDelta('partial answer '),
-      sse({ error: { message: 'The server had an error while processing your request', type: 'server_error' } }),
+      sse({
+        error: {
+          message: 'The server had an error while processing your request',
+          type: 'server_error',
+        },
+      }),
     ])
     const err = await streamAgent(args('openai')).catch((e) => e)
     expect(err.message).toMatch(/server had an error/)
@@ -69,7 +78,10 @@ describe('streamAgent provider error sent inside the stream', () => {
   })
 
   it('openrouter: throws on an error chunk', async () => {
-    stubStream([openaiDelta('partial '), sse({ error: { message: 'Provider disconnected', code: 502 } })])
+    stubStream([
+      openaiDelta('partial '),
+      sse({ error: { message: 'Provider disconnected', code: 502 } }),
+    ])
     const err = await streamAgent(args('openrouter')).catch((e) => e)
     expect(err.message).toBe('Provider disconnected')
   })
@@ -131,7 +143,10 @@ describe('streamAgent normal completion still resolves', () => {
   })
 
   it('openai ending on finish_reason length counts as a finished stream', async () => {
-    stubStream([openaiDelta('cut by token limit'), sse({ choices: [{ delta: {}, finish_reason: 'length' }] })])
+    stubStream([
+      openaiDelta('cut by token limit'),
+      sse({ choices: [{ delta: {}, finish_reason: 'length' }] }),
+    ])
     const result = await streamAgent(args('openai'))
     expect(result.content).toBe('cut by token limit')
   })

@@ -1,56 +1,54 @@
 export default {
-  id: "grant-proposal-writer",
-  createdAt: "2025-05-06",
-  name: "Grant Proposal Writer",
+  id: 'grant-proposal-writer',
+  createdAt: '2025-05-06',
+  name: 'Grant Proposal Writer',
   description:
-    "Describe your project or research and get a structured grant proposal with problem statement, objectives, methodology, and impact.",
-  category: "Education",
-  icon: "Award",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Describe your project or research and get a structured grant proposal with problem statement, objectives, methodology, and impact.',
+  category: 'Education',
+  icon: 'Award',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     projectDescription:
-      "Our project aims to install solar-powered internet kiosks in 20 remote villages in the Himalayan region to provide digital literacy training and access to telemedicine services for approximately 5,000 residents.",
-    organization: "Digital Reach Foundation",
-    fundingBody: "The Global Connectivity Fund",
-    budget: "$75,000",
-    duration: "24 months",
+      'Our project aims to install solar-powered internet kiosks in 20 remote villages in the Himalayan region to provide digital literacy training and access to telemedicine services for approximately 5,000 residents.',
+    organization: 'Digital Reach Foundation',
+    fundingBody: 'The Global Connectivity Fund',
+    budget: '$75,000',
+    duration: '24 months',
   },
   inputs: [
     {
-      id: "projectDescription",
-      label: "What is your project or research about?",
-      type: "textarea",
+      id: 'projectDescription',
+      label: 'What is your project or research about?',
+      type: 'textarea',
       placeholder:
-        "e.g. We want to build low-cost water filtration systems for rural communities in Tamil Nadu using locally sourced materials and train local technicians to maintain them.",
+        'e.g. We want to build low-cost water filtration systems for rural communities in Tamil Nadu using locally sourced materials and train local technicians to maintain them.',
       required: true,
     },
     {
-      id: "organization",
-      label: "Your organization or institution",
-      type: "text",
-      placeholder:
-        "e.g. IIT Madras / GreenWater NGO / Independent researcher",
+      id: 'organization',
+      label: 'Your organization or institution',
+      type: 'text',
+      placeholder: 'e.g. IIT Madras / GreenWater NGO / Independent researcher',
     },
     {
-      id: "fundingBody",
-      label: "Who are you applying to?",
-      type: "text",
-      placeholder:
-        "e.g. Bill & Melinda Gates Foundation / DST India / Local government",
+      id: 'fundingBody',
+      label: 'Who are you applying to?',
+      type: 'text',
+      placeholder: 'e.g. Bill & Melinda Gates Foundation / DST India / Local government',
     },
     {
-      id: "budget",
-      label: "Approximate budget requested",
-      type: "text",
-      placeholder: "e.g. $50,000 / ₹20 lakhs",
+      id: 'budget',
+      label: 'Approximate budget requested',
+      type: 'text',
+      placeholder: 'e.g. $50,000 / ₹20 lakhs',
     },
     {
-      id: "duration",
-      label: "Project duration",
-      type: "text",
-      placeholder: "e.g. 18 months",
+      id: 'duration',
+      label: 'Project duration',
+      type: 'text',
+      placeholder: 'e.g. 18 months',
     },
   ],
   systemPrompt: `You are an expert grant writer who has helped secure millions
@@ -117,5 +115,5 @@ Rules:
   "according to [relevant organization type]" or use hedged language
 - Objectives must be specific enough that success is measurable
 - Tone: professional, passionate, credible — not bureaucratic`,
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

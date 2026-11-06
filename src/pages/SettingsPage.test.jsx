@@ -33,7 +33,9 @@ describe('Settings credential state', () => {
 
     const status = screen.getByRole('status')
     expect(status).toHaveTextContent(/No keys were saved/)
-    expect(status).toHaveTextContent(/Skipped empty fields: OpenAI, Anthropic, Google Gemini, OpenRouter/)
+    expect(status).toHaveTextContent(
+      /Skipped empty fields: OpenAI, Anthropic, Google Gemini, OpenRouter/
+    )
     expect(getGlobalKeys().openai).toBe('')
   })
 

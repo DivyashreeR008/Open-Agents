@@ -1,28 +1,28 @@
 export default {
-  id: "wellness-goal-tracker",
-  createdAt: "2026-10-20",
-  name: "Wellness Goal Tracker",
+  id: 'wellness-goal-tracker',
+  createdAt: '2026-10-20',
+  name: 'Wellness Goal Tracker',
   description:
-    "Design wellness goal tracking plans with habit stacking, measurement, and weekly review templates.",
-  category: "Healthcare",
-  icon: "Heart",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Design wellness goal tracking plans with habit stacking, measurement, and weekly review templates.',
+  category: 'Healthcare',
+  icon: 'Heart',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {},
   inputs: [
     {
-      id: "goals",
-      label: "Wellness goals",
-      type: "textarea",
-      placeholder: "e.g. exercise 3x/week, sleep 8 hours, meditate daily...",
+      id: 'goals',
+      label: 'Wellness goals',
+      type: 'textarea',
+      placeholder: 'e.g. exercise 3x/week, sleep 8 hours, meditate daily...',
       required: true,
     },
     {
-      id: "currentHabits",
-      label: "Current habits",
-      type: "text",
-      placeholder: "e.g. morning coffee, evening walk, lunch at desk...",
+      id: 'currentHabits',
+      label: 'Current habits',
+      type: 'text',
+      placeholder: 'e.g. morning coffee, evening walk, lunch at desk...',
       required: true,
     },
   ],
@@ -49,5 +49,5 @@ Rules:
 - Set specific, measurable targets.
 - Use habit stacking (after [existing habit], I will [new habit]).`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

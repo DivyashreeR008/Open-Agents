@@ -1,16 +1,16 @@
 export default {
-  id: "smart-contract-auditor",
-  createdAt: "2026-05-23",
-  name: "Smart Contract Auditor",
+  id: 'smart-contract-auditor',
+  createdAt: '2026-05-23',
+  name: 'Smart Contract Auditor',
   description:
-    "Paste your smart contract code and get a structured security audit with vulnerability detection, severity ratings, gas optimization tips, and fix recommendations.",
-  category: "Web3",
-  icon: "ShieldCheck",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Paste your smart contract code and get a structured security audit with vulnerability detection, severity ratings, gas optimization tips, and fix recommendations.',
+  category: 'Web3',
+  icon: 'ShieldCheck',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    language: "Solidity",
+    language: 'Solidity',
     code: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -28,34 +28,30 @@ contract SimpleVault {
         balances[msg.sender] -= amount;
     }
 }`,
-    auditDepth: "Deep Security Analysis",
+    auditDepth: 'Deep Security Analysis',
   },
   inputs: [
     {
-      id: "language",
-      label: "Smart Contract Language",
-      type: "select",
-      options: ["Solidity", "Vyper", "Rust (Solana/Near)"],
-      defaultValue: "Solidity",
+      id: 'language',
+      label: 'Smart Contract Language',
+      type: 'select',
+      options: ['Solidity', 'Vyper', 'Rust (Solana/Near)'],
+      defaultValue: 'Solidity',
       required: true,
     },
     {
-      id: "code",
-      label: "Smart Contract Code",
-      type: "code",
-      placeholder: "Paste your smart contract source code here...",
+      id: 'code',
+      label: 'Smart Contract Code',
+      type: 'code',
+      placeholder: 'Paste your smart contract source code here...',
       required: true,
     },
     {
-      id: "auditDepth",
-      label: "Audit Focus",
-      type: "select",
-      options: [
-        "Quick Scan",
-        "Deep Security Analysis",
-        "Gas Optimization Focus",
-      ],
-      defaultValue: "Deep Security Analysis",
+      id: 'auditDepth',
+      label: 'Audit Focus',
+      type: 'select',
+      options: ['Quick Scan', 'Deep Security Analysis', 'Gas Optimization Focus'],
+      defaultValue: 'Deep Security Analysis',
       required: true,
     },
   ],
@@ -144,5 +140,5 @@ Rules:
 - For "Deep Security Analysis": full report as above.
 - Always cite the SWC registry number where applicable.
 - Be honest — if the contract looks clean, say so clearly.`,
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

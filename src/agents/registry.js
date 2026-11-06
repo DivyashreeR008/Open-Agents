@@ -11,11 +11,11 @@
 // Each definition file becomes a separate chunk loaded on demand.
 // ============================================================
 
-const modules = import.meta.glob('./definitions/*.js', { eager: false });
+const modules = import.meta.glob('./definitions/*.js', { eager: false })
 
 // Known synchronously from the glob, so count-sensitive UI can render the real
 // catalogue size during the lazy load instead of flashing a stale number.
-export const AGENT_COUNT = Object.keys(modules).length;
+export const AGENT_COUNT = Object.keys(modules).length
 
 /**
  * Fail loudly when two definitions claim the same id. The registry used to
@@ -25,55 +25,54 @@ export const AGENT_COUNT = Object.keys(modules).length;
  * @returns {Array<{id?: string}>} the same array, for chaining
  */
 export function assertUniqueAgentIds(agents) {
-  const seenIds = new Set();
-  const duplicateIds = new Set();
+  const seenIds = new Set()
+  const duplicateIds = new Set()
 
   for (const agent of agents) {
-    if (!agent?.id) continue;
+    if (!agent?.id) continue
     if (seenIds.has(agent.id)) {
-      duplicateIds.add(agent.id);
+      duplicateIds.add(agent.id)
     } else {
-      seenIds.add(agent.id);
+      seenIds.add(agent.id)
     }
   }
 
   if (duplicateIds.size > 0) {
-    const label = duplicateIds.size === 1 ? 'id' : 'ids';
+    const label = duplicateIds.size === 1 ? 'id' : 'ids'
     throw new Error(
       `Duplicate agent ${label}: ${[...duplicateIds].join(', ')}. ` +
         'Each definition must declare a unique id that matches its filename.'
-    );
+    )
   }
 
-  return agents;
+  return agents
 }
 
 const normalizeAgents = (agents) => {
-  assertUniqueAgentIds(agents);
+  assertUniqueAgentIds(agents)
   return agents.filter(Boolean).filter((agent) => {
     if (!agent?.id) {
-      console.warn('Skipping agent without an id:', agent);
-      return false;
+      console.warn('Skipping agent without an id:', agent)
+      return false
     }
-    return true;
-  });
-};
+    return true
+  })
+}
 
-let cachedAgentsPromise = null;
+let cachedAgentsPromise = null
 
 export function loadAllAgents() {
-  if (cachedAgentsPromise) return cachedAgentsPromise;
+  if (cachedAgentsPromise) return cachedAgentsPromise
 
-  cachedAgentsPromise = Promise.all(
-    Object.values(modules).map((loader) => loader())
-  ).then((entries) => {
-    return normalizeAgents(entries.map((mod) => mod.default));
-  })
-  .catch((error) => {
-    // Allow future calls to retry initialization after a failed load.
-    cachedAgentsPromise = null;
-    throw error;
-  });
+  cachedAgentsPromise = Promise.all(Object.values(modules).map((loader) => loader()))
+    .then((entries) => {
+      return normalizeAgents(entries.map((mod) => mod.default))
+    })
+    .catch((error) => {
+      // Allow future calls to retry initialization after a failed load.
+      cachedAgentsPromise = null
+      throw error
+    })
 
-  return cachedAgentsPromise;
+  return cachedAgentsPromise
 }

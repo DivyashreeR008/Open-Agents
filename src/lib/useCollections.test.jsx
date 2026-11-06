@@ -1,10 +1,6 @@
 import { act, renderHook } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
-import {
-  COLLECTIONS_STORAGE_KEY,
-  DEFAULT_COLLECTION_ID,
-  useCollections,
-} from './useCollections'
+import { COLLECTIONS_STORAGE_KEY, DEFAULT_COLLECTION_ID, useCollections } from './useCollections'
 
 const existingCollections = [
   {

@@ -1,28 +1,28 @@
 export default {
-  id: "secret-exposure-response",
-  createdAt: "2026-10-20",
-  name: "Secret Exposure Response Planner",
+  id: 'secret-exposure-response',
+  createdAt: '2026-10-20',
+  name: 'Secret Exposure Response Planner',
   description:
-    "Create incident response plans for exposed secrets including rotation, revocation, and audit steps.",
-  category: "Cybersecurity",
-  icon: "AlertTriangle",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Create incident response plans for exposed secrets including rotation, revocation, and audit steps.',
+  category: 'Cybersecurity',
+  icon: 'AlertTriangle',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {},
   inputs: [
     {
-      id: "secretType",
-      label: "Secret type",
-      type: "text",
-      placeholder: "e.g. API key, database password, private key, JWT secret...",
+      id: 'secretType',
+      label: 'Secret type',
+      type: 'text',
+      placeholder: 'e.g. API key, database password, private key, JWT secret...',
       required: true,
     },
     {
-      id: "exposure",
-      label: "Exposure details",
-      type: "textarea",
-      placeholder: "How was it exposed? Where? Duration? Who had access?",
+      id: 'exposure',
+      label: 'Exposure details',
+      type: 'textarea',
+      placeholder: 'How was it exposed? Where? Duration? Who had access?',
       required: true,
     },
   ],
@@ -52,5 +52,5 @@ Rules:
 - Provide concrete, sequential steps.
 - Prioritize containment first, then investigation.`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

@@ -28,7 +28,8 @@ const salesDiscoveryCallGenerator = {
       id: 'product_description',
       label: 'What does your product do?',
       type: 'textarea',
-      placeholder: 'e.g. A CRM platform that helps sales teams track leads, manage pipelines, and close deals faster.',
+      placeholder:
+        'e.g. A CRM platform that helps sales teams track leads, manage pipelines, and close deals faster.',
       required: true,
     },
     {
@@ -42,7 +43,8 @@ const salesDiscoveryCallGenerator = {
       id: 'ideal_customer_profile',
       label: 'Ideal Customer Profile (ICP)',
       type: 'textarea',
-      placeholder: 'e.g. VP of Sales at a 50-200 person B2B SaaS company struggling with pipeline visibility',
+      placeholder:
+        'e.g. VP of Sales at a 50-200 person B2B SaaS company struggling with pipeline visibility',
       required: true,
     },
     {
@@ -185,6 +187,6 @@ Output Format:
 `,
 
   outputType: 'markdown',
-};
+}
 
-export default salesDiscoveryCallGenerator;
+export default salesDiscoveryCallGenerator

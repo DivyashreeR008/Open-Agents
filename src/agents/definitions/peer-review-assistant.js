@@ -1,31 +1,32 @@
 export default {
-  id: "peer-review-assistant",
-  createdAt: "2026-10-12",
-  name: "Peer Review Assistant",
+  id: 'peer-review-assistant',
+  createdAt: '2026-10-12',
+  name: 'Peer Review Assistant',
   description:
-    "Paste a paper or report draft to get a structured peer review: summary check, strengths, major/minor issues, and a verdict.",
-  category: "Research",
-  icon: "FileSearch",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Paste a paper or report draft to get a structured peer review: summary check, strengths, major/minor issues, and a verdict.',
+  category: 'Research',
+  icon: 'FileSearch',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    manuscript: "Title: Remote work and junior developer mentoring. Abstract: We surveyed 84 junior developers... [full text]",
-    venue: "Workshop paper, 8 pages max",
+    manuscript:
+      'Title: Remote work and junior developer mentoring. Abstract: We surveyed 84 junior developers... [full text]',
+    venue: 'Workshop paper, 8 pages max',
   },
   inputs: [
     {
-      id: "manuscript",
-      label: "Manuscript text",
-      type: "textarea",
-      placeholder: "Paste the full draft: title, abstract, body, references section",
+      id: 'manuscript',
+      label: 'Manuscript text',
+      type: 'textarea',
+      placeholder: 'Paste the full draft: title, abstract, body, references section',
       required: true,
     },
     {
-      id: "venue",
-      label: "Venue / bar (optional)",
-      type: "text",
-      placeholder: "e.g. Conference paper, journal submission, internal report",
+      id: 'venue',
+      label: 'Venue / bar (optional)',
+      type: 'text',
+      placeholder: 'e.g. Conference paper, journal submission, internal report',
     },
   ],
   systemPrompt: `You are a fair, demanding peer reviewer. Your job is to make
@@ -59,6 +60,6 @@ Rules:
 - Quote or pinpoint locations for every criticism ("Section 3,
   paragraph 2") — vague reviews are useless
 - Be specific with praise too; "well written" without evidence doesn't count`,
-  outputType: "markdown",
-  suggestedChainFrom: ["research-agent", "grant-proposal-writer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['research-agent', 'grant-proposal-writer'],
+}

@@ -32,7 +32,7 @@ export const MODEL_MAP = {
 
 export function resolveAgentModel(agent, actualProvider, selectedModel) {
   // Check if selectedModel is valid for the current actualProvider
-  if (selectedModel && MODELS[actualProvider]?.some(m => m.value === selectedModel)) {
+  if (selectedModel && MODELS[actualProvider]?.some((m) => m.value === selectedModel)) {
     return selectedModel
   }
 
@@ -40,7 +40,10 @@ export function resolveAgentModel(agent, actualProvider, selectedModel) {
     return agent.models[actualProvider]
   }
 
-  if (agent.model && (actualProvider === agent.defaultProvider || actualProvider === agent.provider)) {
+  if (
+    agent.model &&
+    (actualProvider === agent.defaultProvider || actualProvider === agent.provider)
+  ) {
     return agent.model
   }
 

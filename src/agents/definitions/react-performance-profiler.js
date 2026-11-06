@@ -1,35 +1,36 @@
 export default {
-  id: "react-performance-profiler",
-  createdAt: "2026-10-20",
-  name: "React Performance Profiler",
+  id: 'react-performance-profiler',
+  createdAt: '2026-10-20',
+  name: 'React Performance Profiler',
   description:
-    "Analyze React render behavior, state updates, and bundle hotspots to prioritize the smallest high-impact performance fixes.",
-  category: "Engineering",
-  icon: "Gauge",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Analyze React render behavior, state updates, and bundle hotspots to prioritize the smallest high-impact performance fixes.',
+  category: 'Engineering',
+  icon: 'Gauge',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {},
   inputs: [
     {
-      id: "code",
-      label: "Component code",
-      type: "code",
-      placeholder: "Paste the component tree, hooks, and context providers...",
+      id: 'code',
+      label: 'Component code',
+      type: 'code',
+      placeholder: 'Paste the component tree, hooks, and context providers...',
       required: true,
     },
     {
-      id: "symptoms",
-      label: "Observed symptoms",
-      type: "textarea",
-      placeholder: "e.g. input lag while typing, slow route transitions, high CPU after a modal opens...",
+      id: 'symptoms',
+      label: 'Observed symptoms',
+      type: 'textarea',
+      placeholder:
+        'e.g. input lag while typing, slow route transitions, high CPU after a modal opens...',
       required: true,
     },
     {
-      id: "measurements",
-      label: "Profiler data or metrics",
-      type: "textarea",
-      placeholder: "e.g. React Profiler commits, Lighthouse scores, bundle sizes...",
+      id: 'measurements',
+      label: 'Profiler data or metrics',
+      type: 'textarea',
+      placeholder: 'e.g. React Profiler commits, Lighthouse scores, bundle sizes...',
       required: false,
     },
   ],
@@ -63,5 +64,5 @@ Rules:
 - Prefer small, low-risk changes over rewrites.
 - Do not claim a measurement that was not provided; mark assumptions clearly.`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

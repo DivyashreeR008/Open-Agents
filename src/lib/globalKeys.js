@@ -22,9 +22,9 @@
  */
 
 const KEYS = {
-  openai:     'OpenAgents_openai_key',
-  anthropic:  'OpenAgents_anthropic_key',
-  gemini:     'OpenAgents_gemini_key',
+  openai: 'OpenAgents_openai_key',
+  anthropic: 'OpenAgents_anthropic_key',
+  gemini: 'OpenAgents_gemini_key',
   openrouter: 'OpenAgents_openrouter_key',
 }
 const DEFAULT_PROVIDER_KEY = 'OpenAgents_default_provider'
@@ -64,10 +64,13 @@ function readSecret(storageKey) {
  * Store a secret in sessionStorage with a fresh 8-hour expiry.
  */
 function writeSecret(storageKey, value) {
-  sessionStorage.setItem(storageKey, JSON.stringify({
-    key: value,
-    expiresAt: Date.now() + EXPIRY_MS,
-  }))
+  sessionStorage.setItem(
+    storageKey,
+    JSON.stringify({
+      key: value,
+      expiresAt: Date.now() + EXPIRY_MS,
+    })
+  )
 }
 
 /**
@@ -76,10 +79,10 @@ function writeSecret(storageKey, value) {
  */
 export function getGlobalKeys() {
   const keys = {
-    openai:          readSecret(KEYS.openai),
-    anthropic:       readSecret(KEYS.anthropic),
-    gemini:          readSecret(KEYS.gemini),
-    openrouter:      readSecret(KEYS.openrouter),
+    openai: readSecret(KEYS.openai),
+    anthropic: readSecret(KEYS.anthropic),
+    gemini: readSecret(KEYS.gemini),
+    openrouter: readSecret(KEYS.openrouter),
   }
 
   let defaultProvider = localStorage.getItem(DEFAULT_PROVIDER_KEY) || ''
@@ -178,9 +181,9 @@ export function clearAllGlobalKeys() {
  */
 export function getAvailableProviders() {
   const PROVIDER_LABELS = {
-    openai:    'OpenAI',
+    openai: 'OpenAI',
     anthropic: 'Anthropic',
-    gemini:    'Google Gemini',
+    gemini: 'Google Gemini',
     openrouter: 'OpenRouter',
   }
 

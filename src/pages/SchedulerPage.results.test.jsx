@@ -3,9 +3,14 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 
 const scheduler = vi.hoisted(() => ({
-  jobs: [], results: [], running: {},
-  toggleJob: vi.fn(), deleteJob: vi.fn(), runJob: vi.fn(),
-  deleteResult: vi.fn(), clearResultsForJob: vi.fn(),
+  jobs: [],
+  results: [],
+  running: {},
+  toggleJob: vi.fn(),
+  deleteJob: vi.fn(),
+  runJob: vi.fn(),
+  deleteResult: vi.fn(),
+  clearResultsForJob: vi.fn(),
 }))
 
 vi.mock('../lib/useScheduler', () => ({
@@ -13,22 +18,57 @@ vi.mock('../lib/useScheduler', () => ({
   SCHEDULE_OPTIONS: [{ value: 'daily', label: 'Every day' }],
 }))
 vi.mock('../lib/useDocumentTitle', () => ({ useDocumentTitle: vi.fn() }))
-vi.mock('../components/OutputRenderer', () => ({ default: ({ content }) => <div>Output: {content}</div> }))
+vi.mock('../components/OutputRenderer', () => ({
+  default: ({ content }) => <div>Output: {content}</div>,
+}))
 
 import SchedulerPage from './SchedulerPage'
 
 const jobs = [
-  { id: 'j1', label: 'Morning digest', agentName: 'Summarizer', schedule: 'daily', enabled: true, lastRunAt: 1700000000000, nextRunAt: null },
-  { id: 'j2', label: 'Weekly review', agentName: 'Reviewer', schedule: 'daily', enabled: true, lastRunAt: 1700000000000, nextRunAt: null },
+  {
+    id: 'j1',
+    label: 'Morning digest',
+    agentName: 'Summarizer',
+    schedule: 'daily',
+    enabled: true,
+    lastRunAt: 1700000000000,
+    nextRunAt: null,
+  },
+  {
+    id: 'j2',
+    label: 'Weekly review',
+    agentName: 'Reviewer',
+    schedule: 'daily',
+    enabled: true,
+    lastRunAt: 1700000000000,
+    nextRunAt: null,
+  },
 ]
 const results = [
-  { id: 'r1', jobId: 'j1', output: 'First digest', ranAt: 1700000000000, duration: 1200, agentName: 'Summarizer' },
-  { id: 'r2', jobId: 'j1', error: 'Provider failed', ranAt: 1700000100000, agentName: 'Summarizer' },
+  {
+    id: 'r1',
+    jobId: 'j1',
+    output: 'First digest',
+    ranAt: 1700000000000,
+    duration: 1200,
+    agentName: 'Summarizer',
+  },
+  {
+    id: 'r2',
+    jobId: 'j1',
+    error: 'Provider failed',
+    ranAt: 1700000100000,
+    agentName: 'Summarizer',
+  },
   { id: 'r3', jobId: 'j2', output: 'Weekly output', ranAt: 1700000200000, agentName: 'Reviewer' },
 ]
 
 function renderPage() {
-  return render(<MemoryRouter><SchedulerPage /></MemoryRouter>)
+  return render(
+    <MemoryRouter>
+      <SchedulerPage />
+    </MemoryRouter>
+  )
 }
 
 beforeEach(() => {

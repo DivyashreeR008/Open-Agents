@@ -79,9 +79,7 @@ describe('evaluateConditionalStep', () => {
   }
 
   it('returns the matching label and agents', () => {
-    expect(
-      evaluateConditionalStep(step, { steps: { classify: { output: 'billing' } } })
-    ).toEqual({
+    expect(evaluateConditionalStep(step, { steps: { classify: { output: 'billing' } } })).toEqual({
       conditionValue: 'billing',
       branchLabel: 'billing',
       branchAgents: ['refund-policy-writer'],
@@ -89,9 +87,7 @@ describe('evaluateConditionalStep', () => {
   })
 
   it('returns the default branch for an unmatched value', () => {
-    expect(
-      evaluateConditionalStep(step, { steps: { classify: { output: 'other' } } })
-    ).toEqual({
+    expect(evaluateConditionalStep(step, { steps: { classify: { output: 'other' } } })).toEqual({
       conditionValue: 'other',
       branchLabel: 'default',
       branchAgents: ['eli5-explainer'],

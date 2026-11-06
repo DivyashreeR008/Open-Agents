@@ -1,7 +1,8 @@
 const codeMigrationGuideGenerator = {
   id: 'code-migration-guide',
   name: 'Code Migration Guide Generator',
-  description: 'Generate a step-by-step checklist, identify common pitfalls, and highlight breaking changes for tech stack migrations.',
+  description:
+    'Generate a step-by-step checklist, identify common pitfalls, and highlight breaking changes for tech stack migrations.',
   category: 'Engineering',
   icon: 'ArrowRightLeft',
   provider: 'any',
@@ -50,6 +51,6 @@ List the most frequent issues developers face during this specific migration and
 ### 💥 Breaking Changes to Watch Out For
 Highlight critical breaking changes between {{sourceTech}} and {{targetTech}} that will directly impact the described codebase.`,
   outputType: 'markdown',
-};
+}
 
-export default codeMigrationGuideGenerator;
+export default codeMigrationGuideGenerator

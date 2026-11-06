@@ -7,9 +7,7 @@ describe('PageHeader', () => {
     render(<PageHeader title="Agent catalogue" />)
 
     expect(screen.getByRole('banner')).toBeInTheDocument()
-    expect(
-      screen.getByRole('heading', { level: 1, name: 'Agent catalogue' })
-    ).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: 'Agent catalogue' })).toBeInTheDocument()
   })
 
   it('renders an eyebrow only when one is supplied', () => {
@@ -52,15 +50,11 @@ describe('PageHeader', () => {
     const { container, rerender } = render(<PageHeader title="Agents" />)
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
 
-    rerender(
-      <PageHeader title="Agents" actions={<button type="button">New collection</button>} />
-    )
+    rerender(<PageHeader title="Agents" actions={<button type="button">New collection</button>} />)
 
     const header = screen.getByRole('banner')
     const actionCluster = header.lastElementChild
-    expect(actionCluster).toContainElement(
-      screen.getByRole('button', { name: 'New collection' })
-    )
+    expect(actionCluster).toContainElement(screen.getByRole('button', { name: 'New collection' }))
     expect(container.querySelector('header')).toBe(header)
   })
 })

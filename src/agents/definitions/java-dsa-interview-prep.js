@@ -1,7 +1,8 @@
 const javaDsaInterviewPrep = {
   id: 'java-dsa-interview-prep',
   name: 'Java DSA Interview Prep',
-  description: 'Generates Java DSA problems, provides hints, reviews attempts, and simulates coding interviews.',
+  description:
+    'Generates Java DSA problems, provides hints, reviews attempts, and simulates coding interviews.',
   category: 'Education',
   icon: 'Code',
   provider: 'any',
@@ -24,7 +25,7 @@ const javaDsaInterviewPrep = {
         'Graphs',
         'Sorting',
         'Searching',
-        'Dynamic Programming'
+        'Dynamic Programming',
       ],
       defaultValue: 'Arrays',
       required: true,
@@ -46,7 +47,7 @@ const javaDsaInterviewPrep = {
         'Request Hint',
         'Review Attempt',
         'Request Solution',
-        'Interview Mode'
+        'Interview Mode',
       ],
       defaultValue: 'Problem Generation',
       required: true,
@@ -55,9 +56,10 @@ const javaDsaInterviewPrep = {
       id: 'problem_or_attempt',
       label: 'Problem, Attempt, or Previous Context (Optional)',
       type: 'textarea',
-      placeholder: 'Paste the generated problem, your attempted Java solution, or previous interview context here for follow-ups...',
+      placeholder:
+        'Paste the generated problem, your attempted Java solution, or previous interview context here for follow-ups...',
       required: false,
-    }
+    },
   ],
   systemPrompt: `You are an expert Java DSA interview mentor.
 
@@ -109,6 +111,6 @@ FALLBACK FOR MISSING CONTEXT:
 - Instead, politely ask the user to paste the problem or their attempt in the text area so you can assist them.
 - If they are in "Interview Mode" without a problem, generate one to start the interview.`,
   outputType: 'markdown',
-};
+}
 
-export default javaDsaInterviewPrep;
+export default javaDsaInterviewPrep

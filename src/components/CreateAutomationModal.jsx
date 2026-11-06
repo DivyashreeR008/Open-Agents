@@ -1,10 +1,26 @@
 import { useState, useEffect } from 'react'
 import {
-  X, Clock, Zap, ShieldCheck, Mail, AlertCircle, CheckCircle2,
-  ChevronDown, Sparkles, Key, Lock, ArrowRight, Layers
+  X,
+  Clock,
+  Zap,
+  ShieldCheck,
+  Mail,
+  AlertCircle,
+  CheckCircle2,
+  ChevronDown,
+  Sparkles,
+  Key,
+  Lock,
+  ArrowRight,
+  Layers,
 } from 'lucide-react'
 import { SCHEDULE_PRESETS, createAutomation, updateAutomation } from '../lib/automationsService'
-import { DEFAULT_MISSED_POLICY, MAX_CATCH_UP_RUNS, MISSED_RUN_POLICIES, normalizeMissedPolicy } from '../lib/missedRuns'
+import {
+  DEFAULT_MISSED_POLICY,
+  MAX_CATCH_UP_RUNS,
+  MISSED_RUN_POLICIES,
+  normalizeMissedPolicy,
+} from '../lib/missedRuns'
 import { MODEL_MAP, MODELS } from '../lib/resolveAgentModel'
 import { useAgents } from '../lib/useAgents'
 import { useProgressiveList } from '../lib/useProgressiveList'
@@ -45,7 +61,7 @@ export default function CreateAutomationModal({
     }
   }, [agents, selectedAgentId, preselectedAgent])
 
-  const selectedAgent = agents.find(a => a.id === selectedAgentId) || preselectedAgent
+  const selectedAgent = agents.find((a) => a.id === selectedAgentId) || preselectedAgent
 
   // Update defaults when agent changes
   useEffect(() => {
@@ -54,7 +70,7 @@ export default function CreateAutomationModal({
         setName(`${selectedAgent.name} Autopilot`)
       }
       const initialInputs = {}
-      selectedAgent.inputs?.forEach(inp => {
+      selectedAgent.inputs?.forEach((inp) => {
         initialInputs[inp.id] = inp.defaultValue || (inp.type === 'multiselect' ? [] : '')
       })
       setInputs(initialInputs)
@@ -66,15 +82,15 @@ export default function CreateAutomationModal({
   }, [selectedAgentId, selectedAgent])
 
   const handleInputChange = (id, val) => {
-    setInputs(prev => ({ ...prev, [id]: val }))
+    setInputs((prev) => ({ ...prev, [id]: val }))
   }
 
   const handleToggleMultiselect = (id, opt) => {
-    setInputs(prev => {
+    setInputs((prev) => {
       const cur = prev[id] || []
       return {
         ...prev,
-        [id]: cur.includes(opt) ? cur.filter(o => o !== opt) : [...cur, opt],
+        [id]: cur.includes(opt) ? cur.filter((o) => o !== opt) : [...cur, opt],
       }
     })
   }
@@ -144,9 +160,10 @@ export default function CreateAutomationModal({
     }
   }
 
-  const filteredAgents = agents.filter(a =>
-    a.name.toLowerCase().includes(searchAgent.toLowerCase()) ||
-    a.category.toLowerCase().includes(searchAgent.toLowerCase())
+  const filteredAgents = agents.filter(
+    (a) =>
+      a.name.toLowerCase().includes(searchAgent.toLowerCase()) ||
+      a.category.toLowerCase().includes(searchAgent.toLowerCase())
   )
 
   const {
@@ -171,7 +188,6 @@ export default function CreateAutomationModal({
 
       {/* Modal Card */}
       <div className="relative w-full max-w-2xl my-8 shadow-pop border transition-colors dark:bg-[#111111] dark:border-border/80 bg-white border-gray-200 text-gray-900 dark:text-gray-100 overflow-hidden z-10">
-
         {/* Header with Gradient Accent */}
         <div className="relative px-6 py-5 border-b dark:border-border/60 border-gray-100 bg-zinc-500/10">
           <div className="flex items-center justify-between">
@@ -198,7 +214,10 @@ export default function CreateAutomationModal({
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6 max-h-[75vh] overflow-y-auto custom-scrollbar">
+        <form
+          onSubmit={handleSubmit}
+          className="p-6 space-y-6 max-h-[75vh] overflow-y-auto custom-scrollbar"
+        >
           {error && (
             <div className="flex items-center gap-2 p-3 text-xs bg-zinc-500/10 border border-zinc-500/20 text-zinc-500">
               <AlertCircle size={15} className="shrink-0" />
@@ -216,7 +235,7 @@ export default function CreateAutomationModal({
                 aria-label="Automation name"
                 type="text"
                 value={name}
-                onChange={e => setName(e.target.value)}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Daily Tech SEO Audit & Content Recommendations"
                 className="w-full h-10 px-3.5 text-sm transition-colors dark:bg-surface-input dark:border-border dark:text-text-primary bg-gray-50 border border-gray-200 text-gray-900 focus:ring-2 focus:ring-zinc-500/40 focus:border-zinc-500 outline-none"
               />
@@ -232,27 +251,33 @@ export default function CreateAutomationModal({
                     type="text"
                     placeholder="Search agents by name or category..."
                     value={searchAgent}
-                    onChange={e => setSearchAgent(e.target.value)}
+                    onChange={(e) => setSearchAgent(e.target.value)}
                     aria-label="Search agents"
                     className="w-full h-9 px-3 text-xs dark:bg-surface-hover dark:border-border/60 bg-gray-100 border border-gray-200 outline-none"
                   />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-44 overflow-y-auto p-1 border dark:border-border/60 border-gray-200">
-                    {visibleAgents.map(a => (
+                    {visibleAgents.map((a) => (
                       <button
                         type="button"
                         key={a.id}
                         onClick={() => setSelectedAgentId(a.id)}
                         className={`p-2.5 text-left text-xs transition-colors border flex items-start justify-between gap-2
-                          ${selectedAgentId === a.id
-                            ? 'border-zinc-900 dark:border-white bg-zinc-500/15 text-zinc-900 dark:text-white font-semibold '
-                            : 'border-transparent dark:hover:bg-surface-hover hover:bg-gray-100 text-gray-700 dark:text-gray-300'
+                          ${
+                            selectedAgentId === a.id
+                              ? 'border-zinc-900 dark:border-white bg-zinc-500/15 text-zinc-900 dark:text-white font-semibold '
+                              : 'border-transparent dark:hover:bg-surface-hover hover:bg-gray-100 text-gray-700 dark:text-gray-300'
                           }`}
                       >
                         <div className="truncate">
                           <p className="font-medium truncate">{a.name}</p>
                           <span className="text-[10px] opacity-70">{a.category}</span>
                         </div>
-                        {selectedAgentId === a.id && <CheckCircle2 size={14} className="shrink-0 text-zinc-600 dark:text-zinc-300 mt-0.5" />}
+                        {selectedAgentId === a.id && (
+                          <CheckCircle2
+                            size={14}
+                            className="shrink-0 text-zinc-600 dark:text-zinc-300 mt-0.5"
+                          />
+                        )}
                       </button>
                     ))}
                     {filteredCount === 0 && (
@@ -282,7 +307,9 @@ export default function CreateAutomationModal({
                   </div>
                   <div className="min-w-0">
                     <p className="text-xs font-bold truncate">{selectedAgent.name}</p>
-                    <p className="text-[11px] text-gray-500 dark:text-gray-400 truncate">{selectedAgent.description}</p>
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400 truncate">
+                      {selectedAgent.description}
+                    </p>
                   </div>
                 </div>
                 <span className="px-2 py-0.5 text-[10px] font-semibold bg-zinc-500/15 text-zinc-900 dark:text-white shrink-0 ml-2">
@@ -299,11 +326,13 @@ export default function CreateAutomationModal({
                 <label className="text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-300">
                   Configured Inputs
                 </label>
-                <span className="text-[11px] text-gray-400">These inputs will be fed on every recurring trigger</span>
+                <span className="text-[11px] text-gray-400">
+                  These inputs will be fed on every recurring trigger
+                </span>
               </div>
 
               <div className="space-y-3">
-                {selectedAgent.inputs.map(inp => (
+                {selectedAgent.inputs.map((inp) => (
                   <div key={inp.id} className="space-y-1">
                     <label className="text-xs font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       {inp.label}
@@ -315,13 +344,13 @@ export default function CreateAutomationModal({
                         aria-label={inp.label}
                         rows={3}
                         value={inputs[inp.id] || ''}
-                        onChange={e => handleInputChange(inp.id, e.target.value)}
+                        onChange={(e) => handleInputChange(inp.id, e.target.value)}
                         placeholder={inp.placeholder || `Enter ${inp.label.toLowerCase()}...`}
                         className="w-full p-2.5 text-xs font-mono dark:bg-surface-input dark:border-border bg-gray-50 border border-gray-200 outline-none focus:ring-1 focus:ring-zinc-500/40"
                       />
                     ) : inp.type === 'multiselect' ? (
                       <div className="flex flex-wrap gap-1.5 pt-1">
-                        {inp.options?.map(opt => {
+                        {inp.options?.map((opt) => {
                           const isSel = (inputs[inp.id] || []).includes(opt)
                           return (
                             <button
@@ -334,7 +363,8 @@ export default function CreateAutomationModal({
                                   : 'dark:bg-surface-input dark:border-border border-gray-200 text-gray-600 dark:text-gray-400 hover:border-gray-400'
                               }`}
                             >
-                              {isSel ? '✓ ' : ''}{opt}
+                              {isSel ? '✓ ' : ''}
+                              {opt}
                             </button>
                           )
                         })}
@@ -344,7 +374,7 @@ export default function CreateAutomationModal({
                         aria-label={inp.label}
                         type="text"
                         value={inputs[inp.id] || ''}
-                        onChange={e => handleInputChange(inp.id, e.target.value)}
+                        onChange={(e) => handleInputChange(inp.id, e.target.value)}
                         placeholder={inp.placeholder || `Enter ${inp.label.toLowerCase()}...`}
                         className="w-full h-9 px-3 text-xs dark:bg-surface-input dark:border-border bg-gray-50 border border-gray-200 outline-none focus:ring-1 focus:ring-zinc-500/40"
                       />
@@ -361,19 +391,22 @@ export default function CreateAutomationModal({
               Recurring Autopilot Interval
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-              {SCHEDULE_PRESETS.map(preset => (
+              {SCHEDULE_PRESETS.map((preset) => (
                 <button
                   type="button"
                   key={preset.value}
                   onClick={() => setSchedule(preset.value)}
                   className={`p-3 border text-left transition-colors relative
-                    ${schedule === preset.value
-                      ? 'border-zinc-900 dark:border-white bg-zinc-500/10 dark:bg-zinc-500/15 text-zinc-900 dark:text-white font-semibold'
-                      : 'border-gray-200 dark:border-border/80 dark:bg-surface-card bg-white text-gray-700 dark:text-gray-300 hover:border-zinc-400 dark:hover:border-zinc-400'
+                    ${
+                      schedule === preset.value
+                        ? 'border-zinc-900 dark:border-white bg-zinc-500/10 dark:bg-zinc-500/15 text-zinc-900 dark:text-white font-semibold'
+                        : 'border-gray-200 dark:border-border/80 dark:bg-surface-card bg-white text-gray-700 dark:text-gray-300 hover:border-zinc-400 dark:hover:border-zinc-400'
                     }`}
                 >
                   <p className="text-xs font-bold">{preset.label}</p>
-                  <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">{preset.description}</p>
+                  <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">
+                    {preset.description}
+                  </p>
                   <span className="inline-block mt-2 font-mono text-[9px] px-1.5 py-0.5 bg-black/10 dark:bg-white/10">
                     {preset.cron}
                   </span>
@@ -382,23 +415,29 @@ export default function CreateAutomationModal({
             </div>
 
             <div className="pt-3">
-              <label htmlFor="missed-run-policy" className="block text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-300 mb-1.5">
+              <label
+                htmlFor="missed-run-policy"
+                className="block text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-300 mb-1.5"
+              >
                 If runs are missed
               </label>
               <select
                 id="missed-run-policy"
                 value={missedPolicy}
-                onChange={e => setMissedPolicy(e.target.value)}
+                onChange={(e) => setMissedPolicy(e.target.value)}
                 className="w-full h-10 px-3 text-xs font-medium dark:bg-surface-input dark:border-border bg-gray-50 border border-gray-200 outline-none"
               >
-                {MISSED_RUN_POLICIES.map(policy => (
+                {MISSED_RUN_POLICIES.map((policy) => (
                   <option key={policy.value} value={policy.value}>
-                    {policy.value === 'catch_up' ? `Catch up (up to ${MAX_CATCH_UP_RUNS} runs)` : policy.label}
+                    {policy.value === 'catch_up'
+                      ? `Catch up (up to ${MAX_CATCH_UP_RUNS} runs)`
+                      : policy.label}
                   </option>
                 ))}
               </select>
               <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1.5">
-                {MISSED_RUN_POLICIES.find(p => p.value === missedPolicy)?.description} Scheduled runs only happen while this app is open.
+                {MISSED_RUN_POLICIES.find((p) => p.value === missedPolicy)?.description} Scheduled
+                runs only happen while this app is open.
               </p>
             </div>
           </div>
@@ -412,7 +451,7 @@ export default function CreateAutomationModal({
               <select
                 aria-label="Model provider"
                 value={provider}
-                onChange={e => {
+                onChange={(e) => {
                   setProvider(e.target.value)
                   setSelectedModel(MODEL_MAP[e.target.value] || MODEL_MAP.openai)
                 }}
@@ -431,11 +470,13 @@ export default function CreateAutomationModal({
               <select
                 aria-label="Model"
                 value={selectedModel}
-                onChange={e => setSelectedModel(e.target.value)}
+                onChange={(e) => setSelectedModel(e.target.value)}
                 className="w-full h-10 px-3 text-xs font-medium dark:bg-surface-input dark:border-border bg-gray-50 border border-gray-200 outline-none"
               >
-                {modelsForProvider.map(m => (
-                  <option key={m.value} value={m.value}>{m.label}</option>
+                {modelsForProvider.map((m) => (
+                  <option key={m.value} value={m.value}>
+                    {m.label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -460,8 +501,12 @@ export default function CreateAutomationModal({
                 aria-label={`${provider} API key`}
                 type="password"
                 value={apiKey}
-                onChange={e => setApiKey(e.target.value)}
-                placeholder={initialData?.hasKey ? '•••••••••••••••• (Key saved and encrypted)' : `Enter ${provider} API Key...`}
+                onChange={(e) => setApiKey(e.target.value)}
+                placeholder={
+                  initialData?.hasKey
+                    ? '•••••••••••••••• (Key saved and encrypted)'
+                    : `Enter ${provider} API Key...`
+                }
                 className="w-full h-10 pl-9 pr-3 text-xs font-mono dark:bg-[#0A0A0A] dark:border-border bg-white border border-gray-200 outline-none focus:ring-1 focus:ring-zinc-500/40"
               />
               <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -471,11 +516,14 @@ export default function CreateAutomationModal({
               <input
                 type="checkbox"
                 checked={optInEncryptedConsent}
-                onChange={e => setOptInEncryptedConsent(e.target.checked)}
+                onChange={(e) => setOptInEncryptedConsent(e.target.checked)}
                 className="mt-0.5 border-gray-300 accent-zinc-500 focus:ring-zinc-500/40"
               />
               <span className="text-[11px] text-gray-600 dark:text-gray-400 leading-tight">
-                <strong>Explicit Opt-in Consent:</strong> I authorize encrypting this key with a non-extractable key held by this browser profile. The encrypted value stays on this device and can be used for scheduled runs. This protects copied storage data, but not scripts or people controlling this browser profile.
+                <strong>Explicit Opt-in Consent:</strong> I authorize encrypting this key with a
+                non-extractable key held by this browser profile. The encrypted value stays on this
+                device and can be used for scheduled runs. This protects copied storage data, but
+                not scripts or people controlling this browser profile.
               </span>
             </label>
           </div>
@@ -491,7 +539,7 @@ export default function CreateAutomationModal({
                 <input
                   type="checkbox"
                   checked={emailNotification}
-                  onChange={e => setEmailNotification(e.target.checked)}
+                  onChange={(e) => setEmailNotification(e.target.checked)}
                   className="sr-only peer"
                 />
                 <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-zinc-900 dark:peer-checked:bg-white"></div>
@@ -507,12 +555,13 @@ export default function CreateAutomationModal({
                   aria-label="Recipient email address"
                   type="email"
                   value={notificationEmail}
-                  onChange={e => setNotificationEmail(e.target.value)}
+                  onChange={(e) => setNotificationEmail(e.target.value)}
                   placeholder="name@company.com"
                   className="w-full h-9 px-3 text-xs dark:bg-surface-input dark:border-border bg-white border border-gray-200 outline-none focus:ring-1 focus:ring-zinc-500/40"
                 />
                 <p className="text-[10px] text-gray-400">
-                  Formatted execution markdown reports and run diagnostics will be sent directly to your inbox upon execution.
+                  Formatted execution markdown reports and run diagnostics will be sent directly to
+                  your inbox upon execution.
                 </p>
               </div>
             )}

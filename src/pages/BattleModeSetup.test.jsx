@@ -25,6 +25,8 @@ describe('BattleModeSetup copy', () => {
         <BattleModeSetup />
       </MemoryRouter>
     )
-    expect(screen.getByText(/GPT-4o, Claude Sonnet, Gemini Flash and OpenRouter/i)).toBeInTheDocument()
+    expect(
+      screen.getByText(/GPT-4o, Claude Sonnet, Gemini Flash and OpenRouter/i)
+    ).toBeInTheDocument()
   })
 })

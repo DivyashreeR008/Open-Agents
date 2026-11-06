@@ -1,34 +1,33 @@
 export default {
-  id: "api-status-code-guide",
-  createdAt: "2026-10-12",
-  name: "API Status Code Guide",
-  description:
-    "Describe your API scenarios to get the right status code per case with examples.",
-  category: "Developer Tools",
-  icon: "TrafficCone",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'api-status-code-guide',
+  createdAt: '2026-10-12',
+  name: 'API Status Code Guide',
+  description: 'Describe your API scenarios to get the right status code per case with examples.',
+  category: 'Developer Tools',
+  icon: 'TrafficCone',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     scenarios:
-      "POST /orders creates an order; GET /orders/{id} for a missing order; POST /login with wrong password; bulk import with 3 of 10 rows invalid",
-    style: "REST",
+      'POST /orders creates an order; GET /orders/{id} for a missing order; POST /login with wrong password; bulk import with 3 of 10 rows invalid',
+    style: 'REST',
   },
   inputs: [
     {
-      id: "scenarios",
-      label: "API scenarios",
-      type: "textarea",
+      id: 'scenarios',
+      label: 'API scenarios',
+      type: 'textarea',
       placeholder:
-        "Describe each case, e.g. POST /signup with duplicate email; DELETE /files/{id} without permission; async export job accepted",
+        'Describe each case, e.g. POST /signup with duplicate email; DELETE /files/{id} without permission; async export job accepted',
       required: true,
     },
     {
-      id: "style",
-      label: "API style",
-      type: "select",
-      options: ["REST", "REST-strict-RFC9110", "GraphQL-HTTP"],
-      defaultValue: "REST",
+      id: 'style',
+      label: 'API style',
+      type: 'select',
+      options: ['REST', 'REST-strict-RFC9110', 'GraphQL-HTTP'],
+      defaultValue: 'REST',
       required: true,
     },
   ],
@@ -59,6 +58,6 @@ Rules:
 - Keep examples minimal and consistent across scenarios
 - Flag ambiguous scenarios instead of guessing silently
 - Use neutral technical language with no emoji`,
-  outputType: "markdown",
-  suggestedChainFrom: ["api-doc-generator", "openapi-spec-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['api-doc-generator', 'openapi-spec-generator'],
+}

@@ -33,11 +33,7 @@ export const DEFAULT_BRANCH = 'default'
  * @returns {boolean}
  */
 export function isConditionalStep(entry) {
-  return (
-    typeof entry === 'object' &&
-    entry !== null &&
-    entry.type === CONDITIONAL_STEP_TYPE
-  )
+  return typeof entry === 'object' && entry !== null && entry.type === CONDITIONAL_STEP_TYPE
 }
 
 /**
@@ -69,7 +65,9 @@ export function resolveTemplate(template, context) {
  */
 export function selectBranch(conditionValue, branches) {
   if (!branches || typeof branches !== 'object') return null
-  const normalized = String(conditionValue ?? '').trim().toLowerCase()
+  const normalized = String(conditionValue ?? '')
+    .trim()
+    .toLowerCase()
   const match = Object.keys(branches).find(
     (label) => label !== DEFAULT_BRANCH && label.trim().toLowerCase() === normalized
   )
@@ -87,8 +85,12 @@ export function selectBranch(conditionValue, branches) {
 export function evaluateConditionalStep(step, context) {
   const conditionValue = resolveTemplate(step.condition, context).trim()
   const branchLabel = selectBranch(conditionValue, step.branches)
-  const branchAgents = branchLabel ? step.branches[branchLabel] ?? [] : []
-  return { conditionValue, branchLabel, branchAgents: Array.isArray(branchAgents) ? branchAgents : [] }
+  const branchAgents = branchLabel ? (step.branches[branchLabel] ?? []) : []
+  return {
+    conditionValue,
+    branchLabel,
+    branchAgents: Array.isArray(branchAgents) ? branchAgents : [],
+  }
 }
 
 /**
@@ -101,10 +103,13 @@ export function validateConditionalStep(step, allSteps = []) {
   const problems = []
   if (!step.id) problems.push('Conditional step is missing an "id".')
   if (!step.condition) problems.push('Conditional step is missing a "condition" template.')
-  const labels = step.branches && typeof step.branches === 'object' ? Object.keys(step.branches) : []
+  const labels =
+    step.branches && typeof step.branches === 'object' ? Object.keys(step.branches) : []
   if (labels.length === 0) problems.push('Conditional step defines no branches.')
   if (!labels.includes(DEFAULT_BRANCH)) {
-    problems.push('Conditional step has no "default" branch; runs with an unmatched condition will fail.')
+    problems.push(
+      'Conditional step has no "default" branch; runs with an unmatched condition will fail.'
+    )
   }
   for (const label of labels) {
     if (!Array.isArray(step.branches[label]) || step.branches[label].length === 0) {
@@ -149,7 +154,9 @@ export function detectCircularBranches(step, allSteps = []) {
 
     recursionStack.add(stepId)
 
-    const currentStep = allSteps.find((s) => s.id === stepId || (typeof s === 'string' && s === stepId))
+    const currentStep = allSteps.find(
+      (s) => s.id === stepId || (typeof s === 'string' && s === stepId)
+    )
     if (currentStep && isConditionalStep(currentStep)) {
       const branches = currentStep.branches || {}
       for (const agents of Object.values(branches)) {
@@ -174,7 +181,9 @@ export function detectCircularBranches(step, allSteps = []) {
     if (Array.isArray(agents)) {
       for (const agentId of agents) {
         if (agentId === step.id) {
-          problems.push(`Branch "${branchLabel}" directly references the conditional step itself, creating a cycle.`)
+          problems.push(
+            `Branch "${branchLabel}" directly references the conditional step itself, creating a cycle.`
+          )
         } else {
           visited.clear()
           recursionStack.clear()

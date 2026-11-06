@@ -2,7 +2,10 @@ import { act, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 
-const mocks = vi.hoisted(() => ({ fetchWorkflows: vi.fn(), subscribeToAllWorkflows: vi.fn(() => ({})) }))
+const mocks = vi.hoisted(() => ({
+  fetchWorkflows: vi.fn(),
+  subscribeToAllWorkflows: vi.fn(() => ({})),
+}))
 const agents = [
   { id: 'a1', name: 'Researcher', category: 'Frontend' },
   { id: 'a2', name: 'Writer', category: 'Writing' },
@@ -27,7 +30,9 @@ const workflows = [
 function renderPage() {
   return render(
     <MemoryRouter initialEntries={['/workflows']}>
-      <Routes><Route path="/workflows" element={<WorkflowLibrary />} /></Routes>
+      <Routes>
+        <Route path="/workflows" element={<WorkflowLibrary />} />
+      </Routes>
     </MemoryRouter>
   )
 }

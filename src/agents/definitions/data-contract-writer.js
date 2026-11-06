@@ -1,40 +1,38 @@
 export default {
-  id: "data-contract-writer",
-  createdAt: "2026-10-12",
-  name: "Data Contract Writer",
-  description:
-    "Write producer/consumer data contracts: schemas, SLAs, owners, and change rules.",
-  category: "Data Science",
-  icon: "FileSignature",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'data-contract-writer',
+  createdAt: '2026-10-12',
+  name: 'Data Contract Writer',
+  description: 'Write producer/consumer data contracts: schemas, SLAs, owners, and change rules.',
+  category: 'Data Science',
+  icon: 'FileSignature',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     dataset:
-      "orders.events: order_id (string, PK), customer_id (string, FK), amount_cents (int), currency (string ISO-4217), created_at (timestamptz). 2M rows/day, append-only, late arrivals up to 2h.",
-    producers: "Checkout service team, owns Kafka topic orders.events.v1",
-    consumers: "Analytics team, finance reconciliation job, fraud model",
+      'orders.events: order_id (string, PK), customer_id (string, FK), amount_cents (int), currency (string ISO-4217), created_at (timestamptz). 2M rows/day, append-only, late arrivals up to 2h.',
+    producers: 'Checkout service team, owns Kafka topic orders.events.v1',
+    consumers: 'Analytics team, finance reconciliation job, fraud model',
   },
   inputs: [
     {
-      id: "dataset",
-      label: "Dataset description",
-      type: "textarea",
-      placeholder:
-        "e.g. Table/topic name, key fields and types, volume, freshness needs",
+      id: 'dataset',
+      label: 'Dataset description',
+      type: 'textarea',
+      placeholder: 'e.g. Table/topic name, key fields and types, volume, freshness needs',
       required: true,
     },
     {
-      id: "producers",
-      label: "Producers",
-      type: "text",
-      placeholder: "e.g. Checkout service team, owns the source topic",
+      id: 'producers',
+      label: 'Producers',
+      type: 'text',
+      placeholder: 'e.g. Checkout service team, owns the source topic',
     },
     {
-      id: "consumers",
-      label: "Consumers",
-      type: "text",
-      placeholder: "e.g. Analytics team, billing job, ML feature pipeline",
+      id: 'consumers',
+      label: 'Consumers',
+      type: 'text',
+      placeholder: 'e.g. Analytics team, billing job, ML feature pipeline',
     },
   ],
   systemPrompt: `You are a data platform engineer who writes producer/consumer data contracts.
@@ -67,6 +65,6 @@ Rules:
 - Flag missing information explicitly instead of filling it in
 - Keep language neutral and precise
 - State assumptions in a short closing list`,
-  outputType: "markdown",
-  suggestedChainFrom: ["data-dictionary-generator", "api-doc-generator"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['data-dictionary-generator', 'api-doc-generator'],
+}

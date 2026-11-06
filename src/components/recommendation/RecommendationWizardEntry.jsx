@@ -1,7 +1,10 @@
 import { forwardRef } from 'react'
 import { SlidersHorizontal } from 'lucide-react'
 
-const RecommendationWizardEntry = forwardRef(function RecommendationWizardEntry({ onOpen, disabled = false, loading = false }, ref) {
+const RecommendationWizardEntry = forwardRef(function RecommendationWizardEntry(
+  { onOpen, disabled = false, loading = false },
+  ref
+) {
   return (
     <button
       ref={ref}

@@ -1,28 +1,28 @@
 export default {
-  id: "customer-interview-guide",
-  createdAt: "2026-10-20",
-  name: "Customer Interview Guide",
+  id: 'customer-interview-guide',
+  createdAt: '2026-10-20',
+  name: 'Customer Interview Guide',
   description:
-    "Design customer interview guides with unbiased questioning, probing techniques, and synthesis frameworks.",
-  category: "Marketing",
-  icon: "MessageCircle",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Design customer interview guides with unbiased questioning, probing techniques, and synthesis frameworks.',
+  category: 'Marketing',
+  icon: 'MessageCircle',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {},
   inputs: [
     {
-      id: "goal",
-      label: "Research goal",
-      type: "text",
-      placeholder: "e.g. understand churn reasons, validate feature idea...",
+      id: 'goal',
+      label: 'Research goal',
+      type: 'text',
+      placeholder: 'e.g. understand churn reasons, validate feature idea...',
       required: true,
     },
     {
-      id: "segment",
-      label: "Customer segment",
-      type: "text",
-      placeholder: "e.g. enterprise buyers, SMB users, churned customers...",
+      id: 'segment',
+      label: 'Customer segment',
+      type: 'text',
+      placeholder: 'e.g. enterprise buyers, SMB users, churned customers...',
       required: true,
     },
   ],
@@ -49,5 +49,5 @@ Rules:
 - Use open-ended questions.
 - Include behavioral questions (what did you do), not just opinions.`,
 
-  outputType: "markdown",
-};
+  outputType: 'markdown',
+}

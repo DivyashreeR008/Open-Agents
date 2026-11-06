@@ -1,41 +1,39 @@
 export default {
-  id: "token-launch-checklist",
-  createdAt: "2026-10-12",
-  name: "Token Launch Checklist",
-  description:
-    "Launch a token fairly: LP locks, anti-snipe, distribution, and comms timeline.",
-  category: "Web3",
-  icon: "Rocket",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'token-launch-checklist',
+  createdAt: '2026-10-12',
+  name: 'Token Launch Checklist',
+  description: 'Launch a token fairly: LP locks, anti-snipe, distribution, and comms timeline.',
+  category: 'Web3',
+  icon: 'Rocket',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     token:
-      "ORBIT governance token, 100M fixed supply: 40% community, 20% team 2-year vest, 15% treasury, 15% LP incentives, 10% early backers. No tax, no mint function.",
-    chain: "Base, Uniswap-style LP",
-    raise: "planned",
+      'ORBIT governance token, 100M fixed supply: 40% community, 20% team 2-year vest, 15% treasury, 15% LP incentives, 10% early backers. No tax, no mint function.',
+    chain: 'Base, Uniswap-style LP',
+    raise: 'planned',
   },
   inputs: [
     {
-      id: "token",
-      label: "Token design",
-      type: "textarea",
-      placeholder:
-        "Describe supply, distribution, vesting, taxes, and mint or freeze powers.",
+      id: 'token',
+      label: 'Token design',
+      type: 'textarea',
+      placeholder: 'Describe supply, distribution, vesting, taxes, and mint or freeze powers.',
       required: true,
     },
     {
-      id: "chain",
-      label: "Chain and DEX",
-      type: "text",
-      placeholder: "e.g. Base, Uniswap-style LP",
+      id: 'chain',
+      label: 'Chain and DEX',
+      type: 'text',
+      placeholder: 'e.g. Base, Uniswap-style LP',
     },
     {
-      id: "raise",
-      label: "Raise plan",
-      type: "select",
-      options: ["none", "planned"],
-      defaultValue: "none",
+      id: 'raise',
+      label: 'Raise plan',
+      type: 'select',
+      options: ['none', 'planned'],
+      defaultValue: 'none',
       required: true,
     },
   ],
@@ -65,6 +63,6 @@ Rules:
 - Do not invent audit results, chain statistics, or legal conclusions.
 - Flag centralized powers (mint, freeze, tax changes) explicitly.
 - Keep tone neutral and factual.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["research-agent", "grant-proposal-writer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['research-agent', 'grant-proposal-writer'],
+}

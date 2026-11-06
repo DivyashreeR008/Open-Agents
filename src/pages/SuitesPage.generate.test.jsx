@@ -14,7 +14,11 @@ import SuitesPage from './SuitesPage'
 
 function WorkflowMarker() {
   const location = useLocation()
-  return <div>Workflow: {location.state?.workflowTitle} / {location.state?.preselectedAgents?.join(',')}</div>
+  return (
+    <div>
+      Workflow: {location.state?.workflowTitle} / {location.state?.preselectedAgents?.join(',')}
+    </div>
+  )
 }
 
 function renderPage() {
@@ -38,16 +42,24 @@ const generated = {
 beforeEach(() => {
   vi.clearAllMocks()
   mocks.useApiKey.mockReturnValue({
-    provider: 'openai', setProvider: vi.fn(), apiKey: 'key', setApiKey: vi.fn(),
-    saveForSession: false, setSaveForSession: vi.fn(),
+    provider: 'openai',
+    setProvider: vi.fn(),
+    apiKey: 'key',
+    setApiKey: vi.fn(),
+    saveForSession: false,
+    setSaveForSession: vi.fn(),
   })
 })
 
 describe('SuitesPage custom generation', () => {
   it('disables Generate without a goal or key', () => {
     mocks.useApiKey.mockReturnValue({
-      provider: 'openai', setProvider: vi.fn(), apiKey: '', setApiKey: vi.fn(),
-      saveForSession: false, setSaveForSession: vi.fn(),
+      provider: 'openai',
+      setProvider: vi.fn(),
+      apiKey: '',
+      setApiKey: vi.fn(),
+      saveForSession: false,
+      setSaveForSession: vi.fn(),
     })
     renderPage()
     expect(screen.getByRole('button', { name: /Generate/ })).toBeDisabled()
@@ -56,7 +68,9 @@ describe('SuitesPage custom generation', () => {
   it('renders a generated suite and hands its ids to the workflow builder', async () => {
     mocks.generateCustomSuite.mockResolvedValue(generated)
     renderPage()
-    fireEvent.change(screen.getByLabelText('Goal for the agent suite'), { target: { value: 'Interview prep' } })
+    fireEvent.change(screen.getByLabelText('Goal for the agent suite'), {
+      target: { value: 'Interview prep' },
+    })
     fireEvent.click(screen.getByRole('button', { name: /Generate/ }))
 
     await screen.findByRole('heading', { name: 'Interview sprint' })

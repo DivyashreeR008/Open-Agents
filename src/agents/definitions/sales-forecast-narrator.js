@@ -1,40 +1,39 @@
 export default {
-  id: "sales-forecast-narrator",
-  createdAt: "2026-10-12",
-  name: "Sales Forecast Narrator",
-  description:
-    "Turn pipeline data into a forecast story: commit, best case, risks, and asks.",
-  category: "Sales",
-  icon: "TrendingUp",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'sales-forecast-narrator',
+  createdAt: '2026-10-12',
+  name: 'Sales Forecast Narrator',
+  description: 'Turn pipeline data into a forecast story: commit, best case, risks, and asks.',
+  category: 'Sales',
+  icon: 'TrendingUp',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
-    pipeline: "Commit: Acme $40k verbal. Best case: Globex $60k legal review, Initech $25k pilot. Pipeline: 8 early-stage deals $120k total.",
-    quarter: "Q3, $150k quota, $90k closed so far",
-    risks: "Globex legal slow, Initech champion on leave, two deals single-threaded",
+    pipeline:
+      'Commit: Acme $40k verbal. Best case: Globex $60k legal review, Initech $25k pilot. Pipeline: 8 early-stage deals $120k total.',
+    quarter: 'Q3, $150k quota, $90k closed so far',
+    risks: 'Globex legal slow, Initech champion on leave, two deals single-threaded',
   },
   inputs: [
     {
-      id: "pipeline",
-      label: "Pipeline data",
-      type: "textarea",
+      id: 'pipeline',
+      label: 'Pipeline data',
+      type: 'textarea',
       placeholder:
-        "Paste commit, best case, and pipeline deals, e.g.:\nCommit: Acme $40k verbal\nBest case: Globex $60k legal review\nPipeline: 8 early-stage deals $120k total",
+        'Paste commit, best case, and pipeline deals, e.g.:\nCommit: Acme $40k verbal\nBest case: Globex $60k legal review\nPipeline: 8 early-stage deals $120k total',
       required: true,
     },
     {
-      id: "quarter",
-      label: "Quarter and quota",
-      type: "text",
-      placeholder: "e.g. Q3, $150k quota, $90k closed so far",
+      id: 'quarter',
+      label: 'Quarter and quota',
+      type: 'text',
+      placeholder: 'e.g. Q3, $150k quota, $90k closed so far',
     },
     {
-      id: "risks",
-      label: "Risks and gaps",
-      type: "textarea",
-      placeholder:
-        "e.g. Globex legal slow, Initech champion on leave, two deals single-threaded",
+      id: 'risks',
+      label: 'Risks and gaps',
+      type: 'textarea',
+      placeholder: 'e.g. Globex legal slow, Initech champion on leave, two deals single-threaded',
     },
   ],
   systemPrompt: `You are a sales forecasting assistant who turns raw pipeline
@@ -66,6 +65,6 @@ Rules:
 - Do not invent metrics, quotes, reviews, or deal updates
 - Keep confidence labels consistent and explain downgrades
 - Separate facts from judgment in every deal read`,
-  outputType: "markdown",
-  suggestedChainFrom: ["data-analysis-agent", "research-agent"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['data-analysis-agent', 'research-agent'],
+}

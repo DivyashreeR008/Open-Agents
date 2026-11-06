@@ -1,41 +1,39 @@
 export default {
-  id: "recipe-scaler",
-  createdAt: "2026-10-12",
-  name: "Recipe Scaler",
-  description:
-    "Scale any recipe to servings with converted units, adjusted times, and pan swaps.",
-  category: "Productivity",
-  icon: "UtensilsCrossed",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+  id: 'recipe-scaler',
+  createdAt: '2026-10-12',
+  name: 'Recipe Scaler',
+  description: 'Scale any recipe to servings with converted units, adjusted times, and pan swaps.',
+  category: 'Productivity',
+  icon: 'UtensilsCrossed',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     recipe:
-      "Classic lasagna, serves 8: 500g beef mince, 800g crushed tomatoes, 250g ricotta, 12 lasagna sheets, 200g mozzarella. Bake 45 min at 180C in 9x13 pan.",
-    servings: "4",
-    system: "metric",
+      'Classic lasagna, serves 8: 500g beef mince, 800g crushed tomatoes, 250g ricotta, 12 lasagna sheets, 200g mozzarella. Bake 45 min at 180C in 9x13 pan.',
+    servings: '4',
+    system: 'metric',
   },
   inputs: [
     {
-      id: "recipe",
-      label: "Original recipe",
-      type: "textarea",
-      placeholder:
-        "Paste the recipe with ingredient amounts, servings, pan size, time and temp",
+      id: 'recipe',
+      label: 'Original recipe',
+      type: 'textarea',
+      placeholder: 'Paste the recipe with ingredient amounts, servings, pan size, time and temp',
       required: true,
     },
     {
-      id: "servings",
-      label: "Target servings",
-      type: "text",
-      placeholder: "e.g. 4",
+      id: 'servings',
+      label: 'Target servings',
+      type: 'text',
+      placeholder: 'e.g. 4',
     },
     {
-      id: "system",
-      label: "Measurement system",
-      type: "select",
-      options: ["metric", "US"],
-      defaultValue: "metric",
+      id: 'system',
+      label: 'Measurement system',
+      type: 'select',
+      options: ['metric', 'US'],
+      defaultValue: 'metric',
       required: true,
     },
   ],
@@ -75,6 +73,6 @@ Rules:
 - Never scale food-safety steps away: temperatures and internal
   doneness cues stay intact.
 - Keep the tone neutral and practical.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["research-agent", "blog-post-seo-optimizer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['research-agent', 'blog-post-seo-optimizer'],
+}

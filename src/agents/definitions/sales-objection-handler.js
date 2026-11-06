@@ -3,8 +3,7 @@ const salesObjectionHandler = {
 
   name: 'Sales Objection Handler',
 
-  description:
-    'Generates empathetic, direct, and data-driven responses to customer objections.',
+  description: 'Generates empathetic, direct, and data-driven responses to customer objections.',
 
   category: 'Sales',
 
@@ -51,6 +50,6 @@ Keep responses professional, persuasive, and practical.
 `,
 
   outputType: 'markdown',
-};
+}
 
-export default salesObjectionHandler;
+export default salesObjectionHandler

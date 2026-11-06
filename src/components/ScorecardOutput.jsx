@@ -55,16 +55,16 @@ export default function ScorecardOutput({ data }) {
   }
 
   const score = parsed?.matchScore ?? 0
-  const scoreColor =
-    score >= 70 ? '#D4D4D4' : score >= 40 ? '#8A8A8A' : '#919191'
+  const scoreColor = score >= 70 ? '#D4D4D4' : score >= 40 ? '#8A8A8A' : '#919191'
 
   const recommendation = parsed?.recommendation || 'N/A'
-  const recColor = {
-    'Strong Yes': 'bg-zinc-500/20 text-zinc-400 border-zinc-500/30',
-    Yes: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
-    Maybe: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
-    No: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
-  }[recommendation] || 'bg-gray-500/10 text-gray-400 border-gray-500/20'
+  const recColor =
+    {
+      'Strong Yes': 'bg-zinc-500/20 text-zinc-400 border-zinc-500/30',
+      Yes: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
+      Maybe: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
+      No: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
+    }[recommendation] || 'bg-gray-500/10 text-gray-400 border-gray-500/20'
 
   // SVG circle params
   const radius = 54
@@ -112,53 +112,57 @@ export default function ScorecardOutput({ data }) {
           <div className="font-display text-[17px] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-text-primary mb-3">
             {score}/100
           </div>
-          <div className={`inline-flex items-center px-3 py-1 text-xs font-semibold border ${recColor}`}>
+          <div
+            className={`inline-flex items-center px-3 py-1 text-xs font-semibold border ${recColor}`}
+          >
             {recommendation}
           </div>
         </div>
       </div>
 
       {/* Criteria Breakdown */}
-      {parsed?.criteria && typeof parsed.criteria === 'object' && !Array.isArray(parsed.criteria) && (
-        <div className="p-4 dark:bg-surface-card bg-white border dark:border-border border-gray-200">
-          <h3 className="text-sm font-semibold dark:text-text-primary text-gray-900 mb-3">
-            Criteria Breakdown
-          </h3>
-          <div className="space-y-3">
-            {Object.entries(parsed.criteria).map(([name, val]) => (
-              <div key={name}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-medium dark:text-text-secondary text-gray-600">
-                    {name}
-                  </span>
-                  <span className="text-xs font-bold dark:text-text-primary text-gray-900">
-                    {val?.score ?? 0}/100
-                  </span>
+      {parsed?.criteria &&
+        typeof parsed.criteria === 'object' &&
+        !Array.isArray(parsed.criteria) && (
+          <div className="p-4 dark:bg-surface-card bg-white border dark:border-border border-gray-200">
+            <h3 className="text-sm font-semibold dark:text-text-primary text-gray-900 mb-3">
+              Criteria Breakdown
+            </h3>
+            <div className="space-y-3">
+              {Object.entries(parsed.criteria).map(([name, val]) => (
+                <div key={name}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-medium dark:text-text-secondary text-gray-600">
+                      {name}
+                    </span>
+                    <span className="text-xs font-bold dark:text-text-primary text-gray-900">
+                      {val?.score ?? 0}/100
+                    </span>
+                  </div>
+                  <div className="w-full h-2 dark:bg-surface-input bg-gray-100 overflow-hidden">
+                    <div
+                      className="h-full transition-all duration-700 ease-out"
+                      style={{
+                        width: `${val?.score ?? 0}%`,
+                        backgroundColor:
+                          (val?.score ?? 0) >= 70
+                            ? '#D4D4D4'
+                            : (val?.score ?? 0) >= 40
+                              ? '#8A8A8A'
+                              : '#919191',
+                      }}
+                    />
+                  </div>
+                  {val?.comment && (
+                    <p className="text-[11px] dark:text-text-muted text-gray-400 mt-0.5">
+                      {val.comment}
+                    </p>
+                  )}
                 </div>
-                <div className="w-full h-2 dark:bg-surface-input bg-gray-100 overflow-hidden">
-                  <div
-                    className="h-full transition-all duration-700 ease-out"
-                    style={{
-                      width: `${val?.score ?? 0}%`,
-                      backgroundColor:
-                        (val?.score ?? 0) >= 70
-                          ? '#D4D4D4'
-                          : (val?.score ?? 0) >= 40
-                          ? '#8A8A8A'
-                          : '#919191',
-                    }}
-                  />
-                </div>
-                {val?.comment && (
-                  <p className="text-[11px] dark:text-text-muted text-gray-400 mt-0.5">
-                    {val.comment}
-                  </p>
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
       {/* Strengths & Gaps */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -182,9 +186,7 @@ export default function ScorecardOutput({ data }) {
 
         {Array.isArray(parsed?.gaps) && parsed.gaps.length > 0 && (
           <div className="p-4 dark:bg-surface-card bg-white border dark:border-border border-gray-200">
-            <h3 className="text-sm font-semibold text-zinc-900 dark:text-white mb-2">
-              Top Gaps
-            </h3>
+            <h3 className="text-sm font-semibold text-zinc-900 dark:text-white mb-2">Top Gaps</h3>
             <div className="flex flex-wrap gap-1.5">
               {parsed.gaps.map((g, i) => (
                 <span

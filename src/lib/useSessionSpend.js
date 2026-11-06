@@ -35,10 +35,7 @@ function loadSession() {
     if (raw) {
       const data = JSON.parse(raw)
       if (data && typeof data === 'object' && Array.isArray(data.runs)) {
-        const runs = data.runs
-          .map(normalizeRun)
-          .filter(Boolean)
-          .slice(0, MAX_RUNS)
+        const runs = data.runs.map(normalizeRun).filter(Boolean).slice(0, MAX_RUNS)
         // Recompute rather than trusting a stored total, which may be stale,
         // non-numeric, or from a record that was written by an older build.
         const totalSpend = runs.reduce((sum, run) => sum + run.totalCost, 0)

@@ -91,7 +91,12 @@ describe('RecentRuns', () => {
       <RecentRuns
         history={[
           makeRun(),
-          { ...makeRun(), id: 'run-2', agentName: 'API Doc Generator', timestamp: now - 5 * 60_000 },
+          {
+            ...makeRun(),
+            id: 'run-2',
+            agentName: 'API Doc Generator',
+            timestamp: now - 5 * 60_000,
+          },
         ]}
         onRerun={vi.fn()}
         onCopy={vi.fn()}
@@ -177,10 +182,7 @@ describe('RecentRuns', () => {
     const onDelete = vi.fn()
     const onRerun = vi.fn()
     const onCopy = vi.fn()
-    const runs = [
-      makeRun(),
-      makeRun({ id: 'run-2', output: 'Second output.' }),
-    ]
+    const runs = [makeRun(), makeRun({ id: 'run-2', output: 'Second output.' })]
 
     render(
       <RecentRuns
@@ -205,6 +207,5 @@ describe('RecentRuns', () => {
 
     fireEvent.click(screen.getAllByRole('button', { name: 'Copy' })[0])
     expect(onCopy).toHaveBeenCalledWith(runs[0].output)
-
   })
 })

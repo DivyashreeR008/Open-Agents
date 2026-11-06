@@ -14,7 +14,10 @@ describe('marketplace tagless listings', () => {
   })
 
   it('filters without crashing on missing tags or names', () => {
-    const listings = [{ id: 'x', name: 'Old' }, { id: 'y', name: 'New', tags: ['research'] }]
+    const listings = [
+      { id: 'x', name: 'Old' },
+      { id: 'y', name: 'New', tags: ['research'] },
+    ]
     expect(() => filterListings(listings, { search: 'res' })).not.toThrow()
     expect(filterListings(listings, { search: 'res' })).toHaveLength(1)
     expect(filterListings(listings, { search: '' })).toHaveLength(2)

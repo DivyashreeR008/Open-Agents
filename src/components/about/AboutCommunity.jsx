@@ -5,13 +5,17 @@ export default function AboutCommunity() {
     <section aria-labelledby="about-community-title" className="mb-12">
       <div className="flex items-center gap-2 mb-3">
         <Users className="text-zinc-600 dark:text-zinc-300" size={22} />
-        <h2 id="about-community-title" className="text-2xl sm:text-3xl font-bold dark:text-text-primary text-gray-900 tracking-tight">
+        <h2
+          id="about-community-title"
+          className="text-2xl sm:text-3xl font-bold dark:text-text-primary text-gray-900 tracking-tight"
+        >
           Community & Contributor Appreciation
         </h2>
       </div>
 
       <p className="text-sm dark:text-text-secondary text-gray-600 mb-8 max-w-3xl leading-relaxed">
-        OpenAgents thrives on collective intelligence. Every contributor who submits an agent, fixes a typo, optimizes CSS, or reviews code is an essential builder of this platform.
+        OpenAgents thrives on collective intelligence. Every contributor who submits an agent, fixes
+        a typo, optimizes CSS, or reviews code is an essential builder of this platform.
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -23,7 +27,8 @@ export default function AboutCommunity() {
             Contributor First
           </h3>
           <p className="text-xs sm:text-sm dark:text-text-secondary text-gray-600 leading-relaxed">
-            We value your time. Our contribution guide is designed to get your first PR merged in under 15 minutes with clear feedback and zero bureaucracy.
+            We value your time. Our contribution guide is designed to get your first PR merged in
+            under 15 minutes with clear feedback and zero bureaucracy.
           </p>
         </div>
 
@@ -35,7 +40,8 @@ export default function AboutCommunity() {
             Hall of Fame
           </h3>
           <p className="text-xs sm:text-sm dark:text-text-secondary text-gray-600 leading-relaxed">
-            All contributors are permanently celebrated in our repository's Hall of Fame. Your name and agent contributions leave a lasting mark.
+            All contributors are permanently celebrated in our repository's Hall of Fame. Your name
+            and agent contributions leave a lasting mark.
           </p>
         </div>
 
@@ -47,7 +53,8 @@ export default function AboutCommunity() {
             Open Collaboration
           </h3>
           <p className="text-xs sm:text-sm dark:text-text-secondary text-gray-600 leading-relaxed">
-            Have an idea for a new agent category or workflow feature? Join GitHub Discussions to brainstorm with maintainers and fellow developers.
+            Have an idea for a new agent category or workflow feature? Join GitHub Discussions to
+            brainstorm with maintainers and fellow developers.
           </p>
         </div>
       </div>

@@ -1,11 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { renderHook } from '@testing-library/react'
-import {
-  DEFAULT_TITLE,
-  SITE_NAME,
-  formatDocumentTitle,
-  useDocumentTitle,
-} from './useDocumentTitle'
+import { DEFAULT_TITLE, SITE_NAME, formatDocumentTitle, useDocumentTitle } from './useDocumentTitle'
 
 describe('formatDocumentTitle', () => {
   it('returns the site default for empty or missing page titles', () => {

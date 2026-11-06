@@ -1,41 +1,40 @@
 export default {
-  id: "tokenomics-designer",
-  createdAt: "2026-10-12",
-  name: "Tokenomics Designer",
+  id: 'tokenomics-designer',
+  createdAt: '2026-10-12',
+  name: 'Tokenomics Designer',
   description:
-    "Design token supply, allocation, vesting, and emissions with sustainability checks.",
-  category: "Web3",
-  icon: "Coins",
-  provider: "any",
-  defaultProvider: "anthropic",
-  model: "claude-sonnet-4-6",
+    'Design token supply, allocation, vesting, and emissions with sustainability checks.',
+  category: 'Web3',
+  icon: 'Coins',
+  provider: 'any',
+  defaultProvider: 'anthropic',
+  model: 'claude-sonnet-4-6',
   exampleInputs: {
     project:
-      "Decentralized GPU marketplace: users pay in tokens for compute, node operators earn tokens, 5% protocol fee funds treasury and burns.",
-    chain: "Arbitrum, ERC-20, planned DEX listing in Q3",
-    fundraising: "planned",
+      'Decentralized GPU marketplace: users pay in tokens for compute, node operators earn tokens, 5% protocol fee funds treasury and burns.',
+    chain: 'Arbitrum, ERC-20, planned DEX listing in Q3',
+    fundraising: 'planned',
   },
   inputs: [
     {
-      id: "project",
-      label: "Project description",
-      type: "textarea",
-      placeholder:
-        "e.g. What the product does, who pays, who earns, fee or burn mechanics...",
+      id: 'project',
+      label: 'Project description',
+      type: 'textarea',
+      placeholder: 'e.g. What the product does, who pays, who earns, fee or burn mechanics...',
       required: true,
     },
     {
-      id: "chain",
-      label: "Chain and listing context",
-      type: "text",
-      placeholder: "e.g. Ethereum ERC-20, planned CEX listing, existing airdrop...",
+      id: 'chain',
+      label: 'Chain and listing context',
+      type: 'text',
+      placeholder: 'e.g. Ethereum ERC-20, planned CEX listing, existing airdrop...',
     },
     {
-      id: "fundraising",
-      label: "Fundraising stage",
-      type: "select",
-      options: ["none", "planned", "raised"],
-      defaultValue: "planned",
+      id: 'fundraising',
+      label: 'Fundraising stage',
+      type: 'select',
+      options: ['none', 'planned', 'raised'],
+      defaultValue: 'planned',
       required: true,
     },
   ],
@@ -68,6 +67,6 @@ Rules:
 - Keep allocations as illustrative ranges when inputs are incomplete.
 - Flag regulatory and custody topics as needs-expert-review, not advice.
 - Use neutral, instructional tone.`,
-  outputType: "markdown",
-  suggestedChainFrom: ["research-agent", "grant-proposal-writer"],
-};
+  outputType: 'markdown',
+  suggestedChainFrom: ['research-agent', 'grant-proposal-writer'],
+}

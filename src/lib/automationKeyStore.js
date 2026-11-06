@@ -37,25 +37,30 @@ function openDatabase() {
       }
     }
     request.onsuccess = () => resolve(request.result)
-    request.onerror = () => reject(new CredentialProtectionError(
-      'KEYSTORE_UNAVAILABLE',
-      'Secure device storage could not be opened. This automation key was not saved.',
-      request.error
-    ))
-    request.onblocked = () => reject(new CredentialProtectionError(
-      'KEYSTORE_BLOCKED',
-      'Secure device storage is blocked by another tab. Close other tabs and try again.'
-    ))
+    request.onerror = () =>
+      reject(
+        new CredentialProtectionError(
+          'KEYSTORE_UNAVAILABLE',
+          'Secure device storage could not be opened. This automation key was not saved.',
+          request.error
+        )
+      )
+    request.onblocked = () =>
+      reject(
+        new CredentialProtectionError(
+          'KEYSTORE_BLOCKED',
+          'Secure device storage is blocked by another tab. Close other tabs and try again.'
+        )
+      )
   })
 }
 
 async function createOrReadKey() {
   requireProtectionApis()
-  const candidate = await crypto.subtle.generateKey(
-    { name: 'AES-GCM', length: 256 },
-    false,
-    ['encrypt', 'decrypt']
-  )
+  const candidate = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, false, [
+    'encrypt',
+    'decrypt',
+  ])
   const database = await openDatabase()
 
   try {
@@ -93,7 +98,7 @@ let cachedDeviceKeyPromise
 
 export function getOrCreateDeviceKey() {
   if (!cachedDeviceKeyPromise) {
-    cachedDeviceKeyPromise = createOrReadKey().catch(error => {
+    cachedDeviceKeyPromise = createOrReadKey().catch((error) => {
       cachedDeviceKeyPromise = undefined
       throw error
     })

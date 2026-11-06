@@ -162,10 +162,7 @@ describe('useHistory recording', () => {
 
 describe('useHistory deletion and clearing', () => {
   it('deletes only the matching run from state and storage', () => {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify([storedRun('keep'), storedRun('remove')])
-    )
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([storedRun('keep'), storedRun('remove')]))
     const { result } = renderHook(() => useHistory())
 
     act(() => result.current.deleteRun('remove'))
