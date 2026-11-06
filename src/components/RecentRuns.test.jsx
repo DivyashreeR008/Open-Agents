@@ -1,5 +1,5 @@
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
 import RecentRuns from './RecentRuns'
 
 const now = new Date('2026-01-01T12:00:00.000Z').getTime()
@@ -25,6 +25,12 @@ describe('RecentRuns', () => {
     vi.useRealTimers()
   })
 
+  it('shows an empty state before any runs exist', () => {
+    render(<RecentRuns history={[]} />)
+
+    expect(screen.getByText('Runs you start will show up here.')).toBeInTheDocument()
+  })
+
   it('renders the empty state without list actions', () => {
     render(
       <RecentRuns
@@ -42,13 +48,71 @@ describe('RecentRuns', () => {
     expect(screen.queryByText('Clear')).not.toBeInTheDocument()
   })
 
-  it('renders one article per run with the history count', () => {
-    const { container } = render(
+  it('refreshes relative ages while the page remains open', () => {
+    render(
+      <RecentRuns
+        history={[makeRun()]}
+        onRerun={vi.fn()}
+        onCopy={vi.fn()}
+        onDelete={vi.fn()}
+        onClearAll={vi.fn()}
+      />
+    )
+
+    expect(screen.getByText('just now')).toBeInTheDocument()
+
+    act(() => {
+      vi.advanceTimersByTime(60_000)
+    })
+
+    expect(screen.getByText('1m ago')).toBeInTheDocument()
+    expect(screen.queryByText('just now')).not.toBeInTheDocument()
+  })
+
+  it('keeps the exact timestamp available as a tooltip', () => {
+    render(
+      <RecentRuns
+        history={[makeRun()]}
+        onRerun={vi.fn()}
+        onCopy={vi.fn()}
+        onDelete={vi.fn()}
+        onClearAll={vi.fn()}
+      />
+    )
+
+    const label = screen.getByText('just now')
+    expect(label.tagName).toBe('TIME')
+    expect(label).toHaveAttribute('title')
+    expect(label.getAttribute('title')).not.toBe('')
+  })
+
+  it('does not reshuffle entries when the clock advances', () => {
+    render(
       <RecentRuns
         history={[
           makeRun(),
-          makeRun({ id: 'run-2', agentName: 'Test Planner', provider: 'Anthropic', output: 'A different output.' }),
+          { ...makeRun(), id: 'run-2', agentName: 'API Doc Generator', timestamp: now - 5 * 60_000 },
         ]}
+        onRerun={vi.fn()}
+        onCopy={vi.fn()}
+        onDelete={vi.fn()}
+        onClearAll={vi.fn()}
+      />
+    )
+
+    const before = screen.getAllByRole('heading').map((heading) => heading.textContent)
+    act(() => {
+      vi.advanceTimersByTime(90_000)
+    })
+    const after = screen.getAllByRole('heading').map((heading) => heading.textContent)
+
+    expect(after).toEqual(before)
+  })
+
+  it('renders one article per run with the history count', () => {
+    const { container } = render(
+      <RecentRuns
+        history={[makeRun(), { ...makeRun(), id: 'run-2', agentName: 'Test Planner' }]}
         onRerun={vi.fn()}
         onCopy={vi.fn()}
         onDelete={vi.fn()}
@@ -141,5 +205,6 @@ describe('RecentRuns', () => {
 
     fireEvent.click(screen.getAllByRole('button', { name: 'Copy' })[0])
     expect(onCopy).toHaveBeenCalledWith(runs[0].output)
+
   })
 })
