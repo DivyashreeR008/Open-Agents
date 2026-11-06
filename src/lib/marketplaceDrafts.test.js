@@ -1,7 +1,8 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { afterEach, describe, it, expect, beforeEach, vi } from 'vitest'
 import {
   publishAgent,
   importAgent,
+  loadListings,
   loadDrafts,
   getDraft,
   removeDraft,
@@ -9,6 +10,10 @@ import {
   getMissingDraftFields,
   buildDraftAgent,
 } from './marketplace'
+
+afterEach(() => {
+  vi.restoreAllMocks()
+})
 
 const baseAgents = [
   { id: 'summarizer', name: 'Summarizer', provider: 'openai', systemPrompt: 'base prompt', inputs: [] },
@@ -81,6 +86,71 @@ describe('imported drafts', () => {
     localStorage.setItem('oa_marketplace_drafts', JSON.stringify({ broken: true }))
     const draft = importAgent(listing.id)
     expect(loadDrafts().map((d) => d.id)).toEqual([draft.id])
+  })
+
+  it('reuses an existing draft instead of duplicating it and inflating the count', () => {
+    const listing = publish()
+    const first = importAgent(listing.id)
+    const second = importAgent(listing.id)
+
+    expect(second).toMatchObject({ id: first.id, alreadyImported: true })
+    expect(loadDrafts()).toHaveLength(1)
+    expect(loadListings()[0].importCount).toBe(1)
+  })
+
+  it('handles a listing with missing configuration without throwing', () => {
+    localStorage.setItem(
+      'oa_marketplace_listings',
+      JSON.stringify([
+        {
+          id: 'mkt_no_config',
+          name: 'No Config',
+          description: 'Older listing',
+          tags: null,
+          category: 'Research',
+          config: null,
+          sanitizedFields: null,
+          importCount: 0,
+          ratingTotal: 0,
+          ratingCount: 0,
+          publishedAt: '',
+        },
+      ])
+    )
+
+    const draft = importAgent('mkt_no_config')
+
+    expect(draft).toMatchObject({
+      sourceListingId: 'mkt_no_config',
+      config: {},
+      tags: [],
+      pendingCredentialFields: [],
+      readyToRun: true,
+    })
+  })
+
+  it('reports an unsaved import instead of returning a successful draft', () => {
+    const listing = publish()
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('QuotaExceededError')
+    })
+
+    const draft = importAgent(listing.id)
+
+    expect(draft.persisted).toBe(false)
+    expect(loadDrafts()).toEqual([])
+    expect(loadListings()[0].importCount).toBe(0)
+  })
+
+  it('reports a publish that storage refused', () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('QuotaExceededError')
+    })
+
+    const listing = publish()
+
+    expect(listing.persisted).toBe(false)
+    expect(loadListings()).toEqual([])
   })
 })
 
