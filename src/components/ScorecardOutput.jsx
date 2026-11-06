@@ -129,37 +129,40 @@ export default function ScorecardOutput({ data }) {
               Criteria Breakdown
             </h3>
             <div className="space-y-3">
-              {Object.entries(parsed.criteria).map(([name, val]) => (
-                <div key={name}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium dark:text-text-secondary text-gray-600">
-                      {name}
-                    </span>
-                    <span className="text-xs font-bold dark:text-text-primary text-gray-900">
-                      {val?.score ?? 0}/100
-                    </span>
+              {Object.entries(parsed.criteria).map(([name, val]) => {
+                const criterionScore = typeof val === 'number' ? val : (val?.score ?? 0)
+                return (
+                  <div key={name}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-medium dark:text-text-secondary text-gray-600">
+                        {name}
+                      </span>
+                      <span className="text-xs font-bold dark:text-text-primary text-gray-900">
+                        {criterionScore}/100
+                      </span>
+                    </div>
+                    <div className="w-full h-2 dark:bg-surface-input bg-gray-100 overflow-hidden">
+                      <div
+                        className="h-full transition-all duration-700 ease-out"
+                        style={{
+                          width: `${criterionScore}%`,
+                          backgroundColor:
+                            criterionScore >= 70
+                              ? '#D4D4D4'
+                              : criterionScore >= 40
+                                ? '#8A8A8A'
+                                : '#919191',
+                        }}
+                      />
+                    </div>
+                    {val?.comment && (
+                      <p className="text-[11px] dark:text-text-muted text-gray-400 mt-0.5">
+                        {val.comment}
+                      </p>
+                    )}
                   </div>
-                  <div className="w-full h-2 dark:bg-surface-input bg-gray-100 overflow-hidden">
-                    <div
-                      className="h-full transition-all duration-700 ease-out"
-                      style={{
-                        width: `${val?.score ?? 0}%`,
-                        backgroundColor:
-                          (val?.score ?? 0) >= 70
-                            ? '#D4D4D4'
-                            : (val?.score ?? 0) >= 40
-                              ? '#8A8A8A'
-                              : '#919191',
-                      }}
-                    />
-                  </div>
-                  {val?.comment && (
-                    <p className="text-[11px] dark:text-text-muted text-gray-400 mt-0.5">
-                      {val.comment}
-                    </p>
-                  )}
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         )}
