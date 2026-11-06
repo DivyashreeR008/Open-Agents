@@ -20,10 +20,13 @@ Gemini Models:
 `;
 
 export async function analyseModels(agent, apiKey, provider) {
+  const systemPromptPurpose =
+    typeof agent?.systemPrompt === 'string' ? agent.systemPrompt.slice(0, 300) : ''
+
   const agentContext = `
-    Agent name: ${agent.name}
-    Description: ${agent.description}
-    System prompt purpose: ${agent.systemPrompt.slice(0, 300)}
+    Agent name: ${agent?.name || ''}
+    Description: ${agent?.description || ''}
+    System prompt purpose: ${systemPromptPurpose}
   `;
 
   const systemPrompt = `You are an AI model selection expert. 
