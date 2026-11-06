@@ -1,8 +1,10 @@
 import { useState, Suspense, lazy } from 'react'
-import { Routes, Route, Outlet ,Link} from 'react-router-dom'
-import { Loader2 ,MessageSquare} from 'lucide-react'
+import { Routes, Route, Outlet, Link } from 'react-router-dom'
+import { Loader2, MessageSquare } from 'lucide-react'
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
+import CommandPalette from './components/CommandPalette'
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import SkipToMainContentLink, { MAIN_CONTENT_ID } from './components/SkipToMainContentLink'
 import ScrollToTopButton from './components/ScrollToTopButton'
 import ScrollToBottom from './components/ScrollToBottom'
@@ -37,7 +39,7 @@ const AboutPage = lazy(() => import('./pages/AboutPage'))
 const PortfolioPage = lazy(() => import('./pages/PortfolioPage'))
 const FeedbackPage = lazy(() => import('./pages/FeedbackPage'))
 
-function PageLoader() {
+export function PageLoader() {
   return (
     <div
       className="flex flex-col items-center justify-center min-h-[50vh] gap-3"
@@ -50,11 +52,15 @@ function PageLoader() {
   )
 }
 
-function MainLayout({ sidebarOpen, setSidebarOpen }) {
+export function MainLayout({ sidebarOpen, setSidebarOpen, onOpenCommandPalette }) {
   return (
     <>
       <SkipToMainContentLink />
-      <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <Navbar
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+        onOpenCommandPalette={onOpenCommandPalette}
+      />
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <Link
         to="/feedback"
@@ -70,7 +76,7 @@ function MainLayout({ sidebarOpen, setSidebarOpen }) {
         dark:focus-visible:outline-white"
         aria-label="Give feedback"
       >
-        <MessageSquare size={18} />
+        <MessageSquare size={18} aria-hidden="true" />
         <span>Feedback</span>
       </Link>
       <main id={MAIN_CONTENT_ID} tabIndex={-1} className="pt-12 lg:pl-60 focus:outline-none">
@@ -83,6 +89,18 @@ function MainLayout({ sidebarOpen, setSidebarOpen }) {
 }
 
 export default function App() {
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false)
+
+  useKeyboardShortcuts({
+    'Control+k': (e) => {
+      e.preventDefault()
+      setCommandPaletteOpen((prev) => !prev)
+    },
+    'Control+K': (e) => {
+      e.preventDefault()
+      setCommandPaletteOpen((prev) => !prev)
+    },
+  })
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
@@ -90,6 +108,10 @@ export default function App() {
       <ScrollToTopButton />
       <ScrollToBottom />
       <RouteAnnouncer />
+      <CommandPalette
+        isOpen={commandPaletteOpen}
+        onClose={() => setCommandPaletteOpen(false)}
+      />
       <ErrorBoundary>
         <Suspense fallback={<PageLoader />}>
           <PageTransition>
@@ -98,6 +120,7 @@ export default function App() {
               <MainLayout
                 sidebarOpen={sidebarOpen}
                 setSidebarOpen={setSidebarOpen}
+                onOpenCommandPalette={() => setCommandPaletteOpen(true)}
               />
             }>
               <Route path="/" element={<PortfolioPage />} />

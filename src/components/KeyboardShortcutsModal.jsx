@@ -1,27 +1,44 @@
-import { X, Command, CornerDownLeft, Search, Type, HelpCircle } from 'lucide-react';
+import { useRef } from 'react'
+import { X, Command, CornerDownLeft, Search, Type, HelpCircle } from 'lucide-react'
+import { useDialogFocus } from '../hooks/useDialogFocus'
 
 export default function KeyboardShortcutsModal({ isOpen, onClose }) {
-  if (!isOpen) return null;
+  const panelRef = useRef(null)
+  useDialogFocus(panelRef, { active: isOpen, onClose })
+
+  if (!isOpen) return null
 
   const shortcuts = [
+    { key: 'Ctrl / Cmd + K', description: 'Open Command Palette', icon: <Command size={14} /> },
     { key: 'Ctrl + Enter', description: 'Run Agent or Workflow', icon: <CornerDownLeft size={14} /> },
     { key: '/', description: 'Focus Search Bar', icon: <Search size={14} /> },
     { key: 'Esc', description: 'Clear Inputs / Collapse Playground', icon: <X size={14} /> },
     { key: 'Alt + 1 / 2 / 3', description: 'Toggle Provider (OpenAI, Anthropic, Gemini)', icon: <Type size={14} /> },
     { key: '?', description: 'Open this help menu', icon: <HelpCircle size={14} /> },
-  ];
+  ]
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-      <div className="w-full max-w-md bg-white dark:bg-surface-card border border-gray-200 dark:border-border shadow-pop overflow-hidden">
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="keyboard-shortcuts-title"
+        className="w-full max-w-md bg-white dark:bg-surface-card border border-gray-200 dark:border-border shadow-pop overflow-hidden"
+      >
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-border">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-text-primary flex items-center gap-2">
-            <Command size={20} className="text-zinc-900 dark:text-white" />
+          <h2
+            id="keyboard-shortcuts-title"
+            className="text-lg font-bold text-gray-900 dark:text-text-primary flex items-center gap-2"
+          >
+            <Command size={20} className="text-zinc-900 dark:text-white" aria-hidden="true" />
             Keyboard Shortcuts
           </h2>
           <button
+            type="button"
             onClick={onClose}
             className="p-1.5 text-gray-400 hover:text-gray-900 dark:hover:text-text-primary hover:bg-gray-100 dark:hover:bg-surface-hover transition-colors"
+            aria-label="Close keyboard shortcuts dialog"
           >
             <X size={20} />
           </button>
@@ -38,7 +55,7 @@ export default function KeyboardShortcutsModal({ isOpen, onClose }) {
                   {s.description}
                 </span>
               </div>
-              <kbd className="px-2 py-1 text-xs font-semibold text-gray-500 bg-gray-100 border border-gray-300 dark:bg-surface-input dark:border-border dark:text-text-muted">
+              <kbd className="px-2 py-1 text-xs font-semibold text-gray-500 bg-gray-100 border border-gray-300 dark:bg-surface-input dark:border-border dark:text-text-muted font-mono">
                 {s.key}
               </kbd>
             </div>
@@ -46,5 +63,5 @@ export default function KeyboardShortcutsModal({ isOpen, onClose }) {
         </div>
       </div>
     </div>
-  );
+  )
 }

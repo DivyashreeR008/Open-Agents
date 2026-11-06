@@ -2,24 +2,14 @@ import { useState } from "react";
 import { useTimedState } from "../lib/useTimedState";
 import { X, Search, Star, Trash2, Copy, RotateCcw, History } from "lucide-react";
 import { usePromptHistory } from "../lib/usePromptHistory";
+import { formatExactTime, formatRelativeTime, useNow } from "../lib/formatting";
 
 function truncate(text, max = 140) {
   if (!text) return "";
   return text.length > max ? text.slice(0, max).trim() + "…" : text;
 }
 
-function timeAgo(timestamp) {
-  const diff = Date.now() - timestamp;
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins}m ago`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.floor(hours / 24);
-  return `${days}d ago`;
-}
-
-function PromptItem({ entry, onUse, onToggleFavorite, onDelete, onCopy }) {
+function PromptItem({ entry, now, onUse, onToggleFavorite, onDelete, onCopy }) {
   return (
     <div className="group border p-3 dark:bg-surface-input dark:border-border bg-gray-50 border-gray-200 transition-colors hover:border-zinc-400">
       <p className="text-xs dark:text-text-primary text-gray-800 leading-relaxed mb-2 whitespace-pre-wrap">
@@ -32,7 +22,9 @@ function PromptItem({ entry, onUse, onToggleFavorite, onDelete, onCopy }) {
               {entry.agentName}
             </span>
           )}
-          <span>{timeAgo(entry.createdAt)}</span>
+          <time title={formatExactTime(entry.createdAt)}>
+            {formatRelativeTime(entry.createdAt, now)}
+          </time>
         </div>
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
@@ -84,6 +76,7 @@ function PromptItem({ entry, onUse, onToggleFavorite, onDelete, onCopy }) {
 export default function PromptHistoryPanel({ open, onClose, onUsePrompt }) {
   const { prompts, favorites, deletePrompt, clearHistory, toggleFavorite, searchPrompts } =
     usePromptHistory();
+  const now = useNow();
   const [query, setQuery] = useState("");
   const [copiedId, setCopiedId] = useTimedState(null, open);
   const [confirmClear, setConfirmClear] = useState(false);
@@ -140,6 +133,7 @@ export default function PromptHistoryPanel({ open, onClose, onUsePrompt }) {
               className="absolute left-2.5 top-1/2 -translate-y-1/2 dark:text-text-muted text-gray-400"
             />
             <input
+              aria-label="Search prompts"
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -168,6 +162,7 @@ export default function PromptHistoryPanel({ open, onClose, onUsePrompt }) {
                   <PromptItem
                     key={entry.id}
                     entry={entry}
+                    now={now}
                     onUse={handleUse}
                     onToggleFavorite={toggleFavorite}
                     onDelete={deletePrompt}
@@ -218,6 +213,7 @@ export default function PromptHistoryPanel({ open, onClose, onUsePrompt }) {
                   <PromptItem
                     key={entry.id}
                     entry={entry}
+                    now={now}
                     onUse={handleUse}
                     onToggleFavorite={toggleFavorite}
                     onDelete={deletePrompt}

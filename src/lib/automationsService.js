@@ -2,6 +2,7 @@ import { supabase, isSupabaseConfigured } from './supabase'
 import { runAgent } from './llmAdapter'
 import { recordAnalyticsRun } from './useAnalytics'
 import { CredentialProtectionError, getOrCreateDeviceKey } from './automationKeyStore'
+import { dueWindows, normalizeMissedPolicy, planDueRuns } from './missedRuns'
 
 const STORAGE_KEY = 'oa_automations_v2'
 const RUNS_KEY = 'oa_automation_runs_v2'
@@ -468,6 +469,7 @@ export async function createAutomation(data) {
     model: data.model || 'gpt-4o',
     schedule: data.schedule || 'daily',
     cron: preset.cron,
+    missedPolicy: normalizeMissedPolicy(data.missedPolicy),
     enabled: data.enabled ?? true,
     inputs: data.inputs || {},
     systemPrompt: data.systemPrompt || '',
@@ -531,6 +533,17 @@ export async function updateAutomation(id, updates) {
       updates.cron = preset.cron
       updates.nextRunAt = Date.now() + preset.ms
     }
+  }
+
+  if ('missedPolicy' in updates) {
+    updates.missedPolicy = normalizeMissedPolicy(updates.missedPolicy)
+  }
+
+  // Resuming a paused automation starts a new schedule. The time it was paused is not "missed".
+  if (updates.enabled === true && !existing[index].enabled && !('nextRunAt' in updates)) {
+    const schedule = updates.schedule || existing[index].schedule
+    const preset = SCHEDULE_PRESETS.find(p => p.value === schedule) || SCHEDULE_PRESETS[1]
+    if (!(existing[index].nextRunAt > Date.now())) updates.nextRunAt = Date.now() + preset.ms
   }
 
   const updatedAutomation = { ...existing[index], ...updates, updatedAt: Date.now() }
@@ -622,6 +635,9 @@ export async function runAutomationNow(automationId, options = {}) {
     output: '',
     error: null,
     emailSent: false,
+    // Set when the scheduler runs a window that was due: the time it was due, and whether it was
+    // run late to catch up for time the app was closed.
+    ...(options.scheduledFor ? { scheduledFor: options.scheduledFor, catchUp: Boolean(options.catchUp) } : {}),
   }
 
   const currentRuns = loadRuns()
@@ -711,13 +727,15 @@ export async function runAutomationNow(automationId, options = {}) {
   const allRuns = loadRuns().map(r => (r.id === runId ? finishedRunRecord : r))
   saveRuns(allRuns)
 
-  // Update automation nextRunAt and lastRunAt
+  // Update automation nextRunAt and lastRunAt. A scheduled run leaves nextRunAt alone: the
+  // scheduler moved it past the windows it was handling before it started (see checkDueAutomations).
   const preset = SCHEDULE_PRESETS.find(p => p.value === automation.schedule) || SCHEDULE_PRESETS[1]
-  const updatedNextRun = completedAt + preset.ms
-  updateAutomation(automation.id, {
-    lastRunAt: completedAt,
-    nextRunAt: updatedNextRun,
-  })
+  updateAutomation(
+    automation.id,
+    options.keepSchedule
+      ? { lastRunAt: completedAt }
+      : { lastRunAt: completedAt, nextRunAt: completedAt + preset.ms }
+  )
 
   // Trigger browser notification if supported
   if ('Notification' in window && Notification.permission === 'granted') {
@@ -733,29 +751,108 @@ export async function runAutomationNow(automationId, options = {}) {
   return finishedRunRecord
 }
 
+// ── Missed and skipped scheduled runs ──
+function patchAutomation(id, patch) {
+  const list = loadAutomations()
+  const index = list.findIndex(a => a.id === id)
+  if (index === -1) return
+  list[index] = { ...list[index], ...patch }
+  saveAutomations(list)
+}
+
+// A scheduled window that did not run. `status` is 'missed' when the app was not running at the
+// time (closed tab, sleeping machine) and 'skipped' when it was running but could not start the run.
+// One record covers a range of windows, so a long absence does not fill the history.
+function addUnexecutedRecord(automation, { status, count, first, last, now, policy, reason }) {
+  const record = {
+    id: `run_${now}_${Math.random().toString(36).slice(2, 7)}`,
+    automationId: automation.id,
+    automationName: automation.name,
+    agentName: automation.agentName,
+    status,
+    startedAt: last,
+    completedAt: now,
+    duration: 0,
+    tokens: 0,
+    output: '',
+    error: null,
+    emailSent: false,
+    ...(status === 'missed' ? { missedCount: count } : { skippedCount: count }),
+    firstWindow: first,
+    lastWindow: last,
+    detectedAt: now,
+    policy,
+    ...(reason ? { reason } : {}),
+  }
+  saveRuns([record, ...loadRuns()])
+  return record
+}
+
+/**
+ * Runs what is due at `now`. Called on start-up and then every minute while the app is open.
+ *
+ * Time is counted from each automation's `nextRunAt`. When the app was closed, several windows can
+ * have passed. The automation's missed-run policy decides how many of them to run (see
+ * missedRuns.js); the rest are written to the history as missed, so a schedule that quietly
+ * produced fewer runs than it promised is visible. Returns what it did, for tests and callers.
+ */
+export async function checkDueAutomations(now = Date.now()) {
+  const handled = []
+
+  for (const item of loadAutomations()) {
+    if (!item.enabled) continue
+    // A run is already going: leave the windows alone and look again on the next tick.
+    if (activeRunningIds.has(item.id)) continue
+
+    const preset = SCHEDULE_PRESETS.find(p => p.value === item.schedule) || SCHEDULE_PRESETS[1]
+    const due = dueWindows({ nextRunAt: item.nextRunAt, intervalMs: preset.ms, now })
+    if (!due) continue
+
+    const policy = normalizeMissedPolicy(item.missedPolicy)
+
+    // Move the schedule past these windows and write the history before awaiting anything, so a
+    // second tick that starts while the runs below are in progress does not count them again.
+    patchAutomation(item.id, { nextRunAt: due.last + preset.ms })
+
+    if (!item.hasKey) {
+      // Nothing can run without the key. Say so instead of dropping the windows silently.
+      addUnexecutedRecord(item, {
+        status: 'skipped', count: due.count, first: due.first, last: due.last, now, policy, reason: 'no_key',
+      })
+      handled.push({ id: item.id, ran: [], skipped: due.count, missed: 0 })
+      continue
+    }
+
+    const { runWindows, missed } = planDueRuns(due, policy)
+    if (missed) {
+      addUnexecutedRecord(item, { status: 'missed', ...missed, now, policy })
+    }
+
+    for (const window of runWindows) {
+      try {
+        await runAutomationNow(item.id, {
+          scheduledFor: window,
+          catchUp: !(window === due.last && due.lastOnTime),
+          keepSchedule: true,
+        })
+      } catch (e) {
+        console.error(`Scheduled run for ${item.name} failed:`, e)
+      }
+    }
+    handled.push({ id: item.id, ran: runWindows, skipped: 0, missed: missed ? missed.count : 0 })
+  }
+
+  return handled
+}
+
 // ── In-Browser Cron Background Heartbeat ──
 let heartbeatInterval = null
 
 export function initAutomationEngine() {
   if (heartbeatInterval) return
 
-  const checkDue = async () => {
-    const automations = loadAutomations()
-    const now = Date.now()
-    for (const item of automations) {
-      if (!item.enabled || !item.hasKey) continue
-      if (item.nextRunAt && now >= item.nextRunAt) {
-        try {
-          await runAutomationNow(item.id)
-        } catch (e) {
-          console.error(`Scheduled run for ${item.name} failed:`, e)
-        }
-      }
-    }
-  }
-
   // Check on init
-  checkDue()
+  checkDueAutomations()
   // Check every 60s
-  heartbeatInterval = setInterval(checkDue, 60000)
+  heartbeatInterval = setInterval(checkDueAutomations, 60000)
 }
