@@ -124,7 +124,7 @@ describe('RecentRuns', () => {
     expect(screen.getByText('2')).toBeInTheDocument()
     expect(screen.getByText('Code Reviewer')).toBeInTheDocument()
     expect(screen.getByText('Test Planner')).toBeInTheDocument()
-    expect(screen.getByText('The change looks correct.')).toBeInTheDocument()
+    expect(screen.getAllByText('The change looks correct.')).toHaveLength(2)
   })
 
   it('formats relative timestamps at the minute, hour, and day boundaries', () => {
