@@ -35,7 +35,7 @@ export function useProgressiveList(items, { pageSize = DEFAULT_PAGE_SIZE, resetK
   const total = items.length
 
   return useMemo(() => {
-    const count = Math.min(visibleCount, total)
+    const count = Math.min(Math.max(visibleCount, pageSize), total)
 
     return {
       visibleItems: items.slice(0, count),
