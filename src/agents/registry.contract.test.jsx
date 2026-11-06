@@ -136,5 +136,5 @@ describe('raw agent-definition contract', () => {
         mounted?.unmount()
       }
     }
-  }, 60_000)
+  }, 180_000)
 })

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Sparkles, ArrowRight, ExternalLink } from 'lucide-react'
-import Github from '../icons/Github'
+
+import GitHubIcon from '../GitHubIcon'
 import { useAgents } from '../../lib/useAgents'
 
 export default function AboutHero() {
@@ -62,7 +63,7 @@ export default function AboutHero() {
             aria-label="Star OpenAgents on GitHub (opens in new tab)"
             className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold dark:text-text-primary text-gray-800 dark:bg-white/10 bg-white border border-gray-200 dark:border-white/10 transition-all duration-300 hover:bg-gray-100 dark:hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500"
           >
-            <Github size={16} />
+            <GitHubIcon size={16} />
             <span>Star on GitHub</span>
             <ExternalLink size={12} aria-hidden="true" />
           </a>

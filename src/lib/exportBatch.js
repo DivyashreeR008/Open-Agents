@@ -4,12 +4,13 @@
  */
 
 function slugifyFilename(name) {
-  return (
-    name
-      .toLowerCase()
-      .replace(/\s+/g, '-')
-      .replace(/[^a-z0-9-]/g, '') || 'batch'
-  )
+  const slug = name
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/^-+|-+$/g, '')
+
+  return slug || 'batch'
 }
 
 function downloadBlob(content, mimeType, filename) {
@@ -24,7 +25,7 @@ function downloadBlob(content, mimeType, filename) {
 
 function csvEscape(value) {
   const str = String(value ?? '')
-  if (/[",\n]/.test(str)) {
+  if (/[",\r\n]/.test(str)) {
     return `"${str.replace(/"/g, '""')}"`
   }
   return str
@@ -68,7 +69,15 @@ export function exportBatchAsMarkdown(agentName, results) {
 
   const sections = results
     .map((r, i) => {
-      const heading = `## Item ${i + 1} — ${r.status === 'done' ? 'Success' : r.status === 'failed' ? 'Failed' : 'Pending'}`
+      const label =
+        r.status === 'done'
+          ? 'Success'
+          : r.status === 'failed'
+            ? 'Failed'
+            : r.status === 'stopped'
+              ? 'Stopped'
+              : 'Pending'
+      const heading = `## Item ${i + 1} — ${label}`
       const inputBlock = `**Input:**\n\n${r.input}`
       const bodyBlock =
         r.status === 'failed'

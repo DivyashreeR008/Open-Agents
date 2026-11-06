@@ -192,6 +192,7 @@ export default function WorkflowLibrary() {
           aria-hidden="true"
         />
         <input
+          aria-label="Search workflows"
           id="workflow-search"
           type="text"
           value={searchQuery}

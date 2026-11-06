@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowRight, ChevronDown, Search, X, Star, History, Swords, GitBranch, Lightbulb, LayoutGrid, Rows3, ExternalLink } from 'lucide-react'
-import Github from '../components/icons/Github'
 import AgentCardSkeleton from '../components/AgentCardSkeleton'
 import AgentCard from '../components/AgentCard'
 import { useFavorites } from '../lib/useFavorites'
@@ -16,6 +15,7 @@ import { DEFAULT_COLLECTION_ID, useCollections } from '../lib/useCollections'
 import RecommendationWizardModal from '../components/recommendation/RecommendationWizardModal'
 import { getGlobalKeys } from '../lib/globalKeys'
 import Logo from '../components/Logo'
+import GitHubIcon from '../components/GitHubIcon'
 
 const providerLabels = {
   any: 'Any Provider',
@@ -261,6 +261,16 @@ export default function HomePage() {
   const showingFiltered =
     searchQuery.trim() || selectedCategory || selectedProvider || activeCollectionId !== DEFAULT_COLLECTION_ID
 
+  const resultsStatus = agentsLoading
+    ? 'Loading agents.'
+    : filteredCount === 0
+      ? 'No agents match the current search and filters.'
+      : visibleCount < filteredCount
+        ? `Showing ${visibleCount} of ${filteredCount} agents.`
+        : showingFiltered
+          ? `${filteredCount} ${filteredCount === 1 ? 'agent matches' : 'agents match'} the current filters.`
+          : `${filteredCount} ${filteredCount === 1 ? 'agent is' : 'agents are'} in the catalogue.`
+
   const ledger = [
     { label: 'Agents', value: agents.length || catalogSize || 0 },
     { label: 'Categories', value: allCategories.length },
@@ -499,10 +509,17 @@ export default function HomePage() {
 
       {/* ── Results ──────────────────────────────────────────────────── */}
       <div className="mb-10 flex flex-col gap-8 lg:flex-row">
-        <div className="min-w-0 flex-1">
+        <section
+          className="min-w-0 flex-1"
+          aria-labelledby="agent-results-heading"
+          aria-busy={agentsLoading}
+        >
           <div className="mb-2 flex items-baseline justify-between gap-3 border-b border-zinc-900 pb-1.5 dark:border-white">
             <div className="flex min-w-0 items-baseline gap-2.5">
-              <h2 className="font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-zinc-500 dark:text-text-secondary">
+              <h2
+                id="agent-results-heading"
+                className="font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-zinc-500 dark:text-text-secondary"
+              >
                 {showingFiltered ? 'Matching entries' : 'All entries'}
               </h2>
               <span className="font-mono text-[10px] tabular-nums text-zinc-400 dark:text-text-muted">
@@ -521,6 +538,10 @@ export default function HomePage() {
             )}
           </div>
 
+          <p role="status" aria-label="Agent catalogue status" aria-live="polite" aria-atomic="true" className="sr-only">
+            {resultsStatus}
+          </p>
+
           {agentsLoading ? (
             <div
               className={
@@ -538,15 +559,27 @@ export default function HomePage() {
             </div>
           ) : filteredCount > 0 ? (
             viewMode === 'grid' ? (
-              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
+              <div
+                role="list"
+                aria-label="Agent catalogue, grid view"
+                className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 xl:grid-cols-3"
+              >
                 {visibleAgents.map((agent) => (
-                  <AgentCard key={agent.id} agent={agent} variant="grid" />
+                  <div role="listitem" key={agent.id}>
+                    <AgentCard agent={agent} variant="grid" />
+                  </div>
                 ))}
               </div>
             ) : (
-              <div className="border-t border-zinc-200 dark:border-border">
+              <div
+                role="list"
+                aria-label="Agent catalogue, index view"
+                className="border-t border-zinc-200 dark:border-border"
+              >
                 {visibleAgents.map((agent, i) => (
-                  <AgentCard key={agent.id} agent={agent} variant="row" index={i + 1} />
+                  <div role="listitem" key={agent.id}>
+                    <AgentCard agent={agent} variant="row" index={i + 1} />
+                  </div>
                 ))}
               </div>
             )
@@ -595,7 +628,7 @@ export default function HomePage() {
               )}
             </div>
           )}
-        </div>
+        </section>
 
         <aside className="w-full flex-shrink-0 lg:w-72">
           <RecentRuns
@@ -691,7 +724,7 @@ export default function HomePage() {
               rel="noopener noreferrer"
               className="btn-secondary w-fit"
             >
-              <Github size={14} aria-hidden="true" />
+              <GitHubIcon size={14} aria-hidden="true" />
               GitHub
               <ExternalLink size={12} aria-hidden="true" />
               <span className="sr-only">(opens in new tab)</span>
@@ -737,6 +770,7 @@ ${description}
   return (
     <div className="flex flex-col gap-3">
       <input
+        aria-label="Agent name"
         type="text"
         value={agentName}
         onChange={(e) => setAgentName(e.target.value)}
@@ -744,6 +778,7 @@ ${description}
         className="field h-9"
       />
       <textarea
+        aria-label="What the agent should do"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         placeholder="Describe what it should do — e.g. Takes a job description and rewrites my resume bullet points to match it"

@@ -15,7 +15,7 @@ import {
   ArrowRight,
   GitBranch,
 } from 'lucide-react'
-import * as Icons from 'lucide-react'
+import { resolveAgentIcon } from '../lib/agentIcons'
 import { useAgents } from '../lib/useAgents'
 import OutputRenderer from '../components/OutputRenderer'
 import ApiKeyBar from '../components/ApiKeyBar'
@@ -373,7 +373,7 @@ export default function WorkflowRunner() {
 
       {/* Input */}
       <div className="mb-4">
-        <label className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1.5">
+        <label htmlFor="workflow-input" className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1.5">
           Your Input <span className="text-zinc-400">*</span>
           <span className="ml-1 dark:text-text-muted text-gray-400 font-normal">
             — passed to the first agent, then chained through each step
@@ -451,7 +451,7 @@ export default function WorkflowRunner() {
             const IconComponent =
               step.kind === 'conditional'
                 ? GitBranch
-                : (step.agent && Icons[step.agent.icon]) || Icons.Bot
+                : resolveAgentIcon(step.agent?.icon)
             return (
               <div
                 key={step.agentId + index}

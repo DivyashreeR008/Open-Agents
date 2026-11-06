@@ -4,7 +4,7 @@ import {
   Clock, Play, Trash2, ToggleLeft, ToggleRight, ArrowLeft,
   CheckCircle2, AlertCircle, Zap, ShieldCheck, Mail, Edit3,
   Calendar, Layers, FileText, Download, Copy, Check, Loader2,
-  RefreshCw, Send
+  RefreshCw, Send, CalendarX, SkipForward
 } from 'lucide-react'
 import {
   getAutomation, getRunsForAutomation, toggleAutomation,
@@ -14,6 +14,9 @@ import {
 import { useDocumentTitle } from '../lib/useDocumentTitle'
 import AutomationRunDrawer from '../components/AutomationRunDrawer'
 import CreateAutomationModal from '../components/CreateAutomationModal'
+import {
+  MISSED_RUN_POLICIES, describeUnexecutedRun, isUnexecutedRun, normalizeMissedPolicy, summarizeHistory
+} from '../lib/missedRuns'
 
 export default function AutomationDetailPage() {
   const { id } = useParams()
@@ -120,12 +123,15 @@ export default function AutomationDetailPage() {
     reloadData()
   }
 
-  // Stats calculation
-  const totalRuns = runs.length
-  const successfulRuns = runs.filter(r => r.status === 'success').length
+  // Stats calculation. Missed and skipped windows did not run, so they are not part of these.
+  const executedRuns = runs.filter(r => !isUnexecutedRun(r))
+  const history = summarizeHistory(runs)
+  const missedPolicy = MISSED_RUN_POLICIES.find(p => p.value === normalizeMissedPolicy(automation.missedPolicy))
+  const totalRuns = executedRuns.length
+  const successfulRuns = executedRuns.filter(r => r.status === 'success').length
   const successRate = totalRuns > 0 ? Math.round((successfulRuns / totalRuns) * 100) : 100
   const avgDuration = totalRuns > 0
-    ? (runs.reduce((acc, cur) => acc + (cur.duration || 0), 0) / totalRuns / 1000).toFixed(2)
+    ? (executedRuns.reduce((acc, cur) => acc + (cur.duration || 0), 0) / totalRuns / 1000).toFixed(2)
     : '0.00'
 
   const formatDate = (ts) => {
@@ -294,6 +300,16 @@ export default function AutomationDetailPage() {
       {/* Tab 1: Execution History Table */}
       {activeTab === 'history' && (
         <div className="space-y-4">
+          {runs.length > 0 && (
+            <p id="history-summary" className="text-xs text-gray-500 dark:text-gray-400">
+              <strong className="text-gray-900 dark:text-white tabular-nums">{history.ran}</strong> ran
+              {' · '}
+              <strong className="text-gray-900 dark:text-white tabular-nums">{history.skipped}</strong> skipped
+              {' · '}
+              <strong className="text-gray-900 dark:text-white tabular-nums">{history.missed}</strong> missed
+              <span className="text-gray-400"> (missed: due while the app was not running)</span>
+            </p>
+          )}
           {runs.length === 0 ? (
             <div className="text-center py-16 border dark:border-border border-gray-200 dark:bg-surface-card bg-white p-8">
               <Clock size={28} className="mx-auto mb-3 text-gray-400" />
@@ -332,19 +348,37 @@ export default function AutomationDetailPage() {
                           <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 font-semibold uppercase text-[10px] ${
                             run.status === 'success' ? 'bg-zinc-500/15 text-zinc-500' :
                             run.status === 'running' ? 'bg-zinc-500/15 text-zinc-500' :
+                            isUnexecutedRun(run) ? 'border border-dashed border-zinc-500/50 text-zinc-500' :
                             'bg-zinc-500/15 text-zinc-500'
                           }`}>
                             {run.status === 'success' && <CheckCircle2 size={11} />}
                             {run.status === 'running' && <Loader2 size={11} className="animate-spin" />}
                             {run.status === 'failed' && <AlertCircle size={11} />}
+                            {run.status === 'missed' && <CalendarX size={11} />}
+                            {run.status === 'skipped' && <SkipForward size={11} />}
                             <span>{run.status}</span>
                           </span>
+                          {run.catchUp && (
+                            <span className="ml-1.5 text-[10px] font-semibold uppercase text-gray-500" title="Run late, to catch up for a window that was missed">
+                              catch-up
+                            </span>
+                          )}
                         </td>
                         <td className="px-5 py-3.5 font-medium text-gray-700 dark:text-gray-300">
                           {formatDate(run.startedAt)}
+                          {isUnexecutedRun(run) && (
+                            <span className="block text-[11px] font-normal text-gray-500 dark:text-gray-400">
+                              {describeUnexecutedRun(run).title}
+                            </span>
+                          )}
+                          {run.catchUp && run.scheduledFor && (
+                            <span className="block text-[11px] font-normal text-gray-500 dark:text-gray-400">
+                              was due {formatDate(run.scheduledFor)}
+                            </span>
+                          )}
                         </td>
                         <td className="px-5 py-3.5 font-mono text-gray-600 dark:text-gray-400">
-                          {(run.duration / 1000).toFixed(2)}s
+                          {isUnexecutedRun(run) ? '—' : `${(run.duration / 1000).toFixed(2)}s`}
                         </td>
                         <td className="px-5 py-3.5 font-mono text-gray-600 dark:text-gray-400">
                           {run.tokens || '—'}
@@ -367,7 +401,7 @@ export default function AutomationDetailPage() {
                               }}
                               className="px-2.5 py-1 text-xs font-semibold bg-zinc-500/10 text-zinc-900 hover:bg-zinc-500/20 dark:text-white transition-colors"
                             >
-                              Inspect Output
+                              {isUnexecutedRun(run) ? 'Details' : 'Inspect Output'}
                             </button>
                             <button
                               onClick={(e) => handleDeleteRun(run.id, e)}
@@ -410,6 +444,18 @@ export default function AutomationDetailPage() {
               ) : (
                 <p className="text-xs text-gray-400">No static inputs configured for this agent.</p>
               )}
+            </div>
+
+            <div>
+              <h3 className="text-sm font-bold dark:text-white text-gray-900 uppercase tracking-wider mb-2">
+                Missed Runs
+              </h3>
+              <p id="missed-policy" className="text-xs dark:text-gray-200 text-gray-800">
+                <strong>{missedPolicy.label}.</strong> {missedPolicy.description}
+              </p>
+              <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1">
+                Scheduled runs only happen while this app is open. Use Edit to change what happens to runs that were due while it was closed.
+              </p>
             </div>
 
             {automation.systemPrompt && (

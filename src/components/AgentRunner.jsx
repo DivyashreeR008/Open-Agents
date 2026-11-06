@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { recordAnalyticsRun } from "../lib/useAnalytics";
 import { useNavigate, Link } from "react-router-dom";
-import * as Icons from "lucide-react";
 import CustomSelect from "./CustomSelect";
 import {
   Loader2,
@@ -19,6 +18,7 @@ import {
   Layers,
   History,
 } from "lucide-react";
+import { resolveAgentIcon } from "../lib/agentIcons";
 import ApiKeyBar from "./ApiKeyBar";
 import ApiKeyInfo from "./ApiKeyInfo";
 import OutputRenderer from "./OutputRenderer";
@@ -460,7 +460,7 @@ const handleRun = async () => {
     });
   };
 
-  const IconComponent = Icons[agent.icon] || Icons.Bot;
+  const IconComponent = resolveAgentIcon(agent.icon);
   const supportsBatchMode = agent.inputs.some((i) =>
     ["text", "textarea", "code"].includes(i.type)
   );
@@ -625,6 +625,7 @@ const handleRun = async () => {
             {input.type === "text" && (
               <div className="relative">
                 <input
+                  aria-label={input.label}
                   type="text"
                   value={inputs[input.id] || ""}
                   onChange={(e) => updateInput(input.id, e.target.value)}
@@ -642,6 +643,7 @@ const handleRun = async () => {
             {input.type === "textarea" && (
               <div className="relative flex flex-col gap-1">
                 <textarea
+                  aria-label={input.label}
   ref={(el) => {
     textareaRefs.current[input.id] = el;
   }}
@@ -687,6 +689,7 @@ const handleRun = async () => {
             {input.type === "code" && (
               <div className="relative">
                 <textarea
+                  aria-label={input.label}
                   value={inputs[input.id] || ""}
                   onChange={(e) => updateInput(input.id, e.target.value)}
                   placeholder={input.placeholder}
@@ -714,6 +717,7 @@ const handleRun = async () => {
 
             {input.type === "select" && (
               <CustomSelect
+                label={input.label}
                 value={inputs[input.id] || input.defaultValue || ""}
                 onChange={(val) => updateInput(input.id, val)}
                 options={input.options || []}
@@ -843,6 +847,7 @@ const handleRun = async () => {
             </div>
             <div className="relative">
               <textarea
+                aria-label="Custom system prompt"
                 value={customPrompt}
                 onChange={(e) => setCustomPrompt(e.target.value)}
                 rows={10}
@@ -1109,6 +1114,7 @@ const handleRun = async () => {
 {showModelSwitcher && (
   <div className="mt-3 p-4 border flex flex-wrap gap-3 items-center">
 <CustomSelect
+      label="Provider"
       value={provider}
       onChange={setProvider}
       options={[
@@ -1120,6 +1126,7 @@ const handleRun = async () => {
     />
 
     <CustomSelect
+      label="Model"
       value={selectedModel}
       onChange={setSelectedModel}
       options={MODELS[provider] || []}

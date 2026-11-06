@@ -172,6 +172,7 @@ export default function ApiKeyBar({
       <div className="flex flex-wrap items-center gap-2">
         {/* Provider Select with Logo */}
         <CustomSelect
+          label="Provider"
           value={provider}
           onChange={setProvider}
           options={availableProviders}
@@ -181,6 +182,7 @@ export default function ApiKeyBar({
 
         {/* Model Select */}
         <CustomSelect
+          label="Model"
           value={model}
           onChange={setModel}
           options={availableModels.map(m => ({ value: m.value, label: m.label }))}
@@ -193,6 +195,7 @@ export default function ApiKeyBar({
         {/* API Key Input */}
         <div className="flex-1 min-w-[180px] relative">
           <input
+            aria-label="API key"
             type={showKey ? 'text' : 'password'}
             value={apiKey}
             onChange={(e) => {

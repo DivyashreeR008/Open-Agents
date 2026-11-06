@@ -9,6 +9,7 @@ export default {
   provider: "any",
   defaultProvider: "openai",
   model: "gpt-4o",
+  outputType: "markdown",
   exampleInputs: {
     request:
       "POST to https://api.example.com/v1/users to create a user with JSON body { name, email }",

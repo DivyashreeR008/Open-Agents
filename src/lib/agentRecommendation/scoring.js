@@ -129,10 +129,25 @@ export function scoreAgent(agent = {}, preferences = {}, weights = DEFAULT_RECOM
 }
 
 export function getMaxPossibleScore(preferences = {}, weights = DEFAULT_RECOMMENDATION_WEIGHTS) {
+  const categories = Array.isArray(preferences.categories) ? preferences.categories : []
+  const goalCategories = getGoal(preferences.primaryGoal)?.categories?.length || 0
   const extras = Array.isArray(preferences.extraPreferences) ? preferences.extraPreferences.length : 0
   const taskCount = getGoal(preferences.primaryGoal)?.taskTypes?.length || 0
   const freeTextTokenCount = tokenizeFreeText(preferences.freeTextGoal).length
-  return weights.exactCategory + weights.goalCategory + Math.max(1, taskCount) * weights.taskType + extras * (weights.capabilityKeyword ?? 0) + weights.providerExact + weights.freeTextName * freeTextTokenCount + weights.experience + weights.urgency
+  const hasProviderPreference = Boolean(preferences.providerPreference) && preferences.providerPreference !== 'any'
+  const hasExperiencePreference = Boolean(preferences.experienceLevel) && preferences.experienceLevel !== 'any'
+  const hasUrgencyPreference = preferences.budgetPreference === 'fast' || preferences.budgetPreference === 'capable'
+
+  return (
+    (categories.length ? weights.exactCategory : 0) +
+    (goalCategories ? weights.goalCategory : 0) +
+    taskCount * weights.taskType +
+    extras * (weights.capabilityKeyword ?? 0) +
+    (hasProviderPreference ? weights.providerExact : 0) +
+    freeTextTokenCount * weights.freeTextName +
+    (hasExperiencePreference ? weights.experience : 0) +
+    (hasUrgencyPreference ? weights.urgency : 0)
+  )
 }
 
 export function recommendAgents(agents = [], preferences = {}, options = {}) {
@@ -149,6 +164,9 @@ export function recommendAgents(agents = [], preferences = {}, options = {}) {
       isConfident: result.score >= (options.minScore ?? MIN_CONFIDENT_SCORE),
       matchPercentage: normalizeScore(result.score, maxScore),
     }))
+    // A ranked list is an assertion of relevance. Entries with no matched
+    // signal belong in the catalogue, not in the recommendation results.
+    .filter((result) => result.score > 0)
     .sort((a, b) => b.score - a.score || Number(Boolean(b.matchedSignals.exactCategory)) - Number(Boolean(a.matchedSignals.exactCategory)) || Number(Boolean(b.matchedSignals.provider)) - Number(Boolean(a.matchedSignals.provider)) || String(a.agent.name).localeCompare(String(b.agent.name)))
     .slice(0, limit)
     .map(({ agent, ...result }) => result)

@@ -1,5 +1,5 @@
 import { BookOpen, GitPullRequest, AlertCircle, MessageSquare, ExternalLink } from 'lucide-react'
-import Github from '../icons/Github'
+import GitHubIcon from '../GitHubIcon'
 
 export default function AboutResources() {
   const resources = [
@@ -7,7 +7,7 @@ export default function AboutResources() {
       title: 'GitHub Repository',
       description: 'Explore the full codebase, star the project, or fork your own copy.',
       url: 'https://github.com/DivyashreeR008/Open-Agents',
-      icon: Github,
+      icon: GitHubIcon,
       tag: 'Source Code',
     },
     {

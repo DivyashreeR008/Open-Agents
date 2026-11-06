@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { inertBackground } from './useInertBackground'
 
 const FOCUSABLE = [
   'a[href]',
@@ -45,6 +46,12 @@ export function useDialogFocus(containerRef, { active = true, onClose } = {}) {
       focusWithoutScroll(target)
     }
 
+    // Focus the panel before hiding the background. Setting inert on an
+    // ancestor of the focused opener can blur it, which would make the saved
+    // opener body and lose the return target. Cleanup restores the background
+    // first so the opener is focusable again when focus returns to it.
+    const restoreBackground = inertBackground(container)
+
     const onKeyDown = (event) => {
       if (event.key === 'Escape') {
         event.preventDefault()
@@ -74,6 +81,7 @@ export function useDialogFocus(containerRef, { active = true, onClose } = {}) {
     window.addEventListener('keydown', onKeyDown)
     return () => {
       window.removeEventListener('keydown', onKeyDown)
+      restoreBackground()
       if (opener instanceof HTMLElement && opener !== document.body && opener.isConnected) {
         focusWithoutScroll(opener)
       }

@@ -1,7 +1,10 @@
 import { BarChart3, BookOpen, Briefcase, Code2, Image, PenLine, Search, Workflow } from 'lucide-react'
 
 export const RESULT_LIMIT = 10
-export const MIN_CONFIDENT_SCORE = 12
+// A single task-type match is worth 18, so the old 12-point threshold marked a
+// list confident on one hit. Thirty requires a direct category match or a
+// combination of several independent signals.
+export const MIN_CONFIDENT_SCORE = 30
 
 export const DEFAULT_RECOMMENDATION_WEIGHTS = {
   exactCategory: 30,

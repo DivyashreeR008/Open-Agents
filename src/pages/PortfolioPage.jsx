@@ -1,7 +1,8 @@
-import { useDocumentTitle } from '../lib/useDocumentTitle'
+﻿import { useDocumentTitle } from '../lib/useDocumentTitle'
 import { Link } from 'react-router-dom'
 import { ArrowRight, ArrowUpRight, Mail } from 'lucide-react'
-import Github from '../components/icons/Github'
+
+import GitHubIcon from '../components/GitHubIcon'
 import { useAgents } from '../lib/useAgents'
 import { CATEGORIES } from '../agents/categories'
 
@@ -77,7 +78,7 @@ export default function PortfolioPage() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 border border-white/25 px-5 py-2.5 text-sm font-medium hover:border-white hover:bg-white/5 transition-colors"
               >
-                <Github size={15} /> Source code
+                <GitHubIcon size={15} /> Source code
               </a>
             </div>
             <dl className="mt-14 grid grid-cols-3 max-w-lg gap-6 border-t border-white/10 pt-6">
@@ -178,7 +179,7 @@ export default function PortfolioPage() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 border border-white/25 px-4 py-2.5 hover:border-white hover:bg-white/5 transition-colors"
               >
-                <Github size={14} /> DivyashreeR008/Open-Agents
+                <GitHubIcon size={14} /> DivyashreeR008/Open-Agents
               </a>
               <a
                 href="mailto:hello@openagents.dev"
