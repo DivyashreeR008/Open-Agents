@@ -26,19 +26,27 @@ useDocumentTitle(agent?.name ?? 'Agent')
 useEffect(() => {
 if (!agent) return
 
-const existing = JSON.parse(
-  localStorage.getItem('recentAgents') || '[]'
-)
+let existing = []
+
+try {
+  const parsed = JSON.parse(localStorage.getItem('recentAgents') || '[]')
+  existing = Array.isArray(parsed)
+    ? parsed.filter((item) => typeof item === 'string')
+    : []
+} catch {
+  existing = []
+}
 
 const updated = [
   agent.id,
   ...existing.filter((item) => item !== agent.id),
 ].slice(0, 5)
 
-localStorage.setItem(
-  'recentAgents',
-  JSON.stringify(updated)
-)
+try {
+  localStorage.setItem('recentAgents', JSON.stringify(updated))
+} catch {
+  // Recent tracking is optional; storage can be blocked or full.
+}
 
 }, [agent])
 

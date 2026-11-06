@@ -7,7 +7,15 @@ const MAX_HISTORY = 10;
 function loadHistory() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : [];
+    if (!saved) return [];
+    const parsed = JSON.parse(saved);
+    if (!Array.isArray(parsed)) return [];
+    // Older builds and hand-edited storage can contain nulls or primitives.
+    // The recent-runs list maps over every entry, so keep only records that
+    // can safely be rendered and deleted.
+    return parsed.filter(
+      (entry) => entry && typeof entry === 'object' && !Array.isArray(entry)
+    );
   } catch (error) {
     console.error('Error loading history from localStorage:', error);
     return [];

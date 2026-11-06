@@ -6,7 +6,7 @@
  * runtime regression fails loudly.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter, useLocation } from 'react-router-dom'
 
 const agents = [
@@ -162,7 +162,7 @@ describe('HomePage', () => {
       target: { value: 'zzzz-nothing' },
     })
 
-    expect(screen.getByText(/no agents match/i)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /no agents match/i })).toBeInTheDocument()
   })
 
   it('surfaces favourites in the pinned strip', () => {
@@ -172,5 +172,53 @@ describe('HomePage', () => {
     expect(screen.getByText('Pinned')).toBeInTheDocument()
     // Once in the pinned strip, once in the index.
     expect(screen.getAllByText('Alpha Agent')).toHaveLength(2)
+  })
+})
+
+describe('HomePage result collection semantics', () => {
+  it('exposes the index as a labelled list with one item per visible agent', () => {
+    renderPage()
+
+    const list = screen.getByRole('list', { name: 'Agent catalogue, index view' })
+    expect(within(list).getAllByRole('listitem')).toHaveLength(2)
+    expect(screen.getByRole('status', { name: 'Agent catalogue status' })).toHaveTextContent('2 agents are in the catalogue.')
+  })
+
+  it('switches the list label with the view and keeps item boundaries', () => {
+    renderPage()
+
+    fireEvent.click(screen.getByRole('button', { name: /grid view/i }))
+
+    const list = screen.getByRole('list', { name: 'Agent catalogue, grid view' })
+    expect(within(list).getAllByRole('listitem')).toHaveLength(2)
+  })
+
+  it('announces the filtered count when the collection shrinks', () => {
+    renderPage()
+
+    fireEvent.change(screen.getByPlaceholderText(/search agents/i), {
+      target: { value: 'draws' },
+    })
+
+    expect(screen.getByRole('status', { name: 'Agent catalogue status' })).toHaveTextContent('1 agent matches the current filters.')
+    expect(
+      within(screen.getByRole('list', { name: 'Agent catalogue, index view' })).getAllByRole(
+        'listitem'
+      )
+    ).toHaveLength(1)
+  })
+
+  it('announces an empty collection instead of leaving blank space', () => {
+    renderPage()
+
+    fireEvent.change(screen.getByPlaceholderText(/search agents/i), {
+      target: { value: 'zzzz-nothing' },
+    })
+
+    expect(screen.getByRole('status', { name: 'Agent catalogue status' })).toHaveTextContent(
+      'No agents match the current search and filters.'
+    )
+    expect(screen.queryByRole('list')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /no agents match/i })).toBeInTheDocument()
   })
 })

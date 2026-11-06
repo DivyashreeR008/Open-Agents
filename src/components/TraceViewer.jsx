@@ -70,7 +70,10 @@ function TracePayload({ label, value }) {
         {label}
       </p>
       <pre
-        className="text-xs p-2.5 overflow-x-auto whitespace-pre-wrap break-words max-h-64 overflow-y-auto dark:bg-surface-hover dark:text-text-secondary bg-gray-50 text-gray-700"
+        role="region"
+        tabIndex={0}
+        aria-label={`${label} payload, scrollable`}
+        className="text-xs p-2.5 overflow-x-auto whitespace-pre-wrap break-words max-h-64 overflow-y-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 dark:bg-surface-hover dark:text-text-secondary bg-gray-50 text-gray-700"
       >
         {value}
       </pre>

@@ -1,12 +1,23 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Sun, Moon, Menu, X, HelpCircle, DollarSign, RotateCcw, Settings, PanelLeft, ExternalLink } from 'lucide-react'
-import Github from './icons/Github'
 
+import GitHubIcon from './GitHubIcon'
 import Logo from './Logo'
 import KeyboardShortcutsModal from './KeyboardShortcutsModal'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 import { useSessionSpend } from '../lib/useSessionSpend'
+import { formatCost } from '../lib/formatting'
+
+function updateThemeMeta(isDark) {
+  if (typeof document === 'undefined') return
+  const metaTags = document.querySelectorAll('meta[name="theme-color"]')
+  metaTags.forEach((tag) => {
+    if (!tag.hasAttribute('media')) {
+      tag.setAttribute('content', isDark ? '#000000' : '#ffffff')
+    }
+  })
+}
 
 function updateThemeMeta(isDark) {
   if (typeof document === 'undefined') return
@@ -23,7 +34,7 @@ function updateThemeMeta(isDark) {
  * global search affordance, and the account/utility actions. Primary
  * navigation lives in the Sidebar so this row never gets crowded.
  */
-export default function Navbar({ sidebarOpen, setSidebarOpen }) {
+export default function Navbar({ sidebarOpen, setSidebarOpen, onOpenCommandPalette }) {
   const [darkMode, setDarkMode] = useState(true)
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -63,19 +74,20 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
     }
   }
 
-  const focusGlobalSearch = () => {
+  const handleSearchClick = () => {
     setMobileMenuOpen(false)
+    if (onOpenCommandPalette) {
+      onOpenCommandPalette()
+      return
+    }
 
-    // Focus synchronously when the catalogue is already mounted. This keeps
-    // the mobile keyboard opening from the original tap gesture.
+    // Fallback: Focus synchronously when the catalogue is already mounted.
     const input = document.getElementById('agent-search')
     if (input) {
       input.focus()
       return
     }
 
-    // The catalogue is lazy-loaded, so hand focus intent to HomePage via
-    // router state and let it focus once the search field exists.
     navigate('/agents', { state: { focusSearch: true } })
   }
 
@@ -103,19 +115,19 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
 
           <span className="mx-1 hidden h-4 w-px shrink-0 bg-zinc-200 dark:bg-border sm:block" aria-hidden="true" />
 
-          {/* Global search — the primary way into the product */}
+          {/* Global search / Command Palette trigger */}
           <button
             type="button"
-            onClick={focusGlobalSearch}
+            onClick={handleSearchClick}
             className="group hidden h-8 min-w-0 flex-1 max-w-xs items-center gap-2 border px-2.5 text-left transition-colors sm:flex border-zinc-200 bg-zinc-50/60 hover:border-zinc-300 hover:bg-white dark:border-border dark:bg-surface-card/60 dark:hover:border-border-light dark:hover:bg-surface-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500"
-            aria-label="Search agents"
+            aria-label="Search agents, workflows, settings (Ctrl+K)"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 shrink-0 text-zinc-400 dark:text-text-muted" aria-hidden="true">
               <circle cx="11" cy="11" r="7" />
               <path d="m20 20-3.5-3.5" />
             </svg>
-            <span className="truncate text-[13px] text-zinc-400 dark:text-text-muted">Search agents…</span>
-            <span className="kbd ml-auto hidden md:inline-flex">/</span>
+            <span className="truncate text-[13px] text-zinc-400 dark:text-text-muted">Jump to agent, workflow…</span>
+            <span className="kbd ml-auto hidden md:inline-flex font-mono">⌘K</span>
           </button>
 
           <div className="ml-auto flex shrink-0 items-center gap-1">
@@ -126,7 +138,7 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
               aria-label="Star Open Agents on GitHub (opens in new tab)"
               className="btn-secondary hidden h-8 sm:inline-flex"
             >
-              <Github size={14} aria-hidden="true" />
+              <GitHubIcon size={14} aria-hidden="true" />
               <span className="hidden lg:inline">Star</span>
               <ExternalLink size={12} aria-hidden="true" />
             </a>
@@ -147,7 +159,7 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
                   aria-label="Session spend"
                 >
                   <DollarSign size={11} />
-                  {totalSpend.toFixed(2)}
+                  {formatCost(totalSpend, { symbol: false })}
                 </button>
 
                 {showSpendPopup && (
@@ -159,13 +171,13 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
                       </span>
                     </div>
                     <div className="mb-2 font-mono text-lg font-semibold tabular-nums text-zinc-900 dark:text-text-primary">
-                      ${totalSpend.toFixed(4)}
+                      {formatCost(totalSpend)}
                     </div>
                     <div className="mb-2 max-h-32 space-y-1 overflow-y-auto">
                       {runs.slice(0, 10).map((run, i) => (
                         <div key={i} className="flex justify-between font-mono text-[10px] text-zinc-400 dark:text-text-muted">
                           <span className="max-w-[140px] truncate">{run.model || 'Unknown'}</span>
-                          <span className="tabular-nums">${run.totalCost.toFixed(4)}</span>
+                          <span className="tabular-nums">{formatCost(run.totalCost)}</span>
                         </div>
                       ))}
                     </div>
@@ -215,12 +227,16 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
           }`}
         >
           <div className="p-2">
-            <button type="button" onClick={focusGlobalSearch} className="field flex items-center gap-2 text-left text-zinc-400 dark:text-text-muted">
+            <button
+              type="button"
+              onClick={handleSearchClick}
+              className="field flex items-center gap-2 text-left text-zinc-400 dark:text-text-muted"
+            >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5" aria-hidden="true">
                 <circle cx="11" cy="11" r="7" />
                 <path d="m20 20-3.5-3.5" />
               </svg>
-              Search agents…
+              Jump to agent, workflow…
             </button>
             <div className="mt-2 grid grid-cols-2 gap-1.5">
               <a
@@ -229,7 +245,7 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
                 rel="noopener noreferrer"
                 className="btn-secondary"
               >
-                <Github size={14} aria-hidden="true" />
+                <GitHubIcon size={14} aria-hidden="true" />
                 Star
                 <ExternalLink size={12} aria-hidden="true" />
                 <span className="sr-only">(opens in new tab)</span>

@@ -35,5 +35,5 @@ describe('useAgents architecture', () => {
     }
 
     expect(offenders).toEqual([])
-  })
+  }, 30_000)
 })

@@ -18,10 +18,12 @@ changelog tooling is planned but not yet in place (see ROADMAP.md, section 6).
 ## [Unreleased]
 
 ### Added
+- Global command palette accessible via Ctrl/Cmd+K to jump directly to agents, collections, workflows, and settings pages (#473).
 - Changelog maintenance process documented; entries are added as changes ship.
 - Release and tagging policy (`RELEASING.md`), release notes template and generated release notes configuration (`.github/release.yml`).
 - Collections can be exported to a JSON file, imported back with a validated preview, and duplicated from the Collections page (#151).
 - Imported marketplace drafts can now be listed, opened, completed, run and removed from `/marketplace/drafts` (#133).
+- Documented merge requirements and quality gates in [MERGE_REQUIREMENTS.md](MERGE_REQUIREMENTS.md), covering automated CI status checks, codeowner review routing, branch freshness rules, failure surfaces, and process synchronization (#401).
 - Scheduled automations now detect runs that were due while the app was closed. They are recorded in the history as missed (or skipped, when the app was open but a run could not start), shown in a notice on the Automations page, and each automation has a setting for what to do about them: run once (the previous behaviour), catch up with up to 3 runs, or skip (#94).
 - PWA Web App Manifest and Service Worker with offline caching for built static assets, update availability banner, and dark/light theme colors (#474).
 

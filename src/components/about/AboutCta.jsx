@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Sparkles, GitPullRequest, ArrowRight, PlusCircle, ExternalLink } from 'lucide-react'
-import Github from '../icons/Github'
+import GitHubIcon from '../GitHubIcon'
 
 export default function AboutCta() {
   return (
@@ -41,7 +41,7 @@ export default function AboutCta() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 h-8 px-3 text-sm font-bold text-zinc-200 bg-white/5 hover:bg-white/10 border border-zinc-400/25 transition-colors duration-300"
           >
-            <Github size={16} />
+            <GitHubIcon size={16} />
             <span>Star on GitHub</span>
             <ExternalLink size={12} aria-hidden="true" />
             <span className="sr-only">(opens in new tab)</span>

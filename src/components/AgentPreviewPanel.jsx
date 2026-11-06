@@ -1,6 +1,6 @@
 import { useState } from "react";
-import * as Icons from "lucide-react";
 import { ChevronDown, ChevronRight, FileCode2 } from "lucide-react";
+import { resolveAgentIcon } from "../lib/agentIcons";
 
 const providerLabels = {
   openai: "OpenAI",
@@ -20,7 +20,7 @@ const typeLabels = {
 
 export default function AgentPreviewPanel({ agent }) {
   const [promptOpen, setPromptOpen] = useState(false);
-  const IconComponent = Icons[agent.icon] || Icons.Bot;
+  const IconComponent = resolveAgentIcon(agent.icon);
 
   return (
     <div className="space-y-4 animate-fade-in">

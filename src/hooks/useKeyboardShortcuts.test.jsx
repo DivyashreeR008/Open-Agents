@@ -55,6 +55,15 @@ describe('useKeyboardShortcuts', () => {
     expect(run).toHaveBeenCalledTimes(1)
   })
 
+  it('fires Control+k and treats Cmd+K identically without clashing with existing bindings', () => {
+    const open = vi.fn((e) => e.preventDefault())
+    render(<Harness shortcuts={{ 'Control+k': open, 'Control+K': open }} />)
+    fireEvent.keyDown(document.body, { key: 'k', ctrlKey: true })
+    expect(open).toHaveBeenCalledTimes(1)
+    fireEvent.keyDown(document.body, { key: 'K', metaKey: true })
+    expect(open).toHaveBeenCalledTimes(2)
+  })
+
   it('treats Cmd (metaKey) the same as Control', () => {
     const run = vi.fn()
     render(<Harness shortcuts={{ 'Control+Enter': run }} />)
@@ -164,7 +173,7 @@ describe('KeyboardShortcutsModal help listing', () => {
 
   it('lists the documented shortcuts when open', () => {
     render(<KeyboardShortcutsModal isOpen onClose={() => {}} />)
-    for (const key of ['Ctrl + Enter', '/', 'Esc', 'Alt + 1 / 2 / 3', '?']) {
+    for (const key of ['Ctrl / Cmd + K', 'Ctrl + Enter', '/', 'Esc', 'Alt + 1 / 2 / 3', '?']) {
       expect(screen.getByText(key)).toBeInTheDocument()
     }
   })
