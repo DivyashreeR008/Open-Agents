@@ -163,7 +163,8 @@ export function checkBundleSize(options = {}) {
 // When executed directly via node scripts/check-bundle-size.mjs
 const isDirectRun =
   process.argv[1] &&
-  path.resolve(process.argv[1]) === path.resolve(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'))
+  path.resolve(process.argv[1]) ===
+    path.resolve(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'))
 
 if (isDirectRun || process.argv.includes('--run')) {
   try {
@@ -174,7 +175,9 @@ if (isDirectRun || process.argv.includes('--run')) {
     result.pageChunks
       .sort((a, b) => b.rawSize - a.rawSize)
       .forEach((chunk) => {
-        console.log(`  • ${chunk.name.padEnd(35)} ${chunk.rawKb.padStart(8)} kB  (gzip: ${chunk.gzipKb.padStart(7)} kB)`)
+        console.log(
+          `  • ${chunk.name.padEnd(35)} ${chunk.rawKb.padStart(8)} kB  (gzip: ${chunk.gzipKb.padStart(7)} kB)`
+        )
       })
 
     console.log('\n--- Main Entry Chunk ---')

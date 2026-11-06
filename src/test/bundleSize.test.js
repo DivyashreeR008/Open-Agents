@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { checkBundleSize, DEFAULT_BUDGETS, ROUTE_PAGE_NAMES } from '../../scripts/check-bundle-size.mjs'
+import {
+  checkBundleSize,
+  DEFAULT_BUDGETS,
+  ROUTE_PAGE_NAMES,
+} from '../../scripts/check-bundle-size.mjs'
 
 describe('Bundle Size Budget and Route Code Splitting', () => {
   it('passes bundle size check against default agreed budgets', () => {
