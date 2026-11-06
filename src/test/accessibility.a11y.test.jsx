@@ -4,11 +4,20 @@ import { describe, it, vi } from 'vitest'
 import AgentCard from '../components/AgentCard'
 import CustomSelect from '../components/CustomSelect'
 import Navbar from '../components/Navbar'
+import CommandPalette from '../components/CommandPalette'
 import SettingsPage from '../pages/SettingsPage'
 import { expectNoA11yViolations } from './a11y'
 
 vi.mock('../lib/useFavorites', () => ({
   useFavorites: () => ({ isFavorite: () => false, toggleFavorite: vi.fn() }),
+}))
+
+vi.mock('../lib/useAgents', () => ({
+  useAgents: () => ({ agents: [], catalogSize: 0 }),
+}))
+
+vi.mock('../lib/useCollections', () => ({
+  useCollections: () => ({ collections: [] }),
 }))
 
 const agent = {
@@ -59,6 +68,15 @@ describe('automated accessibility checks', () => {
     const { container } = render(
       <MemoryRouter>
         <SettingsPage />
+      </MemoryRouter>
+    )
+    await expectNoA11yViolations(container)
+  })
+
+  it('checks the command palette dialog for accessibility violations', async () => {
+    const { container } = render(
+      <MemoryRouter>
+        <CommandPalette isOpen={true} onClose={vi.fn()} />
       </MemoryRouter>
     )
     await expectNoA11yViolations(container)
