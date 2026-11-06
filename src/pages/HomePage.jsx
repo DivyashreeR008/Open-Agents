@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowRight, ChevronDown, Search, X, Star, History, Swords, GitBranch, Lightbulb, LayoutGrid, Rows3, ExternalLink, GitHubIcon } from 'lucide-react'
+
 import AgentCardSkeleton from '../components/AgentCardSkeleton'
 import AgentCard from '../components/AgentCard'
 import { useFavorites } from '../lib/useFavorites'
