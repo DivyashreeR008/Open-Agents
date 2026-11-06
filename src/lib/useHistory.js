@@ -1,27 +1,35 @@
-import { useState, useCallback, useEffect } from 'react'
-import { stripCredentialFields } from './secretPolicy'
+import { useState, useCallback, useEffect } from 'react';
+import { stripCredentialFields } from './secretPolicy';
 
-const STORAGE_KEY = 'OpenAgents_history'
-const MAX_HISTORY = 10
+const STORAGE_KEY = 'OpenAgents_history';
+const MAX_HISTORY = 10;
 
 function loadHistory() {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    return saved ? JSON.parse(saved) : []
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return [];
+    const parsed = JSON.parse(saved);
+    if (!Array.isArray(parsed)) return [];
+    // Older builds and hand-edited storage can contain nulls or primitives.
+    // The recent-runs list maps over every entry, so keep only records that
+    // can safely be rendered and deleted.
+    return parsed.filter(
+      (entry) => entry && typeof entry === 'object' && !Array.isArray(entry)
+    );
   } catch (error) {
-    console.error('Error loading history from localStorage:', error)
-    return []
+    console.error('Error loading history from localStorage:', error);
+    return [];
   }
 }
 
 function saveHistory(history) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(history))
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
   } catch (error) {
     if (error.name === 'QuotaExceededError') {
-      console.error('LocalStorage quota exceeded. History might be truncated.')
+      console.error('LocalStorage quota exceeded. History might be truncated.');
     } else {
-      console.error('Error saving history to localStorage:', error)
+      console.error('Error saving history to localStorage:', error);
     }
   }
 }
@@ -38,18 +46,18 @@ function saveHistory(history) {
  * write silently overwrites the other's runs.
  */
 export const useHistory = () => {
-  const [history, setHistory] = useState(() => loadHistory())
+  const [history, setHistory] = useState(() => loadHistory());
 
   // Pick up writes made by other tabs/windows to the same key.
   useEffect(() => {
     const handleStorage = (e) => {
       if (e.key === STORAGE_KEY) {
-        setHistory(loadHistory())
+        setHistory(loadHistory());
       }
-    }
-    window.addEventListener('storage', handleStorage)
-    return () => window.removeEventListener('storage', handleStorage)
-  }, [])
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
 
   /**
    * Save a new run to history.
@@ -58,43 +66,43 @@ export const useHistory = () => {
    *   Pass runId to reuse the same id in analytics so the run is not counted twice.
    */
   const saveRun = useCallback(({ runId, ...run }) => {
-    const timestamp = Date.now()
+    const timestamp = Date.now();
     const newRun = {
       ...stripCredentialFields(run),
       id: runId || `${run.agentId}_${timestamp}`,
       timestamp,
-    }
+    };
 
     // Merge against the current on-disk value, not stale in-memory state,
     // so a concurrent write (another tab, or a near-simultaneous call)
     // isn't silently discarded.
-    const updatedHistory = [newRun, ...loadHistory()].slice(0, MAX_HISTORY)
-    saveHistory(updatedHistory)
-    setHistory(updatedHistory)
-  }, [])
+    const updatedHistory = [newRun, ...loadHistory()].slice(0, MAX_HISTORY);
+    saveHistory(updatedHistory);
+    setHistory(updatedHistory);
+  }, []);
 
   /**
    * Delete a specific run from history.
    * @param {string} runId - The unique ID of the run to delete.
    */
   const deleteRun = useCallback((runId) => {
-    const updatedHistory = loadHistory().filter((run) => run.id !== runId)
-    saveHistory(updatedHistory)
-    setHistory(updatedHistory)
-  }, [])
+    const updatedHistory = loadHistory().filter((run) => run.id !== runId);
+    saveHistory(updatedHistory);
+    setHistory(updatedHistory);
+  }, []);
 
   /**
    * Clear all history from state and localStorage.
    */
   const clearHistory = useCallback(() => {
-    saveHistory([])
-    setHistory([])
-  }, [])
+    saveHistory([]);
+    setHistory([]);
+  }, []);
 
   /**
    * Get the current history (optional wrapper, history state is already returned).
    */
-  const getHistory = useCallback(() => history, [history])
+  const getHistory = useCallback(() => history, [history]);
 
   return {
     history,
@@ -102,7 +110,7 @@ export const useHistory = () => {
     deleteRun,
     clearHistory,
     getHistory,
-  }
-}
+  };
+};
 
-export default useHistory
+export default useHistory;

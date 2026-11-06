@@ -436,11 +436,15 @@ describe('Recommendation Engine Test Suite (Issue #175)', () => {
   })
 
   describe('getMaxPossibleScore', () => {
-    it('calculates the theoretical maximum score for given preferences', () => {
+    it('calculates the theoretical maximum score from the preferences that were actually chosen', () => {
       const preferences = {
         primaryGoal: 'coding-development', // 4 taskTypes
+        categories: ['Engineering'],
         extraPreferences: ['tool-calling', 'vision-support'], // 2 extras
+        providerPreference: 'openai',
         freeTextGoal: 'build fast web app', // 4 tokens: 'build', 'fast', 'web', 'app'
+        experienceLevel: 'beginner',
+        budgetPreference: 'fast',
       }
       // exactCategory (30) + goalCategory (20) + 4 * taskType (18*4=72)
       // + 2 * capabilityKeyword (6*2=12) + providerExact (8)
@@ -450,10 +454,20 @@ describe('Recommendation Engine Test Suite (Issue #175)', () => {
       expect(maxScore).toBe(188)
     })
 
-    it('handles empty preferences without error and returns base max score', () => {
-      const maxScore = getMaxPossibleScore({})
-      // exactCategory(30) + goalCategory(20) + Math.max(1,0)*18(18) + 0 + 8 + 0 + 3 + 3 = 82
-      expect(maxScore).toBe(82)
+    it('does not count weights whose preference is absent or set to any', () => {
+      expect(getMaxPossibleScore({})).toBe(0)
+      expect(
+        getMaxPossibleScore({
+          categories: ['Engineering'],
+          providerPreference: 'any',
+          experienceLevel: 'any',
+          budgetPreference: 'balanced',
+        })
+      ).toBe(30)
+    })
+
+    it('counts goal categories and task types without requiring a category selection', () => {
+      expect(getMaxPossibleScore({ primaryGoal: 'coding-development' })).toBe(92)
     })
   })
 
@@ -514,48 +528,61 @@ describe('Recommendation Engine Test Suite (Issue #175)', () => {
       expect(results[0].agentId).toBe('dup-1')
     })
 
+    it('drops entries that matched no signal instead of filling the ranking', () => {
+      const results = recommendAgents(agentsList, { categories: ['DevOps'] })
+      expect(results.map((result) => result.agentId)).toEqual(['agent-1'])
+
+      expect(recommendAgents(agentsList, {})).toEqual([])
+    })
+
+    it('can report a perfect match as one hundred percent', () => {
+      const preferences = {
+        primaryGoal: 'coding-development',
+        categories: ['Engineering'],
+        extraPreferences: ['tool-calling', 'vision-support'],
+        providerPreference: 'openai',
+        freeTextGoal: 'build fast web app',
+        experienceLevel: 'beginner',
+        budgetPreference: 'fast',
+      }
+      const agent = {
+        id: 'perfect-match',
+        name: 'build fast web app',
+        category: 'Engineering',
+        provider: 'openai',
+        description: 'code debug review technical tool calling vision guide summary',
+      }
+
+      const [result] = recommendAgents([agent], preferences)
+
+      expect(result.score).toBe(getMaxPossibleScore(preferences))
+      expect(result.matchPercentage).toBe(100)
+      expect(result.isConfident).toBe(true)
+    })
+
     describe('Confidence threshold boundary', () => {
-      it('evaluates isConfident correctly across below (11), at (12), and above (13) thresholds using default weights', () => {
-        // Agent 11: providerExact (8) + experience beginner (3) = 11 points (< 12 -> false)
-        const agent11 = {
-          id: 'agent-11',
-          name: 'UnderThreshold',
+      it('requires more than one task-type hit before the list is confident', () => {
+        expect(MIN_CONFIDENT_SCORE).toBeGreaterThan(DEFAULT_RECOMMENDATION_WEIGHTS.taskType)
+        const taskOnly = {
+          id: 'task-only',
+          name: 'Incident Helper',
           category: 'Other',
-          description: 'A helpful guide.', // matches beginner experience (+3)
-          provider: 'openai', // exact provider (+8)
+          description: 'Handles incident reports.',
         }
 
-        // Agent 12: toolCalling capability (6) + visionSupport capability (6) = 12 points (== 12 -> true)
-        const agent12 = {
-          id: 'agent-12',
-          name: 'AtThreshold',
-          category: 'Other',
-          description: 'Automates tools and processes image prompts.', // matches toolCalling (6) + visionSupport (6)
-        }
+        const results = recommendAgents([taskOnly], { primaryGoal: 'coding-development' })
 
-        // Agent 13: freeTextName (10) + experience beginner (3) = 13 points (> 12 -> true)
-        const agent13 = {
-          id: 'agent-13',
-          name: 'TargetBot', // matches freeTextGoal 'targetbot' (+10)
-          category: 'Other',
-          description: 'A helpful guide.', // matches beginner experience (+3)
-        }
+        expect(results[0].score).toBe(DEFAULT_RECOMMENDATION_WEIGHTS.taskType)
+        expect(results[0].isConfident).toBe(false)
+      })
 
-        const prefs11 = { providerPreference: 'openai', experienceLevel: 'beginner' }
-        const prefs12 = { extraPreferences: ['tool-calling', 'vision-support'] }
-        const prefs13 = { freeTextGoal: 'targetbot', experienceLevel: 'beginner' }
+      it('marks a direct category match as confident', () => {
+        const agent = { id: 'category-match', name: 'Category Match', category: 'DevOps' }
 
-        const res11 = recommendAgents([agent11], prefs11)
-        expect(res11[0].score).toBe(11)
-        expect(res11[0].isConfident).toBe(false)
+        const results = recommendAgents([agent], { categories: ['DevOps'] })
 
-        const res12 = recommendAgents([agent12], prefs12)
-        expect(res12[0].score).toBe(12)
-        expect(res12[0].isConfident).toBe(true)
-
-        const res13 = recommendAgents([agent13], prefs13)
-        expect(res13[0].score).toBe(13)
-        expect(res13[0].isConfident).toBe(true)
+        expect(results[0].score).toBe(DEFAULT_RECOMMENDATION_WEIGHTS.exactCategory)
+        expect(results[0].isConfident).toBe(true)
       })
 
       it('allows overriding minScore option', () => {
@@ -799,12 +826,13 @@ describe('Recommendation Engine Test Suite (Issue #175)', () => {
       )
     })
 
-    it('generates fallback metadata focus explanation when reasons count is under 3', () => {
-      const customAgent = { id: 'a1', category: 'Productivity' }
+    it('does not pad a short reason list with generic metadata claims', () => {
+      const customAgent = { id: 'a1', category: 'Productivity', description: 'A productivity helper.' }
       const reasons = buildRecommendationReasons(customAgent, {}, { provider: 'exact' })
-      // provider: exact is reason 1; reasons.length < 3 triggers metadata focus
-      expect(reasons).toContain('Aligns with your preferred provider.')
-      expect(reasons).toContain('Agent metadata identifies its focus as Productivity.')
+
+      expect(reasons).toEqual(['Aligns with your preferred provider.'])
+      expect(reasons).not.toContain('Agent metadata identifies its focus as Productivity.')
+      expect(reasons).not.toContain('Its published description is relevant to the selected workflow.')
     })
 
     it('deduplicates and limits reasons to maximum of 4', () => {
@@ -847,10 +875,7 @@ describe('Recommendation Engine Test Suite (Issue #175)', () => {
       expect(tokenizeFreeText('c++ c#')).toEqual(['c++'])
     })
 
-    it('Defect Characterization 2: fallback explanations generate relevance claims without matched evidence', () => {
-      // Documenting existing behavior for known defect around "invented reasons" in Issue #175.
-      // When zero signals match, buildRecommendationReasons fabricates claims that the agent
-      // is a "closest available match" and its description is "relevant to the selected workflow".
+    it('Explanation integrity: an agent with no matched signals carries no justification', () => {
       const unrelatedAgent = {
         id: 'zero-1',
         name: 'PastryChef',
@@ -866,9 +891,7 @@ describe('Recommendation Engine Test Suite (Issue #175)', () => {
         freeTextTerms: [],
       }
 
-      const reasons = buildRecommendationReasons(unrelatedAgent, preferences, zeroSignals)
-      expect(reasons).toContain('Listed in Culinary; this is one of the closest available matches.')
-      expect(reasons).toContain('Its published description is relevant to the selected workflow.')
+      expect(buildRecommendationReasons(unrelatedAgent, preferences, zeroSignals)).toEqual([])
     })
 
     it('Boundary Pin 3: Normalization clamping strictly at 100% (percentage ceiling)', () => {

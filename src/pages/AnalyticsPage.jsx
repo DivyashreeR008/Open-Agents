@@ -20,6 +20,7 @@ import {
 import { useAnalytics } from '../lib/useAnalytics'
 import { useSessionSpend } from '../lib/useSessionSpend'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
+import { formatCost } from '../lib/formatting'
 
 // ── Provider colors ─────────────────────────────────────────────────────────
 const PROVIDER_COLORS = {
@@ -789,12 +790,6 @@ function RecentTimeline({ runs, navigate }) {
 
 // ── Token Usage & Cost Section ──────────────────────────────────────────────
 
-function formatSpend(cost) {
-  if (cost == null || isNaN(cost)) return '—'
-  if (cost < 0.01) return `$${cost.toFixed(4)}`
-  return `$${cost.toFixed(2)}`
-}
-
 function TokenUsageSection({ runs, totalTokens, totalSpend }) {
   const recentRuns = runs.slice(0, 10)
 
@@ -811,7 +806,7 @@ function TokenUsageSection({ runs, totalTokens, totalSpend }) {
         </div>
         <div className="p-3 dark:bg-surface-input bg-gray-50 border dark:border-border border-gray-200">
           <div className="font-display text-[17px] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-text-primary tabular-nums">
-            {formatSpend(totalSpend)}
+            {formatCost(totalSpend)}
           </div>
           <div className="text-[10px] dark:text-text-muted text-gray-400 font-medium">
             Estimated cost (session)
@@ -838,7 +833,7 @@ function TokenUsageSection({ runs, totalTokens, totalSpend }) {
               </div>
             </div>
             <div className="text-xs font-semibold dark:text-text-primary text-gray-900 tabular-nums shrink-0">
-              {formatSpend(run.totalCost)}
+              {formatCost(run.totalCost)}
             </div>
           </div>
         ))}

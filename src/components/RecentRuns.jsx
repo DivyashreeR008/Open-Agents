@@ -1,4 +1,5 @@
 import { RotateCcw, Copy, Trash2, History } from 'lucide-react'
+import { formatExactTime, formatRelativeTime, useNow } from '../lib/formatting'
 
 const providerDot = (provider) => {
   const p = provider?.toLowerCase() || ''
@@ -8,17 +9,9 @@ const providerDot = (provider) => {
   return 'bg-zinc-500'
 }
 
-const formatTimeAgo = (timestamp) => {
-  const seconds = Math.floor((Date.now() - timestamp) / 1000)
-  if (seconds < 60) return 'just now'
-  const minutes = Math.floor(seconds / 60)
-  if (minutes < 60) return `${minutes}m ago`
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
-  return `${Math.floor(hours / 24)}d ago`
-}
-
 export default function RecentRuns({ history, onRerun, onCopy, onDelete, onClearAll }) {
+  const now = useNow()
+
   if (!history || history.length === 0) {
     return (
       <div className="animate-fade-in">
@@ -69,7 +62,9 @@ export default function RecentRuns({ history, onRerun, onCopy, onDelete, onClear
                   />
                   <span className="truncate">{run.provider || 'unknown'}</span>
                   <span aria-hidden="true">·</span>
-                  <span className="shrink-0">{formatTimeAgo(run.timestamp)}</span>
+                  <time className="shrink-0" title={formatExactTime(run.timestamp)}>
+                    {formatRelativeTime(run.timestamp, now)}
+                  </time>
                 </div>
               </div>
 

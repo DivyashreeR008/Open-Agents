@@ -1,24 +1,9 @@
-import {
-  DEFAULT_RECOMMENDATION_WEIGHTS,
-  GOAL_OPTIONS,
-  EXTRA_PREFERENCE_OPTIONS,
-  STOP_WORDS,
-  RESULT_LIMIT,
-  MIN_CONFIDENT_SCORE,
-} from './constants.js'
+import { DEFAULT_RECOMMENDATION_WEIGHTS, GOAL_OPTIONS, EXTRA_PREFERENCE_OPTIONS, STOP_WORDS, RESULT_LIMIT, MIN_CONFIDENT_SCORE } from './constants.js'
 import { TASK_KEYWORDS, CAPABILITY_KEYWORDS } from './rules.js'
 import { buildRecommendationReasons } from './explanations.js'
 
-const normalize = (value) =>
-  String(value || '')
-    .trim()
-    .toLowerCase()
-const searchableText = (agent = {}) =>
-  normalize(
-    [agent.id, agent.name, agent.description, agent.category, agent.provider]
-      .filter(Boolean)
-      .join(' ')
-  )
+const normalize = (value) => String(value || '').trim().toLowerCase()
+const searchableText = (agent = {}) => normalize([agent.id, agent.name, agent.description, agent.category, agent.provider].filter(Boolean).join(' '))
 const FREE_TEXT_TOKEN_LIMIT = 12
 const termPatternCache = new Map()
 
@@ -131,44 +116,37 @@ export function scoreAgent(agent = {}, preferences = {}, weights = DEFAULT_RECOM
     }
   }
 
-  if (
-    preferences.budgetPreference === 'fast' &&
-    ['summary', 'reply', 'regex', 'email', 'tone'].some((term) => hasTerm(text, term))
-  ) {
+  if (preferences.budgetPreference === 'fast' && ['summary', 'reply', 'regex', 'email', 'tone'].some((term) => hasTerm(text, term))) {
     score += weights.urgency
     matchedSignals.preference = 'fast'
   }
-  if (
-    preferences.budgetPreference === 'capable' &&
-    ['audit', 'report', 'plan', 'architecture', 'analysis'].some((term) => hasTerm(text, term))
-  ) {
+  if (preferences.budgetPreference === 'capable' && ['audit', 'report', 'plan', 'architecture', 'analysis'].some((term) => hasTerm(text, term))) {
     score += weights.urgency
     matchedSignals.preference = 'capable'
   }
 
-  return {
-    agentId: agent?.id,
-    score,
-    matchedSignals,
-    reasons: buildRecommendationReasons(agent, preferences, matchedSignals),
-  }
+  return { agentId: agent?.id, score, matchedSignals, reasons: buildRecommendationReasons(agent, preferences, matchedSignals) }
 }
 
 export function getMaxPossibleScore(preferences = {}, weights = DEFAULT_RECOMMENDATION_WEIGHTS) {
-  const extras = Array.isArray(preferences.extraPreferences)
-    ? preferences.extraPreferences.length
-    : 0
+  const categories = Array.isArray(preferences.categories) ? preferences.categories : []
+  const goalCategories = getGoal(preferences.primaryGoal)?.categories?.length || 0
+  const extras = Array.isArray(preferences.extraPreferences) ? preferences.extraPreferences.length : 0
   const taskCount = getGoal(preferences.primaryGoal)?.taskTypes?.length || 0
   const freeTextTokenCount = tokenizeFreeText(preferences.freeTextGoal).length
+  const hasProviderPreference = Boolean(preferences.providerPreference) && preferences.providerPreference !== 'any'
+  const hasExperiencePreference = Boolean(preferences.experienceLevel) && preferences.experienceLevel !== 'any'
+  const hasUrgencyPreference = preferences.budgetPreference === 'fast' || preferences.budgetPreference === 'capable'
+
   return (
-    weights.exactCategory +
-    weights.goalCategory +
-    Math.max(1, taskCount) * weights.taskType +
+    (categories.length ? weights.exactCategory : 0) +
+    (goalCategories ? weights.goalCategory : 0) +
+    taskCount * weights.taskType +
     extras * (weights.capabilityKeyword ?? 0) +
-    weights.providerExact +
-    weights.freeTextName * freeTextTokenCount +
-    weights.experience +
-    weights.urgency
+    (hasProviderPreference ? weights.providerExact : 0) +
+    freeTextTokenCount * weights.freeTextName +
+    (hasExperiencePreference ? weights.experience : 0) +
+    (hasUrgencyPreference ? weights.urgency : 0)
   )
 }
 
@@ -177,25 +155,19 @@ export function recommendAgents(agents = [], preferences = {}, options = {}) {
   const limit = options.limit ?? RESULT_LIMIT
   if (!Array.isArray(agents) || !agents.length) return []
   const maxScore = Math.max(getMaxPossibleScore(preferences, weights), 1)
-  return [
-    ...new Map(
-      agents.filter((agent) => agent && agent.id).map((agent) => [agent.id, agent])
-    ).values(),
-  ]
+  return [...new Map(agents
+    .filter((agent) => agent && agent.id)
+    .map((agent) => [agent.id, agent])).values()]
     .map((agent) => ({ agent, ...scoreAgent(agent, preferences, weights) }))
     .map((result) => ({
       ...result,
       isConfident: result.score >= (options.minScore ?? MIN_CONFIDENT_SCORE),
       matchPercentage: normalizeScore(result.score, maxScore),
     }))
-    .sort(
-      (a, b) =>
-        b.score - a.score ||
-        Number(Boolean(b.matchedSignals.exactCategory)) -
-          Number(Boolean(a.matchedSignals.exactCategory)) ||
-        Number(Boolean(b.matchedSignals.provider)) - Number(Boolean(a.matchedSignals.provider)) ||
-        String(a.agent.name).localeCompare(String(b.agent.name))
-    )
+    // A ranked list is an assertion of relevance. Entries with no matched
+    // signal belong in the catalogue, not in the recommendation results.
+    .filter((result) => result.score > 0)
+    .sort((a, b) => b.score - a.score || Number(Boolean(b.matchedSignals.exactCategory)) - Number(Boolean(a.matchedSignals.exactCategory)) || Number(Boolean(b.matchedSignals.provider)) - Number(Boolean(a.matchedSignals.provider)) || String(a.agent.name).localeCompare(String(b.agent.name)))
     .slice(0, limit)
     .map(({ agent, ...result }) => result)
 }

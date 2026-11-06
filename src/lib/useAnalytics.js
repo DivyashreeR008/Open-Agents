@@ -5,10 +5,17 @@ const MAX_EVENTS = 500
 
 // ── Persistence helpers ─────────────────────────────────────────────────────
 
+function sanitizeEvents(value) {
+  if (!Array.isArray(value)) return []
+  return value.filter(
+    (event) => event && typeof event === 'object' && !Array.isArray(event)
+  )
+}
+
 function loadEvents() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? JSON.parse(raw) : []
+    return raw ? sanitizeEvents(JSON.parse(raw)) : []
   } catch {
     return []
   }
@@ -130,16 +137,27 @@ export function allocateRoundedPercentages(items) {
   return allocated.map(({ remainder: _remainder, index: _index, ...item }) => item)
 }
 
-function computeStats(events, timeRange = 'all') {
-  // ── Time-range filtering
-  const now = new Date()
-  let filteredEvents = events
+/**
+ * Derive every analytics figure from a stored event list.
+ *
+ * Exported for direct testing and for callers that already have an event
+ * snapshot. `now` is injectable so rolling windows and streaks can be checked
+ * against fixed dates instead of the wall clock.
+ *
+ * @param {Array<object>} events
+ * @param {'all'|'7d'|'30d'|'90d'} [timeRange]
+ * @param {Date} [now]
+ * @returns {object}
+ */
+export function computeStats(events, timeRange = 'all', now = new Date()) {
+  const sourceEvents = sanitizeEvents(events)
+  let filteredEvents = sourceEvents
 
   if (timeRange !== 'all') {
     const daysMap = { '7d': 7, '30d': 30, '90d': 90 }
     const days = daysMap[timeRange] || Infinity
     const cutoff = now.getTime() - days * 86400000
-    filteredEvents = events.filter((e) => e.timestamp >= cutoff)
+    filteredEvents = sourceEvents.filter((e) => Number(e.timestamp) >= cutoff)
   }
 
   if (filteredEvents.length === 0) {

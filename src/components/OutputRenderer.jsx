@@ -301,23 +301,35 @@ ${stringContent}
               skipHtml={true}
               remarkPlugins={[remarkGfm]}
               components={{
+                // Fenced blocks supply their own pre element through the
+                // highlighter. Drop the default wrapper so the scroll region
+                // below is a real container rather than a div inside a pre.
+                pre: ({ children }) => <>{children}</>,
                 code({ node, className, children, ...props }) {
                   const match = /language-(\w+)/.exec(className || '')
                   const isInline = !match && (children?.length ?? 0) < 80
                   return !isInline && match ? (
-                    <SyntaxHighlighter
-                      style={monoPrism}
-                      language={match[1]}
-                      PreTag="div"
-                      customStyle={{
-                        margin: '0.5rem 0',
-                        borderRadius: '0px',
-                        fontSize: '0.75rem',
-                      }}
-                      {...props}
+                    <div
+                      role="region"
+                      tabIndex={0}
+                      aria-label={`${match[1]} code block, scrollable`}
+                      className="overflow-x-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500"
                     >
-                      {String(children).replace(/\n$/, '')}
-                    </SyntaxHighlighter>
+                      <SyntaxHighlighter
+                        style={monoPrism}
+                        language={match[1]}
+                        PreTag="div"
+                        customStyle={{
+                          margin: '0.5rem 0',
+                          borderRadius: '0px',
+                          fontSize: '0.75rem',
+                          overflowX: 'visible',
+                        }}
+                        {...props}
+                      >
+                        {String(children).replace(/\n$/, '')}
+                      </SyntaxHighlighter>
+                    </div>
                   ) : (
                     <code className={className} {...props}>
                       {children}

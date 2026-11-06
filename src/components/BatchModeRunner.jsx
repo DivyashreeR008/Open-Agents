@@ -193,6 +193,7 @@ export default function BatchModeRunner({ agent, provider, apiKey, selectedModel
             Which field varies per item?
           </label>
           <CustomSelect
+            label="Field that varies per item"
             value={batchFieldId}
             onChange={setBatchFieldId}
             options={batchableFields.map((f) => ({ value: f.id, label: f.label }))}
@@ -216,6 +217,7 @@ export default function BatchModeRunner({ agent, provider, apiKey, selectedModel
               </label>
               {input.type === 'select' ? (
                 <CustomSelect
+                  label={input.label}
                   value={fixedInputs[input.id] || input.defaultValue || ''}
                   onChange={(val) => updateFixedInput(input.id, val)}
                   options={input.options || []}
@@ -256,6 +258,7 @@ export default function BatchModeRunner({ agent, provider, apiKey, selectedModel
                 </div>
               ) : input.type === 'textarea' || input.type === 'code' ? (
                 <textarea
+                  aria-label={input.label}
                   value={fixedInputs[input.id] ?? input.defaultValue ?? ''}
                   onChange={(e) => updateFixedInput(input.id, e.target.value)}
                   placeholder={input.placeholder}
@@ -269,6 +272,7 @@ export default function BatchModeRunner({ agent, provider, apiKey, selectedModel
                 />
               ) : (
                 <input
+                  aria-label={input.label}
                   type="text"
                   value={fixedInputs[input.id] ?? input.defaultValue ?? ''}
                   onChange={(e) => updateFixedInput(input.id, e.target.value)}
@@ -287,6 +291,7 @@ export default function BatchModeRunner({ agent, provider, apiKey, selectedModel
           Batch items — one per line, or upload a .csv / .txt file
         </label>
         <textarea
+          aria-label="Batch items, one per line"
           value={rawPaste}
           onChange={(e) => handlePasteChange(e.target.value)}
           placeholder={'Item 1\nItem 2\nItem 3...'}
@@ -305,6 +310,7 @@ export default function BatchModeRunner({ agent, provider, apiKey, selectedModel
             Upload .csv / .txt
           </button>
           <input
+            aria-label="Upload a CSV or text file of batch items"
             ref={fileInputRef}
             type="file"
             accept=".csv,.txt"
@@ -334,6 +340,7 @@ export default function BatchModeRunner({ agent, provider, apiKey, selectedModel
               <div className="flex items-center gap-2">
                 <span className="text-[11px] dark:text-text-muted text-gray-400">Use column:</span>
                 <CustomSelect
+                  label="CSV column to use"
                   value={String(csvColumnIndex)}
                   onChange={handleCsvColumnChange}
                   options={
@@ -429,7 +436,12 @@ export default function BatchModeRunner({ agent, provider, apiKey, selectedModel
                 </span>
               </div>
               {r.status === 'done' && r.output && (
-                <div className="px-3 py-2 text-xs dark:text-text-secondary text-gray-600 whitespace-pre-wrap max-h-32 overflow-y-auto">
+                <div
+                  role="region"
+                  tabIndex={0}
+                  aria-label={`Batch result ${i + 1} output, scrollable`}
+                  className="px-3 py-2 text-xs dark:text-text-secondary text-gray-600 whitespace-pre-wrap max-h-32 overflow-y-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500"
+                >
                   {r.output}
                 </div>
               )}

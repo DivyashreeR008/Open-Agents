@@ -5,11 +5,13 @@ export function exportWorkflowAsMarkdown(workflowTitle, steps) {
     year: 'numeric',
   })
 
-  const filename =
-    workflowTitle
-      .toLowerCase()
-      .replace(/\s+/g, '-')
-      .replace(/[^a-z0-9-]/g, '') + '-output.md'
+  const slug = workflowTitle
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/^-+|-+$/g, '') || 'workflow'
+
+  const filename = `${slug}-output.md`
 
   const stepContent = steps
     .filter((s) => s.status === 'done' && s.output)

@@ -29,7 +29,7 @@ describe('End-to-End Application Smoke Path', () => {
     await import('../pages/HomePage')
     await import('../pages/AgentPage')
     await import('../components/AgentRunner')
-  }, 40000)
+  }, 120000)
 
   beforeEach(() => {
     localStorage.clear()

@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import * as Icons from 'lucide-react'
+import { resolveAgentIcon } from '../lib/agentIcons'
 import { DEFAULT_COLLECTION_ID, useCollections } from '../lib/useCollections'
 import { useAgents } from '../lib/useAgents'
 
@@ -269,7 +270,7 @@ export default function Sidebar({ open, onClose }) {
           {isSearching ? (
             <>
               {filteredAgents.slice(0, SIDEBAR_SEARCH_LIMIT).map((agent, index) => {
-                const IconComponent = Icons[agent.icon] || Icons.Bot
+                const IconComponent = resolveAgentIcon(agent.icon)
 
                 return (
                   <NavLink
@@ -358,7 +359,7 @@ export default function Sidebar({ open, onClose }) {
                   {isCategoryExpanded && (
                     <div className="border-l border-zinc-200 py-1 pl-2 dark:border-border">
                       {visibleCategoryAgents.map((agent, agentIndex) => {
-                        const IconComponent = Icons[agent.icon] || Icons.Bot
+                        const IconComponent = resolveAgentIcon(agent.icon)
 
                         return (
                           <NavLink

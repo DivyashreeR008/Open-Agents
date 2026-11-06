@@ -134,6 +134,7 @@ export default function SuitesPage() {
 
         <div className="flex flex-col sm:flex-row gap-2">
           <input
+            aria-label="Goal for the agent suite"
             type="text"
             value={goal}
             onChange={(e) => setGoal(e.target.value)}

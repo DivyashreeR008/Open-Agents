@@ -10,12 +10,12 @@
  */
 
 import { Link } from 'react-router-dom'
-import * as Icons from 'lucide-react'
 import { ArrowRight, FolderPlus, Star, Copy, Check } from 'lucide-react'
 import { useFavorites } from '../lib/useFavorites'
 import { useState } from 'react'
 import { useTimedState } from '../lib/useTimedState'
 import CollectionPicker from './CollectionPicker'
+import { resolveAgentIcon } from '../lib/agentIcons'
 
 const providerMeta = {
   openai: { label: 'OpenAI', dot: 'bg-zinc-500' },
@@ -34,7 +34,7 @@ function isWithinLast7Days(dateStr) {
 }
 
 export default function AgentCard({ agent, variant = 'grid', index = null }) {
-  const IconComponent = Icons[agent?.icon] || Icons.Bot
+  const IconComponent = resolveAgentIcon(agent?.icon)
   const provider = providerMeta[agent?.provider] || providerMeta.any
   const { isFavorite, toggleFavorite } = useFavorites()
   const [showCollectionPicker, setShowCollectionPicker] = useState(false)

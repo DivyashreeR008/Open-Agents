@@ -1,8 +1,10 @@
 import { useState, Suspense, lazy } from 'react'
-import { Routes, Route, Outlet, Link } from 'react-router-dom'
-import { Loader2, MessageSquare } from 'lucide-react'
+import { Routes, Route, Outlet ,Link} from 'react-router-dom'
+import { Loader2 ,MessageSquare} from 'lucide-react'
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
+import CommandPalette from './components/CommandPalette'
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import SkipToMainContentLink, { MAIN_CONTENT_ID } from './components/SkipToMainContentLink'
 import ScrollToTopButton from './components/ScrollToTopButton'
 import ScrollToBottom from './components/ScrollToBottom'
@@ -44,21 +46,21 @@ function PageLoader() {
       role="status"
       aria-live="polite"
     >
-      <Loader2
-        size={32}
-        className="animate-spin text-zinc-900 dark:text-white"
-        aria-hidden="true"
-      />
+      <Loader2 size={32} className="animate-spin text-zinc-900 dark:text-white" aria-hidden="true" />
       <p className="text-sm dark:text-text-secondary text-gray-500">Loading...</p>
     </div>
   )
 }
 
-function MainLayout({ sidebarOpen, setSidebarOpen }) {
+function MainLayout({ sidebarOpen, setSidebarOpen, onOpenCommandPalette }) {
   return (
     <>
       <SkipToMainContentLink />
-      <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <Navbar
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+        onOpenCommandPalette={onOpenCommandPalette}
+      />
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <Link
         to="/feedback"
@@ -87,6 +89,18 @@ function MainLayout({ sidebarOpen, setSidebarOpen }) {
 }
 
 export default function App() {
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false)
+
+  useKeyboardShortcuts({
+    'Control+k': (e) => {
+      e.preventDefault()
+      setCommandPaletteOpen((prev) => !prev)
+    },
+    'Control+K': (e) => {
+      e.preventDefault()
+      setCommandPaletteOpen((prev) => !prev)
+    },
+  })
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
@@ -94,42 +108,50 @@ export default function App() {
       <ScrollToTopButton />
       <ScrollToBottom />
       <RouteAnnouncer />
+      <CommandPalette
+        isOpen={commandPaletteOpen}
+        onClose={() => setCommandPaletteOpen(false)}
+      />
       <ErrorBoundary>
         <Suspense fallback={<PageLoader />}>
           <PageTransition>
             <Routes>
-              <Route
-                element={<MainLayout sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />}
-              >
-                <Route path="/" element={<PortfolioPage />} />
-                <Route path="/agents" element={<HomePage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/feedback" element={<FeedbackPage />} />
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/terms" element={<TermsOfService />} />
-                <Route path="/settings" element={<SettingsPage />} />
-                <Route path="/agent/:id" element={<AgentPage />} />
-                <Route path="/suites" element={<SuitesPage />} />
-                <Route path="/collections" element={<CollectionsPage />} />
-                <Route path="/collections/:id" element={<CollectionDetailPage />} />
-                <Route path="/scheduler" element={<AutomationsPage />} />
-                <Route path="/automations" element={<AutomationsPage />} />
-                <Route path="/automations/:id" element={<AutomationDetailPage />} />
-                <Route path="/marketplace" element={<MarketplacePage />} />
-                <Route path="/marketplace/drafts" element={<MarketplaceDraftsPage />} />
-                <Route path="/marketplace/drafts/:id" element={<MarketplaceDraftPage />} />
-                <Route path="/analytics" element={<AnalyticsPage />} />
-                <Route path="/workflows" element={<WorkflowLibrary />} />
-                <Route path="/workflows/build" element={<WorkflowBuilder />} />
-                <Route path="/workflows/:id" element={<WorkflowDetail />} />
-                <Route path="/workflows/:id/run" element={<WorkflowRunner />} />
-                <Route path="/battle" element={<BattleModeLanding />} />
-                <Route path="/battle/setup" element={<BattleModeSetup />} />
-                <Route path="/battle/arena" element={<BattleModeArena />} />
-                <Route path="/battle/winner" element={<BattleModeWinner />} />
-                <Route path="*" element={<NotFoundPage />} />
-              </Route>
-            </Routes>
+            <Route element={
+              <MainLayout
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+                onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+              />
+            }>
+              <Route path="/" element={<PortfolioPage />} />
+              <Route path="/agents" element={<HomePage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/feedback" element={<FeedbackPage />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<TermsOfService />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/agent/:id" element={<AgentPage />} />
+              <Route path="/suites" element={<SuitesPage />} />
+              <Route path="/collections" element={<CollectionsPage />} />
+              <Route path="/collections/:id" element={<CollectionDetailPage />} />
+              <Route path="/scheduler" element={<AutomationsPage />} />
+              <Route path="/automations" element={<AutomationsPage />} />
+              <Route path="/automations/:id" element={<AutomationDetailPage />} />
+              <Route path="/marketplace" element={<MarketplacePage />} />
+              <Route path="/marketplace/drafts" element={<MarketplaceDraftsPage />} />
+              <Route path="/marketplace/drafts/:id" element={<MarketplaceDraftPage />} />
+              <Route path="/analytics" element={<AnalyticsPage />} />
+              <Route path="/workflows" element={<WorkflowLibrary />} />
+              <Route path="/workflows/build" element={<WorkflowBuilder />} />
+              <Route path="/workflows/:id" element={<WorkflowDetail />} />
+              <Route path="/workflows/:id/run" element={<WorkflowRunner />} />
+              <Route path="/battle" element={<BattleModeLanding />} />
+              <Route path="/battle/setup" element={<BattleModeSetup />} />
+              <Route path="/battle/arena" element={<BattleModeArena />} />
+              <Route path="/battle/winner" element={<BattleModeWinner />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Route>
+          </Routes>
           </PageTransition>
         </Suspense>
       </ErrorBoundary>

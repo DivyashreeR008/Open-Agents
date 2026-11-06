@@ -40,3 +40,25 @@ describe('OutputRenderer Copy as Plain Text', () => {
     expect(JSON.parse(await copied(/Copy as Plain Text/i))).toEqual(obj)
   })
 })
+
+describe('OutputRenderer scrollable code regions', () => {
+  it('exposes fenced code blocks as named, focusable scroll containers', () => {
+    const md = '```js\nconst retryCount = 3\nconst userIdList = [1, 2, 3]\n```'
+    render(<OutputRenderer content={md} outputType="markdown" agentName="t" />)
+
+    const region = screen.getByRole('region', { name: 'js code block, scrollable' })
+    expect(region).toHaveAttribute('tabindex', '0')
+    expect(region).toHaveClass('overflow-x-auto')
+    expect(region).toHaveTextContent('const retryCount = 3')
+
+    region.focus()
+    expect(region).toHaveFocus()
+  })
+
+  it('keeps inline code out of the region landmarks', () => {
+    render(<OutputRenderer content="Use `retryCount` in the loop." outputType="markdown" agentName="t" />)
+
+    expect(screen.queryByRole('region')).not.toBeInTheDocument()
+    expect(screen.getByText('retryCount')).toBeInTheDocument()
+  })
+})

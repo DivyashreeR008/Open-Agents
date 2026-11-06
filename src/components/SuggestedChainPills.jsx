@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { GitBranch } from 'lucide-react'
-import * as Icons from 'lucide-react'
+import { resolveAgentIcon } from '../lib/agentIcons'
 import { useAgents } from '../lib/useAgents'
 
 /**
@@ -40,7 +40,7 @@ export default function SuggestedChainPills({ agent }) {
       </div>
       <div className="flex flex-wrap gap-2">
         {predecessors.map((pred) => {
-          const IconComponent = Icons[pred.icon] || Icons.Bot
+          const IconComponent = resolveAgentIcon(pred.icon)
           return (
             <button
               key={pred.id}

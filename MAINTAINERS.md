@@ -10,7 +10,8 @@
 
 ## What Maintainers Do
 
-- Review and merge pull requests
+- Review and merge pull requests according to the gates in [MERGE_REQUIREMENTS.md](./MERGE_REQUIREMENTS.md)
+- Ensure CI workflows, repository merge settings, and [MERGE_REQUIREMENTS.md](./MERGE_REQUIREMENTS.md) stay strictly synchronized
 - Label and respond to issues
 - Decide the direction of the project
 - Keep the codebase clean and consistent

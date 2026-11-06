@@ -137,6 +137,7 @@ export default function ScheduleAgentModal({
               Schedule Name
             </label>
             <input
+              aria-label="Schedule name"
               type="text"
               value={label}
               onChange={(e) => setLabel(e.target.value)}
@@ -175,6 +176,7 @@ export default function ScheduleAgentModal({
               Model
             </label>
             <select
+              aria-label="Model"
               value={selectedModel}
               onChange={(e) => setSelectedModel(e.target.value)}
               className="w-full h-9 px-3 text-sm transition-colors dark:bg-surface-input dark:border-border dark:text-text-primary bg-gray-50 border border-gray-200 text-gray-900 focus:ring-1 focus:ring-zinc-500/40 focus:border-zinc-500 outline-none"
@@ -197,6 +199,7 @@ export default function ScheduleAgentModal({
             </div>
             <div className="relative">
               <input
+                aria-label="Provider API key"
                 type="password"
                 value={keyOverride}
                 onChange={(e) => setKeyOverride(e.target.value)}
@@ -236,6 +239,7 @@ export default function ScheduleAgentModal({
             </label>
             {emailNotification && (
               <input
+                aria-label="Notification email address"
                 type="email"
                 value={notificationEmail}
                 onChange={(e) => setNotificationEmail(e.target.value)}

@@ -1,38 +1,29 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
-  Clock,
-  Play,
-  Trash2,
-  ToggleLeft,
-  ToggleRight,
-  ChevronRight,
-  AlertCircle,
-  CheckCircle2,
-  Calendar,
-  Zap,
-  Loader2,
-  Plus,
-  ShieldCheck,
-  Mail,
-  Search,
-  Filter,
-  Activity,
-  ArrowUpRight,
-  Lock,
-  Sparkles,
-  RefreshCw,
+  Clock, Play, Trash2, ToggleLeft, ToggleRight,
+  ChevronRight, AlertCircle, CheckCircle2, Calendar, Zap,
+  Loader2, Plus, ShieldCheck, Mail, Search, Filter,
+  Activity, ArrowUpRight, Lock, Sparkles, RefreshCw, CalendarX, X
 } from 'lucide-react'
 import {
-  loadAutomations,
-  loadRuns,
-  toggleAutomation,
-  deleteAutomation,
-  runAutomationNow,
-  initAutomationEngine,
+  loadAutomations, loadRuns, toggleAutomation, deleteAutomation,
+  runAutomationNow, initAutomationEngine
 } from '../lib/automationsService'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
 import CreateAutomationModal from '../components/CreateAutomationModal'
+import { isUnexecutedRun, summarizeHistory } from '../lib/missedRuns'
+
+const MISSED_BANNER_KEY = 'oa_missed_runs_banner_dismissed_at'
+const MISSED_BANNER_WINDOW_MS = 7 * 24 * 60 * 60 * 1000
+
+function readDismissedAt() {
+  try {
+    return Number(localStorage.getItem(MISSED_BANNER_KEY)) || 0
+  } catch {
+    return 0
+  }
+}
 
 export default function AutomationsPage() {
   useDocumentTitle('Scheduled Automations')
@@ -47,6 +38,7 @@ export default function AutomationsPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [editingAutomation, setEditingAutomation] = useState(null)
   const [confirmDeleteId, setConfirmDeleteId] = useState(null)
+  const [missedDismissedAt, setMissedDismissedAt] = useState(readDismissedAt)
   const [notificationBanner, setNotificationBanner] = useState(
     'Notification' in window ? Notification.permission : 'unsupported'
   )
@@ -75,13 +67,13 @@ export default function AutomationsPage() {
   }
 
   const handleRunNow = async (id) => {
-    setRunningMap((prev) => ({ ...prev, [id]: true }))
+    setRunningMap(prev => ({ ...prev, [id]: true }))
     try {
       await runAutomationNow(id)
     } catch (err) {
       alert(err.message || 'Run failed')
     } finally {
-      setRunningMap((prev) => ({ ...prev, [id]: false }))
+      setRunningMap(prev => ({ ...prev, [id]: false }))
       reloadData()
     }
   }
@@ -95,22 +87,40 @@ export default function AutomationsPage() {
 
   // KPIs
   const totalCount = automations.length
-  const activeCount = automations.filter((a) => a.enabled).length
-  const totalRunsCount = runs.length
-  const successfulRuns = runs.filter((r) => r.status === 'success').length
+  const activeCount = automations.filter(a => a.enabled).length
+  // Missed and skipped windows did not run, so they are not counted as runs here.
+  const totalRunsCount = runs.filter(r => !isUnexecutedRun(r)).length
+  const successfulRuns = runs.filter(r => r.status === 'success').length
   const successRate = totalRunsCount > 0 ? Math.round((successfulRuns / totalRunsCount) * 100) : 100
 
+  // Runs that did not happen since the banner was last dismissed (looking back at most a week)
+  const bannerSince = Math.max(missedDismissedAt, Date.now() - MISSED_BANNER_WINDOW_MS)
+  const recentUnexecuted = runs.filter(r => isUnexecutedRun(r) && (r.detectedAt || r.startedAt) > bannerSince)
+  const recentSummary = summarizeHistory(recentUnexecuted)
+  const recentAutomationCount = new Set(recentUnexecuted.map(r => r.automationId)).size
+
+  const dismissMissedBanner = () => {
+    const now = Date.now()
+    try {
+      localStorage.setItem(MISSED_BANNER_KEY, String(now))
+    } catch {}
+    setMissedDismissedAt(now)
+  }
+
   // Filtered list
-  const filtered = automations.filter((item) => {
+  const filtered = automations.filter(item => {
     const matchesSearch =
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.agentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (item.category && item.category.toLowerCase().includes(searchQuery.toLowerCase()))
 
     const matchesStatus =
-      statusFilter === 'all' ? true : statusFilter === 'active' ? item.enabled : !item.enabled
+      statusFilter === 'all' ? true :
+      statusFilter === 'active' ? item.enabled :
+      !item.enabled
 
-    const matchesSchedule = scheduleFilter === 'all' ? true : item.schedule === scheduleFilter
+    const matchesSchedule =
+      scheduleFilter === 'all' ? true : item.schedule === scheduleFilter
 
     return matchesSearch && matchesStatus && matchesSchedule
   })
@@ -154,8 +164,7 @@ export default function AutomationsPage() {
             </span>
           </div>
           <p className="text-xs sm:text-sm text-gray-500 dark:text-text-secondary">
-            Set your favorite AI agents on autopilot with recurring schedules, execution history,
-            and Resend email alerts.
+            Set your favorite AI agents on autopilot with recurring schedules, execution history, and Resend email alerts.
           </p>
         </div>
 
@@ -199,9 +208,7 @@ export default function AutomationsPage() {
               </span>
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-              Automation keys use AES-GCM with a non-extractable key held by this browser profile.
-              Ciphertext stays on this device; re-entry is required on another device or after site
-              data is cleared.
+              Automation keys use AES-GCM with a non-extractable key held by this browser profile. Ciphertext stays on this device; re-entry is required on another device or after site data is cleared.
             </p>
           </div>
         </div>
@@ -217,6 +224,38 @@ export default function AutomationsPage() {
           </div>
         </div>
       </div>
+
+      {recentUnexecuted.length > 0 && (
+        <div
+          id="missed-runs-banner"
+          role="status"
+          className="p-4 border border-dashed dark:border-zinc-500/40 border-zinc-300 flex items-start justify-between gap-3"
+        >
+          <div className="flex items-start gap-3">
+            <CalendarX size={18} className="text-zinc-500 mt-0.5 shrink-0" aria-hidden="true" />
+            <div>
+              <h4 className="text-xs sm:text-sm font-bold text-gray-900 dark:text-gray-100">
+                {recentSummary.missed > 0
+                  ? `${recentSummary.missed} scheduled ${recentSummary.missed === 1 ? 'run was' : 'runs were'} missed`
+                  : `${recentSummary.skipped} scheduled ${recentSummary.skipped === 1 ? 'run was' : 'runs were'} skipped`}
+                {recentSummary.missed > 0 && recentSummary.skipped > 0 && `, and ${recentSummary.skipped} skipped`}
+                {` across ${recentAutomationCount} ${recentAutomationCount === 1 ? 'automation' : 'automations'}`}
+              </h4>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                Scheduled runs only happen while this app is open. Open an automation to see what was missed, or use Edit to change what happens to runs that were due while it was closed.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={dismissMissedBanner}
+            aria-label="Dismiss missed runs notice"
+            className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 shrink-0"
+          >
+            <X size={15} />
+          </button>
+        </div>
+      )}
 
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -261,9 +300,7 @@ export default function AutomationsPage() {
           <div className="text-2xl sm:text-3xl font-extrabold text-zinc-500 tabular-nums">
             {successRate}%
           </div>
-          <p className="text-[11px] text-gray-400 mt-1">
-            {successfulRuns} of {totalRunsCount} completed
-          </p>
+          <p className="text-[11px] text-gray-400 mt-1">{successfulRuns} of {totalRunsCount} completed</p>
         </div>
       </div>
 
@@ -272,10 +309,11 @@ export default function AutomationsPage() {
         <div className="relative w-full sm:w-80">
           <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
+            aria-label="Search automations or agents"
             type="text"
             placeholder="Search automations or agents..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={e => setSearchQuery(e.target.value)}
             className="w-full h-9 pl-9 pr-4 text-xs dark:bg-surface-input dark:border-border bg-gray-50 border border-gray-200 outline-none focus:ring-1 focus:ring-zinc-500/40"
           />
         </div>
@@ -283,8 +321,9 @@ export default function AutomationsPage() {
         <div className="flex items-center gap-2 w-full sm:w-auto justify-end flex-wrap">
           {/* Status Filter */}
           <select
+            aria-label="Filter by status"
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            onChange={e => setStatusFilter(e.target.value)}
             className="h-9 px-3 text-xs dark:bg-surface-input dark:border-border bg-gray-50 border border-gray-200 outline-none"
           >
             <option value="all">All Statuses</option>
@@ -294,8 +333,9 @@ export default function AutomationsPage() {
 
           {/* Schedule Interval Filter */}
           <select
+            aria-label="Filter by schedule"
             value={scheduleFilter}
-            onChange={(e) => setScheduleFilter(e.target.value)}
+            onChange={e => setScheduleFilter(e.target.value)}
             className="h-9 px-3 text-xs dark:bg-surface-input dark:border-border bg-gray-50 border border-gray-200 outline-none"
           >
             <option value="all">All Schedules</option>
@@ -343,9 +383,9 @@ export default function AutomationsPage() {
       {/* Automations Cards Grid */}
       {filtered.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filtered.map((auto) => {
+          {filtered.map(auto => {
             const isRunning = runningMap[auto.id]
-            const autoRuns = runs.filter((r) => r.automationId === auto.id)
+            const autoRuns = runs.filter(r => r.automationId === auto.id)
             const lastRun = autoRuns[0]
 
             return (
@@ -359,13 +399,9 @@ export default function AutomationsPage() {
                   {/* Top Bar: Status Toggle & Badges */}
                   <div className="flex items-center justify-between gap-3 mb-3">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span
-                        className={`text-[10px] font-bold px-2.5 py-0.5 uppercase ${
-                          auto.enabled
-                            ? 'bg-zinc-500/15 text-zinc-500'
-                            : 'bg-gray-200 dark:bg-gray-800 text-gray-500'
-                        }`}
-                      >
+                      <span className={`text-[10px] font-bold px-2.5 py-0.5 uppercase ${
+                        auto.enabled ? 'bg-zinc-500/15 text-zinc-500' : 'bg-gray-200 dark:bg-gray-800 text-gray-500'
+                      }`}>
                         {auto.enabled ? 'Active' : 'Paused'}
                       </span>
                       <span className="text-[10px] font-semibold px-2 py-0.5 bg-zinc-500/10 text-zinc-900 dark:text-white">
@@ -374,6 +410,11 @@ export default function AutomationsPage() {
                       {auto.emailNotification && (
                         <span className="text-[10px] font-semibold px-2 py-0.5 bg-zinc-500/10 text-zinc-500 flex items-center gap-1">
                           <Mail size={10} /> Email
+                        </span>
+                      )}
+                      {summarizeHistory(autoRuns).missed > 0 && (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 border border-dashed border-zinc-500/50 text-zinc-500 flex items-center gap-1">
+                          <CalendarX size={10} /> {summarizeHistory(autoRuns).missed} missed
                         </span>
                       )}
                     </div>
@@ -398,13 +439,9 @@ export default function AutomationsPage() {
                   </Link>
 
                   <div className="flex items-center gap-2 mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    <span className="font-medium text-gray-700 dark:text-gray-300">
-                      {auto.agentName}
-                    </span>
+                    <span className="font-medium text-gray-700 dark:text-gray-300">{auto.agentName}</span>
                     <span>•</span>
-                    <span className="font-mono text-[11px]">
-                      {auto.provider} ({auto.model})
-                    </span>
+                    <span className="font-mono text-[11px]">{auto.provider} ({auto.model})</span>
                   </div>
 
                   {/* Timestamps */}
@@ -416,9 +453,7 @@ export default function AutomationsPage() {
                       </span>
                     </div>
                     <div>
-                      <span className="text-[10px] font-medium text-gray-400 block">
-                        Next Autopilot Trigger
-                      </span>
+                      <span className="text-[10px] font-medium text-gray-400 block">Next Autopilot Trigger</span>
                       <span className="font-medium text-zinc-900 dark:text-white">
                         {auto.enabled ? formatCountdown(auto.nextRunAt) : 'Paused'}
                       </span>
@@ -435,11 +470,7 @@ export default function AutomationsPage() {
                       className="px-3 py-1.5 text-xs font-semibold text-zinc-900 bg-zinc-500/10 hover:bg-zinc-500/20 border border-zinc-500/20 dark:text-white transition-colors flex items-center gap-1.5 disabled:opacity-50"
                       title="Execute Autopilot Run Now"
                     >
-                      {isRunning ? (
-                        <Loader2 size={13} className="animate-spin" />
-                      ) : (
-                        <Play size={13} />
-                      )}
+                      {isRunning ? <Loader2 size={13} className="animate-spin" /> : <Play size={13} />}
                       <span>{isRunning ? 'Running...' : 'Run Now'}</span>
                     </button>
 

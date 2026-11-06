@@ -12,7 +12,7 @@ import {
   AlertCircle,
   GitBranch,
 } from 'lucide-react'
-import * as Icons from 'lucide-react'
+import { resolveAgentIcon } from '../lib/agentIcons'
 import { useAgents } from '../lib/useAgents'
 import { fetchWorkflowById, subscribeToWorkflow } from '../hooks/useWorkflows'
 import { supabase } from '../lib/supabase'
@@ -20,7 +20,7 @@ import { useDocumentTitle } from '../lib/useDocumentTitle'
 
 function AgentRow({ agentId, index, total, agents }) {
   const agent = agents?.find((a) => a.id === agentId)
-  const IconComponent = (agent && Icons[agent.icon]) || Icons.Bot
+  const IconComponent = resolveAgentIcon(agent?.icon)
 
   return (
     <div className="flex items-center gap-3">

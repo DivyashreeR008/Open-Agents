@@ -23,7 +23,7 @@
 - [ ] Any accepted security exceptions are deliberately recorded in `security-exceptions.json` ✅
 - [ ] My PR has a clear description above ✅
 
-> Tip: run `npm run verify` locally before opening your PR. It runs both the test suite and build check matching CI.
+> Tip: run `npm run verify` locally before opening your PR. It runs both the test suite and build check matching CI. See [MERGE_REQUIREMENTS.md](../MERGE_REQUIREMENTS.md) for all merge gate requirements.
 
 ## Screenshots (if UI change)
 

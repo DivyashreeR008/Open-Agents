@@ -25,7 +25,15 @@ export function useRecommendationWizard(agents = []) {
   )
 
   const openWizard = () => setIsOpen(true)
-  const closeWizard = () => setIsOpen(false)
+  const closeWizard = () => {
+    // Closing ends the interaction. Keeping answers and a completed ranking
+    // around makes the next open look like it inherited a past session.
+    setIsOpen(false)
+    setPreferences(initialPreferences)
+    setErrors({})
+    setHasCompleted(false)
+    setCurrentStepIndex(0)
+  }
   const setPreference = (key, value) => {
     setPreferences((prev) => ({
       ...prev,

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Sparkles, ArrowRight, ExternalLink } from 'lucide-react'
-import Github from '../icons/Github'
+import { Sparkles, ArrowRight, ExternalLink, GitHubIcon } from 'lucide-react'
+
 import { useAgents } from '../../lib/useAgents'
 
 export default function AboutHero() {
@@ -8,10 +8,7 @@ export default function AboutHero() {
   const agentCount = agents.length || catalogSize
 
   return (
-    <section
-      aria-labelledby="about-hero-title"
-      className="relative overflow-hidden panel p-6 sm:p-10 md:p-12 mb-12"
-    >
+    <section aria-labelledby="about-hero-title" className="relative overflow-hidden panel p-6 sm:p-10 md:p-12 mb-12">
       {/* Background glow accents */}
 
       <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6">
@@ -22,19 +19,13 @@ export default function AboutHero() {
         </div>
 
         {/* Project Title */}
-        <h1
-          id="about-hero-title"
-          className="font-display text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight dark:text-white text-gray-900 leading-tight"
-        >
+        <h1 id="about-hero-title" className="font-display text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight dark:text-white text-gray-900 leading-tight">
           Welcome to <span className="text-zinc-900 dark:text-white">OpenAgents</span>
         </h1>
 
         {/* Short Project Overview & Mission Statement */}
         <p className="text-base sm:text-lg dark:text-text-secondary text-gray-600 max-w-3xl mx-auto leading-relaxed">
-          <strong>OpenAgents</strong> is an open-source platform designed to make AI tools
-          accessible, transparent, and effortlessly executable directly inside your browser. Bring
-          your own API key, keep 100% data privacy, and explore specialized agents built for
-          real-world tasks.
+          <strong>OpenAgents</strong> is an open-source platform designed to make AI tools accessible, transparent, and effortlessly executable directly inside your browser. Bring your own API key, keep 100% data privacy, and explore specialized agents built for real-world tasks.
         </p>
 
         {/* Mission Card */}
@@ -48,9 +39,7 @@ export default function AboutHero() {
                 Our Mission
               </h2>
               <p className="text-xs sm:text-sm dark:text-text-secondary text-gray-600 leading-relaxed">
-                To democratize AI automation by fostering a global community of developers,
-                creators, and students who build, chain, and share open-source AI tools without
-                paywalls, telemetry, or server lock-in.
+                To democratize AI automation by fostering a global community of developers, creators, and students who build, chain, and share open-source AI tools without paywalls, telemetry, or server lock-in.
               </p>
             </div>
           </div>
@@ -73,7 +62,7 @@ export default function AboutHero() {
             aria-label="Star OpenAgents on GitHub (opens in new tab)"
             className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold dark:text-text-primary text-gray-800 dark:bg-white/10 bg-white border border-gray-200 dark:border-white/10 transition-all duration-300 hover:bg-gray-100 dark:hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500"
           >
-            <Github size={16} />
+            <GitHubIcon size={16} />
             <span>Star on GitHub</span>
             <ExternalLink size={12} aria-hidden="true" />
           </a>
@@ -89,28 +78,16 @@ export default function AboutHero() {
         {/* Quick Highlights / Stats Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-6 border-t dark:border-white/10 border-gray-200/80">
           <div className="p-3 text-center">
-            <div className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white">
-              {agentCount}
-            </div>
-            <div className="text-xs dark:text-text-secondary text-gray-500 font-medium">
-              Ready-to-use Agents
-            </div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white">{agentCount}</div>
+            <div className="text-xs dark:text-text-secondary text-gray-500 font-medium">Ready-to-use Agents</div>
           </div>
           <div className="p-3 text-center">
-            <div className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white">
-              4
-            </div>
-            <div className="text-xs dark:text-text-secondary text-gray-500 font-medium">
-              AI Providers
-            </div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white">4</div>
+            <div className="text-xs dark:text-text-secondary text-gray-500 font-medium">AI Providers</div>
           </div>
           <div className="p-3 text-center">
-            <div className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white">
-              100%
-            </div>
-            <div className="text-xs dark:text-text-secondary text-gray-500 font-medium">
-              Browser Privacy
-            </div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white">100%</div>
+            <div className="text-xs dark:text-text-secondary text-gray-500 font-medium">Browser Privacy</div>
           </div>
         </div>
       </div>

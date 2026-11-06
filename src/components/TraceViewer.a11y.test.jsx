@@ -37,3 +37,31 @@ describe('TraceViewer timeline segments', () => {
     expect(document.querySelector('[aria-live="polite"]').textContent).toMatch(/^Write:/)
   })
 })
+
+describe('TraceViewer payload regions', () => {
+  it('makes tall input and output payloads keyboard-scrollable and named', () => {
+    const failed = {
+      steps: [
+        {
+          stepName: 'Inspect',
+          stepType: 'tool',
+          status: 'failed',
+          durationMs: 25,
+          input: 'source line\n'.repeat(20),
+          output: 'stack line\n'.repeat(20),
+        },
+      ],
+    }
+    render(<TraceViewer trace={failed} />)
+
+    const input = screen.getByRole('region', { name: 'Input payload, scrollable' })
+    const output = screen.getByRole('region', { name: 'Output payload, scrollable' })
+
+    expect(input).toHaveAttribute('tabindex', '0')
+    expect(output).toHaveAttribute('tabindex', '0')
+    expect(output).toHaveClass('overflow-y-auto')
+
+    output.focus()
+    expect(output).toHaveFocus()
+  })
+})

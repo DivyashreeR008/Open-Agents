@@ -4,6 +4,7 @@ import { X } from 'lucide-react'
 import { useRecommendationWizard } from '../../hooks/useRecommendationWizard'
 import RecommendationWizardStep from './RecommendationWizardStep'
 import RecommendationResults from './RecommendationResults'
+import { inertBackground } from '../../hooks/useInertBackground'
 
 const TOTAL_STEPS = 5
 
@@ -38,7 +39,11 @@ export default function RecommendationWizardModal({ agents = [], isOpen, onClose
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     document.body.classList.add('recommendation-wizard-open')
-    window.setTimeout(() => focusWithoutScroll(headingRef.current), 0)
+    let restoreBackground = () => {}
+    const focusTimer = window.setTimeout(() => {
+      focusWithoutScroll(headingRef.current)
+      restoreBackground = inertBackground(panelRef.current)
+    }, 0)
 
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
@@ -72,6 +77,8 @@ export default function RecommendationWizardModal({ agents = [], isOpen, onClose
     document.addEventListener('keydown', handleKeyDown)
 
     return () => {
+      window.clearTimeout(focusTimer)
+      restoreBackground()
       document.body.style.overflow = previousOverflow
       document.body.classList.remove('recommendation-wizard-open')
       document.removeEventListener('keydown', handleKeyDown)

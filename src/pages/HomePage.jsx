@@ -1,19 +1,6 @@
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import {
-  ArrowRight,
-  ChevronDown,
-  Search,
-  X,
-  Star,
-  History,
-  Swords,
-  GitBranch,
-  LayoutGrid,
-  Rows3,
-  ExternalLink,
-} from 'lucide-react'
-import Github from '../components/icons/Github'
+import { ArrowRight, ChevronDown, Search, X, Star, History, Swords, GitBranch, Lightbulb, LayoutGrid, Rows3, ExternalLink, GitHubIcon } from 'lucide-react'
 import AgentCardSkeleton from '../components/AgentCardSkeleton'
 import AgentCard from '../components/AgentCard'
 import { useFavorites } from '../lib/useFavorites'
@@ -28,6 +15,7 @@ import { DEFAULT_COLLECTION_ID, useCollections } from '../lib/useCollections'
 import RecommendationWizardModal from '../components/recommendation/RecommendationWizardModal'
 import { getGlobalKeys } from '../lib/globalKeys'
 import Logo from '../components/Logo'
+import GitHubIcon from '../components/GitHubIcon'
 
 const providerLabels = {
   any: 'Any Provider',
@@ -74,15 +62,12 @@ export default function HomePage() {
   const selectedProvider = searchParams.get('provider') || null
 
   const updateFilter = (key, value) => {
-    setSearchParams(
-      (previous) => {
-        const next = new URLSearchParams(previous)
-        if (value) next.set(key, value)
-        else next.delete(key)
-        return next
-      },
-      { replace: true }
-    )
+    setSearchParams((previous) => {
+      const next = new URLSearchParams(previous)
+      if (value) next.set(key, value)
+      else next.delete(key)
+      return next
+    }, { replace: true })
   }
 
   const setSearchQuery = (value) => updateFilter('q', value)
@@ -160,25 +145,33 @@ export default function HomePage() {
 
   useKeyboardShortcuts({
     '/': (e) => {
-      e.preventDefault()
-      document.getElementById('agent-search')?.focus()
+      e.preventDefault();
+      document.getElementById('agent-search')?.focus();
     },
-  })
+  });
 
   const { favorites } = useFavorites()
   const { history, deleteRun, clearHistory } = useHistory()
   const activeCollectionId = searchParams.get('collection') || DEFAULT_COLLECTION_ID
-  const selectedCollection = collections.find((collection) => collection.id === activeCollectionId)
+  const selectedCollection = collections.find(
+    (collection) => collection.id === activeCollectionId
+  )
 
   const recentAgents = useMemo(() => {
-    const recentIds = JSON.parse(localStorage.getItem('recentAgents') || '[]')
+    const recentIds = JSON.parse(
+      localStorage.getItem('recentAgents') || '[]'
+    )
 
-    return recentIds.map((id) => agents.find((a) => a.id === id)).filter(Boolean)
+    return recentIds
+      .map((id) => agents.find((a) => a.id === id))
+      .filter(Boolean)
   }, [agents])
 
   // Resolve favorite agents (preserving the user's star order)
   const favoriteAgents = useMemo(() => {
-    return favorites.map((id) => agents.find((a) => a.id === id)).filter(Boolean)
+    return favorites
+      .map((id) => agents.find((a) => a.id === id))
+      .filter(Boolean)
   }, [favorites, agents])
 
   // Filter agents based on search + category
@@ -222,15 +215,7 @@ export default function HomePage() {
 
       return searchableText.includes(q)
     })
-  }, [
-    activeCollectionId,
-    agents,
-    collections,
-    getAgentCollectionId,
-    searchQuery,
-    selectedCategory,
-    selectedProvider,
-  ])
+  }, [activeCollectionId, agents, collections, getAgentCollectionId, searchQuery, selectedCategory, selectedProvider])
 
   const {
     visibleItems: visibleAgents,
@@ -274,10 +259,17 @@ export default function HomePage() {
   }
 
   const showingFiltered =
-    searchQuery.trim() ||
-    selectedCategory ||
-    selectedProvider ||
-    activeCollectionId !== DEFAULT_COLLECTION_ID
+    searchQuery.trim() || selectedCategory || selectedProvider || activeCollectionId !== DEFAULT_COLLECTION_ID
+
+  const resultsStatus = agentsLoading
+    ? 'Loading agents.'
+    : filteredCount === 0
+      ? 'No agents match the current search and filters.'
+      : visibleCount < filteredCount
+        ? `Showing ${visibleCount} of ${filteredCount} agents.`
+        : showingFiltered
+          ? `${filteredCount} ${filteredCount === 1 ? 'agent matches' : 'agents match'} the current filters.`
+          : `${filteredCount} ${filteredCount === 1 ? 'agent is' : 'agents are'} in the catalogue.`
 
   const ledger = [
     { label: 'Agents', value: agents.length || catalogSize || 0 },
@@ -287,16 +279,13 @@ export default function HomePage() {
   ]
 
   const clearFilters = () => {
-    setSearchParams(
-      (previous) => {
-        const next = new URLSearchParams(previous)
-        next.delete('q')
-        next.delete('category')
-        next.delete('provider')
-        return next
-      },
-      { replace: true }
-    )
+    setSearchParams((previous) => {
+      const next = new URLSearchParams(previous)
+      next.delete('q')
+      next.delete('category')
+      next.delete('provider')
+      return next
+    }, { replace: true })
   }
 
   return (
@@ -444,10 +433,7 @@ export default function HomePage() {
                   <X size={14} />
                 </button>
               ) : (
-                <span
-                  className="kbd absolute right-2.5 top-1/2 hidden -translate-y-1/2 sm:inline-flex"
-                  aria-hidden="true"
-                >
+                <span className="kbd absolute right-2.5 top-1/2 hidden -translate-y-1/2 sm:inline-flex" aria-hidden="true">
                   /
                 </span>
               )}
@@ -523,10 +509,17 @@ export default function HomePage() {
 
       {/* ── Results ──────────────────────────────────────────────────── */}
       <div className="mb-10 flex flex-col gap-8 lg:flex-row">
-        <div className="min-w-0 flex-1">
+        <section
+          className="min-w-0 flex-1"
+          aria-labelledby="agent-results-heading"
+          aria-busy={agentsLoading}
+        >
           <div className="mb-2 flex items-baseline justify-between gap-3 border-b border-zinc-900 pb-1.5 dark:border-white">
             <div className="flex min-w-0 items-baseline gap-2.5">
-              <h2 className="font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-zinc-500 dark:text-text-secondary">
+              <h2
+                id="agent-results-heading"
+                className="font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-zinc-500 dark:text-text-secondary"
+              >
                 {showingFiltered ? 'Matching entries' : 'All entries'}
               </h2>
               <span className="font-mono text-[10px] tabular-nums text-zinc-400 dark:text-text-muted">
@@ -545,6 +538,10 @@ export default function HomePage() {
             )}
           </div>
 
+          <p role="status" aria-label="Agent catalogue status" aria-live="polite" aria-atomic="true" className="sr-only">
+            {resultsStatus}
+          </p>
+
           {agentsLoading ? (
             <div
               className={
@@ -554,20 +551,35 @@ export default function HomePage() {
               }
             >
               {Array.from({ length: 9 }).map((_, idx) => (
-                <AgentCardSkeleton key={idx} variant={viewMode === 'grid' ? 'grid' : 'index'} />
+                <AgentCardSkeleton
+                  key={idx}
+                  variant={viewMode === 'grid' ? 'grid' : 'index'}
+                />
               ))}
             </div>
           ) : filteredCount > 0 ? (
             viewMode === 'grid' ? (
-              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
+              <div
+                role="list"
+                aria-label="Agent catalogue, grid view"
+                className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 xl:grid-cols-3"
+              >
                 {visibleAgents.map((agent) => (
-                  <AgentCard key={agent.id} agent={agent} variant="grid" />
+                  <div role="listitem" key={agent.id}>
+                    <AgentCard agent={agent} variant="grid" />
+                  </div>
                 ))}
               </div>
             ) : (
-              <div className="border-t border-zinc-200 dark:border-border">
+              <div
+                role="list"
+                aria-label="Agent catalogue, index view"
+                className="border-t border-zinc-200 dark:border-border"
+              >
                 {visibleAgents.map((agent, i) => (
-                  <AgentCard key={agent.id} agent={agent} variant="row" index={i + 1} />
+                  <div role="listitem" key={agent.id}>
+                    <AgentCard agent={agent} variant="row" index={i + 1} />
+                  </div>
                 ))}
               </div>
             )
@@ -605,14 +617,18 @@ export default function HomePage() {
                 Showing {visibleCount} of {filteredCount}
               </span>
               {hasMore && (
-                <button type="button" onClick={showMore} className="btn-secondary h-7 text-[11px]">
+                <button
+                  type="button"
+                  onClick={showMore}
+                  className="btn-secondary h-7 text-[11px]"
+                >
                   Load {Math.min(CATALOG_PAGE_SIZE, remaining)} more
                   <ChevronDown size={12} aria-hidden="true" />
                 </button>
               )}
             </div>
           )}
-        </div>
+        </section>
 
         <aside className="w-full flex-shrink-0 lg:w-72">
           <RecentRuns
@@ -692,16 +708,10 @@ export default function HomePage() {
 
           <div className="flex flex-col gap-2">
             <span className="eyebrow">Legal</span>
-            <Link
-              to="/privacy"
-              className="w-fit text-[13px] text-zinc-500 underline decoration-zinc-300 underline-offset-4 transition-colors hover:text-black hover:decoration-current dark:text-text-secondary dark:hover:text-white"
-            >
+            <Link to="/privacy" className="w-fit text-[13px] text-zinc-500 underline decoration-zinc-300 underline-offset-4 transition-colors hover:text-black hover:decoration-current dark:text-text-secondary dark:hover:text-white">
               Privacy policy
             </Link>
-            <Link
-              to="/terms"
-              className="w-fit text-[13px] text-zinc-500 underline decoration-zinc-300 underline-offset-4 transition-colors hover:text-black hover:decoration-current dark:text-text-secondary dark:hover:text-white"
-            >
+            <Link to="/terms" className="w-fit text-[13px] text-zinc-500 underline decoration-zinc-300 underline-offset-4 transition-colors hover:text-black hover:decoration-current dark:text-text-secondary dark:hover:text-white">
               Terms of service
             </Link>
           </div>
@@ -714,7 +724,7 @@ export default function HomePage() {
               rel="noopener noreferrer"
               className="btn-secondary w-fit"
             >
-              <Github size={14} aria-hidden="true" />
+              <GitHubIcon size={14} aria-hidden="true" />
               GitHub
               <ExternalLink size={12} aria-hidden="true" />
               <span className="sr-only">(opens in new tab)</span>
@@ -745,7 +755,7 @@ function AgentRequestPanel() {
     if (!agentName.trim() || !description.trim()) return
     const title = encodeURIComponent(`[Agent Request]: ${agentName}`)
     const body = encodeURIComponent(
-      `### What should this agent do?
+`### What should this agent do?
 ${description}
 
 ### Additional context
@@ -760,6 +770,7 @@ ${description}
   return (
     <div className="flex flex-col gap-3">
       <input
+        aria-label="Agent name"
         type="text"
         value={agentName}
         onChange={(e) => setAgentName(e.target.value)}
@@ -767,6 +778,7 @@ ${description}
         className="field h-9"
       />
       <textarea
+        aria-label="What the agent should do"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         placeholder="Describe what it should do — e.g. Takes a job description and rewrites my resume bullet points to match it"

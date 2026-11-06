@@ -1,105 +1,115 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Swords, ArrowLeft, Key, Eye, EyeOff, ChevronDown, Search, AlertCircle } from 'lucide-react'
-import { useDocumentTitle } from '../lib/useDocumentTitle'
-import { useAgents } from '../lib/useAgents'
-import { useProgressiveList } from '../lib/useProgressiveList'
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Swords,
+  ArrowLeft,
+  Key,
+  Eye,
+  EyeOff,
+  ChevronDown,
+  Search,
+  AlertCircle,
+} from "lucide-react";
+import { useDocumentTitle } from "../lib/useDocumentTitle";
+import { useAgents } from "../lib/useAgents";
+import { useProgressiveList } from "../lib/useProgressiveList";
 
 // Input validation constants - prevent LLM calls with excessively long inputs
 const INPUT_LIMITS = {
-  text: 2000, // Standard text field max
+  text: 2000,      // Standard text field max
   textarea: 10000, // Textarea/description max
-  code: 50000, // Code input max (allow more for actual code)
-  select: 1000, // Select option max
+  code: 50000,     // Code input max (allow more for actual code)
+  select: 1000,    // Select option max
   multiselect: 5000, // Combined multiselect options max
-}
+};
 
 // Validate input length based on input type
 function validateInput(input, value) {
-  if (!value) return { valid: true }
+  if (!value) return { valid: true };
 
-  const limit = INPUT_LIMITS[input.type] || 2000
-  let length = 0
+  const limit = INPUT_LIMITS[input.type] || 2000;
+  let length = 0;
 
   if (Array.isArray(value)) {
     // For multiselect, sum the lengths of all selected options
-    length = value.join(', ').length
+    length = value.join(", ").length;
   } else {
-    length = String(value).length
+    length = String(value).length;
   }
 
   if (length > limit) {
     return {
       valid: false,
-      error: `${input.label || 'Input'} exceeds maximum length (${length}/${limit} characters)`,
+      error: `${input.label || "Input"} exceeds maximum length (${length}/${limit} characters)`,
       length,
       limit,
-    }
+    };
   }
 
-  return { valid: true, length, limit }
+  return { valid: true, length, limit };
 }
 
 const API_KEY_FIELDS = [
   {
-    id: 'openai',
-    label: 'OpenAI API Key',
-    placeholder: 'sk-...',
-    color: 'text-zinc-400',
-    border: 'border-zinc-400/30',
-    bg: 'bg-zinc-400/10',
-    focusBorder: 'focus:border-zinc-400/60',
+    id: "openai",
+    label: "OpenAI API Key",
+    placeholder: "sk-...",
+    color: "text-zinc-400",
+    border: "border-zinc-400/30",
+    bg: "bg-zinc-400/10",
+    focusBorder: "focus:border-zinc-400/60",
   },
   {
-    id: 'anthropic',
-    label: 'Anthropic API Key',
-    placeholder: 'sk-ant-...',
-    color: 'text-zinc-400',
-    border: 'border-zinc-400/30',
-    bg: 'bg-zinc-400/10',
-    focusBorder: 'focus:border-zinc-400/60',
+    id: "anthropic",
+    label: "Anthropic API Key",
+    placeholder: "sk-ant-...",
+    color: "text-zinc-400",
+    border: "border-zinc-400/30",
+    bg: "bg-zinc-400/10",
+    focusBorder: "focus:border-zinc-400/60",
   },
   {
-    id: 'gemini',
-    label: 'Gemini API Key',
-    placeholder: 'AIza...',
-    color: 'text-zinc-400',
-    border: 'border-zinc-400/30',
-    bg: 'bg-zinc-400/10',
-    focusBorder: 'focus:border-zinc-400/60',
+    id: "gemini",
+    label: "Gemini API Key",
+    placeholder: "AIza...",
+    color: "text-zinc-400",
+    border: "border-zinc-400/30",
+    bg: "bg-zinc-400/10",
+    focusBorder: "focus:border-zinc-400/60",
   },
   {
-    id: 'openrouter',
-    label: 'OpenRouter API Key',
-    placeholder: 'sk-or-...',
-    color: 'text-zinc-400',
-    border: 'border-zinc-400/30',
-    bg: 'bg-zinc-400/10',
-    focusBorder: 'focus:border-zinc-400/60',
+    id: "openrouter",
+    label: "OpenRouter API Key",
+    placeholder: "sk-or-...",
+    color: "text-zinc-400",
+    border: "border-zinc-400/30",
+    bg: "bg-zinc-400/10",
+    focusBorder: "focus:border-zinc-400/60",
   },
-]
+];
 
 function InputField({ input, value, onChange }) {
-  const validation = validateInput(input, value)
+  const validation = validateInput(input, value);
   const baseClass =
-    'w-full dark:bg-surface-input bg-gray-50 border border-gray-700 px-3 py-2 text-sm dark:text-text-primary text-gray-900 placeholder-gray-500 outline-none focus:border-gray-500 transition-colors duration-200 resize-none'
+    "w-full dark:bg-surface-input bg-gray-50 border border-gray-700 px-3 py-2 text-sm dark:text-text-primary text-gray-900 placeholder-gray-500 outline-none focus:border-gray-500 transition-colors duration-200 resize-none";
 
   const borderClass = validation.valid
-    ? 'border-gray-700'
-    : 'border-zinc-500/50 focus:border-zinc-500'
+    ? "border-gray-700"
+    : "border-zinc-500/50 focus:border-zinc-500";
 
-  if (input.type === 'select') {
+  if (input.type === "select") {
     return (
       <div>
         <div className="relative">
           <select
-            value={value ?? input.defaultValue ?? ''}
+            aria-label={input.label}
+            value={value ?? input.defaultValue ?? ""}
             onChange={(e) => onChange(input.id, e.target.value)}
             className={`${baseClass} ${borderClass} appearance-none cursor-pointer`}
-            style={{ background: 'rgb(0 0 0 / 0.6)' }}
+            style={{ background: "rgb(0 0 0 / 0.6)" }}
           >
             {input.options.map((opt) => (
-              <option key={opt} value={opt} style={{ background: '#000000' }}>
+              <option key={opt} value={opt} style={{ background: "#000000" }}>
                 {opt}
               </option>
             ))}
@@ -116,35 +126,38 @@ function InputField({ input, value, onChange }) {
           </div>
         )}
       </div>
-    )
+    );
   }
 
-  if (input.type === 'multiselect') {
-    const selected = Array.isArray(value) ? value : (input.defaultValue ?? [])
+  if (input.type === "multiselect") {
+    const selected = Array.isArray(value)
+      ? value
+      : input.defaultValue ?? [];
     const toggle = (opt) => {
-      const next = selected.includes(opt) ? selected.filter((s) => s !== opt) : [...selected, opt]
-      onChange(input.id, next)
-    }
+      const next = selected.includes(opt)
+        ? selected.filter((s) => s !== opt)
+        : [...selected, opt];
+      onChange(input.id, next);
+    };
     return (
       <div>
         <div className="flex flex-wrap gap-2">
           {input.options.map((opt) => {
-            const active = selected.includes(opt)
+            const active = selected.includes(opt);
             return (
               <button
                 key={opt}
                 type="button"
                 onClick={() => toggle(opt)}
                 className={`px-3 py-1 text-xs font-medium border transition-colors duration-150
-                  ${
-                    active
-                      ? 'bg-zinc-400/20 border-zinc-400/60 text-zinc-300'
-                      : 'bg-gray-800/60 border-gray-700 dark:text-text-muted text-gray-500 hover:border-gray-500 hover:text-gray-300'
+                  ${active
+                    ? "bg-zinc-400/20 border-zinc-400/60 text-zinc-300"
+                    : "bg-gray-800/60 border-gray-700 dark:text-text-muted text-gray-500 hover:border-gray-500 hover:text-gray-300"
                   }`}
               >
                 {opt}
               </button>
-            )
+            );
           })}
         </div>
         {!validation.valid && (
@@ -154,23 +167,22 @@ function InputField({ input, value, onChange }) {
           </div>
         )}
       </div>
-    )
+    );
   }
 
-  if (input.type === 'code' || input.type === 'textarea') {
+  if (input.type === "code" || input.type === "textarea") {
     return (
       <div>
         <textarea
-          value={value ?? ''}
+          aria-label={input.label}
+          value={value ?? ""}
           onChange={(e) => onChange(input.id, e.target.value)}
           placeholder={input.placeholder}
-          rows={input.type === 'code' ? 8 : 4}
+          rows={input.type === "code" ? 8 : 4}
           className={`${baseClass} ${borderClass} font-mono text-xs leading-relaxed`}
         />
         <div className="flex items-center justify-between mt-1 text-xs">
-          <div
-            className={validation.valid ? 'text-gray-500' : 'text-zinc-400 flex items-center gap-1'}
-          >
+          <div className={validation.valid ? "text-gray-500" : "text-zinc-400 flex items-center gap-1"}>
             {!validation.valid && (
               <>
                 <AlertCircle size={12} />
@@ -178,22 +190,21 @@ function InputField({ input, value, onChange }) {
               </>
             )}
             {validation.valid && validation.length > 0 && (
-              <span className="text-gray-500">
-                {validation.length}/{validation.limit} characters
-              </span>
+              <span className="text-gray-500">{validation.length}/{validation.limit} characters</span>
             )}
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   // Default: text input
   return (
     <div>
       <input
+        aria-label={input.label}
         type="text"
-        value={value ?? ''}
+        value={value ?? ""}
         onChange={(e) => onChange(input.id, e.target.value)}
         placeholder={input.placeholder}
         className={`${baseClass} ${borderClass}`}
@@ -205,39 +216,39 @@ function InputField({ input, value, onChange }) {
         </div>
       )}
     </div>
-  )
+  );
 }
 
 export default function BattleModeSetup() {
-  const navigate = useNavigate()
-  useDocumentTitle('Battle Setup')
+  const navigate = useNavigate();
+  useDocumentTitle("Battle Setup");
 
-  const { agents, loading: agentsLoading } = useAgents()
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedAgent, setSelectedAgent] = useState(null)
-  const [inputs, setInputs] = useState({})
+  const { agents, loading: agentsLoading } = useAgents();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedAgent, setSelectedAgent] = useState(null);
+  const [inputs, setInputs] = useState({});
   const [apiKeys, setApiKeys] = useState({
-    openai: '',
-    anthropic: '',
-    gemini: '',
-    openrouter: '',
-  })
+    openai: "",
+    anthropic: "",
+    gemini: "",
+    openrouter: "",
+  });
   const [showKeys, setShowKeys] = useState({
     openai: false,
     anthropic: false,
     gemini: false,
     openrouter: false,
-  })
-  const [step, setStep] = useState(1) // 1 = pick agent, 2 = fill inputs + keys
+  });
+  const [step, setStep] = useState(1); // 1 = pick agent, 2 = fill inputs + keys
 
   const filteredAgents = agents.filter((a) => {
-    const q = searchQuery.toLowerCase()
+    const q = searchQuery.toLowerCase();
     return (
       a.name.toLowerCase().includes(q) ||
       a.description?.toLowerCase().includes(q) ||
       a.category?.toLowerCase().includes(q)
-    )
-  })
+    );
+  });
 
   const {
     visibleItems: visibleAgents,
@@ -248,68 +259,71 @@ export default function BattleModeSetup() {
   } = useProgressiveList(filteredAgents, {
     pageSize: 24,
     resetKey: searchQuery,
-  })
+  });
 
   const handleInputChange = (id, val) => {
-    setInputs((prev) => ({ ...prev, [id]: val }))
-  }
+    setInputs((prev) => ({ ...prev, [id]: val }));
+  };
 
   const handleSelectAgent = (agent) => {
-    setSelectedAgent(agent)
+    setSelectedAgent(agent);
     // Pre-fill defaults
-    const defaults = {}
+    const defaults = {};
     agent.inputs?.forEach((inp) => {
       if (inp.defaultValue !== undefined) {
-        defaults[inp.id] = inp.defaultValue
+        defaults[inp.id] = inp.defaultValue;
       }
-    })
-    setInputs(defaults)
-    setStep(2)
-  }
+    });
+    setInputs(defaults);
+    setStep(2);
+  };
 
   const canSubmit =
     selectedAgent &&
     Object.values(apiKeys).some((k) => k.trim()) &&
     selectedAgent.inputs?.every((inp) => {
-      const val = inputs[inp.id]
+      const val = inputs[inp.id];
       if (!inp.required) {
         // For optional fields, if there's a value, it must be valid
-        if (!val || (Array.isArray(val) && val.length === 0)) return true
-        return validateInput(inp, val).valid
+        if (!val || (Array.isArray(val) && val.length === 0)) return true;
+        return validateInput(inp, val).valid;
       }
       // For required fields, must have value and pass validation
-      if (Array.isArray(val)) return val.length > 0 && validateInput(inp, val).valid
-      const hasValue = val && String(val).trim().length > 0
-      return hasValue && validateInput(inp, val).valid
-    })
+      if (Array.isArray(val)) return val.length > 0 && validateInput(inp, val).valid;
+      const hasValue = val && String(val).trim().length > 0;
+      return hasValue && validateInput(inp, val).valid;
+    });
 
   const handleStartBattle = () => {
-    if (!canSubmit) return
-    navigate('/battle/arena', {
+    if (!canSubmit) return;
+    navigate("/battle/arena", {
       state: { agent: selectedAgent, inputs, apiKeys },
-    })
-  }
+    });
+  };
 
   return (
     <div className="min-h-screen dark:bg-surface bg-gray-50 text-white battle-page-transition">
+
       <main className="pt-20 px-4 pb-12 max-w-4xl mx-auto">
         {/* Back */}
         <button
-          onClick={() => (step === 2 ? setStep(1) : navigate('/battle'))}
+          onClick={() =>
+            step === 2 ? setStep(1) : navigate("/battle")
+          }
           className="flex items-center gap-1.5 text-xs font-medium dark:text-text-muted text-gray-500 hover:text-white transition-all duration-200 hover:gap-2 mb-8"
         >
           <ArrowLeft size={14} />
-          {step === 2 ? 'Back to Agent Selection' : 'Back to Battle Mode'}
+          {step === 2 ? "Back to Agent Selection" : "Back to Battle Mode"}
         </button>
 
         {/* Header */}
         <div className="text-center mb-10 battle-fade-in">
           <h1 className="text-3xl font-extrabold tracking-wider mb-1 text-white">
-            {step === 1 ? 'Pick Your Agent' : 'Configure Battle'}
+            {step === 1 ? "Pick Your Agent" : "Configure Battle"}
           </h1>
           <p className="text-sm dark:text-text-muted text-gray-500">
             {step === 1
-              ? 'Choose an agent to battle across GPT-4o, Claude Sonnet, Gemini Flash and OpenRouter'
+              ? "Choose an agent to battle across GPT-4o, Claude Sonnet, Gemini Flash and OpenRouter"
               : `Setting up ${selectedAgent?.name}`}
           </p>
         </div>
@@ -320,10 +334,9 @@ export default function BattleModeSetup() {
             <div key={s} className="flex items-center gap-3">
               <div
                 className={`w-7 h-7 flex items-center justify-center text-xs font-bold border transition-colors duration-200
-                  ${
-                    step >= s
-                      ? 'bg-zinc-400/20 border-zinc-400/60 text-zinc-300'
-                      : 'bg-gray-800 border-gray-700 dark:text-text-muted text-gray-500'
+                  ${step >= s
+                    ? "bg-zinc-400/20 border-zinc-400/60 text-zinc-300"
+                    : "bg-gray-800 border-gray-700 dark:text-text-muted text-gray-500"
                   }`}
               >
                 {s}
@@ -331,7 +344,7 @@ export default function BattleModeSetup() {
               {s < 2 && (
                 <div
                   className={`h-px w-12 transition-colors duration-300 ${
-                    step > s ? 'bg-zinc-400/40' : 'bg-gray-700'
+                    step > s ? "bg-zinc-400/40" : "bg-gray-700"
                   }`}
                 />
               )}
@@ -416,7 +429,9 @@ export default function BattleModeSetup() {
                   <div key={input.id}>
                     <label className="block text-xs font-semibold dark:text-text-primary text-gray-900 mb-1.5 uppercase tracking-wide">
                       {input.label}
-                      {input.required && <span className="text-zinc-400 ml-1">*</span>}
+                      {input.required && (
+                        <span className="text-zinc-400 ml-1">*</span>
+                      )}
                     </label>
                     <InputField
                       input={input}
@@ -437,8 +452,9 @@ export default function BattleModeSetup() {
                 </h2>
               </div>
               <p className="text-xs dark:text-text-muted text-gray-500 mb-5 leading-relaxed">
-                Your keys are used directly in the browser and never sent to our servers. Add at
-                least one key. Providers without a key are skipped in the arena.
+                Your keys are used directly in the browser and never sent to our
+                servers. Add at least one key. Providers without a key are
+                skipped in the arena.
               </p>
               <div className="space-y-4">
                 {API_KEY_FIELDS.map((field) => (
@@ -451,7 +467,8 @@ export default function BattleModeSetup() {
                     </label>
                     <div className="relative">
                       <input
-                        type={showKeys[field.id] ? 'text' : 'password'}
+                        aria-label={field.label}
+                        type={showKeys[field.id] ? "text" : "password"}
                         value={apiKeys[field.id]}
                         onChange={(e) =>
                           setApiKeys((prev) => ({
@@ -473,9 +490,15 @@ export default function BattleModeSetup() {
                           }))
                         }
                         className="absolute right-3 top-1/2 -translate-y-1/2 dark:text-text-muted text-gray-500 hover:text-gray-300 transition-colors"
-                        aria-label={showKeys[field.id] ? 'Hide key' : 'Show key'}
+                        aria-label={
+                          showKeys[field.id] ? "Hide key" : "Show key"
+                        }
                       >
-                        {showKeys[field.id] ? <EyeOff size={14} /> : <Eye size={14} />}
+                        {showKeys[field.id] ? (
+                          <EyeOff size={14} />
+                        ) : (
+                          <Eye size={14} />
+                        )}
                       </button>
                     </div>
                   </div>
@@ -489,18 +512,17 @@ export default function BattleModeSetup() {
               disabled={!canSubmit}
               className={`w-full flex items-center justify-center gap-2.5 px-8 py-4 
                 text-sm font-bold transition-colors duration-200 border
-                ${
-                  canSubmit
-                    ? 'bg-zinc-500 text-white hover:bg-zinc-400 border-zinc-400/20 shadow-panel '
-                    : 'bg-gray-800 text-gray-500 dark:text-text-muted border-gray-700 cursor-not-allowed'
+                ${canSubmit
+                  ? "bg-zinc-500 text-white hover:bg-zinc-400 border-zinc-400/20 shadow-panel "
+                  : "bg-gray-800 text-gray-500 dark:text-text-muted border-gray-700 cursor-not-allowed"
                 }`}
             >
               <Swords size={18} />
-              {canSubmit ? 'Start Battle' : 'Fill all required fields'}
+              {canSubmit ? "Start Battle" : "Fill all required fields"}
             </button>
           </div>
         )}
       </main>
     </div>
-  )
+  );
 }
