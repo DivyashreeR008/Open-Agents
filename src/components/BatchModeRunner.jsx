@@ -423,7 +423,12 @@ export default function BatchModeRunner({ agent, provider, apiKey, selectedModel
                 </span>
               </div>
               {r.status === 'done' && r.output && (
-                <div className="px-3 py-2 text-xs dark:text-text-secondary text-gray-600 whitespace-pre-wrap max-h-32 overflow-y-auto">
+                <div
+                  role="region"
+                  tabIndex={0}
+                  aria-label={`Batch result ${i + 1} output, scrollable`}
+                  className="px-3 py-2 text-xs dark:text-text-secondary text-gray-600 whitespace-pre-wrap max-h-32 overflow-y-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500"
+                >
                   {r.output}
                 </div>
               )}
