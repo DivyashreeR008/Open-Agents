@@ -75,37 +75,89 @@ function writeSecret(storageKey, value) {
  * @returns {{ openai: string, anthropic: string, gemini: string, openrouter: string, defaultProvider: string }}
  */
 export function getGlobalKeys() {
-  return {
+  const keys = {
     openai:          readSecret(KEYS.openai),
     anthropic:       readSecret(KEYS.anthropic),
     gemini:          readSecret(KEYS.gemini),
     openrouter:      readSecret(KEYS.openrouter),
-    defaultProvider: localStorage.getItem(DEFAULT_PROVIDER_KEY) || '',
   }
+
+  let defaultProvider = localStorage.getItem(DEFAULT_PROVIDER_KEY) || ''
+  // A default is only meaningful while its provider still has a live key.
+  // Expired or manually removed keys must not leave a preference that points
+  // at a credential no run can use.
+  if (defaultProvider && !keys[defaultProvider]?.trim()) {
+    localStorage.removeItem(DEFAULT_PROVIDER_KEY)
+    defaultProvider = ''
+  }
+
+  return { ...keys, defaultProvider }
 }
 
 /**
  * Save keys. Only saves non-empty values — passing an empty string does NOT
  * overwrite an existing saved key. To explicitly clear a key use clearGlobalKey(provider).
+ *
+ * An empty `defaultProvider` clears the preference instead of being ignored,
+ * which is what the empty option in Settings asks for. The return value lets
+ * the caller report what actually happened instead of assuming every field
+ * was stored.
+ *
  * @param {{ openai?: string, anthropic?: string, gemini?: string, openrouter?: string, defaultProvider?: string }} keys
+ * @returns {{ stored: string[], skipped: string[], defaultProvider: string | undefined }}
  */
 export function saveGlobalKeys({ openai, anthropic, gemini, openrouter, defaultProvider } = {}) {
-  if (openai          !== undefined && openai.trim()          !== '') writeSecret(KEYS.openai,          openai.trim())
-  if (anthropic       !== undefined && anthropic.trim()       !== '') writeSecret(KEYS.anthropic,       anthropic.trim())
-  if (gemini          !== undefined && gemini.trim()          !== '') writeSecret(KEYS.gemini,          gemini.trim())
-  if (openrouter      !== undefined && openrouter.trim()      !== '') writeSecret(KEYS.openrouter,      openrouter.trim())
-  if (defaultProvider !== undefined && defaultProvider.trim() !== '') localStorage.setItem(DEFAULT_PROVIDER_KEY, defaultProvider.trim())
+  const edits = { openai, anthropic, gemini, openrouter }
+  const stored = []
+  const skipped = []
+
+  Object.entries(edits).forEach(([provider, value]) => {
+    if (value === undefined) return
+    const trimmed = value.trim()
+    if (trimmed === '') {
+      skipped.push(provider)
+      return
+    }
+    writeSecret(KEYS[provider], trimmed)
+    stored.push(provider)
+  })
+
+  let savedDefault
+  if (defaultProvider !== undefined) {
+    savedDefault = defaultProvider.trim()
+    if (savedDefault === '') {
+      localStorage.removeItem(DEFAULT_PROVIDER_KEY)
+    } else {
+      localStorage.setItem(DEFAULT_PROVIDER_KEY, savedDefault)
+    }
+  }
+
+  return { stored, skipped, defaultProvider: savedDefault }
 }
 
 /**
  * Remove a single provider's saved key.
- * @param {'openai' | 'anthropic' | 'gemini' | 'openrouter'} provider
+ *
+ * Clearing the provider that is currently the default also removes the
+ * preference. Callers should not have to remember the second step, and a
+ * default that survives its key is guaranteed to break the next run.
+ *
+ * @param {'openai' | 'anthropic' | 'gemini' | 'openrouter' | 'defaultProvider'} provider
  */
 export function clearGlobalKey(provider) {
+  if (provider === 'defaultProvider') {
+    localStorage.removeItem(DEFAULT_PROVIDER_KEY)
+    return
+  }
+
   const storageKey = KEYS[provider]
   if (storageKey) {
     sessionStorage.removeItem(storageKey)
     localStorage.removeItem(storageKey) // clear any legacy leak too
+  }
+
+  if (localStorage.getItem(DEFAULT_PROVIDER_KEY) === provider) {
+    localStorage.removeItem(DEFAULT_PROVIDER_KEY)
   }
 }
 
