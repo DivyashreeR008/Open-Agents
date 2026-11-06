@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Sun, Moon, Menu, X, HelpCircle, DollarSign, RotateCcw, Settings, PanelLeft, ExternalLink } from 'lucide-react'
-import Github from './icons/Github'
 
+import GitHubIcon from './GitHubIcon'
 import Logo from './Logo'
 import KeyboardShortcutsModal from './KeyboardShortcutsModal'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 import { useSessionSpend } from '../lib/useSessionSpend'
+import { formatCost } from '../lib/formatting'
 
 function updateThemeMeta(isDark) {
   if (typeof document === 'undefined') return
@@ -127,7 +128,7 @@ export default function Navbar({ sidebarOpen, setSidebarOpen, onOpenCommandPalet
               aria-label="Star Open Agents on GitHub (opens in new tab)"
               className="btn-secondary hidden h-8 sm:inline-flex"
             >
-              <Github size={14} aria-hidden="true" />
+              <GitHubIcon size={14} aria-hidden="true" />
               <span className="hidden lg:inline">Star</span>
               <ExternalLink size={12} aria-hidden="true" />
             </a>
@@ -148,7 +149,7 @@ export default function Navbar({ sidebarOpen, setSidebarOpen, onOpenCommandPalet
                   aria-label="Session spend"
                 >
                   <DollarSign size={11} />
-                  {totalSpend.toFixed(2)}
+                  {formatCost(totalSpend, { symbol: false })}
                 </button>
 
                 {showSpendPopup && (
@@ -160,13 +161,13 @@ export default function Navbar({ sidebarOpen, setSidebarOpen, onOpenCommandPalet
                       </span>
                     </div>
                     <div className="mb-2 font-mono text-lg font-semibold tabular-nums text-zinc-900 dark:text-text-primary">
-                      ${totalSpend.toFixed(4)}
+                      {formatCost(totalSpend)}
                     </div>
                     <div className="mb-2 max-h-32 space-y-1 overflow-y-auto">
                       {runs.slice(0, 10).map((run, i) => (
                         <div key={i} className="flex justify-between font-mono text-[10px] text-zinc-400 dark:text-text-muted">
                           <span className="max-w-[140px] truncate">{run.model || 'Unknown'}</span>
-                          <span className="tabular-nums">${run.totalCost.toFixed(4)}</span>
+                          <span className="tabular-nums">{formatCost(run.totalCost)}</span>
                         </div>
                       ))}
                     </div>
@@ -234,7 +235,7 @@ export default function Navbar({ sidebarOpen, setSidebarOpen, onOpenCommandPalet
                 rel="noopener noreferrer"
                 className="btn-secondary"
               >
-                <Github size={14} aria-hidden="true" />
+                <GitHubIcon size={14} aria-hidden="true" />
                 Star
                 <ExternalLink size={12} aria-hidden="true" />
                 <span className="sr-only">(opens in new tab)</span>

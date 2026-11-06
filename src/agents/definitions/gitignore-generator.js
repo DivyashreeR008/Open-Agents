@@ -9,6 +9,7 @@ export default {
   provider: "any",
   defaultProvider: "openai",
   model: "gpt-4o",
+  outputType: "markdown",
   exampleInputs: {
     stack: "Node.js, Next.js, TypeScript",
     os: "macOS, Windows",

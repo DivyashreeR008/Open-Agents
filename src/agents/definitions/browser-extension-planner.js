@@ -5,7 +5,7 @@ export default {
   description:
     "Plan a browser extension with permissions, architecture, security, privacy, and store review.",
   category: "Developer Tools",
-  icon: "Chrome",
+  icon: "Globe",
   provider: "any",
   defaultProvider: "anthropic",
   model: "claude-sonnet-4-6",

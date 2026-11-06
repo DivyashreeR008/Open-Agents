@@ -1,6 +1,18 @@
 import { describe, it, expect } from 'vitest'
-import { loadAllAgents } from './registry'
+import { assertUniqueAgentIds, loadAllAgents } from './registry'
 import { CATEGORIES } from './categories'
+
+const definitionModules = import.meta.glob('./definitions/*.js', {
+  eager: true,
+  import: 'default',
+})
+
+const definitions = Object.entries(definitionModules).map(([file, agent]) => ({
+  file,
+  agent,
+}))
+
+const SUPPORTED_OUTPUT_TYPES = new Set(['markdown', 'text', 'json'])
 
 describe('loadAllAgents', () => {
   it('should load all agent definitions', async () => {
@@ -49,5 +61,51 @@ describe('loadAllAgents', () => {
     const first = await loadAllAgents()
     const second = await loadAllAgents()
     expect(first).toBe(second)
+  })
+})
+
+describe('definition source integrity', () => {
+  it('gives every definition an id that matches its filename', () => {
+    const mismatches = definitions
+      .filter(({ file, agent }) => {
+        const filename = file.split('/').pop().replace(/\.js$/, '')
+        return agent?.id !== filename
+      })
+      .map(({ file, agent }) => `${file}: declares "${agent?.id ?? '(missing)'}"`)
+
+    expect(mismatches).toEqual([])
+  })
+
+  it('keeps every raw definition id unique', () => {
+    expect(() =>
+      assertUniqueAgentIds(definitions.map(({ agent }) => agent))
+    ).not.toThrow()
+  })
+
+  it('declares a supported outputType on every definition', () => {
+    const invalid = definitions
+      .filter(({ agent }) => !SUPPORTED_OUTPUT_TYPES.has(agent?.outputType))
+      .map(({ file, agent }) => `${file}: ${agent?.outputType ?? '(missing)'}`)
+
+    expect(invalid).toEqual([])
+  })
+})
+
+describe('assertUniqueAgentIds', () => {
+  it('throws with every colliding id named once', () => {
+    expect(() =>
+      assertUniqueAgentIds([
+        { id: 'alpha' },
+        { id: 'alpha' },
+        { id: 'beta' },
+        { id: 'gamma' },
+        { id: 'gamma' },
+      ])
+    ).toThrow('Duplicate agent ids: alpha, gamma.')
+  })
+
+  it('ignores entries without an id and returns the original array', () => {
+    const agents = [{ id: 'alpha' }, {}, null]
+    expect(assertUniqueAgentIds(agents)).toBe(agents)
   })
 })

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import * as Icons from 'lucide-react'
 import { ArrowRight } from 'lucide-react'
+import { resolveAgentIcon } from '../../lib/agentIcons'
 
 const providerLabels = { openai: 'OpenAI', anthropic: 'Anthropic', gemini: 'Gemini', openrouter: 'OpenRouter', any: 'Any Provider' }
 const providerClasses = {
@@ -12,7 +12,7 @@ const providerClasses = {
 }
 
 export default function RecommendationResultCard({ rank, agent, result, onOpenAgent }) {
-  const Icon = Icons[agent?.icon] || Icons.Bot
+  const Icon = resolveAgentIcon(agent?.icon)
   const provider = agent?.provider || 'any'
   return (
     <article className=" border bg-white border-gray-200 dark:bg-surface-card dark:border-border p-4 space-y-3">
@@ -31,12 +31,14 @@ export default function RecommendationResultCard({ rank, agent, result, onOpenAg
         </div>
       </div>
       <p className="text-xs leading-relaxed text-gray-500 dark:text-text-secondary">{agent?.description || 'No description provided.'}</p>
-      <div>
-        <h4 className="text-xs font-semibold text-gray-700 dark:text-text-primary mb-1">Why this agent?</h4>
-        <ul className="space-y-1 text-xs text-gray-500 dark:text-text-secondary list-disc pl-4">
-          {(result.reasons || []).slice(0, 4).map((reason) => <li key={reason}>{reason}</li>)}
-        </ul>
-      </div>
+      {(result.reasons || []).length > 0 && (
+        <div>
+          <h4 className="text-xs font-semibold text-gray-700 dark:text-text-primary mb-1">Why this agent?</h4>
+          <ul className="space-y-1 text-xs text-gray-500 dark:text-text-secondary list-disc pl-4">
+            {(result.reasons || []).slice(0, 4).map((reason) => <li key={reason}>{reason}</li>)}
+          </ul>
+        </div>
+      )}
       <div className="flex justify-end">
         <Link to={`/agent/${agent.id}`} onClick={onOpenAgent} className="inline-flex items-center gap-1.5 bg-black px-3 py-2 text-xs font-semibold text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 transition-colors">
           Open agent <ArrowRight size={13} aria-hidden="true" />

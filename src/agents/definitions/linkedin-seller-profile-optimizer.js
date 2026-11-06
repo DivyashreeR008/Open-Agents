@@ -5,7 +5,7 @@ export default {
   description:
     "Turn a LinkedIn profile into a buyer magnet: headline, about, featured, and CTA.",
   category: "Sales",
-  icon: "Linkedin",
+  icon: "Briefcase",
   provider: "any",
   defaultProvider: "anthropic",
   model: "claude-sonnet-4-6",
