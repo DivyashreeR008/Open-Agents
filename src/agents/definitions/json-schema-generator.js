@@ -9,6 +9,7 @@ export default {
   provider: "any",
   defaultProvider: "openai",
   model: "gpt-4o",
+  outputType: "markdown",
   exampleInputs: {
     sample: '{\n  "id": 1,\n  "name": "Ada",\n  "tags": ["admin", "beta"]\n}',
     draft: "Draft 2020-12",

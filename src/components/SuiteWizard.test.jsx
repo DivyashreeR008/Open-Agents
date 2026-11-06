@@ -56,7 +56,7 @@ const mockAgents = [
   { id: 'competitive-analysis-generator', name: 'Competitive Analysis Generator', description: 'Generate competitive analysis', category: 'Business', provider: 'any' },
   { id: 'tone-rewriter', name: 'Tone Rewriter', description: 'Rewrite tone', category: 'Productivity', provider: 'any' },
   { id: 'color-palette-generator', name: 'Color Palette Generator', description: 'Generate color palettes', category: 'Design', provider: 'any' },
-  { id: 'font-pair-generator', name: 'Font Pair Generator', description: 'Generate font pairs', category: 'Design', provider: 'any' },
+  { id: 'font-pairing-agent', name: 'Font Pairing Agent', description: 'Generate font pairings', category: 'Design', provider: 'any' },
   { id: 'typography-pairer', name: 'Typography Pairer', description: 'Pair typography', category: 'Design', provider: 'any' },
   { id: 'accessibility-audit-generator', name: 'Accessibility Audit Generator', description: 'Generate accessibility audits', category: 'Engineering', provider: 'any' },
   { id: 'game_world_lore_generator', name: 'Game World Lore Generator', description: 'Generate game world lore', category: 'Gaming', provider: 'any' },
@@ -95,7 +95,7 @@ const mockAgents = [
   { id: 'smart-contract-auditor', name: 'Smart Contract Auditor', description: 'Audit smart contracts', category: 'Web3', provider: 'any' },
   { id: 'solidity-code-reviewer', name: 'Solidity Code Reviewer', description: 'Review Solidity code', category: 'Web3', provider: 'any' },
   { id: 'web3-whitepaper-writer', name: 'Web3 Whitepaper Writer', description: 'Write Web3 whitepapers', category: 'Web3', provider: 'any' },
-  { id: 'game-system-compatibility-analyser', name: 'Game System Compatibility Analyser', description: 'Analyse game system compatibility', category: 'Gaming', provider: 'any' },
+  { id: 'game-system-compatibility-agent', name: 'Game System Compatibility Agent', description: 'Analyse game system compatibility', category: 'Gaming', provider: 'any' },
   { id: 'future-self-letter-agent', name: 'Future Self Letter Agent', description: 'Write letters to future self', category: 'Productivity', provider: 'any' },
 ]
 

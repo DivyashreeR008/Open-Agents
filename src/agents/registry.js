@@ -17,18 +17,44 @@ const modules = import.meta.glob('./definitions/*.js', { eager: false });
 // catalogue size during the lazy load instead of flashing a stale number.
 export const AGENT_COUNT = Object.keys(modules).length;
 
-const normalizeAgents = (agents) => {
+/**
+ * Fail loudly when two definitions claim the same id. The registry used to
+ * drop the later definition and log a console warning, which made a collision
+ * look like a missing agent in the catalogue instead of a source error.
+ * @param {Array<{id?: string}>} agents
+ * @returns {Array<{id?: string}>} the same array, for chaining
+ */
+export function assertUniqueAgentIds(agents) {
   const seenIds = new Set();
+  const duplicateIds = new Set();
+
+  for (const agent of agents) {
+    if (!agent?.id) continue;
+    if (seenIds.has(agent.id)) {
+      duplicateIds.add(agent.id);
+    } else {
+      seenIds.add(agent.id);
+    }
+  }
+
+  if (duplicateIds.size > 0) {
+    const label = duplicateIds.size === 1 ? 'id' : 'ids';
+    throw new Error(
+      `Duplicate agent ${label}: ${[...duplicateIds].join(', ')}. ` +
+        'Each definition must declare a unique id that matches its filename.'
+    );
+  }
+
+  return agents;
+}
+
+const normalizeAgents = (agents) => {
+  assertUniqueAgentIds(agents);
   return agents.filter(Boolean).filter((agent) => {
     if (!agent?.id) {
       console.warn('Skipping agent without an id:', agent);
       return false;
     }
-    if (seenIds.has(agent.id)) {
-      console.warn(`Skipping duplicate agent id "${agent.id}".`);
-      return false;
-    }
-    seenIds.add(agent.id);
     return true;
   });
 };
