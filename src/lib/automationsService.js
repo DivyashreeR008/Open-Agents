@@ -281,8 +281,12 @@ export async function sendResendNotification({
   }
 
   // Save to local email delivery log
+  let existingLogs = []
   try {
-    const existingLogs = JSON.parse(localStorage.getItem(EMAIL_LOGS_KEY) || '[]')
+    const parsedLogs = JSON.parse(localStorage.getItem(EMAIL_LOGS_KEY) || '[]')
+    if (Array.isArray(parsedLogs)) existingLogs = parsedLogs
+  } catch {}
+  try {
     localStorage.setItem(EMAIL_LOGS_KEY, JSON.stringify([logEntry, ...existingLogs].slice(0, 50)))
   } catch {}
 
