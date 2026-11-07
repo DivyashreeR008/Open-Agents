@@ -15,12 +15,15 @@ const ICON_ALIASES = {
   GitHub: GitHubIcon,
 }
 
+const hasOwn = (object, key) => Object.prototype.hasOwnProperty.call(object, key)
+
 export function resolveAgentIcon(name) {
   if (!name) return LucideIcons.Bot
-  return ICON_ALIASES[name] || LucideIcons[name] || LucideIcons.Bot
+  if (hasOwn(ICON_ALIASES, name)) return ICON_ALIASES[name]
+  return hasOwn(LucideIcons, name) ? LucideIcons[name] : LucideIcons.Bot
 }
 
 export function isKnownAgentIcon(name) {
   if (!name) return false
-  return Boolean(ICON_ALIASES[name] || LucideIcons[name])
+  return hasOwn(ICON_ALIASES, name) || (hasOwn(LucideIcons, name) && Boolean(LucideIcons[name]))
 }
