@@ -80,7 +80,9 @@ export const MODEL_PRICING = {
 }
 
 export function getPricing(modelId) {
-  return MODEL_PRICING[modelId] || null
+  if (typeof modelId !== 'string') return null
+  if (!Object.prototype.hasOwnProperty.call(MODEL_PRICING, modelId)) return null
+  return MODEL_PRICING[modelId]
 }
 
 export function estimateInputCost(modelId, inputTokens) {
