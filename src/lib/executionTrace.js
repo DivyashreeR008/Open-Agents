@@ -31,7 +31,7 @@ export function recordStep(trace, step) {
     stepType: step.stepType || 'agent',
     input: truncateForStorage(step.input),
     output: truncateForStorage(step.output),
-    durationMs: Math.round(step.durationMs),
+    durationMs: Number.isFinite(Number(step.durationMs)) ? Math.round(Number(step.durationMs)) : 0,
     status: step.status,
     error: step.error ?? null,
   })
