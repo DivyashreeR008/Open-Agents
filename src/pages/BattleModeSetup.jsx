@@ -19,7 +19,7 @@ function validateInput(input, value) {
   if (!value) return { valid: true }
 
   const limit = INPUT_LIMITS[input.type] || 2000
-  let length = 0
+  let length
 
   if (Array.isArray(value)) {
     // For multiselect, sum the lengths of all selected options

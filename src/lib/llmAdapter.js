@@ -441,7 +441,9 @@ export async function runAgent(
     }
   } catch (error) {
     if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-      throw new Error("Couldn't reach the API. Check your internet connection and try again.")
+      throw new Error("Couldn't reach the API. Check your internet connection and try again.", {
+        cause: error,
+      })
     }
     throw error
   }
@@ -588,7 +590,9 @@ export async function streamAgent({
       return { content: fullContent, duration }
     }
     if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-      throw new Error("Couldn't reach the API. Check your internet connection and try again.")
+      throw new Error("Couldn't reach the API. Check your internet connection and try again.", {
+        cause: error,
+      })
     }
     throw error
   }
