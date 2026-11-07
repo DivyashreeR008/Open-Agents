@@ -49,7 +49,9 @@ describe('WorkflowDetail navigation', () => {
   })
 
   it('returns to the library from the header', async () => {
-    mocks.fetchWorkflowById.mockResolvedValue({ data: { id: 'w1', title: 'Chain', agents: [], usage_count: 0 } })
+    mocks.fetchWorkflowById.mockResolvedValue({
+      data: { id: 'w1', title: 'Chain', agents: [], usage_count: 0 },
+    })
     renderPage()
     await screen.findByRole('heading', { name: 'Chain' })
     fireEvent.click(screen.getByRole('button', { name: /Workflow Library/ }))
@@ -59,11 +61,15 @@ describe('WorkflowDetail navigation', () => {
   it('clears the copied label after the confirmation window', async () => {
     const writeText = vi.fn().mockResolvedValue(undefined)
     Object.assign(navigator, { clipboard: { writeText } })
-    mocks.fetchWorkflowById.mockResolvedValue({ data: { id: 'w1', title: 'Chain', agents: [], usage_count: 0 } })
+    mocks.fetchWorkflowById.mockResolvedValue({
+      data: { id: 'w1', title: 'Chain', agents: [], usage_count: 0 },
+    })
     renderPage()
     await screen.findByRole('heading', { name: 'Chain' })
     fireEvent.click(screen.getByRole('button', { name: /Share/ }))
     await screen.findByRole('button', { name: /Copied!/ })
-    await waitFor(() => expect(screen.getByRole('button', { name: /Share/ })).toBeInTheDocument(), { timeout: 3000 })
+    await waitFor(() => expect(screen.getByRole('button', { name: /Share/ })).toBeInTheDocument(), {
+      timeout: 3000,
+    })
   })
 })

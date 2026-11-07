@@ -48,11 +48,11 @@ async function makeAutomation(overrides = {}) {
     nextRunAt: nextRunAt ?? NOW - 30_000,
     enabled: overrides.enabled ?? true,
   }
-  saveAutomations([patched, ...loadAutomations().filter(a => a.id !== created.id)])
+  saveAutomations([patched, ...loadAutomations().filter((a) => a.id !== created.id)])
   return patched
 }
 
-const byStatus = (id, status) => getRunsForAutomation(id).filter(r => r.status === status)
+const byStatus = (id, status) => getRunsForAutomation(id).filter((r) => r.status === status)
 
 beforeAll(() => {
   vi.stubGlobal('crypto', webcrypto)
@@ -60,7 +60,10 @@ beforeAll(() => {
 
 beforeEach(async () => {
   localStorage.clear()
-  keyStoreState.key = await webcrypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt'])
+  keyStoreState.key = await webcrypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, false, [
+    'encrypt',
+    'decrypt',
+  ])
   provider.runAgent.mockReset()
   provider.runAgent.mockResolvedValue({ content: 'done', tokens: 12, duration: 5 })
   vi.useFakeTimers({ toFake: ['Date'] })
@@ -100,7 +103,7 @@ describe('a scheduled run that is on time', () => {
     await checkDueAutomations(NOW)
     await checkDueAutomations(NOW + 60_000)
     expect(provider.runAgent).toHaveBeenCalledTimes(1)
-    expect(getRunsForAutomation(a.id).filter(r => r.status === 'success')).toHaveLength(1)
+    expect(getRunsForAutomation(a.id).filter((r) => r.status === 'success')).toHaveLength(1)
   })
 })
 
@@ -112,10 +115,17 @@ describe('when the app was closed for 3.5 days (4 daily windows, newest 12 hours
     await checkDueAutomations(NOW)
 
     expect(provider.runAgent).toHaveBeenCalledTimes(1)
-    expect(byStatus(a.id, 'success')[0]).toMatchObject({ scheduledFor: NOW - 0.5 * DAY, catchUp: true })
+    expect(byStatus(a.id, 'success')[0]).toMatchObject({
+      scheduledFor: NOW - 0.5 * DAY,
+      catchUp: true,
+    })
     const [missed] = byStatus(a.id, 'missed')
     expect(missed).toMatchObject({
-      missedCount: 3, firstWindow: NOW - 3.5 * DAY, lastWindow: NOW - 1.5 * DAY, detectedAt: NOW, policy: 'run_once',
+      missedCount: 3,
+      firstWindow: NOW - 3.5 * DAY,
+      lastWindow: NOW - 1.5 * DAY,
+      detectedAt: NOW,
+      policy: 'run_once',
     })
     expect(byStatus(a.id, 'missed')).toHaveLength(1)
     expect(getAutomation(a.id).nextRunAt).toBe(NOW + 0.5 * DAY)
@@ -126,10 +136,15 @@ describe('when the app was closed for 3.5 days (4 daily windows, newest 12 hours
     await checkDueAutomations(NOW)
 
     expect(provider.runAgent).toHaveBeenCalledTimes(3)
-    const scheduled = byStatus(a.id, 'success').map(r => r.scheduledFor).sort((x, y) => x - y)
+    const scheduled = byStatus(a.id, 'success')
+      .map((r) => r.scheduledFor)
+      .sort((x, y) => x - y)
     expect(scheduled).toEqual([NOW - 2.5 * DAY, NOW - 1.5 * DAY, NOW - 0.5 * DAY])
-    expect(byStatus(a.id, 'success').every(r => r.catchUp)).toBe(true)
-    expect(byStatus(a.id, 'missed')[0]).toMatchObject({ missedCount: 1, firstWindow: NOW - 3.5 * DAY })
+    expect(byStatus(a.id, 'success').every((r) => r.catchUp)).toBe(true)
+    expect(byStatus(a.id, 'missed')[0]).toMatchObject({
+      missedCount: 1,
+      firstWindow: NOW - 3.5 * DAY,
+    })
     expect(getAutomation(a.id).nextRunAt).toBe(NOW + 0.5 * DAY)
   })
 
@@ -197,7 +212,10 @@ describe('an automation that cannot run', () => {
     provider.runAgent.mockRejectedValue(new Error('rate limited'))
     const a = await makeAutomation({ nextRunAt: NOW - 30_000 })
     await checkDueAutomations(NOW)
-    expect(byStatus(a.id, 'failed')[0]).toMatchObject({ error: 'rate limited', scheduledFor: NOW - 30_000 })
+    expect(byStatus(a.id, 'failed')[0]).toMatchObject({
+      error: 'rate limited',
+      scheduledFor: NOW - 30_000,
+    })
     expect(byStatus(a.id, 'missed')).toHaveLength(0)
   })
 })
@@ -205,7 +223,12 @@ describe('an automation that cannot run', () => {
 describe('overlapping ticks', () => {
   it('does not count or run the same windows twice while a catch-up is still going', async () => {
     let release
-    provider.runAgent.mockImplementation(() => new Promise(resolve => { release = () => resolve({ content: 'late', tokens: 1, duration: 1 }) }))
+    provider.runAgent.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          release = () => resolve({ content: 'late', tokens: 1, duration: 1 })
+        })
+    )
     const a = await makeAutomation({ nextRunAt: NOW - 3.5 * DAY })
 
     const first = checkDueAutomations(NOW)
@@ -224,14 +247,29 @@ describe('overlapping ticks', () => {
 
 describe('settings', () => {
   it('stores a missed-run policy, and falls back to run_once for anything else', async () => {
-    const withPolicy = await createAutomation({ name: 'x', agentId: 'a', agentName: 'A', schedule: 'daily', missedPolicy: 'skip', apiKey: 'k' })
-    const withoutPolicy = await createAutomation({ name: 'y', agentId: 'a', agentName: 'A', schedule: 'daily', apiKey: 'k' })
+    const withPolicy = await createAutomation({
+      name: 'x',
+      agentId: 'a',
+      agentName: 'A',
+      schedule: 'daily',
+      missedPolicy: 'skip',
+      apiKey: 'k',
+    })
+    const withoutPolicy = await createAutomation({
+      name: 'y',
+      agentId: 'a',
+      agentName: 'A',
+      schedule: 'daily',
+      apiKey: 'k',
+    })
     expect(withPolicy.missedPolicy).toBe('skip')
     expect(withoutPolicy.missedPolicy).toBe('run_once')
 
     const updated = await updateAutomation(withPolicy.id, { missedPolicy: 'catch_up' })
     expect(updated.missedPolicy).toBe('catch_up')
-    expect((await updateAutomation(withPolicy.id, { missedPolicy: 'bogus' })).missedPolicy).toBe('run_once')
+    expect((await updateAutomation(withPolicy.id, { missedPolicy: 'bogus' })).missedPolicy).toBe(
+      'run_once'
+    )
   })
 
   it('treats the time an automation was paused as paused, not missed', async () => {

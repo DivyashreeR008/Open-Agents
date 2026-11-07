@@ -3,10 +3,14 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 
 const svc = vi.hoisted(() => ({
-  automations: [], runs: [],
-  loadAutomations: vi.fn(), loadRuns: vi.fn(),
-  toggleAutomation: vi.fn(), deleteAutomation: vi.fn(),
-  runAutomationNow: vi.fn(), initAutomationEngine: vi.fn(),
+  automations: [],
+  runs: [],
+  loadAutomations: vi.fn(),
+  loadRuns: vi.fn(),
+  toggleAutomation: vi.fn(),
+  deleteAutomation: vi.fn(),
+  runAutomationNow: vi.fn(),
+  initAutomationEngine: vi.fn(),
 }))
 const notification = vi.hoisted(() => ({ permission: 'default', request: vi.fn() }))
 
@@ -20,15 +24,18 @@ vi.mock('../lib/automationsService', () => ({
 }))
 vi.mock('../lib/useDocumentTitle', () => ({ useDocumentTitle: vi.fn() }))
 vi.mock('../components/CreateAutomationModal', () => ({
-  default: ({ isOpen, initialData }) => (
-    isOpen ? <div role="dialog">Automation form {initialData?.name || 'new'}</div> : null
-  ),
+  default: ({ isOpen, initialData }) =>
+    isOpen ? <div role="dialog">Automation form {initialData?.name || 'new'}</div> : null,
 }))
 
 import AutomationsPage from './AutomationsPage'
 
 function renderPage() {
-  return render(<MemoryRouter><AutomationsPage /></MemoryRouter>)
+  return render(
+    <MemoryRouter>
+      <AutomationsPage />
+    </MemoryRouter>
+  )
 }
 
 beforeEach(() => {
@@ -50,8 +57,12 @@ describe('AutomationsPage empty and notification states', () => {
     expect(screen.getByRole('heading', { name: 'Scheduled Automations' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'No automations found' })).toBeInTheDocument()
     expect(screen.getByText(/Put your favorite agents on recurring autopilot/)).toBeInTheDocument()
-    expect(screen.getByText('Total Automations').parentElement.nextElementSibling).toHaveTextContent('0')
-    expect(screen.getByText('Active Autopilots').parentElement.nextElementSibling).toHaveTextContent('0')
+    expect(
+      screen.getByText('Total Automations').parentElement.nextElementSibling
+    ).toHaveTextContent('0')
+    expect(
+      screen.getByText('Active Autopilots').parentElement.nextElementSibling
+    ).toHaveTextContent('0')
     expect(svc.initAutomationEngine).toHaveBeenCalledTimes(1)
   })
 
@@ -67,11 +78,16 @@ describe('AutomationsPage empty and notification states', () => {
   })
 
   it('requests notification permission and hides the prompt when granted', async () => {
-    vi.stubGlobal('Notification', { permission: 'default', requestPermission: notification.request })
+    vi.stubGlobal('Notification', {
+      permission: 'default',
+      requestPermission: notification.request,
+    })
     renderPage()
     fireEvent.click(screen.getByRole('button', { name: /Enable Alerts/ }))
     expect(notification.request).toHaveBeenCalledTimes(1)
-    await waitFor(() => expect(screen.queryByRole('button', { name: /Enable Alerts/ })).not.toBeInTheDocument())
+    await waitFor(() =>
+      expect(screen.queryByRole('button', { name: /Enable Alerts/ })).not.toBeInTheDocument()
+    )
   })
 
   it('omits the prompt for denied and unsupported browsers', () => {

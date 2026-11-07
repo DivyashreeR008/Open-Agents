@@ -56,7 +56,9 @@ describe('OutputRenderer scrollable code regions', () => {
   })
 
   it('keeps inline code out of the region landmarks', () => {
-    render(<OutputRenderer content="Use `retryCount` in the loop." outputType="markdown" agentName="t" />)
+    render(
+      <OutputRenderer content="Use `retryCount` in the loop." outputType="markdown" agentName="t" />
+    )
 
     expect(screen.queryByRole('region')).not.toBeInTheDocument()
     expect(screen.getByText('retryCount')).toBeInTheDocument()

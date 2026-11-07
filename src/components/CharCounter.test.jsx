@@ -11,7 +11,7 @@ describe('CharCounter', () => {
   })
 
   it('counts the exact supplied value against the supplied maximum', () => {
-    render(<CharCounter value={"hello\nworld"} maxLength={20} />)
+    render(<CharCounter value={'hello\nworld'} maxLength={20} />)
 
     expect(screen.getByText('11 / 20 characters')).toBeInTheDocument()
   })

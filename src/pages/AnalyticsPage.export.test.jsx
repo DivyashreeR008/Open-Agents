@@ -19,18 +19,30 @@ vi.mock('../lib/useDocumentTitle', () => ({ useDocumentTitle: vi.fn() }))
 import AnalyticsPage from './AnalyticsPage'
 
 const stats = {
-  totalRuns: 5, uniqueAgents: 2, favoriteProvider: 'openai', currentStreak: 2,
-  longestStreak: 4, avgRunsPerDay: 0.7, mostProductiveDay: 'Monday',
+  totalRuns: 5,
+  uniqueAgents: 2,
+  favoriteProvider: 'openai',
+  currentStreak: 2,
+  longestStreak: 4,
+  avgRunsPerDay: 0.7,
+  mostProductiveDay: 'Monday',
   topAgents: [{ agentId: 'a1', agentName: 'Researcher', count: 3 }],
   providerDistribution: [{ name: 'openai', count: 5, pct: 100 }],
   categoryDistribution: [{ name: 'Research', count: 5, pct: 100 }],
-  dailyRuns: [{ date: '2026-11-01', count: 2 }, { date: '2026-11-02', count: 3 }],
+  dailyRuns: [
+    { date: '2026-11-01', count: 2 },
+    { date: '2026-11-02', count: 3 },
+  ],
   heatmapData: [{ date: '2026-11-01', count: 2 }],
   recentRuns: [],
 }
 
 function renderPage() {
-  return render(<MemoryRouter><AnalyticsPage /></MemoryRouter>)
+  return render(
+    <MemoryRouter>
+      <AnalyticsPage />
+    </MemoryRouter>
+  )
 }
 
 const originalCreate = URL.createObjectURL
@@ -59,11 +71,11 @@ describe('AnalyticsPage session spend and export', () => {
     renderPage()
     expect(screen.getByText('Token Usage & Cost (This Session)')).toBeInTheDocument()
     expect(screen.getByText('1,800')).toBeInTheDocument()
-    expect(screen.getByText('$0.0080')).toBeInTheDocument()
+    expect(screen.getByText('$0.008')).toBeInTheDocument()
     expect(screen.getByText('1,000 in · 500 out')).toBeInTheDocument()
     expect(screen.getByText('200 in · 100 out')).toBeInTheDocument()
-    expect(screen.getByText('$0.0050')).toBeInTheDocument()
-    expect(screen.getByText('$0.0030')).toBeInTheDocument()
+    expect(screen.getByText('$0.005')).toBeInTheDocument()
+    expect(screen.getByText('$0.003')).toBeInTheDocument()
   })
 
   it('downloads the dashboard payload and revokes the object URL', async () => {

@@ -15,7 +15,12 @@ import {
   Layers,
 } from 'lucide-react'
 import { SCHEDULE_PRESETS, createAutomation, updateAutomation } from '../lib/automationsService'
-import { DEFAULT_MISSED_POLICY, MAX_CATCH_UP_RUNS, MISSED_RUN_POLICIES, normalizeMissedPolicy } from '../lib/missedRuns'
+import {
+  DEFAULT_MISSED_POLICY,
+  MAX_CATCH_UP_RUNS,
+  MISSED_RUN_POLICIES,
+  normalizeMissedPolicy,
+} from '../lib/missedRuns'
 import { MODEL_MAP, MODELS } from '../lib/resolveAgentModel'
 import { useAgents } from '../lib/useAgents'
 import { useProgressiveList } from '../lib/useProgressiveList'
@@ -410,23 +415,29 @@ export default function CreateAutomationModal({
             </div>
 
             <div className="pt-3">
-              <label htmlFor="missed-run-policy" className="block text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-300 mb-1.5">
+              <label
+                htmlFor="missed-run-policy"
+                className="block text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-300 mb-1.5"
+              >
                 If runs are missed
               </label>
               <select
                 id="missed-run-policy"
                 value={missedPolicy}
-                onChange={e => setMissedPolicy(e.target.value)}
+                onChange={(e) => setMissedPolicy(e.target.value)}
                 className="w-full h-10 px-3 text-xs font-medium dark:bg-surface-input dark:border-border bg-gray-50 border border-gray-200 outline-none"
               >
-                {MISSED_RUN_POLICIES.map(policy => (
+                {MISSED_RUN_POLICIES.map((policy) => (
                   <option key={policy.value} value={policy.value}>
-                    {policy.value === 'catch_up' ? `Catch up (up to ${MAX_CATCH_UP_RUNS} runs)` : policy.label}
+                    {policy.value === 'catch_up'
+                      ? `Catch up (up to ${MAX_CATCH_UP_RUNS} runs)`
+                      : policy.label}
                   </option>
                 ))}
               </select>
               <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1.5">
-                {MISSED_RUN_POLICIES.find(p => p.value === missedPolicy)?.description} Scheduled runs only happen while this app is open.
+                {MISSED_RUN_POLICIES.find((p) => p.value === missedPolicy)?.description} Scheduled
+                runs only happen while this app is open.
               </p>
             </div>
           </div>

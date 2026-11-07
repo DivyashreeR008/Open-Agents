@@ -38,7 +38,9 @@ describe('FeedbackPage option links', () => {
   it('tells assistive technology that focus leaves the page', () => {
     renderPage()
     for (const [name] of cases) {
-      expect(screen.getByRole('link', { name: new RegExp(`${name}.*opens in new tab`) })).toBeInTheDocument()
+      expect(
+        screen.getByRole('link', { name: new RegExp(`${name}.*opens in new tab`) })
+      ).toBeInTheDocument()
     }
   })
 })

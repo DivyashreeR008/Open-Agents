@@ -42,7 +42,14 @@ describe('sortListings', () => {
   it('puts unknown publication dates last in both age directions', () => {
     const withUnknown = [
       ...listings,
-      { id: 'unknown', name: 'Unknown', publishedAt: '', ratingTotal: 0, ratingCount: 0, importCount: 0 },
+      {
+        id: 'unknown',
+        name: 'Unknown',
+        publishedAt: '',
+        ratingTotal: 0,
+        ratingCount: 0,
+        importCount: 0,
+      },
     ]
 
     expect(names(sortListings(withUnknown, 'newest')).at(-1)).toBe('Unknown')
@@ -51,9 +58,27 @@ describe('sortListings', () => {
 
   it('orders by average rating and breaks ties with the vote count', () => {
     const tied = [
-      { id: 'a', name: 'OneVote', ratingTotal: 5, ratingCount: 1, publishedAt: '2026-01-01T00:00:00.000Z' },
-      { id: 'b', name: 'TwoVotes', ratingTotal: 10, ratingCount: 2, publishedAt: '2026-01-02T00:00:00.000Z' },
-      { id: 'c', name: 'Low', ratingTotal: 3, ratingCount: 1, publishedAt: '2026-01-03T00:00:00.000Z' },
+      {
+        id: 'a',
+        name: 'OneVote',
+        ratingTotal: 5,
+        ratingCount: 1,
+        publishedAt: '2026-01-01T00:00:00.000Z',
+      },
+      {
+        id: 'b',
+        name: 'TwoVotes',
+        ratingTotal: 10,
+        ratingCount: 2,
+        publishedAt: '2026-01-02T00:00:00.000Z',
+      },
+      {
+        id: 'c',
+        name: 'Low',
+        ratingTotal: 3,
+        ratingCount: 1,
+        publishedAt: '2026-01-03T00:00:00.000Z',
+      },
     ]
 
     expect(names(sortListings(tied, 'rating'))).toEqual(['TwoVotes', 'OneVote', 'Low'])

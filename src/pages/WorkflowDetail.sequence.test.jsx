@@ -42,7 +42,9 @@ describe('WorkflowDetail usage and sequence', () => {
       callback = next
       return { id: 'channel' }
     })
-    mocks.fetchWorkflowById.mockResolvedValue({ data: { id: 'w1', title: 'Chain', agents: ['a1'], usage_count: 3 } })
+    mocks.fetchWorkflowById.mockResolvedValue({
+      data: { id: 'w1', title: 'Chain', agents: ['a1'], usage_count: 3 },
+    })
     const { unmount } = renderPage()
     await screen.findByRole('heading', { name: 'Chain' })
     expect(screen.getByText('3')).toBeInTheDocument()
@@ -56,7 +58,9 @@ describe('WorkflowDetail usage and sequence', () => {
 
   it('renders known and unknown agents in workflow order', async () => {
     mocks.subscribeToWorkflow.mockReturnValue({})
-    mocks.fetchWorkflowById.mockResolvedValue({ data: { id: 'w1', title: 'Chain', agents: ['a1', 'missing', 'a2'], usage_count: 0 } })
+    mocks.fetchWorkflowById.mockResolvedValue({
+      data: { id: 'w1', title: 'Chain', agents: ['a1', 'missing', 'a2'], usage_count: 0 },
+    })
     renderPage()
     await screen.findByRole('heading', { name: 'Chain' })
     expect(screen.getByText('Researcher')).toBeInTheDocument()
@@ -67,7 +71,9 @@ describe('WorkflowDetail usage and sequence', () => {
 
   it('uses the singular agent label and the chained-output note', async () => {
     mocks.subscribeToWorkflow.mockReturnValue({})
-    mocks.fetchWorkflowById.mockResolvedValue({ data: { id: 'w1', title: 'Chain', agents: ['a1'], usage_count: 0 } })
+    mocks.fetchWorkflowById.mockResolvedValue({
+      data: { id: 'w1', title: 'Chain', agents: ['a1'], usage_count: 0 },
+    })
     renderPage()
     await screen.findByRole('heading', { name: 'Chain' })
     expect(screen.getAllByText('1 agent').length).toBeGreaterThan(0)

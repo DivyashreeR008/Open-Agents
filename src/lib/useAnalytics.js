@@ -7,9 +7,7 @@ const MAX_EVENTS = 500
 
 function sanitizeEvents(value) {
   if (!Array.isArray(value)) return []
-  return value.filter(
-    (event) => event && typeof event === 'object' && !Array.isArray(event)
-  )
+  return value.filter((event) => event && typeof event === 'object' && !Array.isArray(event))
 }
 
 function loadEvents() {

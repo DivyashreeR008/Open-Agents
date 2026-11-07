@@ -29,9 +29,7 @@ describe('GitHubIcon', () => {
   })
 
   it('forwards a class name and additional SVG attributes', () => {
-    const { container } = render(
-      <GitHubIcon className="text-zinc-500" data-testid="brand-mark" />
-    )
+    const { container } = render(<GitHubIcon className="text-zinc-500" data-testid="brand-mark" />)
     const svg = container.querySelector('svg')
 
     expect(svg).toHaveClass('text-zinc-500')

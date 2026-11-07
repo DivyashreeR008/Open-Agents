@@ -40,7 +40,7 @@ describe('useRecommendationWizard', () => {
     })
   })
 
-  it('opens and closes without discarding the current answers', () => {
+  it('closes with a clean session so the next open starts fresh', () => {
     const { result } = renderHook(() => useRecommendationWizard(agents))
 
     act(() => result.current.openWizard())
@@ -50,7 +50,10 @@ describe('useRecommendationWizard', () => {
     act(() => result.current.closeWizard())
 
     expect(result.current.isOpen).toBe(false)
-    expect(result.current.preferences.freeTextGoal).toBe('prepare a launch')
+    expect(result.current.preferences.freeTextGoal).toBe('')
+    expect(result.current.currentStepIndex).toBe(0)
+    expect(result.current.hasCompleted).toBe(false)
+    expect(result.current.errors).toEqual({})
   })
 
   it('rejects a missing goal and exposes a field-specific error', () => {
@@ -89,9 +92,7 @@ describe('useRecommendationWizard', () => {
     expect(result.current.currentStepIndex).toBe(1)
 
     expect(runStep(() => result.current.nextStep())).toBe(false)
-    expect(result.current.errors.experienceLevel).toBe(
-      'Choose how much guidance you want.'
-    )
+    expect(result.current.errors.experienceLevel).toBe('Choose how much guidance you want.')
 
     act(() => result.current.setPreference('experienceLevel', 'intermediate'))
     expect(result.current.errors.experienceLevel).toBeUndefined()
@@ -152,10 +153,7 @@ describe('useRecommendationWizard', () => {
 
     act(() => result.current.toggleExtraPreference('tool-calling'))
     act(() => result.current.toggleExtraPreference('vision-support'))
-    expect(result.current.preferences.extraPreferences).toEqual([
-      'tool-calling',
-      'vision-support',
-    ])
+    expect(result.current.preferences.extraPreferences).toEqual(['tool-calling', 'vision-support'])
 
     act(() => result.current.toggleExtraPreference('tool-calling'))
     expect(result.current.preferences.extraPreferences).toEqual(['vision-support'])

@@ -20,7 +20,9 @@ import WorkflowBuilder from './WorkflowBuilder'
 function renderPage(state) {
   return render(
     <MemoryRouter initialEntries={[{ pathname: '/workflows/build', state }]}>
-      <Routes><Route path="/workflows/build" element={<WorkflowBuilder />} /></Routes>
+      <Routes>
+        <Route path="/workflows/build" element={<WorkflowBuilder />} />
+      </Routes>
     </MemoryRouter>
   )
 }
@@ -79,10 +81,15 @@ describe('WorkflowBuilder agent selection', () => {
   })
 
   it('prefills a forked workflow and preserves chain order', async () => {
-    renderPage({ forkedWorkflow: { title: 'Source flow', description: 'Original copy', agents: ['a2', 'a1'] } })
+    renderPage({
+      forkedWorkflow: { title: 'Source flow', description: 'Original copy', agents: ['a2', 'a1'] },
+    })
     expect(await screen.findByDisplayValue('Copy of Source flow')).toBeInTheDocument()
     expect(screen.getByDisplayValue('Original copy')).toBeInTheDocument()
     const removeButtons = screen.getAllByRole('button', { name: /^Remove / })
-    expect(removeButtons.map((button) => button.getAttribute('aria-label'))).toEqual(['Remove Beta', 'Remove Alpha'])
+    expect(removeButtons.map((button) => button.getAttribute('aria-label'))).toEqual([
+      'Remove Beta',
+      'Remove Alpha',
+    ])
   })
 })

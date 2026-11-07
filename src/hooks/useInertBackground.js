@@ -35,7 +35,8 @@ export function inertBackground(container) {
       // can still dismiss the dialog; only hidden layers with focusable
       // content need inert applied.
       const alreadyHidden = sibling.getAttribute('aria-hidden') === 'true'
-      const hasFocusableContent = sibling.matches(FOCUSABLE) || Boolean(sibling.querySelector(FOCUSABLE))
+      const hasFocusableContent =
+        sibling.matches(FOCUSABLE) || Boolean(sibling.querySelector(FOCUSABLE))
       if (alreadyHidden && !hasFocusableContent) continue
 
       changed.push({

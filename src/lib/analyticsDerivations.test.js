@@ -84,7 +84,9 @@ describe('analytics totals and distributions', () => {
       { agentId: 'agent-b', agentName: 'Agent B', count: 3 },
       { agentId: 'agent-c', agentName: 'Agent C', count: 1 },
     ])
-    expect(stats.providerDistribution.map(({ name, count, pct }) => ({ name, count, pct }))).toEqual([
+    expect(
+      stats.providerDistribution.map(({ name, count, pct }) => ({ name, count, pct }))
+    ).toEqual([
       { name: 'openai', count: 5, pct: 63 },
       { name: 'anthropic', count: 2, pct: 25 },
       { name: 'gemini', count: 1, pct: 12 },
@@ -107,9 +109,7 @@ describe('analytics totals and distributions', () => {
     const stats = computeStats(many, 'all', NOW)
 
     expect(stats.totalRuns).toBe(12)
-    expect(stats.recentRuns.map((run) => run.id)).toEqual(
-      many.slice(0, 10).map((run) => run.id)
-    )
+    expect(stats.recentRuns.map((run) => run.id)).toEqual(many.slice(0, 10).map((run) => run.id))
   })
 
   it('ignores non-record entries without mutating the supplied event list', () => {
@@ -165,11 +165,7 @@ describe('analytics rolling windows', () => {
     const thirtyDays = computeStats(events, '30d', NOW)
     const all = computeStats(events, 'all', NOW)
 
-    expect(sevenDays.recentRuns.map((run) => run.id)).toEqual([
-      'now',
-      'yesterday',
-      'boundary',
-    ])
+    expect(sevenDays.recentRuns.map((run) => run.id)).toEqual(['now', 'yesterday', 'boundary'])
     expect(thirtyDays.recentRuns.map((run) => run.id)).toEqual([
       'now',
       'yesterday',

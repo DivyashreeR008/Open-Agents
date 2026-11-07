@@ -7,16 +7,12 @@ describe('EmptyState', () => {
   it('renders a level-three title and the guidance text', () => {
     render(<EmptyState title="No agents yet" description="Add a definition to get started." />)
 
-    expect(
-      screen.getByRole('heading', { level: 3, name: 'No agents yet' })
-    ).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 3, name: 'No agents yet' })).toBeInTheDocument()
     expect(screen.getByText('Add a definition to get started.')).toBeInTheDocument()
   })
 
   it('renders a decorative icon at the documented size', () => {
-    const { container } = render(
-      <EmptyState icon={Inbox} title="No agents yet" />
-    )
+    const { container } = render(<EmptyState icon={Inbox} title="No agents yet" />)
     const icon = container.querySelector('svg')
 
     expect(icon).toHaveAttribute('aria-hidden', 'true')
@@ -33,21 +29,14 @@ describe('EmptyState', () => {
   })
 
   it('renders an action in its wrapper', () => {
-    render(
-      <EmptyState
-        title="No runs"
-        action={<button type="button">Start a run</button>}
-      />
-    )
+    render(<EmptyState title="No runs" action={<button type="button">Start a run</button>} />)
 
     const action = screen.getByRole('button', { name: 'Start a run' })
     expect(action.parentElement).toHaveClass('mt-4')
   })
 
   it('appends the custom class without dropping the panel treatment', () => {
-    const { container } = render(
-      <EmptyState title="Nothing here" className="col-span-2" />
-    )
+    const { container } = render(<EmptyState title="Nothing here" className="col-span-2" />)
     const panel = container.firstChild
 
     expect(panel.className).toContain('col-span-2')

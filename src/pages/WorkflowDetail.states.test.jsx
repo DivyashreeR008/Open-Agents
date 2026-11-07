@@ -48,7 +48,13 @@ describe('WorkflowDetail states and sharing', () => {
 
   it('renders the title and description from the fetched workflow', async () => {
     mocks.fetchWorkflowById.mockResolvedValue({
-      data: { id: 'w1', title: 'Research chain', description: 'Find and summarize sources', agents: ['a1'], usage_count: 3 },
+      data: {
+        id: 'w1',
+        title: 'Research chain',
+        description: 'Find and summarize sources',
+        agents: ['a1'],
+        usage_count: 3,
+      },
     })
     renderPage()
     expect(await screen.findByRole('heading', { name: 'Research chain' })).toBeInTheDocument()
@@ -67,7 +73,9 @@ describe('WorkflowDetail states and sharing', () => {
   })
 
   it('falls back to a temporary textarea when clipboard access is blocked', async () => {
-    Object.assign(navigator, { clipboard: { writeText: vi.fn().mockRejectedValue(new Error('blocked')) } })
+    Object.assign(navigator, {
+      clipboard: { writeText: vi.fn().mockRejectedValue(new Error('blocked')) },
+    })
     const execCommand = vi.fn(() => true)
     Object.defineProperty(document, 'execCommand', { value: execCommand, configurable: true })
     mocks.fetchWorkflowById.mockResolvedValue({ data: { id: 'w1', title: 'Chain', agents: [] } })

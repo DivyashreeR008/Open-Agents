@@ -42,10 +42,7 @@ beforeEach(() => vi.clearAllMocks())
 
 describe('CollectionDetailPage metadata', () => {
   it('reports unavailable ids separately from runnable agents', () => {
-    renderWith(
-      { id: 'c1', name: 'Launch', agentIds: ['a1', 'gone'] },
-      [makeAgent(1)]
-    )
+    renderWith({ id: 'c1', name: 'Launch', agentIds: ['a1', 'gone'] }, [makeAgent(1)])
     expect(screen.getAllByText('1 / 15').length).toBeGreaterThan(0)
     expect(screen.getByText(/1 unavailable hidden/)).toBeInTheDocument()
   })
@@ -58,10 +55,7 @@ describe('CollectionDetailPage metadata', () => {
 
   it('keeps the capacity labels aligned at the limit', () => {
     const agents = Array.from({ length: 15 }, (_, index) => makeAgent(index + 1))
-    renderWith(
-      { id: 'c1', name: 'Full', agentIds: agents.map((item) => item.id) },
-      agents
-    )
+    renderWith({ id: 'c1', name: 'Full', agentIds: agents.map((item) => item.id) }, agents)
     expect(screen.getAllByText('15 / 15').length).toBeGreaterThanOrEqual(2)
     expect(screen.getByText('runnable agents')).toBeInTheDocument()
   })

@@ -37,7 +37,11 @@ function renderPage() {
 
 beforeEach(() => {
   vi.clearAllMocks()
-  mocks.useAgents.mockReturnValue({ agents: [{ id: 'a1', name: 'Alpha' }], loading: false, error: null })
+  mocks.useAgents.mockReturnValue({
+    agents: [{ id: 'a1', name: 'Alpha' }],
+    loading: false,
+    error: null,
+  })
   mocks.useCollections.mockReturnValue({
     collections: [{ id: 'all-agents', name: 'All Agents', agentIds: [] }, launch],
     createCollection: vi.fn(),
@@ -68,10 +72,12 @@ describe('CollectionsPage actions', () => {
   })
 
   it('reports duplicate success and failure through the flash notice', () => {
-    mocks.duplicateCollection.mockReturnValueOnce({
-      ok: true,
-      collection: { name: 'Launch copy' },
-    }).mockReturnValueOnce({ ok: false, error: 'Limit reached' })
+    mocks.duplicateCollection
+      .mockReturnValueOnce({
+        ok: true,
+        collection: { name: 'Launch copy' },
+      })
+      .mockReturnValueOnce({ ok: false, error: 'Limit reached' })
     renderPage()
 
     fireEvent.click(screen.getByRole('button', { name: 'Duplicate Launch' }))

@@ -16,8 +16,12 @@ vi.mock('../lib/llmAdapter', () => ({ runAgent: mocks.runAgent }))
 vi.mock('../lib/useAgents', () => ({ useAgents: () => ({ agents }) }))
 vi.mock('../lib/useApiKey', () => ({
   useApiKey: () => ({
-    provider: 'openai', setProvider: vi.fn(), apiKey: 'sk-test', setApiKey: vi.fn(),
-    saveForSession: false, setSaveForSession: vi.fn(),
+    provider: 'openai',
+    setProvider: vi.fn(),
+    apiKey: 'sk-test',
+    setApiKey: vi.fn(),
+    saveForSession: false,
+    setSaveForSession: vi.fn(),
   }),
 }))
 vi.mock('../lib/useAnalytics', () => ({ recordAnalyticsRun: mocks.recordAnalyticsRun }))
@@ -26,7 +30,9 @@ vi.mock('../hooks/useWorkflows', () => ({
   fetchWorkflowById: mocks.fetchWorkflowById,
   incrementUsage: mocks.incrementUsage,
 }))
-vi.mock('../lib/exportMarkdown', () => ({ exportWorkflowAsMarkdown: mocks.exportWorkflowAsMarkdown }))
+vi.mock('../lib/exportMarkdown', () => ({
+  exportWorkflowAsMarkdown: mocks.exportWorkflowAsMarkdown,
+}))
 vi.mock('../components/ApiKeyBar', () => ({ default: () => null }))
 vi.mock('../components/OutputRenderer', () => ({ default: ({ content }) => <div>{content}</div> }))
 vi.mock('../components/RunRating', () => ({ default: () => null }))
@@ -50,7 +56,11 @@ beforeEach(() => vi.clearAllMocks())
 describe('WorkflowRunner load states', () => {
   it('renders the loading message while the workflow request is pending', async () => {
     let resolveFetch
-    mocks.fetchWorkflowById.mockReturnValue(new Promise((resolve) => { resolveFetch = resolve }))
+    mocks.fetchWorkflowById.mockReturnValue(
+      new Promise((resolve) => {
+        resolveFetch = resolve
+      })
+    )
     renderPage()
     expect(screen.getByText('Loading workflow...')).toBeInTheDocument()
     await act(async () => {

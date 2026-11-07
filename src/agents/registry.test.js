@@ -77,9 +77,7 @@ describe('definition source integrity', () => {
   })
 
   it('keeps every raw definition id unique', () => {
-    expect(() =>
-      assertUniqueAgentIds(definitions.map(({ agent }) => agent))
-    ).not.toThrow()
+    expect(() => assertUniqueAgentIds(definitions.map(({ agent }) => agent))).not.toThrow()
   })
 
   it('declares a supported outputType on every definition', () => {

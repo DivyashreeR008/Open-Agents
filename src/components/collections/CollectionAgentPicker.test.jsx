@@ -109,9 +109,7 @@ describe('CollectionAgentPicker', () => {
 
     const checkboxes = screen.getAllByRole('checkbox')
     fireEvent.click(checkboxes[1])
-    expect(
-      screen.getByText('Unable to add this agent to the collection.')
-    ).toBeInTheDocument()
+    expect(screen.getByText('Unable to add this agent to the collection.')).toBeInTheDocument()
 
     fireEvent.click(checkboxes[2])
     expect(screen.getByText('The collection is locked.')).toBeInTheDocument()
@@ -135,7 +133,9 @@ describe('CollectionAgentPicker', () => {
     expect(checkboxes[2]).toBeDisabled()
     expect(checkboxes[3]).toBeDisabled()
     expect(
-      screen.getByText('Collection limit reached. Unchecked agents are disabled until you remove one of the selected agents.')
+      screen.getByText(
+        'Collection limit reached. Unchecked agents are disabled until you remove one of the selected agents.'
+      )
     ).toBeInTheDocument()
   })
 })

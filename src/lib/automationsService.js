@@ -10,9 +10,27 @@ const VAULT_KEY = 'oa_encrypted_vault_v2'
 const EMAIL_LOGS_KEY = 'oa_automation_email_logs_v2'
 
 export const SCHEDULE_PRESETS = [
-  { value: 'hourly', label: 'Every hour', cron: '0 * * * *', ms: 60 * 60 * 1000, description: 'Runs at minute 0 of every hour' },
-  { value: 'daily', label: 'Every day (9:00 AM)', cron: '0 9 * * *', ms: 24 * 60 * 60 * 1000, description: 'Runs once a day at 9:00 AM' },
-  { value: 'weekly', label: 'Every week (Mon 9:00 AM)', cron: '0 9 * * 1', ms: 7 * 24 * 60 * 60 * 1000, description: 'Runs every Monday at 9:00 AM' },
+  {
+    value: 'hourly',
+    label: 'Every hour',
+    cron: '0 * * * *',
+    ms: 60 * 60 * 1000,
+    description: 'Runs at minute 0 of every hour',
+  },
+  {
+    value: 'daily',
+    label: 'Every day (9:00 AM)',
+    cron: '0 9 * * *',
+    ms: 24 * 60 * 60 * 1000,
+    description: 'Runs once a day at 9:00 AM',
+  },
+  {
+    value: 'weekly',
+    label: 'Every week (Mon 9:00 AM)',
+    cron: '0 9 * * 1',
+    ms: 7 * 24 * 60 * 60 * 1000,
+    description: 'Runs every Monday at 9:00 AM',
+  },
 ]
 
 // Legacy constants are used only to migrate pre-v2 ciphertext once. New vault
@@ -100,13 +118,15 @@ export async function decryptSecret(encryptedValue) {
 
 function bytesToBase64(bytes) {
   let binary = ''
-  bytes.forEach(byte => { binary += String.fromCharCode(byte) })
+  bytes.forEach((byte) => {
+    binary += String.fromCharCode(byte)
+  })
   return btoa(binary)
 }
 
 function base64ToBytes(value) {
   const binary = atob(value)
-  return Uint8Array.from(binary, character => character.charCodeAt(0))
+  return Uint8Array.from(binary, (character) => character.charCodeAt(0))
 }
 
 async function decryptLegacySecret(encryptedValue) {
@@ -201,36 +221,36 @@ export function removeAutomationKey(automationId) {
 export async function clearAutomationKeys(provider) {
   const automations = loadAutomations()
   const vault = getVault()
-  const affected = automations.filter(
-    automation => !provider || automation.provider === provider
-  )
-  const affectedIds = new Set(affected.map(automation => automation.id))
+  const affected = automations.filter((automation) => !provider || automation.provider === provider)
+  const affectedIds = new Set(affected.map((automation) => automation.id))
   const clearedCount = affected.filter(
-    automation => automation.hasKey || Object.hasOwn(vault, automation.id)
+    (automation) => automation.hasKey || Object.hasOwn(vault, automation.id)
   ).length
 
   if (provider) {
-    affectedIds.forEach(id => delete vault[id])
+    affectedIds.forEach((id) => delete vault[id])
     saveVault(vault)
   } else {
     saveVault({})
   }
 
-  saveAutomations(automations.map(automation =>
-    affectedIds.has(automation.id)
-      ? { ...automation, hasKey: false }
-      : automation
-  ))
+  saveAutomations(
+    automations.map((automation) =>
+      affectedIds.has(automation.id) ? { ...automation, hasKey: false } : automation
+    )
+  )
 
   if (isSupabaseConfigured && affectedIds.size > 0) {
     try {
-      await Promise.all([...affectedIds].map(async automationId => {
-        const { error } = await supabase
-          .from('user_secrets')
-          .delete()
-          .eq('automation_id', automationId)
-        if (error) throw error
-      }))
+      await Promise.all(
+        [...affectedIds].map(async (automationId) => {
+          const { error } = await supabase
+            .from('user_secrets')
+            .delete()
+            .eq('automation_id', automationId)
+          if (error) throw error
+        })
+      )
     } catch (error) {
       console.warn('Supabase automation key clear failed:', error)
     }
@@ -240,7 +260,15 @@ export async function clearAutomationKeys(provider) {
 }
 
 // ── Email Notification Dispatch (Resend integration / simulation) ──
-export async function sendResendNotification({ to, automationName, agentName, output, status, duration, error }) {
+export async function sendResendNotification({
+  to,
+  automationName,
+  agentName,
+  output,
+  status,
+  duration,
+  error,
+}) {
   const logEntry = {
     id: `email_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
     to,
@@ -326,10 +354,12 @@ const INITIAL_SEED_AUTOMATIONS = [
     cron: '0 9 * * *',
     enabled: true,
     inputs: {
-      draft: 'Top emerging AI agents and automated workflow frameworks in 2026 for developer productivity.',
+      draft:
+        'Top emerging AI agents and automated workflow frameworks in 2026 for developer productivity.',
       keywords: 'AI agents, automation, developer tools, LLM workflows',
     },
-    systemPrompt: 'You are an expert SEO optimizer. Enhance content with high-intent keywords, meta tags, and structured headers.',
+    systemPrompt:
+      'You are an expert SEO optimizer. Enhance content with high-intent keywords, meta tags, and structured headers.',
     emailNotification: true,
     notificationEmail: 'user@example.com',
     createdAt: Date.now() - 3 * 24 * 60 * 60 * 1000,
@@ -456,7 +486,7 @@ export function saveRuns(runs) {
 // ── Automation CRUD Operations ──
 export async function createAutomation(data) {
   const now = Date.now()
-  const preset = SCHEDULE_PRESETS.find(p => p.value === data.schedule) || SCHEDULE_PRESETS[1]
+  const preset = SCHEDULE_PRESETS.find((p) => p.value === data.schedule) || SCHEDULE_PRESETS[1]
   const id = `auto_${now}_${Math.random().toString(36).slice(2, 7)}`
 
   const newAutomation = {
@@ -518,7 +548,7 @@ export async function createAutomation(data) {
 
 export async function updateAutomation(id, updates) {
   const existing = loadAutomations()
-  const index = existing.findIndex(a => a.id === id)
+  const index = existing.findIndex((a) => a.id === id)
   if (index === -1) throw new Error('Automation not found')
 
   if (updates.apiKey) {
@@ -528,7 +558,7 @@ export async function updateAutomation(id, updates) {
   }
 
   if (updates.schedule && updates.schedule !== existing[index].schedule) {
-    const preset = SCHEDULE_PRESETS.find(p => p.value === updates.schedule)
+    const preset = SCHEDULE_PRESETS.find((p) => p.value === updates.schedule)
     if (preset) {
       updates.cron = preset.cron
       updates.nextRunAt = Date.now() + preset.ms
@@ -542,7 +572,7 @@ export async function updateAutomation(id, updates) {
   // Resuming a paused automation starts a new schedule. The time it was paused is not "missed".
   if (updates.enabled === true && !existing[index].enabled && !('nextRunAt' in updates)) {
     const schedule = updates.schedule || existing[index].schedule
-    const preset = SCHEDULE_PRESETS.find(p => p.value === schedule) || SCHEDULE_PRESETS[1]
+    const preset = SCHEDULE_PRESETS.find((p) => p.value === schedule) || SCHEDULE_PRESETS[1]
     if (!(existing[index].nextRunAt > Date.now())) updates.nextRunAt = Date.now() + preset.ms
   }
 
@@ -552,15 +582,20 @@ export async function updateAutomation(id, updates) {
 
   if (isSupabaseConfigured) {
     try {
-      await supabase.from('automations').update({
-        name: updatedAutomation.name,
-        schedule: updatedAutomation.schedule,
-        enabled: updatedAutomation.enabled,
-        inputs: updatedAutomation.inputs,
-        email_notification: updatedAutomation.emailNotification,
-        notification_email: updatedAutomation.notificationEmail,
-        next_run_at: updatedAutomation.nextRunAt ? new Date(updatedAutomation.nextRunAt).toISOString() : null,
-      }).eq('id', id)
+      await supabase
+        .from('automations')
+        .update({
+          name: updatedAutomation.name,
+          schedule: updatedAutomation.schedule,
+          enabled: updatedAutomation.enabled,
+          inputs: updatedAutomation.inputs,
+          email_notification: updatedAutomation.emailNotification,
+          notification_email: updatedAutomation.notificationEmail,
+          next_run_at: updatedAutomation.nextRunAt
+            ? new Date(updatedAutomation.nextRunAt).toISOString()
+            : null,
+        })
+        .eq('id', id)
     } catch (e) {}
   }
 
@@ -569,7 +604,7 @@ export async function updateAutomation(id, updates) {
 
 export async function toggleAutomation(id) {
   const existing = loadAutomations()
-  const item = existing.find(a => a.id === id)
+  const item = existing.find((a) => a.id === id)
   if (!item) return null
   return await updateAutomation(id, { enabled: !item.enabled })
 }
@@ -577,10 +612,10 @@ export async function toggleAutomation(id) {
 export async function deleteAutomation(id) {
   removeAutomationKey(id)
   const existing = loadAutomations()
-  saveAutomations(existing.filter(a => a.id !== id))
+  saveAutomations(existing.filter((a) => a.id !== id))
 
   const existingRuns = loadRuns()
-  saveRuns(existingRuns.filter(r => r.automationId !== id))
+  saveRuns(existingRuns.filter((r) => r.automationId !== id))
 
   if (isSupabaseConfigured) {
     try {
@@ -593,17 +628,17 @@ export async function deleteAutomation(id) {
 
 export function getAutomation(id) {
   const list = loadAutomations()
-  return list.find(a => a.id === id) || null
+  return list.find((a) => a.id === id) || null
 }
 
 export function getRunsForAutomation(automationId) {
   const allRuns = loadRuns()
-  return allRuns.filter(r => r.automationId === automationId)
+  return allRuns.filter((r) => r.automationId === automationId)
 }
 
 export function deleteRun(runId) {
   const allRuns = loadRuns()
-  saveRuns(allRuns.filter(r => r.id !== runId))
+  saveRuns(allRuns.filter((r) => r.id !== runId))
   if (isSupabaseConfigured) {
     supabase.from('automation_runs').delete().eq('id', runId).then()
   }
@@ -637,7 +672,9 @@ export async function runAutomationNow(automationId, options = {}) {
     emailSent: false,
     // Set when the scheduler runs a window that was due: the time it was due, and whether it was
     // run late to catch up for time the app was closed.
-    ...(options.scheduledFor ? { scheduledFor: options.scheduledFor, catchUp: Boolean(options.catchUp) } : {}),
+    ...(options.scheduledFor
+      ? { scheduledFor: options.scheduledFor, catchUp: Boolean(options.catchUp) }
+      : {}),
   }
 
   const currentRuns = loadRuns()
@@ -650,7 +687,9 @@ export async function runAutomationNow(automationId, options = {}) {
   try {
     const apiKey = await retrieveAutomationKey(automation.id)
     if (!apiKey) {
-      throw new Error('Encrypted API Key is missing. Please edit this automation and re-enter your API key.')
+      throw new Error(
+        'Encrypted API Key is missing. Please edit this automation and re-enter your API key.'
+      )
     }
 
     // Build user message from saved inputs
@@ -662,7 +701,8 @@ export async function runAutomationNow(automationId, options = {}) {
       })
     }
     const userMessage = parts.length > 0 ? parts.join('\n\n') : 'Execute scheduled agent run.'
-    const systemPrompt = automation.systemPrompt || 'You are an intelligent AI agent executing a scheduled task.'
+    const systemPrompt =
+      automation.systemPrompt || 'You are an intelligent AI agent executing a scheduled task.'
 
     const result = await runAgent({
       provider: automation.provider,
@@ -724,12 +764,13 @@ export async function runAutomationNow(automationId, options = {}) {
     emailSent,
   }
 
-  const allRuns = loadRuns().map(r => (r.id === runId ? finishedRunRecord : r))
+  const allRuns = loadRuns().map((r) => (r.id === runId ? finishedRunRecord : r))
   saveRuns(allRuns)
 
   // Update automation nextRunAt and lastRunAt. A scheduled run leaves nextRunAt alone: the
   // scheduler moved it past the windows it was handling before it started (see checkDueAutomations).
-  const preset = SCHEDULE_PRESETS.find(p => p.value === automation.schedule) || SCHEDULE_PRESETS[1]
+  const preset =
+    SCHEDULE_PRESETS.find((p) => p.value === automation.schedule) || SCHEDULE_PRESETS[1]
   updateAutomation(
     automation.id,
     options.keepSchedule
@@ -742,7 +783,8 @@ export async function runAutomationNow(automationId, options = {}) {
     new Notification(
       status === 'success' ? `${automation.name} Finished` : `${automation.name} Failed`,
       {
-        body: status === 'success' ? `Output generated in ${(duration / 1000).toFixed(1)}s` : errorMsg,
+        body:
+          status === 'success' ? `Output generated in ${(duration / 1000).toFixed(1)}s` : errorMsg,
         icon: '/favicon.ico',
       }
     )
@@ -754,7 +796,7 @@ export async function runAutomationNow(automationId, options = {}) {
 // ── Missed and skipped scheduled runs ──
 function patchAutomation(id, patch) {
   const list = loadAutomations()
-  const index = list.findIndex(a => a.id === id)
+  const index = list.findIndex((a) => a.id === id)
   if (index === -1) return
   list[index] = { ...list[index], ...patch }
   saveAutomations(list)
@@ -804,7 +846,7 @@ export async function checkDueAutomations(now = Date.now()) {
     // A run is already going: leave the windows alone and look again on the next tick.
     if (activeRunningIds.has(item.id)) continue
 
-    const preset = SCHEDULE_PRESETS.find(p => p.value === item.schedule) || SCHEDULE_PRESETS[1]
+    const preset = SCHEDULE_PRESETS.find((p) => p.value === item.schedule) || SCHEDULE_PRESETS[1]
     const due = dueWindows({ nextRunAt: item.nextRunAt, intervalMs: preset.ms, now })
     if (!due) continue
 
@@ -817,7 +859,13 @@ export async function checkDueAutomations(now = Date.now()) {
     if (!item.hasKey) {
       // Nothing can run without the key. Say so instead of dropping the windows silently.
       addUnexecutedRecord(item, {
-        status: 'skipped', count: due.count, first: due.first, last: due.last, now, policy, reason: 'no_key',
+        status: 'skipped',
+        count: due.count,
+        first: due.first,
+        last: due.last,
+        now,
+        policy,
+        reason: 'no_key',
       })
       handled.push({ id: item.id, ran: [], skipped: due.count, missed: 0 })
       continue

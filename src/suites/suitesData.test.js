@@ -34,9 +34,7 @@ describe('suite catalogue contract', () => {
     for (const suite of suites) {
       expect(Array.isArray(suite.agents), suite.id).toBe(true)
       expect(suite.agents.length, suite.id).toBeGreaterThan(0)
-      expect(new Set(suite.agents).size, `${suite.id} duplicate agent`).toBe(
-        suite.agents.length
-      )
+      expect(new Set(suite.agents).size, `${suite.id} duplicate agent`).toBe(suite.agents.length)
 
       for (const agentId of suite.agents) {
         expect(typeof agentId, suite.id).toBe('string')
@@ -53,9 +51,7 @@ describe('suite catalogue contract', () => {
       expect(suite.quiz.questions.length, suite.id).toBeGreaterThan(0)
 
       const questionIds = suite.quiz.questions.map((question) => question.id)
-      expect(new Set(questionIds).size, `${suite.id} question ids`).toBe(
-        questionIds.length
-      )
+      expect(new Set(questionIds).size, `${suite.id} question ids`).toBe(questionIds.length)
 
       for (const question of suite.quiz.questions) {
         expect(question.id.trim().length, suite.id).toBeGreaterThan(0)
@@ -67,9 +63,7 @@ describe('suite catalogue contract', () => {
           expect(option.label.trim().length, suite.id).toBeGreaterThan(0)
           expect(Array.isArray(option.tags), suite.id).toBe(true)
           expect(option.tags.length, suite.id).toBeGreaterThan(0)
-          expect(new Set(option.tags).size, `${suite.id} duplicate tag`).toBe(
-            option.tags.length
-          )
+          expect(new Set(option.tags).size, `${suite.id} duplicate tag`).toBe(option.tags.length)
         }
       }
     }

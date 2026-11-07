@@ -91,7 +91,12 @@ describe('RecentRuns', () => {
       <RecentRuns
         history={[
           makeRun(),
-          { ...makeRun(), id: 'run-2', agentName: 'API Doc Generator', timestamp: now - 5 * 60_000 },
+          {
+            ...makeRun(),
+            id: 'run-2',
+            agentName: 'API Doc Generator',
+            timestamp: now - 5 * 60_000,
+          },
         ]}
         onRerun={vi.fn()}
         onCopy={vi.fn()}
@@ -124,7 +129,7 @@ describe('RecentRuns', () => {
     expect(screen.getByText('2')).toBeInTheDocument()
     expect(screen.getByText('Code Reviewer')).toBeInTheDocument()
     expect(screen.getByText('Test Planner')).toBeInTheDocument()
-    expect(screen.getByText('The change looks correct.')).toBeInTheDocument()
+    expect(screen.getAllByText('The change looks correct.')).toHaveLength(2)
   })
 
   it('formats relative timestamps at the minute, hour, and day boundaries', () => {
@@ -177,10 +182,7 @@ describe('RecentRuns', () => {
     const onDelete = vi.fn()
     const onRerun = vi.fn()
     const onCopy = vi.fn()
-    const runs = [
-      makeRun(),
-      makeRun({ id: 'run-2', output: 'Second output.' }),
-    ]
+    const runs = [makeRun(), makeRun({ id: 'run-2', output: 'Second output.' })]
 
     render(
       <RecentRuns
@@ -205,6 +207,5 @@ describe('RecentRuns', () => {
 
     fireEvent.click(screen.getAllByRole('button', { name: 'Copy' })[0])
     expect(onCopy).toHaveBeenCalledWith(runs[0].output)
-
   })
 })

@@ -4,9 +4,7 @@ import UpdateNotification from './UpdateNotification'
 
 describe('UpdateNotification Component', () => {
   it('does not render when updateAvailable is false', () => {
-    const { container } = render(
-      <UpdateNotification updateAvailable={false} />
-    )
+    const { container } = render(<UpdateNotification updateAvailable={false} />)
     expect(container.firstChild).toBeNull()
   })
 
@@ -17,19 +15,12 @@ describe('UpdateNotification Component', () => {
     expect(alert).toBeInTheDocument()
     expect(alert).toHaveAttribute('aria-live', 'polite')
     expect(screen.getByText('Update Available')).toBeInTheDocument()
-    expect(
-      screen.getByText('A new version of Open Agents is ready.')
-    ).toBeInTheDocument()
+    expect(screen.getByText('A new version of Open Agents is ready.')).toBeInTheDocument()
   })
 
   it('triggers onUpdate callback when Update button is clicked', () => {
     const handleUpdate = vi.fn()
-    render(
-      <UpdateNotification
-        updateAvailable={true}
-        onUpdate={handleUpdate}
-      />
-    )
+    render(<UpdateNotification updateAvailable={true} onUpdate={handleUpdate} />)
 
     const updateBtn = screen.getByRole('button', {
       name: /reload and apply update/i,
@@ -40,12 +31,7 @@ describe('UpdateNotification Component', () => {
 
   it('triggers onDismiss callback when Dismiss button is clicked', () => {
     const handleDismiss = vi.fn()
-    render(
-      <UpdateNotification
-        updateAvailable={true}
-        onDismiss={handleDismiss}
-      />
-    )
+    render(<UpdateNotification updateAvailable={true} onDismiss={handleDismiss} />)
 
     const dismissBtn = screen.getByRole('button', {
       name: /dismiss update notification/i,

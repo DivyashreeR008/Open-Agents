@@ -32,7 +32,9 @@ describe('SuggestedChainPills', () => {
   })
 
   it('renders nothing when the agent has no suggested chain', () => {
-    const { container } = render(<SuggestedChainPills agent={{ ...reviewer, suggestedChainFrom: [] }} />)
+    const { container } = render(
+      <SuggestedChainPills agent={{ ...reviewer, suggestedChainFrom: [] }} />
+    )
 
     expect(container).toBeEmptyDOMElement()
   })
@@ -52,10 +54,7 @@ describe('SuggestedChainPills', () => {
 
     expect(screen.getByText('Works well after')).toBeInTheDocument()
     const pills = screen.getAllByRole('button')
-    expect(pills.map((pill) => pill.textContent)).toEqual([
-      'Technical Writer',
-      'Test Planner',
-    ])
+    expect(pills.map((pill) => pill.textContent)).toEqual(['Technical Writer', 'Test Planner'])
     expect(screen.queryByText('missing')).not.toBeInTheDocument()
   })
 
@@ -74,8 +73,9 @@ describe('SuggestedChainPills', () => {
   it('names both agents in each pill title', () => {
     render(<SuggestedChainPills agent={reviewer} />)
 
-    expect(
-      screen.getByRole('button', { name: 'Technical Writer' })
-    ).toHaveAttribute('title', 'Start a workflow: Technical Writer \u2192 Code Reviewer')
+    expect(screen.getByRole('button', { name: 'Technical Writer' })).toHaveAttribute(
+      'title',
+      'Start a workflow: Technical Writer \u2192 Code Reviewer'
+    )
   })
 })

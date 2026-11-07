@@ -50,14 +50,19 @@ function deferredRun() {
   runAgent.mockImplementation(({ provider }) => {
     let resolve
     let reject
-    const promise = new Promise((res, rej) => { resolve = res; reject = rej })
+    const promise = new Promise((res, rej) => {
+      resolve = res
+      reject = rej
+    })
     pending.push({ provider, resolve, reject })
     return promise
   })
   return pending
 }
 
-beforeEach(() => { vi.clearAllMocks() })
+beforeEach(() => {
+  vi.clearAllMocks()
+})
 
 describe('BattleModeArena winner handoff and failures', () => {
   it('redirects a direct visit without battle state to setup', async () => {
@@ -71,7 +76,10 @@ describe('BattleModeArena winner handoff and failures', () => {
     await waitFor(() => expect(pending).toHaveLength(4))
     await act(async () => {
       for (const call of pending) {
-        call.resolve({ content: `${call.provider} answer`, duration: call.provider === 'anthropic' ? 2300 : 1000 })
+        call.resolve({
+          content: `${call.provider} answer`,
+          duration: call.provider === 'anthropic' ? 2300 : 1000,
+        })
       }
     })
 
@@ -90,19 +98,35 @@ describe('BattleModeArena winner handoff and failures', () => {
     await waitFor(() => expect(pending).toHaveLength(4))
     const abort = Object.assign(new Error('aborted'), { name: 'AbortError' })
     await act(async () => {
-      pending.find((c) => c.provider === 'openai').resolve({ content: 'OpenAI answer', duration: 1000 })
+      pending
+        .find((c) => c.provider === 'openai')
+        .resolve({ content: 'OpenAI answer', duration: 1000 })
       pending.find((c) => c.provider === 'anthropic').reject(abort)
       pending.find((c) => c.provider === 'gemini').reject(new Error('Gemini quota exhausted'))
-      pending.find((c) => c.provider === 'openrouter').resolve({ content: 'Router answer', duration: 1400 })
+      pending
+        .find((c) => c.provider === 'openrouter')
+        .resolve({ content: 'Router answer', duration: 1400 })
     })
 
-    expect(await screen.findByText('Request timed out - the LLM took too long to respond. Please try again.')).toBeInTheDocument()
+    expect(
+      await screen.findByText(
+        'Request timed out - the LLM took too long to respond. Please try again.'
+      )
+    ).toBeInTheDocument()
     expect(screen.getByText('Gemini quota exhausted')).toBeInTheDocument()
     const claudePane = screen.getByRole('region', { name: 'Claude Sonnet' })
     const geminiPane = screen.getByRole('region', { name: 'Gemini Flash' })
-    expect(within(claudePane).queryByRole('button', { name: 'Pick Winner' })).not.toBeInTheDocument()
-    expect(within(geminiPane).queryByRole('button', { name: 'Pick Winner' })).not.toBeInTheDocument()
-    expect(within(screen.getByRole('region', { name: 'GPT-4o' })).getByRole('button', { name: 'Pick Winner' })).toBeInTheDocument()
+    expect(
+      within(claudePane).queryByRole('button', { name: 'Pick Winner' })
+    ).not.toBeInTheDocument()
+    expect(
+      within(geminiPane).queryByRole('button', { name: 'Pick Winner' })
+    ).not.toBeInTheDocument()
+    expect(
+      within(screen.getByRole('region', { name: 'GPT-4o' })).getByRole('button', {
+        name: 'Pick Winner',
+      })
+    ).toBeInTheDocument()
   })
 
   it('renders markdown answers as formatting and text answers as preformatted text', async () => {

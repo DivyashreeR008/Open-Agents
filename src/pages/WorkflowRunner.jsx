@@ -386,7 +386,10 @@ export default function WorkflowRunner() {
 
       {/* Input */}
       <div className="mb-4">
-        <label htmlFor="workflow-input" className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1.5">
+        <label
+          htmlFor="workflow-input"
+          className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1.5"
+        >
           Your Input <span className="text-zinc-400">*</span>
           <span className="ml-1 dark:text-text-muted text-gray-400 font-normal">
             — passed to the first agent, then chained through each step
@@ -462,9 +465,7 @@ export default function WorkflowRunner() {
         <div className="space-y-4">
           {steps.map((step, index) => {
             const IconComponent =
-              step.kind === 'conditional'
-                ? GitBranch
-                : resolveAgentIcon(step.agent?.icon)
+              step.kind === 'conditional' ? GitBranch : resolveAgentIcon(step.agent?.icon)
             return (
               <div
                 key={step.agentId + index}

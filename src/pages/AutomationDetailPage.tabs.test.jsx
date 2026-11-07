@@ -25,10 +25,20 @@ vi.mock('../components/CreateAutomationModal', () => ({
 import AutomationDetailPage from './AutomationDetailPage'
 
 const automation = {
-  id: 'a1', name: 'Daily digest', enabled: true, schedule: 'Every day', cron: '0 9 * * *',
-  agentId: 'summarizer', agentName: 'Summarizer', provider: 'openai', model: 'gpt-4.1-mini',
-  createdAt: 1700000000000, notificationEmail: '', missedPolicy: 'skip',
-  inputs: { topic: 'AI', tags: ['news', 'brief'] }, systemPrompt: 'Be concise.',
+  id: 'a1',
+  name: 'Daily digest',
+  enabled: true,
+  schedule: 'Every day',
+  cron: '0 9 * * *',
+  agentId: 'summarizer',
+  agentName: 'Summarizer',
+  provider: 'openai',
+  model: 'gpt-4.1-mini',
+  createdAt: 1700000000000,
+  notificationEmail: '',
+  missedPolicy: 'skip',
+  inputs: { topic: 'AI', tags: ['news', 'brief'] },
+  systemPrompt: 'Be concise.',
 }
 
 function renderPage() {
@@ -49,7 +59,13 @@ beforeEach(() => {
     { id: 'r2', status: 'missed', startedAt: 1700000100000, scheduledFor: 1700000100000 },
   ])
   mocks.getEmailLogs.mockReturnValue([
-    { id: 'e1', subject: 'Digest sent', to: 'ops@example.com', sentAt: 1700000000000, status: 'delivered' },
+    {
+      id: 'e1',
+      subject: 'Digest sent',
+      to: 'ops@example.com',
+      sentAt: 1700000000000,
+      status: 'delivered',
+    },
   ])
 })
 
