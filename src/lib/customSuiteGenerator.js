@@ -63,6 +63,9 @@ Rules:
   })
 
   // Parse the JSON response
-  const clean = result.content.replace(/```json|```/g, '').trim()
+  const clean = result.content
+    .replace(/^\uFEFF/, '')
+    .replace(/```json|```/gi, '')
+    .trim()
   return JSON.parse(clean)
 }
