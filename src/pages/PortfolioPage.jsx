@@ -1,7 +1,7 @@
 ﻿import { useDocumentTitle } from '../lib/useDocumentTitle'
 import { Link } from 'react-router-dom'
-import { ArrowRight, ArrowUpRight, Mail } from 'lucide-react'
-import GitHubIcon from '../components/GitHubIcon'
+import { ArrowRight, ArrowUpRight, Mail, GitHubIcon } from 'lucide-react'
+
 import { useAgents } from '../lib/useAgents'
 import { CATEGORIES } from '../agents/categories'
 
