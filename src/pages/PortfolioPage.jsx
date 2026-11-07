@@ -16,7 +16,7 @@ export default function PortfolioPage() {
     {
       n: '01',
       title: 'Agent Catalogue',
-      note: `${agentCount} agents, ${CATEGORIES.length} categories`,
+      note: `${agentCount} ${agentCount === 1 ? 'agent' : 'agents'}, ${CATEGORIES.length} categories`,
       to: '/agents',
     },
     { n: '02', title: 'Battle Mode', note: 'Head-to-head model comparison', to: '/battle' },
@@ -84,9 +84,10 @@ export default function PortfolioPage() {
               OpenAgents
             </h1>
             <p className="mt-6 max-w-xl text-base md:text-lg leading-relaxed text-neutral-400">
-              A self-hostable workspace for running AI agents. Pick from {agentCount} definitions,
-              compare models side by side, chain steps into workflows, and schedule recurring runs —
-              without handing your data to a black-box SaaS.
+              A self-hostable workspace for running AI agents. Pick from {agentCount}{' '}
+              {agentCount === 1 ? 'definition' : 'definitions'}, compare models side by side, chain
+              steps into workflows, and schedule recurring runs — without handing your data to a
+              black-box SaaS.
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <Link
