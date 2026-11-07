@@ -338,13 +338,13 @@ ${stringContent}
                 },
               }}
             >
-              {content}
+              {stringContent}
             </ReactMarkdown>
           </div>
         ) : (
           /* text output */
           <pre className="text-sm whitespace-pre-wrap font-sans dark:text-text-primary text-gray-900 leading-relaxed">
-            {content}
+            {stringContent}
           </pre>
         )}
       </div>
