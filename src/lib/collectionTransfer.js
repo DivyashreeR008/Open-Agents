@@ -54,7 +54,9 @@ const fail = (error) => ({ ok: false, error })
  */
 export function parseCollectionImport(text, { knownAgentIds } = {}) {
   if (typeof text !== 'string' || !text.trim()) return fail('The file is empty.')
-  if (text.length > MAX_COLLECTION_IMPORT_BYTES) {
+  const byteLength =
+    typeof TextEncoder === 'undefined' ? text.length : new TextEncoder().encode(text).length
+  if (byteLength > MAX_COLLECTION_IMPORT_BYTES) {
     return fail('The file is too large to be a collection export.')
   }
 
@@ -98,7 +100,7 @@ export function parseCollectionImport(text, { knownAgentIds } = {}) {
   const unique = [...new Set(source.agentIds)]
   if (!knownAgentIds) return { ok: true, name, agentIds: unique, skippedAgentIds: [] }
 
-  const known = new Set(knownAgentIds)
+  const known = new Set(typeof knownAgentIds === 'string' ? [knownAgentIds] : knownAgentIds)
   return {
     ok: true,
     name,
