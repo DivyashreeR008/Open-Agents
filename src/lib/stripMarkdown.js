@@ -3,21 +3,29 @@
 // removed at the start of a line and emphasis only when the markers hug the
 // text and sit on a word boundary.
 
-const OPEN = ''
-const CLOSE = ''
+const MARKER = ''
+const MARKER_END = ''
 
 export function stripMarkdown(text) {
   if (!text) return ''
+
+  const source = String(text).replace(/\r\n?/g, '\n')
+
+  // Pick a marker sequence that the input does not already contain, so
+  // literal private-use characters survive the parking and restore pass.
+  let open = MARKER
+  while (source.includes(open) || source.includes(`${open}${MARKER_END}`)) open += MARKER
+  const close = `${open}${MARKER_END}`
 
   // Parts that must come out exactly as written (code, escaped characters)
   // are parked behind placeholders and put back at the end.
   const saved = []
   const park = (value) => {
     saved.push(value)
-    return `${OPEN}${saved.length - 1}${CLOSE}`
+    return `${open}${saved.length - 1}${close}`
   }
 
-  let out = String(text).replace(/\r\n?/g, '\n')
+  let out = source
 
   out = out
     // fenced code blocks, keep the code, drop the fences
@@ -50,7 +58,7 @@ export function stripMarkdown(text) {
     .replace(/(^|[^\w])__(?=\S)([^\n]*?\S)__(?!\w)/g, '$1$2')
     .replace(/(^|[^\w])_(?=\S)([^\n_]*?\S)_(?!\w)/g, '$1$2')
 
-  out = out.replace(new RegExp(`${OPEN}(\\d+)${CLOSE}`, 'g'), (_, i) => saved[Number(i)])
+  out = out.replace(new RegExp(`${open}(\\d+)${close}`, 'g'), (_, i) => saved[Number(i)])
 
   return out.replace(/\n{3,}/g, '\n\n').trim()
 }
