@@ -182,6 +182,6 @@ export async function runBatch({
     }
   }
 
-  const workerCount = Math.min(concurrency, items.length)
+  const workerCount = Math.max(1, Math.min(Number(concurrency) || 1, items.length))
   await Promise.all(Array.from({ length: workerCount }, () => worker()))
 }
