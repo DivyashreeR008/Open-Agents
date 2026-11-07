@@ -30,6 +30,14 @@ const KEYS = {
 const DEFAULT_PROVIDER_KEY = 'OpenAgents_default_provider'
 const EXPIRY_MS = 8 * 60 * 60 * 1000 // 8 hours, matching useApiKey.js
 
+function safeStorage(action, fallback = null) {
+  try {
+    return action()
+  } catch {
+    return fallback
+  }
+}
+
 /**
  * Read a secret from sessionStorage, honoring its expiry. Also removes any
  * legacy plaintext key an older version may have left in localStorage.
@@ -38,20 +46,20 @@ function readSecret(storageKey) {
   // Migrate a legacy plaintext key an older version left in localStorage:
   // move its value into sessionStorage (with a fresh expiry) so the user does
   // not lose it, then remove the insecure localStorage copy.
-  const legacy = localStorage.getItem(storageKey)
+  const legacy = safeStorage(() => localStorage.getItem(storageKey))
   if (legacy !== null) {
-    localStorage.removeItem(storageKey)
-    if (legacy !== '' && sessionStorage.getItem(storageKey) === null) {
+    safeStorage(() => localStorage.removeItem(storageKey))
+    if (legacy !== '' && safeStorage(() => sessionStorage.getItem(storageKey)) === null) {
       writeSecret(storageKey, legacy)
     }
   }
 
-  const raw = sessionStorage.getItem(storageKey)
+  const raw = safeStorage(() => sessionStorage.getItem(storageKey))
   if (!raw) return ''
   try {
     const { key, expiresAt } = JSON.parse(raw)
     if (Date.now() > expiresAt) {
-      sessionStorage.removeItem(storageKey)
+      safeStorage(() => sessionStorage.removeItem(storageKey))
       return ''
     }
     return key || ''
@@ -64,12 +72,14 @@ function readSecret(storageKey) {
  * Store a secret in sessionStorage with a fresh 8-hour expiry.
  */
 function writeSecret(storageKey, value) {
-  sessionStorage.setItem(
-    storageKey,
-    JSON.stringify({
-      key: value,
-      expiresAt: Date.now() + EXPIRY_MS,
-    })
+  safeStorage(() =>
+    sessionStorage.setItem(
+      storageKey,
+      JSON.stringify({
+        key: value,
+        expiresAt: Date.now() + EXPIRY_MS,
+      })
+    )
   )
 }
 
@@ -85,12 +95,12 @@ export function getGlobalKeys() {
     openrouter: readSecret(KEYS.openrouter),
   }
 
-  let defaultProvider = localStorage.getItem(DEFAULT_PROVIDER_KEY) || ''
+  let defaultProvider = safeStorage(() => localStorage.getItem(DEFAULT_PROVIDER_KEY)) || ''
   // A default is only meaningful while its provider still has a live key.
   // Expired or manually removed keys must not leave a preference that points
   // at a credential no run can use.
   if (defaultProvider && !keys[defaultProvider]?.trim()) {
-    localStorage.removeItem(DEFAULT_PROVIDER_KEY)
+    safeStorage(() => localStorage.removeItem(DEFAULT_PROVIDER_KEY))
     defaultProvider = ''
   }
 
@@ -129,9 +139,9 @@ export function saveGlobalKeys({ openai, anthropic, gemini, openrouter, defaultP
   if (defaultProvider !== undefined) {
     savedDefault = defaultProvider.trim()
     if (savedDefault === '') {
-      localStorage.removeItem(DEFAULT_PROVIDER_KEY)
+      safeStorage(() => localStorage.removeItem(DEFAULT_PROVIDER_KEY))
     } else {
-      localStorage.setItem(DEFAULT_PROVIDER_KEY, savedDefault)
+      safeStorage(() => localStorage.setItem(DEFAULT_PROVIDER_KEY, savedDefault))
     }
   }
 
@@ -149,18 +159,18 @@ export function saveGlobalKeys({ openai, anthropic, gemini, openrouter, defaultP
  */
 export function clearGlobalKey(provider) {
   if (provider === 'defaultProvider') {
-    localStorage.removeItem(DEFAULT_PROVIDER_KEY)
+    safeStorage(() => localStorage.removeItem(DEFAULT_PROVIDER_KEY))
     return
   }
 
   const storageKey = KEYS[provider]
   if (storageKey) {
-    sessionStorage.removeItem(storageKey)
-    localStorage.removeItem(storageKey) // clear any legacy leak too
+    safeStorage(() => sessionStorage.removeItem(storageKey))
+    safeStorage(() => localStorage.removeItem(storageKey)) // clear any legacy leak too
   }
 
-  if (localStorage.getItem(DEFAULT_PROVIDER_KEY) === provider) {
-    localStorage.removeItem(DEFAULT_PROVIDER_KEY)
+  if (safeStorage(() => localStorage.getItem(DEFAULT_PROVIDER_KEY)) === provider) {
+    safeStorage(() => localStorage.removeItem(DEFAULT_PROVIDER_KEY))
   }
 }
 
@@ -169,10 +179,10 @@ export function clearGlobalKey(provider) {
  */
 export function clearAllGlobalKeys() {
   Object.values(KEYS).forEach((k) => {
-    sessionStorage.removeItem(k)
-    localStorage.removeItem(k)
+    safeStorage(() => sessionStorage.removeItem(k))
+    safeStorage(() => localStorage.removeItem(k))
   })
-  localStorage.removeItem(DEFAULT_PROVIDER_KEY)
+  safeStorage(() => localStorage.removeItem(DEFAULT_PROVIDER_KEY))
 }
 
 /**
