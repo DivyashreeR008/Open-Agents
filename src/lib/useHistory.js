@@ -49,7 +49,8 @@ export const useHistory = () => {
   // Pick up writes made by other tabs/windows to the same key.
   useEffect(() => {
     const handleStorage = (e) => {
-      if (e.key === STORAGE_KEY) {
+      // A null key means another tab called localStorage.clear().
+      if (e.key === STORAGE_KEY || e.key === null) {
         setHistory(loadHistory())
       }
     }
