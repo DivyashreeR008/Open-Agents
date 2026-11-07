@@ -66,7 +66,7 @@ export default function CreateAutomationModal({
   // Update defaults when agent changes
   useEffect(() => {
     if (selectedAgent && !initialData) {
-      if (!name || name.endsWith('Automation')) {
+      if (!name || name.endsWith('Automation') || name.endsWith('Autopilot')) {
         setName(`${selectedAgent.name} Autopilot`)
       }
       const initialInputs = {}
