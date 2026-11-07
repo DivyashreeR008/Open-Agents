@@ -6,7 +6,7 @@ export default function AboutFeatures() {
   const agentCount = agents.length || catalogSize
   const features = [
     {
-      title: `${agentCount} Specialized AI Agents`,
+      title: `${agentCount} Specialized AI Agent${agentCount === 1 ? '' : 's'}`,
       description:
         'Focused tools built for code reviews, SQL generation, blog optimization, resume screening, flashcard creation, and much more.',
       icon: Bot,
