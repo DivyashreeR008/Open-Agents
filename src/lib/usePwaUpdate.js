@@ -29,11 +29,16 @@ export function usePwaUpdate() {
 
     navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange)
 
+    const showUpdate = (worker) => {
+      setWaitingWorker(worker)
+      setUpdateAvailable(true)
+      setDismissed(false)
+    }
+
     const onRegistrationSuccess = (registration) => {
       // If a worker is already waiting to activate
       if (registration.waiting && navigator.serviceWorker.controller) {
-        setWaitingWorker(registration.waiting)
-        setUpdateAvailable(true)
+        showUpdate(registration.waiting)
       }
 
       // Listen for incoming new service workers
@@ -43,8 +48,7 @@ export function usePwaUpdate() {
 
         newWorker.addEventListener('statechange', () => {
           if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            setWaitingWorker(newWorker)
-            setUpdateAvailable(true)
+            showUpdate(newWorker)
           }
         })
       })
