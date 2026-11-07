@@ -7,7 +7,10 @@ const PRICING = {
 }
 
 export function estimateCost(model, inputTokens, outputTokens) {
-  const p = PRICING[model]
+  const p =
+    typeof model === 'string' && Object.prototype.hasOwnProperty.call(PRICING, model)
+      ? PRICING[model]
+      : null
   if (!p) return null // unknown model — don't silently record as $0
   return (inputTokens / 1000) * p.input + (outputTokens / 1000) * p.output
 }
