@@ -108,6 +108,7 @@ export default function ScheduleAgentModal({
           </div>
           <button
             onClick={onClose}
+            aria-label="Close schedule dialog"
             className="p-1.5 dark:hover:bg-surface-hover hover:bg-gray-100 transition-colors dark:text-text-muted text-gray-400"
           >
             <X size={16} />
