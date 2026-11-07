@@ -14,10 +14,11 @@ export default function SuggestedChainPills({ agent }) {
   const navigate = useNavigate()
   const { agents } = useAgents()
 
-  if (!agent.suggestedChainFrom?.length) return null
+  const chain = Array.isArray(agent?.suggestedChainFrom) ? agent.suggestedChainFrom : []
+  if (!chain.length) return null
 
   const predecessors = agents.length
-    ? agent.suggestedChainFrom.map((id) => agents.find((a) => a.id === id)).filter(Boolean)
+    ? chain.map((id) => agents.find((a) => a.id === id)).filter(Boolean)
     : []
 
   if (!predecessors.length) return null
