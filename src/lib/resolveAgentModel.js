@@ -30,13 +30,16 @@ export const MODEL_MAP = {
   openrouter: MODELS.openrouter[0].value,
 }
 
+const hasOwn = (object, key) => Object.prototype.hasOwnProperty.call(object, key)
+
 export function resolveAgentModel(agent, actualProvider, selectedModel) {
   // Check if selectedModel is valid for the current actualProvider
-  if (selectedModel && MODELS[actualProvider]?.some((m) => m.value === selectedModel)) {
+  const providerModels = hasOwn(MODELS, actualProvider) ? MODELS[actualProvider] : null
+  if (selectedModel && providerModels?.some((m) => m.value === selectedModel)) {
     return selectedModel
   }
 
-  if (agent.models && agent.models[actualProvider]) {
+  if (agent.models && hasOwn(agent.models, actualProvider)) {
     return agent.models[actualProvider]
   }
 
@@ -47,5 +50,5 @@ export function resolveAgentModel(agent, actualProvider, selectedModel) {
     return agent.model
   }
 
-  return MODEL_MAP[actualProvider] || MODEL_MAP.openai
+  return hasOwn(MODEL_MAP, actualProvider) ? MODEL_MAP[actualProvider] : MODEL_MAP.openai
 }
