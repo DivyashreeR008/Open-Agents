@@ -9,10 +9,7 @@ export default function ErrorCard({ message }) {
   if (typeof message === 'string' && /rate limit|quota used up/i.test(message)) {
     Icon = AlertTriangle
     color = 'warning'
-  } else if (
-    typeof message === 'string' &&
-    (message.includes('connection') || message.includes('reach'))
-  ) {
+  } else if (typeof message === 'string' && /connection|reach/i.test(message)) {
     Icon = Wifi
     color = 'warning'
   }
