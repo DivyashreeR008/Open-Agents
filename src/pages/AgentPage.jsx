@@ -21,7 +21,7 @@ export default function AgentPage() {
   useEffect(() => {
     if (!agent) return
 
-    let existing = []
+    let existing
 
     try {
       const parsed = JSON.parse(localStorage.getItem('recentAgents') || '[]')

@@ -4,7 +4,7 @@
 
 - name: 'bug'
   color: 'd73a4a'
-  description: 'Something isn''t working'
+  description: "Something isn't working"
 
 - name: 'documentation'
   color: '0075ca'
@@ -28,7 +28,7 @@
 
 - name: 'invalid'
   color: 'e4e669'
-  description: 'This doesn''t seem right'
+  description: "This doesn't seem right"
 
 - name: 'question'
   color: 'd876e3'
