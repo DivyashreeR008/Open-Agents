@@ -27,10 +27,11 @@ export const useKeyboardShortcuts = (shortcuts) => {
       // A printable character with no Ctrl/Meta/Alt held is ordinary typing, so it
       // must not fire while the user is in a text field. Keys like Escape keep working.
       const isPlainKey = singleKey.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey
+      const hasCommandModifier = event.ctrlKey || event.metaKey || event.altKey
 
       if (shortcuts[shortcutStr] && !(isPlainKey && isTyping)) {
         shortcuts[shortcutStr](event)
-      } else if (shortcuts[singleKey] && !isTyping) {
+      } else if (shortcuts[singleKey] && !isTyping && !hasCommandModifier) {
         // For single keys like '/' or '?', we usually don't want them to fire if we are typing in an input
         shortcuts[singleKey](event)
       }
