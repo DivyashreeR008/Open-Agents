@@ -4,7 +4,8 @@ export const SITE_NAME = 'Open Agents'
 export const DEFAULT_TITLE = `${SITE_NAME} \u2014 AI Agents, Ready to Use`
 
 export function formatDocumentTitle(pageTitle) {
-  return pageTitle ? `${pageTitle} \u2014 ${SITE_NAME}` : DEFAULT_TITLE
+  if (typeof pageTitle !== 'string' || !pageTitle.trim()) return DEFAULT_TITLE
+  return `${pageTitle} \u2014 ${SITE_NAME}`
 }
 
 export function useDocumentTitle(pageTitle) {
