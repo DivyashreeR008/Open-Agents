@@ -6,6 +6,8 @@
  * right-aligned action cluster.
  */
 export default function PageHeader({ eyebrow, title, meta, description, actions, children }) {
+  const hasMeta = meta != null && meta !== ''
+
   return (
     <header className="mb-5 flex flex-wrap items-end justify-between gap-x-4 gap-y-3">
       <div className="min-w-0">
@@ -15,9 +17,9 @@ export default function PageHeader({ eyebrow, title, meta, description, actions,
           {title}
         </h1>
 
-        {(meta != null || description) && (
+        {(hasMeta || description) && (
           <p className="mt-1.5 flex flex-wrap items-center gap-2 text-[13px] text-zinc-500 dark:text-text-secondary">
-            {meta != null && (
+            {hasMeta && (
               <span className="font-mono tabular-nums text-zinc-400 dark:text-text-muted">
                 {meta}
               </span>
