@@ -63,7 +63,9 @@ export default function AboutHero() {
             to="/agents"
             className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold text-white bg-zinc-400 hover:bg-zinc-300 transition-colors shadow-panel focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500"
           >
-            <span>Explore {agentCount} Agents</span>
+            <span>
+              Explore {agentCount} Agent{agentCount === 1 ? '' : 's'}
+            </span>
             <ArrowRight size={16} />
           </Link>
 
