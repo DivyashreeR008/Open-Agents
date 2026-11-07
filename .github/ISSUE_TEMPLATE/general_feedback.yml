@@ -63,3 +63,16 @@ body:
     attributes:
       label: Anything else?
       description: Optional — add any additional context, screenshots, or details.
+
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Difficulty
+      description: How much work do you think this is? Sets the `difficulty` label automatically. Pick "Not sure" if you cannot tell.
+      options:
+        - Easy
+        - Medium
+        - Hard
+        - Not sure
+    validations:
+      required: true

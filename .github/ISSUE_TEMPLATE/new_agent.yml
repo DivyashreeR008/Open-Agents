@@ -93,3 +93,16 @@ body:
         - label: This agent does one specific thing, not many things at once
           required: true
         - label: I am happy to build this myself if it gets approved
+
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Difficulty
+      description: How much work do you think this is? Sets the `difficulty` label automatically. Pick "Not sure" if you cannot tell.
+      options:
+        - Easy
+        - Medium
+        - Hard
+        - Not sure
+    validations:
+      required: true

@@ -74,3 +74,16 @@ body:
     attributes:
       label: Screenshots or error messages (optional)
       description: Paste any errors from the browser console or attach a screenshot.
+
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Difficulty
+      description: How much work do you think this is? Sets the `difficulty` label automatically. Pick "Not sure" if you cannot tell.
+      options:
+        - Easy
+        - Medium
+        - Hard
+        - Not sure
+    validations:
+      required: true

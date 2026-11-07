@@ -50,3 +50,16 @@ body:
         - Other
     validations:
       required: true
+
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Difficulty
+      description: How much work do you think this is? Sets the `difficulty` label automatically. Pick "Not sure" if you cannot tell.
+      options:
+        - Easy
+        - Medium
+        - Hard
+        - Not sure
+    validations:
+      required: true

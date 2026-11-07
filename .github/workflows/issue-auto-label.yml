@@ -12,21 +12,45 @@ jobs:
       issues: write
 
     steps:
-      - name: Label based on title prefix
+      - name: Label based on form answer and title prefix
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             const title = (context.payload.issue.title || '').trim();
+            const body = context.payload.issue.body || '';
+
+            // ---- 1. Type label, from the template's title prefix ----
+            let type = null;
+            if (title.startsWith('[Bug]')) type = 'bug';
+            if (title.startsWith('[Feature]')) type = 'enhancement';
+            if (title.startsWith('[Agent]')) type = 'new-agent';
+            if (title.startsWith('[Agent Proposal]')) type = 'new-agent';
+            if (title.startsWith('[Feedback]')) type = 'feedback';
+
+            // ---- 2. Difficulty, from the required "Difficulty" dropdown ----
+            // GitHub renders a dropdown answer as:  ### Difficulty\n\n<answer>
+            const m = body.match(/^###\s*Difficulty\s*\r?\n+\s*([^\r\n]+)/im);
+            const answer = m ? m[1].trim().toLowerCase() : '';
+            let difficulty = null;
+            if (answer.startsWith('easy')) difficulty = 'easy';
+            else if (answer.startsWith('medium')) difficulty = 'medium';
+            else if (answer.startsWith('hard')) difficulty = 'hard';
+
             const labels = new Set();
 
-            if (title.startsWith('[Bug]')) labels.add('bug');
-            if (title.startsWith('[Feature]')) labels.add('enhancement');
-            if (title.startsWith('[Agent]')) labels.add('new-agent');
-            if (title.startsWith('[Feedback]')) labels.add('feedback');
-            if (title.startsWith('[Agent Proposal]')) labels.add('new-agent');
+            // Every issue belongs to the current NSoC season.
+            labels.add('nsoc-2026');
 
-            // Fallback: only issues with no recognised type prefix need initial review
-            if (labels.size === 0) labels.add('triage');
+            if (type) labels.add(type);
+
+            if (difficulty) {
+              labels.add(`difficulty: ${difficulty}`);
+              // Repo convention: good first issue <=> difficulty: easy
+              if (difficulty === 'easy') labels.add('good first issue');
+            }
+
+            // Fallback: no recognised type and no usable difficulty needs a human.
+            if (!type && !difficulty) labels.add('triage');
 
             await github.rest.issues.addLabels({
               owner: context.repo.owner,

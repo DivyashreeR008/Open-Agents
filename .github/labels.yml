@@ -1,3 +1,75 @@
+- name: 'accessibility'
+  color: 'f143ab'
+  description: 'Barrier affecting people with disabilities'
+
+- name: 'bug'
+  color: 'd73a4a'
+  description: 'Something isn''t working'
+
+- name: 'documentation'
+  color: '0075ca'
+  description: 'Improvements or additions to documentation'
+
+- name: 'duplicate'
+  color: 'cfd3d7'
+  description: 'This issue or pull request already exists'
+
+- name: 'enhancement'
+  color: 'a2eeef'
+  description: 'New feature or request'
+
+- name: 'good first issue'
+  color: '7057ff'
+  description: 'Good for newcomers'
+
+- name: 'help wanted'
+  color: '008672'
+  description: 'Extra attention is needed'
+
+- name: 'invalid'
+  color: 'e4e669'
+  description: 'This doesn''t seem right'
+
+- name: 'question'
+  color: 'd876e3'
+  description: 'Further information is requested'
+
+- name: 'wontfix'
+  color: 'ffffff'
+  description: 'This will not be worked on'
+
+- name: 'nsoc-2026'
+  color: '6f42c1'
+  description: 'NSoC 2026 program issue'
+
+- name: 'difficulty: easy'
+  color: 'c2e0c6'
+  description: 'Small, well-scoped NSoC 2026 task'
+
+- name: 'difficulty: medium'
+  color: 'fbca04'
+  description: 'Moderate NSoC 2026 task'
+
+- name: 'difficulty: hard'
+  color: 'b60205'
+  description: 'Large or complex NSoC 2026 task'
+
+- name: 'triage'
+  color: 'ededed'
+  description: 'Initial review needed'
+
+- name: 'new-agent'
+  color: '5319e7'
+  description: 'New agent proposal or implementation'
+
+- name: 'feedback'
+  color: 'd4c5f9'
+  description: 'User feedback'
+
+- name: 'agent-request'
+  color: '1d76db'
+  description: 'Agent requested from the app'
+
 - name: 'dependencies'
   color: '0366d6'
   description: 'Pull requests that update dependencies'
