@@ -8,7 +8,10 @@ on:
 
 permissions:
   contents: read
-  labels: write
+  # `labels` is not a valid GITHUB_TOKEN permission; label APIs are covered by
+  # `issues` (labels on issues) and `pull-requests` (labels on pull requests).
+  issues: write
+  pull-requests: write
 
 jobs:
   sync-labels:
