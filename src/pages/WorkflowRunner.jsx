@@ -32,12 +32,38 @@ import {
 } from '../lib/pipelineBranching'
 import { exportWorkflowAsMarkdown } from '../lib/exportMarkdown'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
+import { getGlobalKeys } from '../lib/globalKeys'
 
 const STATUS_COLORS = {
   waiting: 'dark:text-text-muted text-gray-400',
   running: 'text-zinc-900 dark:text-white',
   done: 'text-zinc-400',
   failed: 'text-zinc-400',
+}
+
+// Read a key saved by useApiKey for a provider other than the one currently
+// selected in the top bar. Those values are stored as { key, expiresAt } JSON,
+// with a legacy plaintext fallback.
+function readSessionProviderKey(provider) {
+  const storageKey = `oa_apikey_${provider}`
+  const raw = sessionStorage.getItem(storageKey)
+  if (!raw) return ''
+  try {
+    const { key, expiresAt } = JSON.parse(raw)
+    if (!key) return ''
+    if (Number.isFinite(expiresAt) && Date.now() > expiresAt) {
+      sessionStorage.removeItem(storageKey)
+      return ''
+    }
+    return key
+  } catch {
+    return raw
+  }
+}
+
+function resolveStepKey(provider, currentProvider, currentKey) {
+  if (provider === currentProvider) return currentKey
+  return readSessionProviderKey(provider) || getGlobalKeys()[provider] || ''
 }
 
 function StepStatusIcon({ status }) {
@@ -239,10 +265,7 @@ export default function WorkflowRunner() {
 
       const actualProvider = step.agent.provider === 'any' ? provider : step.agent.provider
 
-      const keyToUse =
-        actualProvider === provider
-          ? apiKey
-          : sessionStorage.getItem(`oa_apikey_${actualProvider}`) || ''
+      const keyToUse = resolveStepKey(actualProvider, provider, apiKey)
 
       if (!keyToUse) {
         execSteps[i] = {
