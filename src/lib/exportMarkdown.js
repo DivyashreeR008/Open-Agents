@@ -1,4 +1,6 @@
 export function exportWorkflowAsMarkdown(workflowTitle, steps) {
+  const safeTitle =
+    typeof workflowTitle === 'string' && workflowTitle.trim() ? workflowTitle : 'Workflow'
   const date = new Date().toLocaleDateString('en-GB', {
     day: 'numeric',
     month: 'long',
@@ -6,7 +8,7 @@ export function exportWorkflowAsMarkdown(workflowTitle, steps) {
   })
 
   const slug =
-    workflowTitle
+    safeTitle
       .toLowerCase()
       .replace(/\s+/g, '-')
       .replace(/[^a-z0-9-]/g, '')
@@ -19,7 +21,7 @@ export function exportWorkflowAsMarkdown(workflowTitle, steps) {
     .map((s, i) => `## Step ${i + 1} — ${s.agentName}\n\n${s.output}`)
     .join('\n\n---\n\n')
 
-  const content = `# ${workflowTitle} — Workflow Output\nGenerated on ${date}\n\n${stepContent}`
+  const content = `# ${safeTitle} — Workflow Output\nGenerated on ${date}\n\n${stepContent}`
 
   const blob = new Blob([content], { type: 'text/markdown' })
   const url = URL.createObjectURL(blob)
