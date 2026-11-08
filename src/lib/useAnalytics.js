@@ -29,7 +29,13 @@ function saveEvents(events) {
 
 function seedFromHistory() {
   const SEED_FLAG = 'oa_analytics_seeded'
-  if (localStorage.getItem(SEED_FLAG)) return
+
+  try {
+    if (localStorage.getItem(SEED_FLAG)) return
+  } catch {
+    // Storage is unavailable; seeding is best-effort.
+    return
+  }
 
   try {
     const historyRaw = localStorage.getItem('OpenAgents_history')
@@ -38,7 +44,17 @@ function seedFromHistory() {
       return
     }
 
-    const history = JSON.parse(historyRaw)
+    let history
+    try {
+      history = JSON.parse(historyRaw)
+    } catch {
+      // Malformed history should not be retried on every mount.
+      try {
+        localStorage.setItem(SEED_FLAG, '1')
+      } catch {}
+      return
+    }
+
     if (!Array.isArray(history) || history.length === 0) {
       localStorage.setItem(SEED_FLAG, '1')
       return
@@ -48,7 +64,7 @@ function seedFromHistory() {
     const existingIds = new Set(existing.map((e) => e.id))
 
     const seeded = history
-      .filter((run) => !existingIds.has(run.id))
+      .filter((run) => run && typeof run === 'object' && !existingIds.has(run.id))
       .map((run) => ({
         id: run.id,
         agentId: run.agentId,
@@ -68,9 +84,11 @@ function seedFromHistory() {
       saveEvents(merged)
       window.dispatchEvent(new Event('oa_analytics_update'))
     }
-  } catch {}
 
-  localStorage.setItem(SEED_FLAG, '1')
+    localStorage.setItem(SEED_FLAG, '1')
+  } catch {
+    // Storage is unavailable or full; seeding is best-effort.
+  }
 }
 
 // ── Plain function (for use outside React components) ───────────────────────
