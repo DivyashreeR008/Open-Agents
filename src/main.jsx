@@ -25,7 +25,7 @@ function PreloaderApp() {
       <div
         aria-hidden={preloaderDone ? undefined : true}
         aria-busy={preloaderDone ? undefined : true}
-        inert={preloaderDone ? undefined : ''}
+        inert={preloaderDone ? undefined : true}
       >
         <App />
       </div>
