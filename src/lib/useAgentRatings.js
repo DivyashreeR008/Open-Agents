@@ -4,11 +4,38 @@ const STORAGE_KEY = 'oa_ratings'
 const VOTES_KEY = 'oa_rating_votes'
 const listeners = new Set()
 
+function isPlainObject(value) {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value)
+}
+
+function sanitizeCount(value) {
+  return Number.isFinite(value) && value > 0 ? Math.floor(value) : 0
+}
+
+function sanitizeRatings(value) {
+  if (!isPlainObject(value)) return {}
+  return Object.fromEntries(
+    Object.entries(value)
+      .filter(([agentId, counts]) => agentId && isPlainObject(counts))
+      .map(([agentId, counts]) => [
+        agentId,
+        { up: sanitizeCount(counts.up), down: sanitizeCount(counts.down) },
+      ])
+  )
+}
+
+function sanitizeVotes(value) {
+  if (!isPlainObject(value)) return {}
+  return Object.fromEntries(
+    Object.entries(value).filter(([agentId, vote]) => agentId && (vote === 'up' || vote === 'down'))
+  )
+}
+
 const getStoredRatings = () => {
   if (typeof window === 'undefined') return {}
   try {
     const saved = localStorage.getItem(STORAGE_KEY)
-    return saved ? JSON.parse(saved) : {}
+    return saved ? sanitizeRatings(JSON.parse(saved)) : {}
   } catch (error) {
     console.error('Error parsing ratings from localStorage:', error)
     return {}
@@ -19,7 +46,7 @@ const getStoredVotes = () => {
   if (typeof window === 'undefined') return {}
   try {
     const saved = localStorage.getItem(VOTES_KEY)
-    return saved ? JSON.parse(saved) : {}
+    return saved ? sanitizeVotes(JSON.parse(saved)) : {}
   } catch {
     return {}
   }
