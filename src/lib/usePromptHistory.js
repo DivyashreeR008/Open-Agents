@@ -3,10 +3,17 @@ import { useState, useCallback, useEffect } from 'react'
 const STORAGE_KEY = 'oa_prompt_history'
 const MAX_PROMPTS = 100
 
+function sanitizePrompts(value) {
+  if (!Array.isArray(value)) return []
+  return value.filter(
+    (prompt) => prompt && typeof prompt === 'object' && typeof prompt.text === 'string'
+  )
+}
+
 function loadPrompts() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? JSON.parse(raw) : []
+    return raw ? sanitizePrompts(JSON.parse(raw)) : []
   } catch {
     return []
   }
