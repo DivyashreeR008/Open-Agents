@@ -456,7 +456,9 @@ export default function AutomationDetailPage() {
                           )}
                         </td>
                         <td className="px-5 py-3.5 font-mono text-gray-600 dark:text-gray-400">
-                          {isUnexecutedRun(run) ? '—' : `${(run.duration / 1000).toFixed(2)}s`}
+                          {isUnexecutedRun(run)
+                            ? '—'
+                            : `${((run.duration || 0) / 1000).toFixed(2)}s`}
                         </td>
                         <td className="px-5 py-3.5 font-mono text-gray-600 dark:text-gray-400">
                           {run.tokens || '—'}
