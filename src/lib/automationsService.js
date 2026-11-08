@@ -207,7 +207,13 @@ export function removeAutomationKey(automationId) {
   saveVault(vault)
 
   if (isSupabaseConfigured) {
-    supabase.from('user_secrets').delete().eq('automation_id', automationId).then()
+    try {
+      Promise.resolve(
+        supabase.from('user_secrets').delete().eq('automation_id', automationId)
+      ).catch((error) => console.warn('Supabase automation key cleanup failed:', error))
+    } catch (error) {
+      console.warn('Supabase automation key cleanup failed:', error)
+    }
   }
 }
 
@@ -644,7 +650,13 @@ export function deleteRun(runId) {
   const allRuns = loadRuns()
   saveRuns(allRuns.filter((r) => r.id !== runId))
   if (isSupabaseConfigured) {
-    supabase.from('automation_runs').delete().eq('id', runId).then()
+    try {
+      Promise.resolve(supabase.from('automation_runs').delete().eq('id', runId)).catch((error) =>
+        console.warn('Supabase run delete failed:', error)
+      )
+    } catch (error) {
+      console.warn('Supabase run delete failed:', error)
+    }
   }
 }
 
