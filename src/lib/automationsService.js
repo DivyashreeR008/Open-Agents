@@ -260,15 +260,31 @@ export async function clearAutomationKeys(provider) {
 }
 
 // ── Email Notification Dispatch (Resend integration / simulation) ──
+function escapeEmailHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+function emailSubjectName(value) {
+  return String(value ?? '')
+    .replace(/[\r\n]+/g, ' ')
+    .trim()
+}
+
 export async function sendResendNotification({
   to,
   automationName,
   agentName,
   output,
-  status,
-  duration,
+  status = 'success',
+  duration = 0,
   error,
 }) {
+  const safeAutomationName = emailSubjectName(automationName)
   const logEntry = {
     id: `email_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
     to,
@@ -276,7 +292,7 @@ export async function sendResendNotification({
     agentName,
     status: status === 'failed' ? 'Failed' : 'Delivered',
     sentAt: Date.now(),
-    subject: `[Open Agents Hub] ${status === 'failed' ? 'Failed' : 'Completed'}: ${automationName}`,
+    subject: `[Open Agents Hub] ${status === 'failed' ? 'Failed' : 'Completed'}: ${safeAutomationName}`,
     preview: output ? output.slice(0, 180) + '...' : error || 'Run finished',
   }
 
@@ -308,17 +324,17 @@ export async function sendResendNotification({
             <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #000000;">
               <div style="border-bottom: 2px solid #E5E5E5; padding-bottom: 12px; margin-bottom: 20px;">
                 <h2 style="margin: 0; color: #000000;">Open Agents Hub Autopilot Report</h2>
-                <p style="margin: 4px 0 0 0; color: #9E9E9E; font-size: 14px;">Automation: <strong>${automationName}</strong> (${agentName})</p>
+                <p style="margin: 4px 0 0 0; color: #9E9E9E; font-size: 14px;">Automation: <strong>${escapeEmailHtml(automationName)}</strong> (${escapeEmailHtml(agentName)})</p>
               </div>
               <div style="background: #FAFAFA; border: 1px solid #E4E4E4; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-                <p style="margin: 0 0 8px 0; font-size: 13px;"><strong>Status:</strong> <span style="color: ${status === 'failed' ? '#919191' : '#C7C7C7'}; font-weight: 600;">${status.toUpperCase()}</span></p>
+                <p style="margin: 0 0 8px 0; font-size: 13px;"><strong>Status:</strong> <span style="color: ${status === 'failed' ? '#919191' : '#C7C7C7'}; font-weight: 600;">${escapeEmailHtml(String(status).toUpperCase())}</span></p>
                 <p style="margin: 0 0 8px 0; font-size: 13px;"><strong>Execution Time:</strong> ${new Date().toLocaleString()}</p>
                 <p style="margin: 0; font-size: 13px;"><strong>Duration:</strong> ${(duration / 1000).toFixed(2)}s</p>
               </div>
               <div style="margin-bottom: 20px;">
                 <h3 style="margin: 0 0 10px 0; font-size: 16px; color: #000000;">Agent Output</h3>
                 <div style="background: #ffffff; border: 1px solid #D4D4D4; border-radius: 8px; padding: 16px; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">
-                  ${output || error || 'No output generated.'}
+                  ${escapeEmailHtml(output || error || 'No output generated.')}
                 </div>
               </div>
               <p style="font-size: 12px; color: #737373; text-align: center; margin-top: 30px;">
