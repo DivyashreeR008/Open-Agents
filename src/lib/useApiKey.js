@@ -20,12 +20,20 @@ function getSafeApiKey(provider) {
   try {
     const parsed = JSON.parse(raw)
     if (!parsed || typeof parsed !== 'object' || typeof parsed.key !== 'string' || !parsed.key) {
-      sessionStorage.removeItem(STORAGE_PREFIX + provider)
+      try {
+        sessionStorage.removeItem(STORAGE_PREFIX + provider)
+      } catch {
+        // Storage exceptions during cleanup must not bubble or alter fallback
+      }
       return null
     }
     const expiresAt = Number(parsed.expiresAt)
     if (!Number.isFinite(expiresAt) || Date.now() > expiresAt) {
-      sessionStorage.removeItem(STORAGE_PREFIX + provider)
+      try {
+        sessionStorage.removeItem(STORAGE_PREFIX + provider)
+      } catch {
+        // Storage exceptions during cleanup must not bubble or alter fallback
+      }
       return null
     }
     return parsed.key
