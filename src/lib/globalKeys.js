@@ -57,12 +57,17 @@ function readSecret(storageKey) {
   const raw = safeStorage(() => sessionStorage.getItem(storageKey))
   if (!raw) return ''
   try {
-    const { key, expiresAt } = JSON.parse(raw)
-    if (Date.now() > expiresAt) {
+    const parsed = JSON.parse(raw)
+    if (!parsed || typeof parsed !== 'object' || typeof parsed.key !== 'string' || !parsed.key) {
       safeStorage(() => sessionStorage.removeItem(storageKey))
       return ''
     }
-    return key || ''
+    const expiresAt = Number(parsed.expiresAt)
+    if (!Number.isFinite(expiresAt) || Date.now() > expiresAt) {
+      safeStorage(() => sessionStorage.removeItem(storageKey))
+      return ''
+    }
+    return parsed.key
   } catch {
     return raw // tolerate a legacy plaintext session value
   }
