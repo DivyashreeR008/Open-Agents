@@ -148,6 +148,7 @@ export function describeUnexecutedRun(run) {
 export function summarizeHistory(runs) {
   const summary = { ran: 0, skipped: 0, missed: 0 }
   for (const run of runs || []) {
+    if (!run || typeof run !== 'object') continue
     if (run.status === 'missed') summary.missed += run.missedCount || 1
     else if (run.status === 'skipped') summary.skipped += run.skippedCount || 1
     else summary.ran += 1
