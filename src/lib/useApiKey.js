@@ -18,12 +18,17 @@ function getSafeApiKey(provider) {
   }
   if (!raw) return null
   try {
-    const { key, expiresAt } = JSON.parse(raw)
-    if (Date.now() > expiresAt) {
+    const parsed = JSON.parse(raw)
+    if (!parsed || typeof parsed !== 'object' || typeof parsed.key !== 'string' || !parsed.key) {
       sessionStorage.removeItem(STORAGE_PREFIX + provider)
       return null
     }
-    return key
+    const expiresAt = Number(parsed.expiresAt)
+    if (!Number.isFinite(expiresAt) || Date.now() > expiresAt) {
+      sessionStorage.removeItem(STORAGE_PREFIX + provider)
+      return null
+    }
+    return parsed.key
   } catch {
     // Migrate legacy plaintext keys (no expiry)
     return raw
