@@ -16,9 +16,10 @@ export function exportWorkflowAsMarkdown(workflowTitle, steps) {
 
   const filename = `${slug}-output.md`
 
-  const stepContent = steps
+  const safeSteps = Array.isArray(steps) ? steps : []
+  const stepContent = safeSteps
     .filter((s) => s.status === 'done' && s.output)
-    .map((s, i) => `## Step ${i + 1} — ${s.agentName}\n\n${s.output}`)
+    .map((s, i) => `## Step ${i + 1} — ${s.agentName || 'Agent'}\n\n${s.output}`)
     .join('\n\n---\n\n')
 
   const content = `# ${safeTitle} — Workflow Output\nGenerated on ${date}\n\n${stepContent}`
