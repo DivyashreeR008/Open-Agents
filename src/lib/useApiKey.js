@@ -9,7 +9,13 @@ const EXPIRY_MS = 8 * 60 * 60 * 1000 // 8 hours
  * even if storage backend is changed to localStorage.
  */
 function getSafeApiKey(provider) {
-  const raw = sessionStorage.getItem(STORAGE_PREFIX + provider)
+  let raw
+  try {
+    raw = sessionStorage.getItem(STORAGE_PREFIX + provider)
+  } catch {
+    // Blocked storage must not prevent the key form from rendering.
+    return null
+  }
   if (!raw) return null
   try {
     const { key, expiresAt } = JSON.parse(raw)
@@ -28,16 +34,20 @@ function getSafeApiKey(provider) {
  * Store an API key with an expiry timestamp.
  */
 function setSafeApiKey(provider, key) {
-  if (key) {
-    sessionStorage.setItem(
-      STORAGE_PREFIX + provider,
-      JSON.stringify({
-        key,
-        expiresAt: Date.now() + EXPIRY_MS,
-      })
-    )
-  } else {
-    sessionStorage.removeItem(STORAGE_PREFIX + provider)
+  try {
+    if (key) {
+      sessionStorage.setItem(
+        STORAGE_PREFIX + provider,
+        JSON.stringify({
+          key,
+          expiresAt: Date.now() + EXPIRY_MS,
+        })
+      )
+    } else {
+      sessionStorage.removeItem(STORAGE_PREFIX + provider)
+    }
+  } catch {
+    // A blocked or full storage backend must not break typing or clearing a key.
   }
 }
 
