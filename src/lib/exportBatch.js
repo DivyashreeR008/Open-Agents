@@ -39,7 +39,8 @@ export function exportBatchAsCSV(agentName, results) {
   const filename = `${slugifyFilename(agentName)}-batch-results.csv`
 
   const header = ['#', 'Input', 'Status', 'Output', 'Error']
-  const rows = results.map((r, i) => [i + 1, r.input, r.status, r.output || '', r.error || ''])
+  const safeResults = Array.isArray(results) ? results : []
+  const rows = safeResults.map((r, i) => [i + 1, r.input, r.status, r.output || '', r.error || ''])
 
   const csv = [header, ...rows].map((row) => row.map(csvEscape).join(',')).join('\n')
 
@@ -59,7 +60,8 @@ export function exportBatchAsMarkdown(agentName, results) {
 
   const filename = `${slugifyFilename(agentName)}-batch-results.md`
 
-  const sections = results
+  const safeResults = Array.isArray(results) ? results : []
+  const sections = safeResults
     .map((r, i) => {
       const label =
         r.status === 'done'
@@ -79,7 +81,7 @@ export function exportBatchAsMarkdown(agentName, results) {
     })
     .join('\n\n---\n\n')
 
-  const content = `# ${agentName} — Batch Results\nGenerated on ${date}\n${results.length} items processed\n\n${sections}`
+  const content = `# ${agentName} — Batch Results\nGenerated on ${date}\n${safeResults.length} items processed\n\n${sections}`
 
   downloadBlob(content, 'text/markdown', filename)
 }
