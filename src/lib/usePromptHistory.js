@@ -75,8 +75,16 @@ export function usePromptHistory() {
     // Avoid saving an exact duplicate of the most recent entry
     if (current[0]?.text === trimmed) return current[0]
 
+    const baseId = `prompt_${Date.now()}`
+    let id = baseId
+    let suffix = 1
+    while (current.some((prompt) => prompt.id === id)) {
+      id = `${baseId}_${suffix}`
+      suffix += 1
+    }
+
     const entry = {
-      id: `prompt_${Date.now()}`,
+      id,
       text: trimmed,
       agentId: agentId || null,
       agentName: agentName || null,
