@@ -40,8 +40,10 @@ function notify() {
 /**
  * Hook to manage a reusable prompt library, independent of any single
  * agent — prompts can be saved while using one agent and reused with
- * another. Persisted in localStorage, capped at 100 entries (oldest
- * non-favorited prompts drop off first).
+ * another. Persisted in localStorage, capped at 100 entries. The oldest
+ * non-favorited prompts drop off first, and favorites are never evicted;
+ * if favorites alone fill the cap, the newest prompt is still retained
+ * and the library may briefly exceed 100 entries.
  */
 export function usePromptHistory() {
   const [prompts, setPrompts] = useState(loadPrompts)
@@ -95,10 +97,17 @@ export function usePromptHistory() {
     let updated = [entry, ...current]
 
     if (updated.length > MAX_PROMPTS) {
-      // Drop the oldest non-favorited entries first to make room
+      // Favorites are never evicted. The remaining capacity is filled with
+      // the newest others, but one slot is always reserved for the prompt
+      // that was just saved. Without that reservation, a library whose
+      // favorites already meet the cap would report a successful save and
+      // immediately discard the new prompt.
       const favorites = updated.filter((p) => p.favorite)
-      const rest = updated.filter((p) => !p.favorite).slice(0, MAX_PROMPTS - favorites.length)
-      updated = [...favorites, ...rest].sort((a, b) => b.createdAt - a.createdAt)
+      const others = updated.filter((p) => !p.favorite)
+      const roomForOthers = Math.max(MAX_PROMPTS - favorites.length, 1)
+      updated = [...favorites, ...others.slice(0, roomForOthers)].sort(
+        (a, b) => b.createdAt - a.createdAt
+      )
     }
 
     savePrompts(updated)
