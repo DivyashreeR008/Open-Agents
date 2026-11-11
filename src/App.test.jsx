@@ -457,7 +457,7 @@ describe('App Shell and Route Audit (Issue #594)', () => {
 
       // Fallback UI caught by ErrorBoundary
       expect(
-        await screen.findByRole('heading', { name: /failed to render output/i })
+        await screen.findByRole('heading', { name: /something went wrong/i })
       ).toBeInTheDocument()
       expect(screen.getByText(/crash inside settings page/i)).toBeInTheDocument()
 
@@ -470,7 +470,7 @@ describe('App Shell and Route Audit (Issue #594)', () => {
 
       expect(await screen.findByTestId('page-settings')).toBeInTheDocument()
       expect(
-        screen.queryByRole('heading', { name: /failed to render output/i })
+        screen.queryByRole('heading', { name: /something went wrong/i })
       ).not.toBeInTheDocument()
 
       consoleError.mockRestore()

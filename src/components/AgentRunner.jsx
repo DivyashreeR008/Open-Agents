@@ -1077,7 +1077,7 @@ export default function AgentRunner({ agent }) {
 
               {output && !isStreaming && (
                 <div className="space-y-4">
-                  <ErrorBoundary>
+                  <ErrorBoundary variant="output">
                     <OutputRenderer
                       content={output}
                       outputType={agent.outputType}
