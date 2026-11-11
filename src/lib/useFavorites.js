@@ -35,11 +35,22 @@ function notify() {
 export function useFavorites() {
   const [favorites, setFavorites] = useState(loadFavorites)
 
-  // Subscribe to cross-component updates
+  // Subscribe to same-tab updates and writes made by other tabs.
   useEffect(() => {
     const sync = () => setFavorites(loadFavorites())
+    const handleStorage = (event) => {
+      if (event.key === STORAGE_KEY || event.key === null) {
+        sync()
+      }
+    }
+
     listeners.add(sync)
-    return () => listeners.delete(sync)
+    window.addEventListener('storage', handleStorage)
+
+    return () => {
+      listeners.delete(sync)
+      window.removeEventListener('storage', handleStorage)
+    }
   }, [])
 
   const isFavorite = useCallback((agentId) => favorites.includes(agentId), [favorites])

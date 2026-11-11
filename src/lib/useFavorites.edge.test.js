@@ -49,6 +49,53 @@ describe('useFavorites edge cases', () => {
     expect(localStorage.getItem(STORAGE_KEY)).toBe(JSON.stringify(['agent-1']))
   })
 
+  it('applies favorite changes written by another tab', () => {
+    const { result } = renderHook(() => useFavorites())
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(['remote-agent']))
+    act(() => {
+      window.dispatchEvent(
+        new StorageEvent('storage', {
+          key: STORAGE_KEY,
+          newValue: JSON.stringify(['remote-agent']),
+        })
+      )
+    })
+
+    expect(result.current.favorites).toEqual(['remote-agent'])
+    expect(result.current.isFavorite('remote-agent')).toBe(true)
+  })
+
+  it('clears favorites when another tab clears storage', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(['remote-agent']))
+    const { result } = renderHook(() => useFavorites())
+
+    expect(result.current.favorites).toEqual(['remote-agent'])
+
+    localStorage.clear()
+    act(() => {
+      window.dispatchEvent(new StorageEvent('storage', { key: null }))
+    })
+
+    expect(result.current.favorites).toEqual([])
+  })
+
+  it('ignores storage events for unrelated keys', () => {
+    const { result } = renderHook(() => useFavorites())
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(['remote-agent']))
+    act(() => {
+      window.dispatchEvent(
+        new StorageEvent('storage', {
+          key: 'oa_unrelated',
+          newValue: JSON.stringify(['remote-agent']),
+        })
+      )
+    })
+
+    expect(result.current.favorites).toEqual([])
+  })
+
   it('keeps separate hook consumers in sync and detaches an unmounted one', () => {
     const first = renderHook(() => useFavorites())
     const second = renderHook(() => useFavorites())
