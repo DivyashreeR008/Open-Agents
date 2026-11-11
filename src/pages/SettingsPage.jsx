@@ -19,6 +19,7 @@ import {
   getAvailableProviders,
 } from '../lib/globalKeys'
 import { clearAutomationKeys } from '../lib/automationsService'
+import { apiKeyFieldProps } from '../lib/apiKeyFieldProps'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
 import openaiLogo from '../assets/openai.svg'
 import anthropicLogo from '../assets/anthropic.svg'
@@ -326,6 +327,7 @@ export default function SettingsPage() {
                   id={`api-key-${p.id}`}
                   aria-label={`${p.label} API key`}
                   type={showKey[p.id] ? 'text' : 'password'}
+                  {...apiKeyFieldProps(`api-key-${p.id}`)}
                   value={keys[p.id]}
                   onChange={(e) => setKeys((prev) => ({ ...prev, [p.id]: e.target.value }))}
                   placeholder={savedStatus[p.id] ? '••••••••••••••••••••••••' : p.placeholder}

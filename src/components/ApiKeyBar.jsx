@@ -11,6 +11,7 @@ import geminiLogo from '../assets/gemini.svg'
 import openrouterLogo from '../assets/openrouter.svg'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 import { getGlobalKeys, getAvailableProviders } from '../lib/globalKeys'
+import { apiKeyFieldProps } from '../lib/apiKeyFieldProps'
 
 const PROVIDERS = [
   { value: 'openai', label: 'OpenAI' },
@@ -189,6 +190,7 @@ export default function ApiKeyBar({
           <input
             aria-label="API key"
             type={showKey ? 'text' : 'password'}
+            {...apiKeyFieldProps(`api-key-${provider}`)}
             value={apiKey}
             onChange={(e) => {
               const newKey = e.target.value

@@ -4,6 +4,7 @@ import { Swords, ArrowLeft, Key, Eye, EyeOff, ChevronDown, Search, AlertCircle }
 import { useDocumentTitle } from '../lib/useDocumentTitle'
 import { useAgents } from '../lib/useAgents'
 import { useProgressiveList } from '../lib/useProgressiveList'
+import { apiKeyFieldProps } from '../lib/apiKeyFieldProps'
 
 // Input validation constants - prevent LLM calls with excessively long inputs
 const INPUT_LIMITS = {
@@ -456,6 +457,7 @@ export default function BattleModeSetup() {
                       <input
                         aria-label={field.label}
                         type={showKeys[field.id] ? 'text' : 'password'}
+                        {...apiKeyFieldProps(`api-key-${field.id}`)}
                         value={apiKeys[field.id]}
                         onChange={(e) =>
                           setApiKeys((prev) => ({
