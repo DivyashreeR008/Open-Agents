@@ -1,5 +1,5 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 
 const favorites = vi.hoisted(() => ({
@@ -34,8 +34,14 @@ function renderCard() {
 }
 
 beforeEach(() => {
-  favorites.toggleFavorite.mockClear()
+  favorites.toggleFavorite.mockReset()
+  favorites.toggleFavorite.mockReturnValue({ ok: true })
+  favorites.isFavorite.mockReset()
   favorites.isFavorite.mockReturnValue(false)
+})
+
+afterEach(() => {
+  vi.useRealTimers()
 })
 
 describe('AgentCard interactions', () => {
@@ -60,5 +66,42 @@ describe('AgentCard interactions', () => {
     favorites.isFavorite.mockReturnValue(true)
     renderCard()
     expect(screen.getByRole('button', { name: 'Remove from favorites' })).toBeInTheDocument()
+  })
+
+  it('surfaces a rejected write without changing the star state', () => {
+    const message =
+      'Favorites could not be saved. Allow site data for this app or free some browser storage, then try again.'
+    favorites.toggleFavorite.mockReturnValue({ ok: false, error: message })
+    renderCard()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Add to favorites' }))
+
+    expect(favorites.toggleFavorite).toHaveBeenCalledWith('drag-agent')
+    expect(screen.getByRole('alert')).toHaveTextContent(message)
+    expect(screen.getByRole('button', { name: 'Add to favorites' })).toBeInTheDocument()
+  })
+
+  it('clears the write error after a later favorite succeeds', () => {
+    favorites.toggleFavorite.mockReturnValueOnce({ ok: false, error: 'Storage is blocked.' })
+    renderCard()
+    const star = screen.getByRole('button', { name: 'Add to favorites' })
+
+    fireEvent.click(star)
+    expect(screen.getByRole('alert')).toHaveTextContent('Storage is blocked.')
+
+    fireEvent.click(star)
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
+  it('dismisses the write error after its timeout', () => {
+    vi.useFakeTimers()
+    favorites.toggleFavorite.mockReturnValue({ ok: false, error: 'Storage is blocked.' })
+    renderCard()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Add to favorites' }))
+    expect(screen.getByRole('alert')).toBeInTheDocument()
+
+    act(() => vi.advanceTimersByTime(8000))
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 })

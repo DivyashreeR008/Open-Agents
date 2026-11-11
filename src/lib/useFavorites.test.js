@@ -10,11 +10,13 @@ describe('useFavorites', () => {
 
   it('should save a favorite successfully', () => {
     const { result } = renderHook(() => useFavorites())
+    let toggleResult
 
     act(() => {
-      result.current.toggleFavorite('agent-1')
+      toggleResult = result.current.toggleFavorite('agent-1')
     })
 
+    expect(toggleResult).toEqual({ ok: true })
     expect(result.current.favorites).toEqual(['agent-1'])
     expect(localStorage.getItem('oa_favorites')).toBe(JSON.stringify(['agent-1']))
   })
@@ -25,12 +27,17 @@ describe('useFavorites', () => {
     })
 
     const { result } = renderHook(() => useFavorites())
+    let toggleResult
 
     expect(() => {
       act(() => {
-        result.current.toggleFavorite('agent-1')
+        toggleResult = result.current.toggleFavorite('agent-1')
       })
     }).not.toThrow()
+
+    expect(toggleResult.ok).toBe(false)
+    expect(toggleResult.error).toMatch(/could not be saved/i)
+    expect(toggleResult.error).toMatch(/allow site data/i)
   })
 
   it('should not update favorites when localStorage write fails', () => {
@@ -39,11 +46,13 @@ describe('useFavorites', () => {
     })
 
     const { result } = renderHook(() => useFavorites())
+    let toggleResult
 
     act(() => {
-      result.current.toggleFavorite('agent-1')
+      toggleResult = result.current.toggleFavorite('agent-1')
     })
 
+    expect(toggleResult.ok).toBe(false)
     expect(result.current.favorites).toEqual([])
     expect(localStorage.getItem('oa_favorites')).toBeNull()
   })
