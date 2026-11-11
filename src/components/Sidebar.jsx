@@ -12,6 +12,13 @@ const SIDEBAR_SEARCH_LIMIT = 15
 /** Zero-padded ordinal so every entry has a stable address in the index. */
 const pad = (n) => String(n).padStart(2, '0')
 
+function formatCollectionList(names) {
+  if (names.length === 0) return ''
+  if (names.length === 1) return names[0]
+  if (names.length === 2) return `${names[0]} and ${names[1]}`
+  return `${names.slice(0, -1).join(', ')}, and ${names[names.length - 1]}`
+}
+
 const WORKSPACE_ENTRIES = [
   { to: '/workflows', id: 'nav-workflows-link', icon: 'Workflow', label: 'Workflows' },
   { to: '/suites', icon: 'LibraryBig', label: 'Suites' },
@@ -112,10 +119,11 @@ export default function Sidebar({ open, onClose }) {
 
     const collection = collections.find((item) => item.id === collectionId)
     const result = moveAgentToCollection(agentId, collectionId)
+    const destination = collection?.name || 'the selected collection'
+    const sources = (result.movedFrom || []).map((item) => item.name).filter(Boolean)
+    const sourceText = sources.length > 0 ? ` from ${formatCollectionList(sources)}` : ''
 
-    setFeedback(
-      result.ok ? `Moved to ${collection?.name || 'the selected collection'}.` : result.error
-    )
+    setFeedback(result.ok ? `Moved to ${destination}${sourceText}.` : result.error)
 
     window.setTimeout(() => setFeedback(''), 2200)
   }
