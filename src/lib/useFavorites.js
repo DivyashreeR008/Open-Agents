@@ -7,7 +7,22 @@ function loadFavorites() {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return []
     const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) ? parsed : []
+    if (!Array.isArray(parsed)) return []
+
+    // Favorites are agent IDs. Older or hand-edited storage can contain
+    // mixed types, blanks, and duplicates, which the catalogue cannot resolve.
+    const seen = new Set()
+    const ids = []
+
+    parsed.forEach((entry) => {
+      if (typeof entry !== 'string') return
+      const id = entry.trim()
+      if (!id || seen.has(id)) return
+      seen.add(id)
+      ids.push(id)
+    })
+
+    return ids
   } catch {
     return []
   }

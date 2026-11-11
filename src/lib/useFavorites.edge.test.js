@@ -49,6 +49,44 @@ describe('useFavorites edge cases', () => {
     expect(localStorage.getItem(STORAGE_KEY)).toBe(JSON.stringify(['agent-1']))
   })
 
+  it('keeps only unique, non-empty string IDs from a mixed stored array', () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify([
+        'agent-1',
+        42,
+        null,
+        {},
+        '',
+        '  ',
+        ' agent-2 ',
+        'agent-1',
+        ['agent-3'],
+        false,
+      ])
+    )
+
+    const { result } = renderHook(() => useFavorites())
+
+    expect(result.current.favorites).toEqual(['agent-1', 'agent-2'])
+    expect(result.current.isFavorite('agent-1')).toBe(true)
+    expect(result.current.isFavorite('agent-2')).toBe(true)
+    expect(result.current.isFavorite(42)).toBe(false)
+  })
+
+  it('writes the cleaned list after a damaged read', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(['agent-1', null, 'agent-1', 'agent-2']))
+
+    const { result } = renderHook(() => useFavorites())
+
+    act(() => {
+      result.current.toggleFavorite('agent-3')
+    })
+
+    expect(result.current.favorites).toEqual(['agent-3', 'agent-1', 'agent-2'])
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY))).toEqual(['agent-3', 'agent-1', 'agent-2'])
+  })
+
   it('keeps separate hook consumers in sync and detaches an unmounted one', () => {
     const first = renderHook(() => useFavorites())
     const second = renderHook(() => useFavorites())
