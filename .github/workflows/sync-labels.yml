@@ -6,16 +6,18 @@ on:
       - '.github/labels.yml'
   workflow_dispatch:
 
-permissions:
-  contents: read
-  # `labels` is not a valid GITHUB_TOKEN permission; label APIs are covered by
-  # `issues` (labels on issues) and `pull-requests` (labels on pull requests).
-  issues: write
-  pull-requests: write
+# Deny everything by default; the job below opts in to label writes.
+permissions: {}
 
 jobs:
   sync-labels:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # `labels` is not a valid GITHUB_TOKEN permission; label APIs are covered by
+      # `issues` (labels on issues) and `pull-requests` (labels on pull requests).
+      issues: write
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7

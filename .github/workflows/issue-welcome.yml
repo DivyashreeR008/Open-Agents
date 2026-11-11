@@ -5,6 +5,8 @@ on:
   issues:
     types: [opened]
 
+permissions: {}
+
 jobs:
   welcome:
     # Skip issues opened by owners / members / collaborators — only greet external contributors
