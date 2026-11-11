@@ -2,6 +2,9 @@ import { useState, useCallback, useEffect } from 'react'
 
 const STORAGE_KEY = 'oa_favorites'
 
+const FAVORITES_WRITE_ERROR =
+  'Favorites could not be saved. Allow site data for this app or free some browser storage, then try again.'
+
 function loadFavorites() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
@@ -50,9 +53,13 @@ export function useFavorites() {
       ? current.filter((id) => id !== agentId)
       : [agentId, ...current] // newest favorites first
     const saved = saveFavorites(next)
-    if (!saved) return
+    if (!saved) {
+      return { ok: false, error: FAVORITES_WRITE_ERROR }
+    }
+
     setFavorites(next)
     notify()
+    return { ok: true }
   }, [])
 
   return { favorites, isFavorite, toggleFavorite }

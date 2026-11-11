@@ -40,6 +40,7 @@ export default function AgentCard({ agent, variant = 'grid', index = null }) {
   const [showCollectionPicker, setShowCollectionPicker] = useState(false)
   const favorited = isFavorite(agent.id)
   const [copied, setCopied] = useTimedState(false)
+  const [favoriteError, setFavoriteError] = useTimedState('')
 
   const name = agent?.name || 'Unnamed agent'
   const description = agent?.description || 'No description provided.'
@@ -52,7 +53,18 @@ export default function AgentCard({ agent, variant = 'grid', index = null }) {
   const handleFavorite = (e) => {
     e.preventDefault()
     e.stopPropagation()
-    toggleFavorite(agent.id)
+    const result = toggleFavorite(agent.id)
+
+    if (result?.ok === false) {
+      setFavoriteError(
+        result.error ||
+          'Favorites could not be saved. Allow site data for this app, then try again.',
+        8000
+      )
+      return
+    }
+
+    setFavoriteError('', 0)
   }
 
   const handleCollectionPicker = (e) => {
@@ -117,6 +129,15 @@ export default function AgentCard({ agent, variant = 'grid', index = null }) {
     <CollectionPicker agentId={agent.id} onClose={() => setShowCollectionPicker(false)} />
   )
 
+  const favoriteErrorNotice = favoriteError ? (
+    <p
+      role="alert"
+      className="mt-2 border border-zinc-400 bg-white px-2.5 py-1.5 text-xs leading-relaxed text-zinc-700 dark:border-zinc-500 dark:bg-surface-card dark:text-text-secondary"
+    >
+      {favoriteError}
+    </p>
+  ) : null
+
   if (variant === 'row') {
     return (
       <>
@@ -159,6 +180,7 @@ export default function AgentCard({ agent, variant = 'grid', index = null }) {
             aria-hidden="true"
           />
         </Link>
+        {favoriteErrorNotice}
         {picker}
       </>
     )
@@ -206,6 +228,7 @@ export default function AgentCard({ agent, variant = 'grid', index = null }) {
           </span>
         </div>
       </Link>
+      {favoriteErrorNotice}
       {picker}
     </>
   )
