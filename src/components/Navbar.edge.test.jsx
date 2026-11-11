@@ -57,7 +57,7 @@ afterEach(() => {
 })
 
 describe('Navbar theme and search affordances', () => {
-  it('applies a saved light theme, updates only the unqualified theme-color tag, and persists toggles', () => {
+  it('applies a saved light theme, updates only the unqualified theme-color tag, and persists choices', () => {
     localStorage.setItem('oa_theme', 'light')
     renderNavbar()
 
@@ -66,14 +66,16 @@ describe('Navbar theme and search affordances', () => {
     expect(darkMediaMeta).toHaveAttribute('content', '#000000')
     expect(lightMediaMeta).toHaveAttribute('content', '#ffffff')
 
-    fireEvent.click(screen.getByRole('button', { name: 'Toggle theme' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Theme settings' }))
+    fireEvent.click(screen.getByRole('menuitemradio', { name: 'Dark' }))
     expect(document.documentElement).toHaveClass('dark')
     expect(localStorage.getItem('oa_theme')).toBe('dark')
     expect(plainMeta).toHaveAttribute('content', '#000000')
 
-    fireEvent.click(screen.getByRole('button', { name: 'Toggle theme' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Theme settings' }))
+    fireEvent.click(screen.getByRole('menuitemradio', { name: 'System' }))
     expect(document.documentElement).not.toHaveClass('dark')
-    expect(localStorage.getItem('oa_theme')).toBe('light')
+    expect(localStorage.getItem('oa_theme')).toBeNull()
     expect(plainMeta).toHaveAttribute('content', '#ffffff')
   })
 
