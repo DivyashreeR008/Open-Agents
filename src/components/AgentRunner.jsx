@@ -43,6 +43,7 @@ import { analyseModels } from '../lib/modelAnalyser'
 import { useHistory } from '../lib/useHistory'
 import { resolveAgentModel, MODEL_MAP, MODELS } from '../lib/resolveAgentModel'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
+import { useDialogFocus } from '../hooks/useDialogFocus'
 
 const providerLabels = {
   openai: 'OpenAI',
@@ -93,6 +94,8 @@ export default function AgentRunner({ agent }) {
   const [showModelSwitcher, setShowModelSwitcher] = useState(false)
   const [historyPanelOpen, setHistoryPanelOpen] = useState(false)
   const [viewMode, setViewMode] = useState('code')
+  const [confirmClear, setConfirmClear] = useState(false)
+  const clearDialogRef = useRef(null)
   const { savePrompt } = usePromptHistory()
   const { addJob } = useScheduler({ autoRun: false })
   const { addRun } = useSessionSpend()
@@ -124,10 +127,6 @@ export default function AgentRunner({ agent }) {
       if (batchMode) return
       if (canRun() && !loading) handleRun()
     },
-    Escape: () => {
-      handleClear()
-      setPlaygroundOpen(false)
-    },
   })
 
   useEffect(() => {
@@ -144,6 +143,7 @@ export default function AgentRunner({ agent }) {
     setDuration(null)
     setCustomPrompt(agent.systemPrompt)
     setPlaygroundOpen(false)
+    setConfirmClear(false)
     setBatchMode(false)
 
     const defaults = {}
@@ -274,6 +274,7 @@ export default function AgentRunner({ agent }) {
   }, [])
 
   const handleRun = async () => {
+    setConfirmClear(false)
     setLoading(true)
     setError(null)
     setOutput(null)
@@ -399,6 +400,7 @@ export default function AgentRunner({ agent }) {
     // Cancel *and invalidate* the in-flight run so its late completion cannot
     // resurrect the output we are about to discard.
     cancelActiveRun()
+    setConfirmClear(false)
     setLoading(false)
     setOutput(null)
     setStreamingOutput('')
@@ -418,6 +420,28 @@ export default function AgentRunner({ agent }) {
     })
     setInputs(defaults)
   }
+
+  const hasGeneratedResult = Boolean(output || streamingOutput || error)
+  const clearLabel = hasGeneratedResult
+    ? 'Clear prompt and generated output'
+    : 'Clear prompt inputs'
+  const clearScope = hasGeneratedResult
+    ? 'Clears the prompt inputs and the generated output. A confirmation is required.'
+    : 'Clears the prompt inputs.'
+
+  const requestClear = () => {
+    if (!hasInputContent()) return
+    if (!hasGeneratedResult) {
+      handleClear()
+      return
+    }
+
+    setConfirmClear(true)
+  }
+
+  const cancelClear = () => setConfirmClear(false)
+
+  useDialogFocus(clearDialogRef, { active: confirmClear, onClose: cancelClear })
 
   const handleFillExample = () => {
     if (!agent.exampleInputs) return
@@ -522,9 +546,11 @@ export default function AgentRunner({ agent }) {
           <History size={18} />
         </button>
         <button
-          onClick={handleClear}
+          onClick={requestClear}
           disabled={!hasInputContent()}
-          title="Clear Chat"
+          title={clearLabel}
+          aria-label={clearLabel}
+          aria-haspopup={hasGeneratedResult ? 'dialog' : undefined}
           className="p-2 dark:text-text-muted text-gray-500 hover:text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-500/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <Trash2 size={18} />
@@ -918,6 +944,60 @@ export default function AgentRunner({ agent }) {
                 )}
               </div>
 
+              {confirmClear && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+                  <div
+                    ref={clearDialogRef}
+                    id="clear-confirmation"
+                    role="alertdialog"
+                    aria-modal="true"
+                    aria-labelledby="clear-confirmation-title"
+                    aria-describedby="clear-confirmation-description"
+                    className="w-full max-w-md border border-gray-200 bg-white p-5 shadow-pop dark:border-border dark:bg-surface-card"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="bg-zinc-500/10 p-2 text-zinc-600 dark:text-zinc-300">
+                        <Trash2 size={18} aria-hidden="true" />
+                      </div>
+                      <div>
+                        <h2
+                          id="clear-confirmation-title"
+                          className="text-base font-semibold text-gray-900 dark:text-text-primary"
+                        >
+                          Clear this run?
+                        </h2>
+                        <p
+                          id="clear-confirmation-description"
+                          className="mt-1 text-sm leading-relaxed text-gray-500 dark:text-text-secondary"
+                        >
+                          {isStreaming || loading
+                            ? 'This cancels the active run and removes the prompt and partial output. It cannot be undone.'
+                            : 'This removes the prompt inputs, the generated output, and any error details from this run. It cannot be undone.'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-4 flex justify-end gap-2">
+                      <button
+                        type="button"
+                        data-autofocus
+                        onClick={cancelClear}
+                        className="border border-gray-200 bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-600 transition-colors hover:text-gray-900 dark:border-border dark:bg-surface-input dark:text-text-secondary dark:hover:text-text-primary"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleClear}
+                        className="flex items-center gap-1.5 bg-zinc-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-zinc-500"
+                      >
+                        <Trash2 size={13} aria-hidden="true" />
+                        Clear run
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Action Buttons */}
               <div className="flex items-center gap-2 mb-6">
                 {loading ? (
@@ -940,9 +1020,11 @@ export default function AgentRunner({ agent }) {
                 )}
 
                 <button
-                  onClick={handleClear}
+                  onClick={requestClear}
                   disabled={!hasInputContent()}
-                  aria-describedby={!hasInputContent() ? 'clear-reason' : undefined}
+                  title={clearLabel}
+                  aria-describedby={!hasInputContent() ? 'clear-reason' : 'clear-scope'}
+                  aria-haspopup={hasGeneratedResult ? 'dialog' : undefined}
                   className="flex items-center gap-1.5 h-8 px-3 text-sm font-medium transition-colors dark:text-text-secondary dark:hover:text-text-primary dark:hover:bg-surface-hover text-gray-500 hover:text-gray-900 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent dark:disabled:hover:bg-transparent"
                 >
                   <RotateCcw size={14} />
@@ -951,6 +1033,11 @@ export default function AgentRunner({ agent }) {
                 {!hasInputContent() && (
                   <span id="clear-reason" className="sr-only">
                     Nothing to clear yet.
+                  </span>
+                )}
+                {hasInputContent() && (
+                  <span id="clear-scope" className="sr-only">
+                    {clearScope}
                   </span>
                 )}
 

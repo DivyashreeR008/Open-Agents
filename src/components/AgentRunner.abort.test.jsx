@@ -142,16 +142,21 @@ describe('AgentRunner: stream cancellation lifecycle', () => {
     })
 
     await user.click(screen.getByRole('button', { name: /^clear$/i }))
+    expect(screen.getByRole('alertdialog', { name: 'Clear this run?' })).toBeInTheDocument()
+    expect(screen.getByText('partial text that the user threw away')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Clear run' }))
     await flush()
 
     expect(screen.queryByTestId('output')).toBeNull()
+    expect(screen.queryByText('partial text that the user threw away')).toBeNull()
     expect(history()).toHaveLength(0)
     expect(analyticsFor('test-agent')).toHaveLength(0)
     // ...and the UI is idle again, not stuck in "loading".
     expect(screen.getByRole('button', { name: /run agent/i })).toBeInTheDocument()
   })
 
-  it('Escape while streaming behaves like Clear', async () => {
+  it('Escape while editing leaves the prompt and stream untouched', async () => {
     await startRun()
     await act(async () => {
       push(0, 'partial')
@@ -160,9 +165,10 @@ describe('AgentRunner: stream cancellation lifecycle', () => {
     fireEvent.keyDown(window, { key: 'Escape' })
     await flush()
 
-    expect(screen.queryByTestId('output')).toBeNull()
-    expect(history()).toHaveLength(0)
-    expect(screen.getByRole('button', { name: /run agent/i })).toBeInTheDocument()
+    expect(screen.getByRole('textbox')).toHaveValue('some input')
+    expect(screen.getByText('partial')).toBeInTheDocument()
+    expect(requests[0].signal.aborted).toBe(false)
+    expect(screen.getByRole('button', { name: /stop/i })).toBeInTheDocument()
   })
 
   it("a stopped run's late cleanup must not clobber the next run's controller/loading state", async () => {
