@@ -72,7 +72,7 @@ describe('batch result exports', () => {
     expect(clickSpy.mock.instances[0].download).toBe('batch-batch-results.csv')
   })
 
-  it('labels done, failed, stopped, and pending markdown sections', async () => {
+  it('labels done, failed, stopped, and not-started markdown sections', async () => {
     exportBatchAsMarkdown('Review agent', [
       { input: 'first', status: 'done', output: 'first output' },
       { input: 'second', status: 'failed', error: 'provider error' },
@@ -89,7 +89,9 @@ describe('batch result exports', () => {
     expect(content).toContain('## Item 2 — Failed')
     expect(content).toContain('**Error:**\n\nprovider error')
     expect(content).toContain('## Item 3 — Stopped')
-    expect(content).toContain('## Item 4 — Pending')
+    expect(content).toContain('This item was stopped before it finished.')
+    expect(content).toContain('## Item 4 — Not started')
+    expect(content).toContain('This item did not start before the export was created.')
     expect(createdBlob.type).toBe('text/markdown')
   })
 

@@ -20,12 +20,14 @@ describe('batch markdown export status labels', () => {
     delete URL.revokeObjectURL
   })
 
-  it('labels done, failed, stopped, and pending items with their fallbacks', async () => {
+  it('labels done, failed, stopped, running, waiting, and queued items with their fallbacks', async () => {
     exportBatchAsMarkdown('My Agent', [
       { input: 'a', status: 'done', output: '' },
       { input: 'b', status: 'failed', error: '' },
       { input: 'c', status: 'stopped' },
       { input: 'd', status: 'queued' },
+      { input: 'e', status: 'running' },
+      { input: 'f', status: 'waiting' },
     ])
 
     const text = await blob.text()
@@ -35,6 +37,12 @@ describe('batch markdown export status labels', () => {
     expect(text).toContain('## Item 2 \u2014 Failed')
     expect(text).toContain('**Error:**\n\nUnknown error')
     expect(text).toContain('## Item 3 \u2014 Stopped')
-    expect(text).toContain('## Item 4 \u2014 Pending')
+    expect(text).toContain('This item was stopped before it finished.')
+    expect(text).toContain('## Item 4 \u2014 Not started')
+    expect(text).toContain('## Item 5 \u2014 In progress')
+    expect(text).toContain('This item was still running when the export was created.')
+    expect(text).toContain('## Item 6 \u2014 Not started')
+    expect(text).toContain('This item did not start before the export was created.')
+    expect(text).not.toContain('Pending')
   })
 })

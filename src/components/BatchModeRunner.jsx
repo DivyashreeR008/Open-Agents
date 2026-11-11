@@ -9,6 +9,7 @@ import {
   StopCircle,
   Zap,
   FileText,
+  Ban,
 } from 'lucide-react'
 import CustomSelect from './CustomSelect'
 import { runBatch, parsePastedLines, parseCSV } from '../lib/batchRunner'
@@ -21,6 +22,7 @@ const STATUS_COLORS = {
   running: 'text-zinc-900 dark:text-white',
   done: 'text-zinc-400',
   failed: 'text-zinc-400',
+  stopped: 'dark:text-text-muted text-gray-400',
 }
 
 function StatusIcon({ status }) {
@@ -29,6 +31,7 @@ function StatusIcon({ status }) {
     return <Loader2 size={13} className="text-zinc-900 dark:text-white animate-spin" />
   if (status === 'done') return <CheckCircle2 size={13} className={STATUS_COLORS.done} />
   if (status === 'failed') return <XCircle size={13} className={STATUS_COLORS.failed} />
+  if (status === 'stopped') return <Ban size={13} className={STATUS_COLORS.stopped} />
   return null
 }
 
@@ -179,10 +182,21 @@ export default function BatchModeRunner({ agent, provider, apiKey, selectedModel
       abortControllerRef.current = null
     }
     setRunning(false)
+    setResults((prev) =>
+      prev.map((result) =>
+        result.status === 'done' || result.status === 'failed'
+          ? result
+          : { ...result, status: 'stopped' }
+      )
+    )
   }
 
   const completedCount = results.filter((r) => r.status === 'done' || r.status === 'failed').length
-  const allDone = hasRun && !running && completedCount === results.length && results.length > 0
+  const allDone =
+    hasRun &&
+    !running &&
+    results.length > 0 &&
+    results.every((r) => r.status === 'done' || r.status === 'failed' || r.status === 'stopped')
 
   return (
     <div className="space-y-4">
