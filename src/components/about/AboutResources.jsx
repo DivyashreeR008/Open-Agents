@@ -1,4 +1,11 @@
-import { BookOpen, GitPullRequest, AlertCircle, MessageSquare, ExternalLink } from 'lucide-react'
+import {
+  Accessibility,
+  BookOpen,
+  GitPullRequest,
+  AlertCircle,
+  MessageSquare,
+  ExternalLink,
+} from 'lucide-react'
 import GitHubIcon from '../GitHubIcon'
 
 export default function AboutResources() {
@@ -37,6 +44,13 @@ export default function AboutResources() {
       url: 'https://github.com/DivyashreeR008/Open-Agents/discussions',
       icon: MessageSquare,
       tag: 'Community',
+    },
+    {
+      title: 'Accessibility',
+      description: 'Read our accessibility commitment, known limitations, and reporting guidance.',
+      url: 'https://github.com/DivyashreeR008/Open-Agents/blob/main/ACCESSIBILITY.md',
+      icon: Accessibility,
+      tag: 'Access',
     },
   ]
 
