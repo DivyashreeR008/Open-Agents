@@ -650,6 +650,7 @@ export default function AgentRunner({ agent }) {
                           }}
                           placeholder={input.placeholder}
                           rows={4}
+                          maxLength={MAX_CHAR_LIMIT}
                           className="w-full pl-3 pr-10 py-2 text-sm transition-colors resize-none overflow-hidden dark:bg-surface-input dark:border-border dark:text-text-primary dark:placeholder:text-text-muted bg-gray-50 border border-gray-200 text-gray-900 placeholder:text-gray-400 focus:ring-1 focus:ring-zinc-500/40 focus:border-zinc-500 outline-none"
                         />
                         <VoiceInput
@@ -666,10 +667,22 @@ export default function AgentRunner({ agent }) {
                             <span>📝 Words: {getWordCount(inputs[input.id])}</span>
                             <span>🪙 Est. Tokens: {getTokenCount(inputs[input.id])}</span>
                           </div>
-                          <span
-                            className={`self-end ${inputs[input.id]?.length >= MAX_CHAR_LIMIT ? 'text-zinc-500 font-semibold' : ''}`}
-                          >
-                            {inputs[input.id]?.length || 0} / {MAX_CHAR_LIMIT} characters
+                          <span className="flex items-center gap-1 self-end">
+                            <span
+                              className={
+                                inputs[input.id]?.length >= MAX_CHAR_LIMIT
+                                  ? 'text-zinc-500 font-semibold'
+                                  : ''
+                              }
+                            >
+                              {inputs[input.id]?.length || 0} / {MAX_CHAR_LIMIT} characters
+                            </span>
+                            <span
+                              aria-live="polite"
+                              className="font-medium text-zinc-500 dark:text-zinc-300"
+                            >
+                              {inputs[input.id]?.length >= MAX_CHAR_LIMIT ? 'Limit reached' : ''}
+                            </span>
                           </span>
                         </div>
 
@@ -682,19 +695,30 @@ export default function AgentRunner({ agent }) {
                         <textarea
                           aria-label={input.label}
                           value={inputs[input.id] || ''}
-                          onChange={(e) => updateInput(input.id, e.target.value)}
+                          onChange={(e) => {
+                            if (e.target.value.length <= MAX_CHAR_LIMIT) {
+                              updateInput(input.id, e.target.value)
+                            }
+                          }}
                           placeholder={input.placeholder}
                           rows={8}
+                          maxLength={MAX_CHAR_LIMIT}
                           className="w-full pl-3 pr-10 py-2 text-xs font-mono transition-colors resize-y leading-relaxed dark:bg-[#0A0A0A] dark:border-border dark:text-zinc-300 dark:placeholder:text-text-muted bg-gray-900 border border-gray-700 text-zinc-400 placeholder:text-gray-500 focus:ring-1 focus:ring-zinc-500/40 focus:border-zinc-500 outline-none"
                           spellCheck={false}
                         />
                         <VoiceInput
                           value={inputs[input.id] || ''}
-                          onChange={(v) => updateInput(input.id, v)}
+                          onChange={(v) => {
+                            if (v.length <= MAX_CHAR_LIMIT) updateInput(input.id, v)
+                          }}
                           className="top-2 right-2"
                         />
                         <div className="flex items-center gap-3 mt-1">
-                          <CharCounter value={inputs[input.id] || ''} maxLength={5000} />
+                          <CharCounter
+                            value={inputs[input.id] || ''}
+                            maxLength={MAX_CHAR_LIMIT}
+                            showLimit
+                          />
                           <TokenCounter value={inputs[input.id] || ''} modelId={selectedModel} />
                         </div>
                       </div>
@@ -810,7 +834,7 @@ export default function AgentRunner({ agent }) {
                       </label>
                       <div className="flex items-center gap-2">
                         <TokenCounter value={customPrompt} modelId={selectedModel} />
-                        <CharCounter value={customPrompt} maxLength={5000} />
+                        <CharCounter value={customPrompt} maxLength={MAX_CHAR_LIMIT} showLimit />
                         {isPromptModified && (
                           <button
                             onClick={() => setCustomPrompt(agent.systemPrompt)}
@@ -827,15 +851,22 @@ export default function AgentRunner({ agent }) {
                       <textarea
                         aria-label="Custom system prompt"
                         value={customPrompt}
-                        onChange={(e) => setCustomPrompt(e.target.value)}
+                        onChange={(e) => {
+                          if (e.target.value.length <= MAX_CHAR_LIMIT) {
+                            setCustomPrompt(e.target.value)
+                          }
+                        }}
                         rows={10}
+                        maxLength={MAX_CHAR_LIMIT}
                         spellCheck={false}
                         className="w-full pl-3 pr-10 py-2.5 text-xs font-mono leading-relaxed transition-colors resize-y dark:bg-[#0A0A0A] dark:border-border dark:text-text-secondary text-gray-600 dark:placeholder:text-text-muted bg-gray-50 border border-gray-200 text-gray-700 placeholder:text-gray-400 focus:ring-1 focus:ring-zinc-500/40 focus:border-zinc-500 outline-none"
                         placeholder="Enter your custom system prompt..."
                       />
                       <VoiceInput
                         value={customPrompt}
-                        onChange={(v) => setCustomPrompt(v)}
+                        onChange={(v) => {
+                          if (v.length <= MAX_CHAR_LIMIT) setCustomPrompt(v)
+                        }}
                         className="top-2 right-2"
                       />
                     </div>

@@ -33,4 +33,13 @@ describe('CharCounter', () => {
 
     expect(screen.getByText('10 / 5 characters')).toBeInTheDocument()
   })
+
+  it('announces the limit only when the counter opts in and the value reaches it', () => {
+    const { rerender } = render(<CharCounter value="abc" maxLength={5} showLimit />)
+    expect(screen.queryByText('Limit reached')).not.toBeInTheDocument()
+
+    rerender(<CharCounter value="abcde" maxLength={5} showLimit />)
+    expect(screen.getByText(/5 \/ 5 characters/)).toBeInTheDocument()
+    expect(screen.getByText('Limit reached')).toBeInTheDocument()
+  })
 })
