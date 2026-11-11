@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { MemoryRouter, useLocation } from 'react-router-dom'
 
 const agents = [
@@ -111,7 +111,7 @@ describe('HomePage edge states', () => {
     expect(searchInput).toHaveFocus()
   })
 
-  it('keeps a collection scoped, then clears it from the empty state', () => {
+  it('keeps a collection scoped, then clears it from the empty state', async () => {
     state.collections = [{ id: 'design-picks', name: 'Design picks', agentIds: ['beta'] }]
     renderPage(['/agents?collection=design-picks'])
 
@@ -124,13 +124,19 @@ describe('HomePage edge states', () => {
     fireEvent.change(screen.getByPlaceholderText(/search agents/i), {
       target: { value: 'no-such-agent' },
     })
-    expect(screen.getByText(/This collection is empty/i)).toBeInTheDocument()
+
+    await waitFor(() => {
+      expect(screen.getByText(/This collection is empty/i)).toBeInTheDocument()
+    })
 
     fireEvent.click(screen.getByRole('button', { name: 'Show all agents' }))
 
     expect(screen.getByTestId('location-search')).toHaveTextContent('')
     expect(screen.getByRole('heading', { level: 1, name: 'Agents' })).toBeInTheDocument()
-    expect(screen.getByText('Alpha Agent')).toBeInTheDocument()
+
+    await waitFor(() => {
+      expect(screen.getByText('Alpha Agent')).toBeInTheDocument()
+    })
     expect(screen.getByText('Beta Agent')).toBeInTheDocument()
   })
 

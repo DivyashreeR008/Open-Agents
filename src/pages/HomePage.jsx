@@ -23,6 +23,7 @@ import { useDocumentTitle } from '../lib/useDocumentTitle'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 import { useAgents } from '../lib/useAgents'
 import { useProgressiveList } from '../lib/useProgressiveList'
+import { useDebouncedValue } from '../lib/useDebouncedValue'
 import RecommendationWizardEntry from '../components/recommendation/RecommendationWizardEntry'
 import { DEFAULT_COLLECTION_ID, useCollections } from '../lib/useCollections'
 import RecommendationWizardModal from '../components/recommendation/RecommendationWizardModal'
@@ -39,6 +40,11 @@ const providerLabels = {
 }
 
 const CATALOG_PAGE_SIZE = 60
+const SEARCH_DEBOUNCE_MS = 250
+
+function agentLinkHref(target) {
+  return target?.closest?.('a[href^="/agent/"]')?.getAttribute('href') ?? null
+}
 
 /** A filter is a word, not a pill: active options invert to a solid block. */
 function RailOption({ selected, onClick, children }) {
@@ -65,12 +71,14 @@ export default function HomePage() {
   const [isRecommendationWizardOpen, setIsRecommendationWizardOpen] = useState(false)
   const recommendationWizardHeroTriggerRef = useRef(null)
   const recommendationWizardReturnFocusRef = useRef(null)
+  const cataloguePointerTargetRef = useRef(undefined)
   const [viewMode, setViewMode] = useState('index')
   const [searchParams, setSearchParams] = useSearchParams()
   const { collections, getAgentCollectionId } = useCollections()
 
   // Filters live in the URL so a search or category can be linked to directly.
   const searchQuery = searchParams.get('q') || ''
+  const appliedSearchQuery = useDebouncedValue(searchQuery, SEARCH_DEBOUNCE_MS)
   const selectedCategory = searchParams.get('category') || null
   const selectedProvider = searchParams.get('provider') || null
 
@@ -184,7 +192,7 @@ export default function HomePage() {
 
   // Filter agents based on search + category
   const filteredAgents = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase()
+    const q = appliedSearchQuery.trim().toLowerCase()
     // Judge membership by the collection's own list so a duplicated or
     // imported collection that shares agents with another still shows them.
     const activeCollection = collections.find((c) => c.id === activeCollectionId)
@@ -226,9 +234,9 @@ export default function HomePage() {
   }, [
     activeCollectionId,
     agents,
+    appliedSearchQuery,
     collections,
     getAgentCollectionId,
-    searchQuery,
     selectedCategory,
     selectedProvider,
   ])
@@ -242,7 +250,9 @@ export default function HomePage() {
     showMore,
   } = useProgressiveList(filteredAgents, {
     pageSize: CATALOG_PAGE_SIZE,
-    resetKey: [searchQuery, selectedCategory, selectedProvider, activeCollectionId].join('|'),
+    resetKey: [appliedSearchQuery, selectedCategory, selectedProvider, activeCollectionId].join(
+      '|'
+    ),
   })
 
   const handleOpenRecommendationWizard = (event) => {
@@ -275,7 +285,7 @@ export default function HomePage() {
   }
 
   const showingFiltered =
-    searchQuery.trim() ||
+    appliedSearchQuery.trim() ||
     selectedCategory ||
     selectedProvider ||
     activeCollectionId !== DEFAULT_COLLECTION_ID
@@ -308,6 +318,31 @@ export default function HomePage() {
       },
       { replace: true }
     )
+  }
+
+  // A deferred filter can finish between pointer down and the click it
+  // produces. Record the link that received the press and reject activation
+  // if a different agent is under the pointer by the time the click fires.
+  const handleCataloguePointerDown = (event) => {
+    cataloguePointerTargetRef.current = agentLinkHref(event.target)
+  }
+
+  const handleCataloguePointerCancel = () => {
+    cataloguePointerTargetRef.current = undefined
+  }
+
+  const handleCatalogueClick = (event) => {
+    const pressedHref = cataloguePointerTargetRef.current
+    cataloguePointerTargetRef.current = undefined
+
+    // Keyboard and assistive-technology activation has no pointer target.
+    if (!event.detail) return
+
+    const clickedHref = agentLinkHref(event.target)
+    if (pressedHref !== undefined && clickedHref && pressedHref !== clickedHref) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
   }
 
   return (
@@ -538,6 +573,9 @@ export default function HomePage() {
           className="min-w-0 flex-1"
           aria-labelledby="agent-results-heading"
           aria-busy={agentsLoading}
+          onPointerDownCapture={handleCataloguePointerDown}
+          onPointerCancelCapture={handleCataloguePointerCancel}
+          onClickCapture={handleCatalogueClick}
         >
           <div className="mb-2 flex items-baseline justify-between gap-3 border-b border-zinc-900 pb-1.5 dark:border-white">
             <div className="flex min-w-0 items-baseline gap-2.5">
