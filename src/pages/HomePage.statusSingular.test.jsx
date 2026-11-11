@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 
 const agents = [
@@ -52,7 +52,7 @@ beforeEach(() => {
 })
 
 describe('HomePage catalogue status grammar', () => {
-  it('uses plural and singular forms for the catalogue and filtered counts', () => {
+  it('uses plural and singular forms for the catalogue and filtered counts', async () => {
     render(
       <MemoryRouter>
         <HomePage />
@@ -65,6 +65,9 @@ describe('HomePage catalogue status grammar', () => {
     fireEvent.change(screen.getByPlaceholderText(/search agents/i), {
       target: { value: 'Alpha' },
     })
-    expect(status).toHaveTextContent('1 agent matches the current filters.')
+
+    await waitFor(() => {
+      expect(status).toHaveTextContent('1 agent matches the current filters.')
+    })
   })
 })

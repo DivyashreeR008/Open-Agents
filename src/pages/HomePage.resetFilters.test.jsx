@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, useLocation } from 'react-router-dom'
 
 const agents = [
@@ -93,14 +93,17 @@ describe('HomePage filter reset controls', () => {
     expect(screen.queryByRole('button', { name: 'Reset' })).toBeNull()
   })
 
-  it('leaves the collection scope from the results header', () => {
+  it('leaves the collection scope from the results header', async () => {
     renderPage('/agents?collection=design-picks&q=draws')
 
     fireEvent.click(screen.getByRole('button', { name: 'Show all' }))
 
     expect(screen.getByTestId('location-search')).toHaveTextContent('')
     expect(screen.getByRole('heading', { level: 1, name: 'Agents' })).toBeInTheDocument()
-    expect(screen.getByText('Alpha Agent')).toBeInTheDocument()
+
+    await waitFor(() => {
+      expect(screen.getByText('Alpha Agent')).toBeInTheDocument()
+    })
     expect(screen.getByText('Beta Agent')).toBeInTheDocument()
   })
 })

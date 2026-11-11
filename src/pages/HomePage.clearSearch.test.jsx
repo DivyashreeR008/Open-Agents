@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 
 const agents = [
@@ -61,7 +61,7 @@ afterEach(() => {
 })
 
 describe('HomePage search clearing', () => {
-  it('clears the search query and restores the full catalogue', () => {
+  it('clears the search query and restores the full catalogue', async () => {
     render(
       <MemoryRouter initialEntries={['/agents']}>
         <HomePage />
@@ -71,13 +71,18 @@ describe('HomePage search clearing', () => {
     const search = screen.getByPlaceholderText(/search agents/i)
     fireEvent.change(search, { target: { value: 'alpha' } })
 
+    await waitFor(() => {
+      expect(screen.queryByText('Beta Agent')).not.toBeInTheDocument()
+    })
     expect(screen.getByText('Alpha Agent')).toBeInTheDocument()
-    expect(screen.queryByText('Beta Agent')).not.toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: 'Clear search' }))
 
     expect(search).toHaveValue('')
+
+    await waitFor(() => {
+      expect(screen.getByText('Beta Agent')).toBeInTheDocument()
+    })
     expect(screen.getByText('Alpha Agent')).toBeInTheDocument()
-    expect(screen.getByText('Beta Agent')).toBeInTheDocument()
   })
 })

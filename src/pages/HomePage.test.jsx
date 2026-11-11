@@ -6,7 +6,7 @@
  * runtime regression fails loudly.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react'
 import { MemoryRouter, useLocation } from 'react-router-dom'
 
 const agents = [
@@ -120,14 +120,18 @@ describe('HomePage', () => {
     expect(screen.getByText('Beta Agent')).toBeInTheDocument()
   })
 
-  it('filters agents by search query', () => {
+  it('filters agents by search query', async () => {
     renderPage()
 
     fireEvent.change(screen.getByPlaceholderText(/search agents/i), {
       target: { value: 'draws' },
     })
 
-    expect(screen.queryByText('Alpha Agent')).not.toBeInTheDocument()
+    expect(screen.getByText('Alpha Agent')).toBeInTheDocument()
+
+    await waitFor(() => {
+      expect(screen.queryByText('Alpha Agent')).not.toBeInTheDocument()
+    })
     expect(screen.getByText('Beta Agent')).toBeInTheDocument()
   })
 
@@ -155,14 +159,16 @@ describe('HomePage', () => {
     expect(screen.getByPlaceholderText(/search agents/i)).toHaveFocus()
   })
 
-  it('shows the empty state when nothing matches', () => {
+  it('shows the empty state when nothing matches', async () => {
     renderPage()
 
     fireEvent.change(screen.getByPlaceholderText(/search agents/i), {
       target: { value: 'zzzz-nothing' },
     })
 
-    expect(screen.getByRole('heading', { name: /no agents match/i })).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /no agents match/i })).toBeInTheDocument()
+    })
   })
 
   it('surfaces favourites in the pinned strip', () => {
@@ -195,16 +201,18 @@ describe('HomePage result collection semantics', () => {
     expect(within(list).getAllByRole('listitem')).toHaveLength(2)
   })
 
-  it('announces the filtered count when the collection shrinks', () => {
+  it('announces the filtered count when the collection shrinks', async () => {
     renderPage()
 
     fireEvent.change(screen.getByPlaceholderText(/search agents/i), {
       target: { value: 'draws' },
     })
 
-    expect(screen.getByRole('status', { name: 'Agent catalogue status' })).toHaveTextContent(
-      '1 agent matches the current filters.'
-    )
+    await waitFor(() => {
+      expect(screen.getByRole('status', { name: 'Agent catalogue status' })).toHaveTextContent(
+        '1 agent matches the current filters.'
+      )
+    })
     expect(
       within(screen.getByRole('list', { name: 'Agent catalogue, index view' })).getAllByRole(
         'listitem'
@@ -212,16 +220,18 @@ describe('HomePage result collection semantics', () => {
     ).toHaveLength(1)
   })
 
-  it('announces an empty collection instead of leaving blank space', () => {
+  it('announces an empty collection instead of leaving blank space', async () => {
     renderPage()
 
     fireEvent.change(screen.getByPlaceholderText(/search agents/i), {
       target: { value: 'zzzz-nothing' },
     })
 
-    expect(screen.getByRole('status', { name: 'Agent catalogue status' })).toHaveTextContent(
-      'No agents match the current search and filters.'
-    )
+    await waitFor(() => {
+      expect(screen.getByRole('status', { name: 'Agent catalogue status' })).toHaveTextContent(
+        'No agents match the current search and filters.'
+      )
+    })
     expect(screen.queryByRole('list')).not.toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /no agents match/i })).toBeInTheDocument()
   })
