@@ -55,6 +55,41 @@ export function exportBatchAsCSV(agentName, results) {
  * @param {string} agentName
  * @param {Array<{input: string, status: string, output?: string, error?: string}>} results
  */
+const MARKDOWN_STATUS_LABELS = {
+  done: 'Success',
+  failed: 'Failed',
+  stopped: 'Stopped',
+  running: 'In progress',
+  waiting: 'Not started',
+  queued: 'Not started',
+  pending: 'Not started',
+}
+
+const NOT_STARTED_STATUSES = new Set(['waiting', 'queued', 'pending'])
+
+function markdownStatusLabel(status) {
+  return MARKDOWN_STATUS_LABELS[status] || 'Not finished'
+}
+
+function markdownBody(result) {
+  if (result.status === 'failed') {
+    return `**Error:**\n\n${result.error || 'Unknown error'}`
+  }
+  if (result.status === 'done') {
+    return `**Output:**\n\n${result.output || '(empty)'}`
+  }
+  if (result.status === 'stopped') {
+    return '**Status note:**\n\nThis item was stopped before it finished.'
+  }
+  if (result.status === 'running') {
+    return '**Status note:**\n\nThis item was still running when the export was created.'
+  }
+  if (NOT_STARTED_STATUSES.has(result.status)) {
+    return '**Status note:**\n\nThis item did not start before the export was created.'
+  }
+  return '**Status note:**\n\nThis item did not finish, so no output is available.'
+}
+
 export function exportBatchAsMarkdown(agentName, results) {
   const date = new Date().toLocaleDateString('en-GB', {
     day: 'numeric',
@@ -67,21 +102,9 @@ export function exportBatchAsMarkdown(agentName, results) {
   const safeResults = Array.isArray(results) ? results : []
   const sections = safeResults
     .map((r, i) => {
-      const label =
-        r.status === 'done'
-          ? 'Success'
-          : r.status === 'failed'
-            ? 'Failed'
-            : r.status === 'stopped'
-              ? 'Stopped'
-              : 'Pending'
-      const heading = `## Item ${i + 1} — ${label}`
+      const heading = `## Item ${i + 1} — ${markdownStatusLabel(r.status)}`
       const inputBlock = `**Input:**\n\n${r.input}`
-      const bodyBlock =
-        r.status === 'failed'
-          ? `**Error:**\n\n${r.error || 'Unknown error'}`
-          : `**Output:**\n\n${r.output || '(empty)'}`
-      return `${heading}\n\n${inputBlock}\n\n${bodyBlock}`
+      return `${heading}\n\n${inputBlock}\n\n${markdownBody(r)}`
     })
     .join('\n\n---\n\n')
 

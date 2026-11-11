@@ -43,12 +43,13 @@ describe('batch export edge payloads', () => {
     expect(content).not.toContain('undefined')
   })
 
-  it('labels an unrecognized status as pending and falls back for an empty agent name', async () => {
+  it('labels a queued status as not started and falls back for an empty agent name', async () => {
     exportBatchAsMarkdown('', [{ input: 'later', status: 'queued', output: 'waiting' }])
 
     const content = await createdBlob.text()
     expect(content).toContain('#  — Batch Results')
-    expect(content).toContain('## Item 1 — Pending')
+    expect(content).toContain('## Item 1 — Not started')
+    expect(content).toContain('This item did not start before the export was created.')
     expect(clickSpy.mock.instances[0].download).toBe('batch-batch-results.md')
   })
 })
