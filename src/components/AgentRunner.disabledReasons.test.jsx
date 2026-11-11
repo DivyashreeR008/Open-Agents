@@ -56,7 +56,7 @@ describe('AgentRunner disabled action reasons', () => {
     }
   })
 
-  it('drops the reasons once the input has content', async () => {
+  it('replaces the disabled reason with the scope once the input has content', async () => {
     const user = userEvent.setup()
     render(
       <MemoryRouter>
@@ -67,6 +67,9 @@ describe('AgentRunner disabled action reasons', () => {
     expect(screen.getByRole('button', { name: /save prompt/i })).not.toHaveAttribute(
       'aria-describedby'
     )
-    expect(screen.getByRole('button', { name: /^clear$/i })).not.toHaveAttribute('aria-describedby')
+
+    const clear = screen.getByRole('button', { name: /^clear$/i })
+    expect(clear).toHaveAttribute('aria-describedby', 'clear-scope')
+    expect(document.getElementById('clear-scope')).toHaveTextContent('Clears the prompt inputs.')
   })
 })

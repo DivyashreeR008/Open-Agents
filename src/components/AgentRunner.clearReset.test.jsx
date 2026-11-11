@@ -70,10 +70,77 @@ describe('AgentRunner clear', () => {
 
     await user.click(screen.getByRole('button', { name: /^clear$/i }))
 
+    expect(screen.getByRole('alertdialog', { name: 'Clear this run?' })).toBeInTheDocument()
+    expect(screen.getByTestId('output')).toHaveTextContent('generated answer')
+
+    await user.click(screen.getByRole('button', { name: 'Clear run' }))
+
     expect(screen.queryByTestId('output')).toBeNull()
     expect(screen.getByLabelText('Title')).toHaveValue('Default title')
     expect(screen.getByLabelText('Body')).toHaveValue('')
     expect(screen.getByRole('button', { name: 'alpha' })).not.toHaveTextContent('✓')
     expect(screen.getByRole('button', { name: /run agent/i })).toBeDisabled()
+  })
+
+  it('keeps generated output and prompt when the confirmation is cancelled', async () => {
+    const user = userEvent.setup()
+    render(
+      <MemoryRouter>
+        <AgentRunner agent={agent} />
+      </MemoryRouter>
+    )
+
+    await user.type(screen.getByLabelText('Body'), 'keep this prompt')
+    const run = screen.getByRole('button', { name: /run agent/i })
+    await waitFor(() => expect(run).toBeEnabled())
+    await user.click(run)
+    expect(await screen.findByTestId('output')).toHaveTextContent('generated answer')
+
+    await user.click(screen.getByRole('button', { name: /^clear$/i }))
+    expect(screen.getByRole('alertdialog', { name: 'Clear this run?' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
+
+    expect(screen.queryByRole('alertdialog', { name: 'Clear this run?' })).toBeNull()
+    expect(screen.getByTestId('output')).toHaveTextContent('generated answer')
+    expect(screen.getByLabelText('Body')).toHaveValue('keep this prompt')
+    expect(screen.getByRole('button', { name: /^clear$/i })).toHaveFocus()
+  })
+
+  it('dismisses the clear confirmation on Escape without discarding anything', async () => {
+    const user = userEvent.setup()
+    render(
+      <MemoryRouter>
+        <AgentRunner agent={agent} />
+      </MemoryRouter>
+    )
+
+    await user.type(screen.getByLabelText('Body'), 'careful prompt')
+    const run = screen.getByRole('button', { name: /run agent/i })
+    await waitFor(() => expect(run).toBeEnabled())
+    await user.click(run)
+    expect(await screen.findByTestId('output')).toHaveTextContent('generated answer')
+
+    await user.click(screen.getByRole('button', { name: /^clear$/i }))
+    fireEvent.keyDown(window, { key: 'Escape' })
+
+    expect(screen.queryByRole('alertdialog', { name: 'Clear this run?' })).toBeNull()
+    expect(screen.getByTestId('output')).toHaveTextContent('generated answer')
+    expect(screen.getByLabelText('Body')).toHaveValue('careful prompt')
+  })
+
+  it('clears prompt inputs directly when there is no generated output', async () => {
+    const user = userEvent.setup()
+    render(
+      <MemoryRouter>
+        <AgentRunner agent={agent} />
+      </MemoryRouter>
+    )
+
+    await user.type(screen.getByLabelText('Body'), 'temporary prompt')
+    await user.click(screen.getByRole('button', { name: /^clear$/i }))
+
+    expect(screen.queryByRole('alertdialog', { name: 'Clear this run?' })).toBeNull()
+    expect(screen.getByLabelText('Body')).toHaveValue('')
   })
 })
