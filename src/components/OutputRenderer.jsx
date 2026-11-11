@@ -6,6 +6,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import ScorecardOutput from './ScorecardOutput'
 import VoiceOutput from './VoiceOutput'
 import { stripMarkdown } from '../lib/stripMarkdown'
+import { downloadBlob } from '../lib/downloadFile'
 
 // Monochrome prism theme. The default `oneDark` theme ships purple keywords,
 // blue functions and green strings — replaced here with luminance-only tokens
@@ -188,12 +189,11 @@ ${userMessage || 'N/A'}
 ${stringContent}
 `
     const blob = new Blob([logText], { type: 'text/plain;charset=utf-8' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `${agentName ? agentName.replace(/\s+/g, '_').toLowerCase() : 'agent'}_run_log.txt`
-    a.click()
-    setTimeout(() => URL.revokeObjectURL(url), 1000)
+    downloadBlob(
+      blob,
+      'text/plain',
+      `${agentName ? agentName.replace(/\s+/g, '_').toLowerCase() : 'agent'}_run_log.txt`
+    )
   }
 
   const handleDownloadJson = () => {
@@ -208,12 +208,11 @@ ${stringContent}
     const blob = new Blob([JSON.stringify(logObj, null, 2)], {
       type: 'application/json;charset=utf-8',
     })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `${agentName ? agentName.replace(/\s+/g, '_').toLowerCase() : 'agent'}_run_log.json`
-    a.click()
-    setTimeout(() => URL.revokeObjectURL(url), 1000)
+    downloadBlob(
+      blob,
+      'application/json',
+      `${agentName ? agentName.replace(/\s+/g, '_').toLowerCase() : 'agent'}_run_log.json`
+    )
   }
 
   const handleExportPdf = () => {
@@ -231,13 +230,11 @@ ${stringContent}
   // request in issue #429.
   const handleDownloadOutput = () => {
     const extension = outputType === 'markdown' ? 'md' : 'txt'
-    const blob = new Blob([stringContent], { type: 'text/plain;charset=utf-8' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `${agentName ? agentName.replace(/\s+/g, '_').toLowerCase() : 'agent'}_output.${extension}`
-    a.click()
-    setTimeout(() => URL.revokeObjectURL(url), 1000)
+    downloadBlob(
+      stringContent,
+      'text/plain',
+      `${agentName ? agentName.replace(/\s+/g, '_').toLowerCase() : 'agent'}_output.${extension}`
+    )
   }
 
   return (

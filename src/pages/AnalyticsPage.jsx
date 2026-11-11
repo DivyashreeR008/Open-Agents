@@ -20,6 +20,7 @@ import {
 import { useAnalytics } from '../lib/useAnalytics'
 import { useSessionSpend } from '../lib/useSessionSpend'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
+import { downloadBlob } from '../lib/downloadFile'
 import { formatCost } from '../lib/formatting'
 
 // ── Provider colors ─────────────────────────────────────────────────────────
@@ -863,15 +864,11 @@ function ExportBar({ stats }) {
       dailyRuns: stats.dailyRuns,
     }
 
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `dashboard-export-${new Date().toISOString().slice(0, 10)}.json`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+    downloadBlob(
+      JSON.stringify(data, null, 2),
+      'application/json',
+      `dashboard-export-${new Date().toISOString().slice(0, 10)}.json`
+    )
   }
 
   return (

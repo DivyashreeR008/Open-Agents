@@ -10,6 +10,7 @@ import { DEFAULT_COLLECTION_ID, MAX_COLLECTIONS, useCollections } from '../lib/u
 import { useDocumentTitle } from '../lib/useDocumentTitle'
 import { useFlashNotice } from '../lib/useFlashNotice'
 import { collectionExportFilename, serializeCollection } from '../lib/collectionTransfer'
+import { downloadBlob } from '../lib/downloadFile'
 
 export default function CollectionsPage() {
   useDocumentTitle('Collections')
@@ -53,13 +54,11 @@ export default function CollectionsPage() {
   }
 
   const handleExport = (collection) => {
-    const blob = new Blob([serializeCollection(collection)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = collectionExportFilename(collection)
-    link.click()
-    URL.revokeObjectURL(url)
+    downloadBlob(
+      serializeCollection(collection),
+      'application/json',
+      collectionExportFilename(collection)
+    )
     flash(`Exported "${collection.name}".`)
   }
 

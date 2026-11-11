@@ -78,7 +78,8 @@ describe('AnalyticsPage session spend and export', () => {
     expect(screen.getByText('$0.003')).toBeInTheDocument()
   })
 
-  it('downloads the dashboard payload and revokes the object URL', async () => {
+  it('downloads the dashboard payload and releases the object URL after the download starts', async () => {
+    vi.useFakeTimers()
     const createObjectURL = vi.fn(() => 'blob:dashboard')
     const revokeObjectURL = vi.fn()
     URL.createObjectURL = createObjectURL
@@ -90,7 +91,7 @@ describe('AnalyticsPage session spend and export', () => {
 
     expect(createObjectURL).toHaveBeenCalledTimes(1)
     const blob = createObjectURL.mock.calls[0][0]
-    expect(blob.type).toBe('application/json')
+    expect(blob.type).toBe('application/json;charset=utf-8')
     const payload = JSON.parse(await blob.text())
     expect(payload.summary.totalRuns).toBe(5)
     expect(payload.topAgents[0].agentName).toBe('Researcher')
@@ -98,6 +99,8 @@ describe('AnalyticsPage session spend and export', () => {
     expect(payload.dailyRuns).toHaveLength(2)
     expect(click).toHaveBeenCalledTimes(1)
     expect(click.mock.instances[0].download).toMatch(/^dashboard-export-/)
+    expect(revokeObjectURL).not.toHaveBeenCalled()
+    vi.advanceTimersByTime(1000)
     expect(revokeObjectURL).toHaveBeenCalledWith('blob:dashboard')
   })
 

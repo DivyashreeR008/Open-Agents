@@ -1,3 +1,5 @@
+import { downloadBlob } from './downloadFile'
+
 export function exportWorkflowAsMarkdown(workflowTitle, steps) {
   const safeTitle =
     typeof workflowTitle === 'string' && workflowTitle.trim() ? workflowTitle : 'Workflow'
@@ -24,11 +26,5 @@ export function exportWorkflowAsMarkdown(workflowTitle, steps) {
 
   const content = `# ${safeTitle} — Workflow Output\nGenerated on ${date}\n\n${stepContent}`
 
-  const blob = new Blob([content], { type: 'text/markdown' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  a.click()
-  URL.revokeObjectURL(url)
+  downloadBlob(content, 'text/markdown', filename)
 }

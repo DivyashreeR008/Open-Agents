@@ -49,9 +49,11 @@ describe('exportWorkflowAsMarkdown', () => {
       { agentName: 'Reviewer', status: 'done', output: 'Review complete' },
     ])
 
-    expect(createdBlob.type).toBe('text/markdown')
+    expect(createdBlob.type).toBe('text/markdown;charset=utf-8')
     expect(URL.createObjectURL).toHaveBeenCalledWith(createdBlob)
     expect(clickSpy).toHaveBeenCalledTimes(1)
+    expect(URL.revokeObjectURL).not.toHaveBeenCalled()
+    vi.advanceTimersByTime(1000)
     expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:workflow-test')
 
     const content = await createdBlob.text()
