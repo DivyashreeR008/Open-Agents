@@ -53,11 +53,13 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+  vi.useRealTimers()
   vi.restoreAllMocks()
 })
 
 describe('CollectionsPage actions', () => {
-  it('exports a JSON file and revokes the object URL', () => {
+  it('exports a JSON file and releases the object URL after the download starts', () => {
+    vi.useFakeTimers()
     const createObjectURL = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:collection')
     const revokeObjectURL = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
     const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
@@ -66,6 +68,8 @@ describe('CollectionsPage actions', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Export Launch' }))
 
     expect(createObjectURL).toHaveBeenCalledOnce()
+    expect(revokeObjectURL).not.toHaveBeenCalled()
+    vi.advanceTimersByTime(1000)
     expect(revokeObjectURL).toHaveBeenCalledWith('blob:collection')
     expect(click).toHaveBeenCalledOnce()
     expect(mocks.flash).toHaveBeenCalledWith('Exported "Launch".')

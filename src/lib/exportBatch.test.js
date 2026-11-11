@@ -38,7 +38,20 @@ describe('batch result exports', () => {
         '2,pending input,pending,,',
       ].join('\n')
     )
-    expect(createdBlob.type).toBe('text/csv')
+    expect(createdBlob.type).toBe('text/csv;charset=utf-8')
+  })
+
+  it('starts the CSV file with a UTF-8 byte order mark', async () => {
+    exportBatchAsCSV('Review agent', [
+      { input: 'café 日本語', status: 'done', output: 'naïve résumé' },
+    ])
+
+    const bytes = new Uint8Array(await createdBlob.arrayBuffer())
+
+    expect([...bytes.slice(0, 3)]).toEqual([0xef, 0xbb, 0xbf])
+    // Blob.text() decodes as UTF-8 and strips the marker, so the visible text
+    // starts at the header while the file itself carries the marker.
+    expect(await createdBlob.text()).toContain('café 日本語')
   })
 
   it('quotes commas, quotes, newlines, and carriage returns', async () => {
@@ -63,6 +76,8 @@ describe('batch result exports', () => {
     expect(anchor.download).toBe('my--agent-batch-batch-results.csv')
     expect(URL.createObjectURL).toHaveBeenCalledWith(createdBlob)
     expect(clickSpy).toHaveBeenCalledTimes(1)
+    expect(URL.revokeObjectURL).not.toHaveBeenCalled()
+    vi.advanceTimersByTime(1000)
     expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:batch-test')
   })
 
@@ -90,7 +105,7 @@ describe('batch result exports', () => {
     expect(content).toContain('**Error:**\n\nprovider error')
     expect(content).toContain('## Item 3 — Stopped')
     expect(content).toContain('## Item 4 — Pending')
-    expect(createdBlob.type).toBe('text/markdown')
+    expect(createdBlob.type).toBe('text/markdown;charset=utf-8')
   })
 
   it('uses an empty-output marker and a fallback error message', async () => {

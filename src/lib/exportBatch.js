@@ -3,6 +3,10 @@
  * Mirrors the pattern in exportMarkdown.js.
  */
 
+import { downloadBlob } from './downloadFile'
+
+const CSV_BOM = '\uFEFF'
+
 function slugifyFilename(name) {
   const slug = name
     .toLowerCase()
@@ -11,16 +15,6 @@ function slugifyFilename(name) {
     .replace(/^-+|-+$/g, '')
 
   return slug || 'batch'
-}
-
-function downloadBlob(content, mimeType, filename) {
-  const blob = new Blob([content], { type: mimeType })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  a.click()
-  URL.revokeObjectURL(url)
 }
 
 function csvEscape(value) {
@@ -48,7 +42,10 @@ export function exportBatchAsCSV(agentName, results) {
 
   const csv = [header, ...rows].map((row) => row.map(csvEscape).join(',')).join('\n')
 
-  downloadBlob(csv, 'text/csv', filename)
+  // The byte order mark tells spreadsheet applications the file is UTF-8.
+  // Without it, Windows tools fall back to a legacy local encoding and
+  // non-ASCII input and output become mojibake.
+  downloadBlob(CSV_BOM + csv, 'text/csv', filename)
 }
 
 /**

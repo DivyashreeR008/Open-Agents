@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import OutputRenderer from './OutputRenderer'
 import { describeUnexecutedRun, isUnexecutedRun } from '../lib/missedRuns'
+import { downloadBlob } from '../lib/downloadFile'
 
 export default function AutomationRunDrawer({ run, isOpen, onClose }) {
   const [copied, setCopied] = useTimedState(false, isOpen && Boolean(run))
@@ -38,13 +39,11 @@ export default function AutomationRunDrawer({ run, isOpen, onClose }) {
   }
 
   const handleDownload = () => {
-    const element = document.createElement('a')
-    const file = new Blob([run.output || run.error || ''], { type: 'text/markdown' })
-    element.href = URL.createObjectURL(file)
-    element.download = `${run.automationName.replace(/\s+/g, '_')}_${new Date(run.startedAt).toISOString().split('T')[0]}.md`
-    document.body.appendChild(element)
-    element.click()
-    document.body.removeChild(element)
+    downloadBlob(
+      run.output || run.error || '',
+      'text/markdown',
+      `${run.automationName.replace(/\s+/g, '_')}_${new Date(run.startedAt).toISOString().split('T')[0]}.md`
+    )
   }
 
   const formatDate = (ts) => {

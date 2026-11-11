@@ -41,7 +41,8 @@ describe('AutomationRunDrawer actions', () => {
     expect(writeText).toHaveBeenLastCalledWith('Boom')
   })
 
-  it('downloads a markdown file with a normalized name and revokes the URL', () => {
+  it('downloads a markdown file with a normalized name and releases the URL after the download starts', () => {
+    vi.useFakeTimers()
     const createObjectURL = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:run')
     const revokeObjectURL = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
     const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
@@ -51,8 +52,10 @@ describe('AutomationRunDrawer actions', () => {
 
     expect(createObjectURL).toHaveBeenCalledOnce()
     const blob = createObjectURL.mock.calls[0][0]
-    expect(blob.type).toBe('text/markdown')
+    expect(blob.type).toBe('text/markdown;charset=utf-8')
     expect(revokeObjectURL).not.toHaveBeenCalled()
+    vi.advanceTimersByTime(1000)
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:run')
     expect(click).toHaveBeenCalledOnce()
     expect(document.querySelector('a[download="Daily_digest_2023-11-14.md"]')).toBeNull()
   })
