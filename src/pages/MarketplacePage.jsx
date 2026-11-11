@@ -111,6 +111,12 @@ function StarRating({ listing, userVote, onRate }) {
   )
 }
 
+function formatRequirementList(items) {
+  if (items.length < 2) return items[0] ?? ''
+  if (items.length === 2) return `${items[0]} and ${items[1]}`
+  return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`
+}
+
 function PublishModal({ agents, onClose, onPublished }) {
   const [agentId, setAgentId] = useState('')
   const [name, setName] = useState('')
@@ -119,12 +125,73 @@ function PublishModal({ agents, onClose, onPublished }) {
   const [category, setCategory] = useState(MARKETPLACE_CATEGORIES[0])
   const [readme, setReadme] = useState('')
   const [author, setAuthor] = useState('')
+  const [anonymous, setAnonymous] = useState(false)
   const [agentSearch, setAgentSearch] = useState('')
+  const [discardPending, setDiscardPending] = useState(false)
   const panelRef = useRef(null)
-  useDialogFocus(panelRef, { onClose })
+  const keepEditingRef = useRef(null)
+  const lastDraftFocusRef = useRef(null)
 
   const selected = agents.find((a) => a.id === agentId)
-  const canPublish = agentId && name.trim() && description.trim()
+  const trimmedAuthor = author.trim()
+  const hasAuthor = trimmedAuthor.length > 0
+  const missingRequirements = []
+
+  if (!agentId) missingRequirements.push('choose an agent')
+  if (!name.trim()) missingRequirements.push('enter a display name')
+  if (!description.trim()) missingRequirements.push('add a description')
+  if (!hasAuthor && !anonymous) {
+    missingRequirements.push('enter an author or confirm anonymous publishing')
+  }
+
+  const canPublish = missingRequirements.length === 0
+  const hasDraft = Boolean(
+    agentId ||
+    name.trim() ||
+    description.trim() ||
+    tags.trim() ||
+    readme.trim() ||
+    hasAuthor ||
+    anonymous ||
+    category !== MARKETPLACE_CATEGORIES[0]
+  )
+  const requirementsMessage = canPublish
+    ? 'All required details are complete.'
+    : `To publish, ${formatRequirementList(missingRequirements)}.`
+  const attributionMessage = hasAuthor
+    ? `Attribution: ${trimmedAuthor}. This cannot be changed after publishing.`
+    : anonymous
+      ? 'Attribution: Anonymous. This cannot be changed after publishing.'
+      : 'Enter an author name or select anonymous publishing. Attribution cannot be changed later.'
+
+  const cancelDiscard = () => {
+    setDiscardPending(false)
+    const target = lastDraftFocusRef.current
+    if (target instanceof HTMLElement && target.isConnected) {
+      target.focus()
+      return
+    }
+    panelRef.current?.querySelector('[data-autofocus]')?.focus()
+  }
+
+  const requestClose = () => {
+    if (discardPending) {
+      cancelDiscard()
+      return
+    }
+    if (!hasDraft) {
+      onClose()
+      return
+    }
+    lastDraftFocusRef.current = document.activeElement
+    setDiscardPending(true)
+  }
+
+  useDialogFocus(panelRef, { onClose: requestClose })
+
+  useEffect(() => {
+    if (discardPending) keepEditingRef.current?.focus()
+  }, [discardPending])
 
   const matchingAgents = useMemo(() => {
     const q = agentSearch.trim().toLowerCase()
@@ -167,7 +234,7 @@ function PublishModal({ agents, onClose, onPublished }) {
         .filter(Boolean),
       category,
       readme,
-      author,
+      author: hasAuthor ? trimmedAuthor : 'Anonymous',
       config: {
         baseAgentId: selected.id,
         provider: selected.provider,
@@ -186,7 +253,7 @@ function PublishModal({ agents, onClose, onPublished }) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
-      onClick={onClose}
+      onClick={requestClose}
     >
       <div
         ref={panelRef}
@@ -202,7 +269,7 @@ function PublishModal({ agents, onClose, onPublished }) {
           </h2>
           <button
             type="button"
-            onClick={onClose}
+            onClick={requestClose}
             aria-label="Close"
             className="p-1 dark:hover:bg-surface-hover hover:bg-gray-100"
           >
@@ -210,9 +277,39 @@ function PublishModal({ agents, onClose, onPublished }) {
           </button>
         </div>
 
+        {discardPending && (
+          <div
+            role="alert"
+            className="mb-4 border border-amber-300 bg-amber-50 p-3 text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100"
+          >
+            <p className="text-xs font-semibold">Discard this draft?</p>
+            <p className="mt-1 text-[11px]">Your agent selection and form text will be lost.</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <button
+                ref={keepEditingRef}
+                type="button"
+                onClick={cancelDiscard}
+                className="px-2.5 py-1 text-[11px] font-semibold transition-colors bg-black text-white hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-500/40 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+              >
+                Keep editing
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-2.5 py-1 text-[11px] font-semibold transition-colors border border-amber-300 hover:bg-amber-100 focus:outline-none focus:ring-2 focus:ring-zinc-500/40 dark:border-amber-800 dark:hover:bg-amber-900/40"
+              >
+                Discard draft
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="space-y-3">
           <div>
-            <label className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1">
+            <label
+              htmlFor="publish-agent"
+              className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1"
+            >
               Agent <span className="text-zinc-400">*</span>
             </label>
             <input
@@ -225,9 +322,12 @@ function PublishModal({ agents, onClose, onPublished }) {
               className={inputClass}
             />
             <select
+              id="publish-agent"
               value={agentId}
               onChange={(e) => setAgentId(e.target.value)}
               aria-label="Agent to publish"
+              required
+              aria-required="true"
               className={`${inputClass} mt-1.5`}
             >
               <option value="">Select an agent to publish...</option>
@@ -256,28 +356,40 @@ function PublishModal({ agents, onClose, onPublished }) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1">
+            <label
+              htmlFor="publish-name"
+              className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1"
+            >
               Display Name <span className="text-zinc-400">*</span>
             </label>
             <input
+              id="publish-name"
               aria-label="Display name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="My Agent Pack"
+              required
+              aria-required="true"
               className={inputClass}
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1">
+            <label
+              htmlFor="publish-description"
+              className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1"
+            >
               Description <span className="text-zinc-400">*</span>
             </label>
             <textarea
+              id="publish-description"
               aria-label="Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={2}
               placeholder="What does this agent do?"
+              required
+              aria-required="true"
               className={inputClass}
             />
           </div>
@@ -301,18 +413,47 @@ function PublishModal({ agents, onClose, onPublished }) {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1">
+              <label
+                htmlFor="publish-author"
+                className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1"
+              >
                 Author
               </label>
               <input
+                id="publish-author"
                 aria-label="Author"
+                aria-describedby="publish-attribution"
                 value={author}
-                onChange={(e) => setAuthor(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value
+                  setAuthor(value)
+                  if (value.trim()) setAnonymous(false)
+                }}
                 placeholder="Your name"
                 className={inputClass}
               />
             </div>
           </div>
+
+          {!hasAuthor && (
+            <label
+              htmlFor="publish-anonymous"
+              className="flex items-start gap-2 text-[11px] dark:text-text-secondary text-gray-600"
+            >
+              <input
+                id="publish-anonymous"
+                type="checkbox"
+                checked={anonymous}
+                onChange={(e) => setAnonymous(e.target.checked)}
+                aria-describedby="publish-attribution"
+                className="mt-0.5"
+              />
+              <span>Publish anonymously. This attribution cannot be changed later.</span>
+            </label>
+          )}
+          <p id="publish-attribution" className="text-[11px] dark:text-text-muted text-gray-500">
+            {attributionMessage}
+          </p>
 
           <div>
             <label className="block text-xs font-medium dark:text-text-secondary text-gray-600 mb-1">
@@ -353,9 +494,19 @@ function PublishModal({ agents, onClose, onPublished }) {
             </p>
           </div>
 
+          <p
+            id="publish-requirements"
+            role="status"
+            className="text-[11px] dark:text-text-secondary text-gray-600"
+          >
+            {requirementsMessage}
+          </p>
+
           <button
+            type="button"
             onClick={handlePublish}
             disabled={!canPublish}
+            aria-describedby="publish-requirements"
             className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
           >
             <UploadCloud size={15} />

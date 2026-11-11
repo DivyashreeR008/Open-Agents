@@ -81,6 +81,7 @@ describe('MarketplacePage publish details and import outcomes', () => {
     )
     await user.selectOptions(within(dialog).getByLabelText('Category'), 'Content Generation')
     await user.type(within(dialog).getByLabelText('README, optional'), 'Use a short source list.')
+    await user.click(within(dialog).getByRole('checkbox', { name: /publish anonymously/i }))
     await user.click(within(dialog).getByRole('button', { name: 'Publish' }))
 
     const stored = JSON.parse(localStorage.getItem(LISTINGS_KEY))
