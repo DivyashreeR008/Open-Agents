@@ -51,6 +51,33 @@ describe('AgentRunner input defaults', () => {
     expect(screen.getByRole('button', { name: 'beta' })).not.toHaveTextContent('✓')
   })
 
+  it('applies re-run inputs from route state without discarding other defaults', () => {
+    render(
+      <MemoryRouter
+        initialEntries={[
+          {
+            pathname: '/agent/defaults-agent',
+            state: {
+              prefill: {
+                body: 'retry this request',
+                tags: ['beta'],
+                unknown: 'ignored',
+              },
+            },
+          },
+        ]}
+      >
+        <AgentRunner agent={agent} />
+      </MemoryRouter>
+    )
+
+    expect(screen.getByLabelText('Title')).toHaveValue('Draft title')
+    expect(screen.getByLabelText('Body')).toHaveValue('retry this request')
+    expect(screen.getByLabelText('Code')).toHaveValue('const answer = 42')
+    expect(screen.getByRole('button', { name: /beta/ })).toHaveTextContent('✓')
+    expect(screen.getByRole('button', { name: /alpha/ })).not.toHaveTextContent('✓')
+  })
+
   it('resets every value when the selected agent changes', () => {
     const { rerender } = render(
       <MemoryRouter>

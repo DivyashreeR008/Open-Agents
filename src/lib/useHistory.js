@@ -62,6 +62,7 @@ export const useHistory = () => {
    * Save a new run to history.
    * Maintains a maximum of 10 runs, removing the oldest if necessary.
    * @param {Object} run - The run data (agentId, agentName, inputs, output, provider).
+   *   Failed attempts also include status, error, and model.
    *   Pass runId to reuse the same id in analytics so the run is not counted twice.
    */
   const saveRun = useCallback(({ runId, ...run }) => {
