@@ -12,9 +12,10 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, FolderPlus, Star, Copy, Check } from 'lucide-react'
 import { useFavorites } from '../lib/useFavorites'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { useTimedState } from '../lib/useTimedState'
 import CollectionPicker from './CollectionPicker'
+import HighlightedText from './HighlightedText'
 import { resolveAgentIcon } from '../lib/agentIcons'
 
 const providerMeta = {
@@ -33,7 +34,13 @@ function isWithinLast7Days(dateStr) {
   return diffMs >= 0 && diffMs <= 7 * 24 * 60 * 60 * 1000
 }
 
-export default function AgentCard({ agent, variant = 'grid', index = null }) {
+function formatMatchList(fields) {
+  if (fields.length < 2) return fields[0] ?? ''
+  if (fields.length === 2) return `${fields[0]} and ${fields[1]}`
+  return `${fields.slice(0, -1).join(', ')}, and ${fields[fields.length - 1]}`
+}
+
+export default function AgentCard({ agent, variant = 'grid', index = null, searchQuery = '' }) {
   const IconComponent = resolveAgentIcon(agent?.icon)
   const provider = providerMeta[agent?.provider] || providerMeta.any
   const { isFavorite, toggleFavorite } = useFavorites()
@@ -43,6 +50,37 @@ export default function AgentCard({ agent, variant = 'grid', index = null }) {
 
   const name = agent?.name || 'Unnamed agent'
   const description = agent?.description || 'No description provided.'
+  const matchDescriptionId = useId()
+  const query = String(searchQuery ?? '').trim()
+  const normalizedQuery = query.toLowerCase()
+  const hasQuery = query.length > 0
+  const matchedFields = []
+
+  if (hasQuery) {
+    if (agent?.name && String(agent.name).toLowerCase().includes(normalizedQuery)) {
+      matchedFields.push('name')
+    }
+    if (agent?.description && String(agent.description).toLowerCase().includes(normalizedQuery)) {
+      matchedFields.push('description')
+    }
+    if (agent?.category && String(agent.category).toLowerCase().includes(normalizedQuery)) {
+      matchedFields.push('category')
+    }
+    if (provider.label.toLowerCase().includes(normalizedQuery)) {
+      matchedFields.push('provider')
+    }
+    if (agent?.id && String(agent.id).toLowerCase().includes(normalizedQuery)) {
+      matchedFields.push('agent ID')
+    }
+    if (agent?.model && String(agent.model).toLowerCase().includes(normalizedQuery)) {
+      matchedFields.push('model')
+    }
+  }
+
+  const showMatchDescription = hasQuery && matchedFields.length > 0
+  const matchDescription = showMatchDescription
+    ? `Matches search "${query}" in ${formatMatchList(matchedFields)}.`
+    : ''
 
   const handleDragStart = (event) => {
     event.dataTransfer.setData('text/plain', agent.id)
@@ -124,6 +162,7 @@ export default function AgentCard({ agent, variant = 'grid', index = null }) {
           to={`/agent/${agent.id}`}
           draggable
           onDragStart={handleDragStart}
+          aria-describedby={showMatchDescription ? matchDescriptionId : undefined}
           className="index-row group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-black/60 dark:focus-visible:ring-white/60"
         >
           <span className="idx" aria-hidden="true">
@@ -137,18 +176,20 @@ export default function AgentCard({ agent, variant = 'grid', index = null }) {
           />
 
           <span className="w-44 shrink-0 truncate text-[13.5px] font-medium text-zinc-900 dark:text-text-primary sm:w-60">
-            {name}
+            <HighlightedText text={name} query={agent?.name ? query : ''} />
           </span>
 
           <span className="hidden min-w-0 flex-1 truncate text-xs text-zinc-500 sm:block dark:text-text-secondary">
-            {description}
+            <HighlightedText text={description} query={agent?.description ? query : ''} />
           </span>
 
-          <span className="eyebrow ml-auto hidden shrink-0 lg:block">{agent?.category}</span>
+          <span className="eyebrow ml-auto hidden shrink-0 lg:block">
+            <HighlightedText text={agent?.category} query={query} />
+          </span>
 
           <span className="badge hidden shrink-0 items-center gap-1.5 sm:inline-flex">
             <span className={`h-1.5 w-1.5 ${provider.dot}`} aria-hidden="true" />
-            {provider.label}
+            <HighlightedText text={provider.label} query={query} />
           </span>
 
           {actions}
@@ -159,6 +200,11 @@ export default function AgentCard({ agent, variant = 'grid', index = null }) {
             aria-hidden="true"
           />
         </Link>
+        {showMatchDescription && (
+          <span id={matchDescriptionId} className="sr-only">
+            {matchDescription}
+          </span>
+        )}
         {picker}
       </>
     )
@@ -170,6 +216,7 @@ export default function AgentCard({ agent, variant = 'grid', index = null }) {
         to={`/agent/${agent.id}`}
         draggable
         onDragStart={handleDragStart}
+        aria-describedby={showMatchDescription ? matchDescriptionId : undefined}
         className="group flex cursor-grab flex-col border border-zinc-200 bg-white p-4 transition-colors hover:border-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/60 dark:border-border dark:bg-surface-card dark:hover:border-white dark:focus-visible:ring-white/60"
       >
         <div className="flex items-start gap-3">
@@ -179,10 +226,12 @@ export default function AgentCard({ agent, variant = 'grid', index = null }) {
 
           <div className="min-w-0 flex-1">
             <h3 className="truncate text-[14px] font-semibold leading-5 tracking-[-0.01em] text-zinc-900 dark:text-text-primary">
-              {name}
+              <HighlightedText text={name} query={agent?.name ? query : ''} />
             </h3>
             <div className="mt-1 flex items-center gap-1.5">
-              <span className="eyebrow truncate">{agent?.category}</span>
+              <span className="eyebrow truncate">
+                <HighlightedText text={agent?.category} query={query} />
+              </span>
               {isWithinLast7Days(agent?.createdAt) && <span className="badge">new</span>}
             </div>
           </div>
@@ -191,13 +240,13 @@ export default function AgentCard({ agent, variant = 'grid', index = null }) {
         </div>
 
         <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-zinc-500 dark:text-text-secondary">
-          {description}
+          <HighlightedText text={description} query={agent?.description ? query : ''} />
         </p>
 
         <div className="mt-3 flex items-center justify-between border-t border-zinc-200 pt-2.5 dark:border-border">
           <span className="flex items-center gap-1.5 font-mono text-[10px] text-zinc-400 dark:text-text-muted">
             <span className={`h-1.5 w-1.5 ${provider.dot}`} aria-hidden="true" />
-            {provider.label}
+            <HighlightedText text={provider.label} query={query} />
           </span>
 
           <span className="flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.1em] text-zinc-500 opacity-0 transition-opacity group-hover:opacity-100 dark:text-text-secondary">
@@ -206,6 +255,11 @@ export default function AgentCard({ agent, variant = 'grid', index = null }) {
           </span>
         </div>
       </Link>
+      {showMatchDescription && (
+        <span id={matchDescriptionId} className="sr-only">
+          {matchDescription}
+        </span>
+      )}
       {picker}
     </>
   )

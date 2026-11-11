@@ -71,7 +71,7 @@ describe('HomePage search clearing', () => {
     const search = screen.getByPlaceholderText(/search agents/i)
     fireEvent.change(search, { target: { value: 'alpha' } })
 
-    expect(screen.getByText('Alpha Agent')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Alpha Agent/ })).toBeInTheDocument()
     expect(screen.queryByText('Beta Agent')).not.toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: 'Clear search' }))
