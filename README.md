@@ -21,7 +21,7 @@ The app is built with React, Vite, Tailwind CSS, Vitest, and Testing Library. Ag
 
 ## Requirements
 
-- Node.js 22 LTS (22.12.0 or newer). CI uses Node 22.
+- Node.js 22 LTS (22.22.2 or newer). CI runs Node 22.
 - npm, which is included with Node.js.
 - A modern browser.
 - An API key from at least one supported provider to run agents.
