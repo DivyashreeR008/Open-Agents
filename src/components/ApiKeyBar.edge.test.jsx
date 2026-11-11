@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useState } from 'react'
+import { createRef, useState } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import ApiKeyBar from './ApiKeyBar'
@@ -20,6 +20,7 @@ function Harness({
   initialSave = false,
   agentProvider = 'any',
   onProviderChange,
+  inputRef,
 }) {
   const [provider, setProviderState] = useState(initialProvider)
   const [apiKey, setApiKey] = useState(initialKey)
@@ -43,6 +44,7 @@ function Harness({
         agentProvider={agentProvider}
         model={model}
         setModel={setModel}
+        apiKeyInputRef={inputRef}
       />
     </MemoryRouter>
   )
@@ -59,6 +61,13 @@ afterEach(() => {
 })
 
 describe('ApiKeyBar key visibility and session policy', () => {
+  it('lets a caller focus the key field through a ref', () => {
+    const inputRef = createRef()
+    render(<Harness inputRef={inputRef} />)
+
+    expect(inputRef.current).toBe(screen.getByLabelText('API key'))
+  })
+
   it('toggles key visibility and clears session saving when the key is emptied', async () => {
     const user = userEvent.setup()
     render(<Harness initialKey="sk-live" initialSave />)

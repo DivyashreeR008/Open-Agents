@@ -105,6 +105,7 @@ export default function AgentRunner({ agent }) {
   // its results if the id has since changed (cleared, superseded, unmounted).
   const runIdRef = useRef(0)
   const textareaRefs = useRef({})
+  const apiKeyInputRef = useRef(null)
 
   // Abort the in-flight request AND invalidate the run that owns it.
   const cancelActiveRun = () => {
@@ -419,6 +420,15 @@ export default function AgentRunner({ agent }) {
     setInputs(defaults)
   }
 
+  const focusApiKeyInput = () => {
+    const input = apiKeyInputRef.current
+    if (!input) return
+
+    input.focus()
+    input.select?.()
+    input.scrollIntoView?.({ behavior: 'smooth', block: 'center' })
+  }
+
   const handleFillExample = () => {
     if (!agent.exampleInputs) return
     setInputs((prev) => ({ ...prev, ...agent.exampleInputs }))
@@ -570,6 +580,7 @@ export default function AgentRunner({ agent }) {
             agentProvider={agent.provider}
             model={selectedModel}
             setModel={setSelectedModel}
+            apiKeyInputRef={apiKeyInputRef}
           />
 
           {supportsBatchMode && (
@@ -1008,22 +1019,26 @@ export default function AgentRunner({ agent }) {
                         {!['openai', 'anthropic', 'gemini'].includes(error.provider) &&
                           'Your API key is invalid or expired.'}
                       </strong>
-                      <br />
-                      Please check and update your API key.
-                      <br />
-                      <button
-                        className="underline text-zinc-900 dark:text-white"
-                        onClick={() => window.dispatchEvent(new CustomEvent('open-api-key-bar'))}
-                      >
-                        Update API Key
-                      </button>
-                      <span> or </span>
-                      <button
-                        className="underline text-zinc-900 dark:text-white"
-                        onClick={() => window.location.reload()}
-                      >
-                        Reloads page after an invalid API key error
-                      </button>
+                      <div className="mt-1">
+                        Update the key above, then retry. Your inputs stay in place.
+                      </div>
+                      <div className="mt-3 flex flex-wrap items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={focusApiKeyInput}
+                          className="inline-flex h-8 items-center border border-zinc-900 bg-zinc-900 px-3 text-xs font-semibold text-white transition-colors hover:bg-zinc-700 dark:border-white dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+                        >
+                          Update API key
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleRun}
+                          disabled={!canRun() || loading}
+                          className="inline-flex h-8 items-center border border-gray-300 px-3 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-border dark:text-text-secondary dark:hover:bg-surface-hover"
+                        >
+                          Retry run
+                        </button>
+                      </div>
                       {error.detail && (
                         <>
                           <br />
