@@ -45,7 +45,7 @@ export default function Logo({ className = '', height = 28 }) {
       <text
         x="46"
         y="36"
-        fontFamily="'Inter Tight', 'Inter', 'Helvetica Neue', Arial, sans-serif"
+        fontFamily="'Inter Tight Variable', 'Inter Variable', 'Helvetica Neue', Arial, sans-serif"
         fontWeight="700"
         fontSize="32"
         fill="currentColor"

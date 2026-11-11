@@ -14,7 +14,7 @@ const monoPrism = {
   'code[class*="language-"]': {
     color: '#E5E5E5',
     background: 'none',
-    fontFamily: "'JetBrains Mono', 'Fira Code', ui-monospace, monospace",
+    fontFamily: "'JetBrains Mono Variable', 'Fira Code', ui-monospace, monospace",
     textAlign: 'left',
     whiteSpace: 'pre',
     wordSpacing: 'normal',
@@ -26,7 +26,7 @@ const monoPrism = {
   'pre[class*="language-"]': {
     color: '#E5E5E5',
     background: 'none',
-    fontFamily: "'JetBrains Mono', 'Fira Code', ui-monospace, monospace",
+    fontFamily: "'JetBrains Mono Variable', 'Fira Code', ui-monospace, monospace",
     textAlign: 'left',
     whiteSpace: 'pre',
     wordSpacing: 'normal',
