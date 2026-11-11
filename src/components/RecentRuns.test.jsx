@@ -177,6 +177,36 @@ describe('RecentRuns', () => {
     expect(screen.getByText('unknown')).toBeInTheDocument()
   })
 
+  it('renders a failed attempt with its error and re-run action', () => {
+    const onRerun = vi.fn()
+    const onCopy = vi.fn()
+    const failed = makeRun({
+      id: 'failed-run',
+      status: 'failed',
+      output: '',
+      error: 'The provider returned 429 Too Many Requests.',
+    })
+
+    render(
+      <RecentRuns
+        history={[failed]}
+        onRerun={onRerun}
+        onCopy={onCopy}
+        onDelete={vi.fn()}
+        onClearAll={vi.fn()}
+      />
+    )
+
+    expect(screen.getByText('Failed')).toBeInTheDocument()
+    expect(screen.getByText('The provider returned 429 Too Many Requests.')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Re-run' }))
+    expect(onRerun).toHaveBeenCalledWith(failed)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Copy' }))
+    expect(onCopy).toHaveBeenCalledWith('The provider returned 429 Too Many Requests.')
+  })
+
   it('wires clear, delete, rerun, and copy actions to their handlers', () => {
     const onClearAll = vi.fn()
     const onDelete = vi.fn()

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { recordAnalyticsRun } from '../lib/useAnalytics'
-import { useNavigate, Link } from 'react-router-dom'
+import { useLocation, useNavigate, Link } from 'react-router-dom'
 import CustomSelect from './CustomSelect'
 import {
   Loader2,
@@ -70,6 +70,7 @@ export default function AgentRunner({ agent }) {
 
   const { saveRun } = useHistory()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const [inputs, setInputs] = useState({})
   const [output, setOutput] = useState(null)
@@ -146,9 +147,22 @@ export default function AgentRunner({ agent }) {
     setPlaygroundOpen(false)
     setBatchMode(false)
 
+    const prefill =
+      location.state?.prefill &&
+      typeof location.state.prefill === 'object' &&
+      !Array.isArray(location.state.prefill)
+        ? location.state.prefill
+        : null
+
     const defaults = {}
     agent.inputs.forEach((input) => {
-      if (input.defaultValue !== undefined) {
+      const hasPrefill = prefill && Object.prototype.hasOwnProperty.call(prefill, input.id)
+
+      if (hasPrefill) {
+        const value = prefill[input.id]
+        defaults[input.id] =
+          input.type === 'multiselect' && !Array.isArray(value) ? [] : (value ?? '')
+      } else if (input.defaultValue !== undefined) {
         defaults[input.id] = input.defaultValue
       } else if (input.type === 'multiselect') {
         defaults[input.id] = []
@@ -163,6 +177,9 @@ export default function AgentRunner({ agent }) {
     } else if (agent.defaultProvider) {
       setProvider(agent.defaultProvider)
     }
+    // Inputs reset only when the selected agent changes; a route-state update
+    // on its own should not discard what the user is currently typing.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [agent.id])
 
   useEffect(() => {
@@ -302,9 +319,12 @@ export default function AgentRunner({ agent }) {
 
     const controller = new AbortController()
     abortControllerRef.current = controller
+    const actualProvider = agent.provider === 'any' ? provider : agent.provider
+    let model
+    let completionRecorded = false
+
     try {
-      const actualProvider = agent.provider === 'any' ? provider : agent.provider
-      const model = resolveAgentModel(agent, actualProvider, selectedModel)
+      model = resolveAgentModel(agent, actualProvider, selectedModel)
 
       const result = await streamAgent({
         provider: actualProvider,
@@ -352,6 +372,7 @@ export default function AgentRunner({ agent }) {
         output: result.content,
         provider: actualProvider,
       })
+      completionRecorded = true
 
       recordAnalyticsRun({
         runId,
@@ -364,14 +385,34 @@ export default function AgentRunner({ agent }) {
       })
     } catch (err) {
       if (!isCurrentRun()) return
-      if (err.name !== 'AbortError') {
+      if (err?.name !== 'AbortError') {
         // An error mid-stream must not leave the "Streaming...." panel stuck on.
         setIsStreaming(false)
         setStreamingOutput('')
+
+        const failureMessage =
+          err?.type === 'invalid_api_key'
+            ? err.message || 'The provider rejected the API key.'
+            : err?.message || 'The run failed before producing output.'
+
         if (err && err.type === 'invalid_api_key') {
           setError(err)
         } else {
-          setError({ type: 'generic', message: err.message })
+          setError({ type: 'generic', message: failureMessage })
+        }
+
+        if (!completionRecorded) {
+          saveRun({
+            runId: `${agent.id}_${Date.now()}`,
+            agentId: agent.id,
+            agentName: agent.name,
+            inputs: { ...inputs },
+            output: '',
+            error: failureMessage,
+            status: 'failed',
+            provider: actualProvider,
+            model,
+          })
         }
       }
     } finally {

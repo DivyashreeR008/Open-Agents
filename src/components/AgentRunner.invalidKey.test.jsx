@@ -25,6 +25,8 @@ vi.mock('./ScheduleAgentModal', () => ({ default: () => null }))
 
 import AgentRunner from './AgentRunner'
 
+const storedHistory = () => JSON.parse(localStorage.getItem('OpenAgents_history') || '[]')
+
 const agent = {
   id: 'key-agent',
   name: 'Key Agent',
@@ -67,6 +69,16 @@ describe('AgentRunner provider error rendering', () => {
       expect(screen.getByText('Your Anthropic API key is invalid or expired.')).toBeInTheDocument()
     })
     expect(screen.getByText(/Details: key rejected/)).toBeInTheDocument()
+    await waitFor(() => expect(storedHistory()).toHaveLength(1))
+    expect(storedHistory()[0]).toMatchObject({
+      agentId: 'key-agent',
+      agentName: 'Key Agent',
+      inputs: { text: 'hello' },
+      output: '',
+      error: 'The provider rejected the API key.',
+      status: 'failed',
+      provider: 'openai',
+    })
   })
 
   it('renders a generic error message from a thrown Error', async () => {
@@ -84,6 +96,14 @@ describe('AgentRunner provider error rendering', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Provider unavailable')).toBeInTheDocument()
+    })
+    await waitFor(() => expect(storedHistory()).toHaveLength(1))
+    expect(storedHistory()[0]).toMatchObject({
+      agentId: 'key-agent',
+      inputs: { text: 'hello' },
+      output: '',
+      error: 'Provider unavailable',
+      status: 'failed',
     })
   })
 })

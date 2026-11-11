@@ -199,7 +199,7 @@ describe('AgentRunner: stream cancellation lifecycle', () => {
     expect(analyticsFor('test-agent')).toHaveLength(0)
   })
 
-  it('a provider error event mid-stream shows an error and records no run', async () => {
+  it('a provider error event mid-stream shows an error and records a failed run', async () => {
     await startRun()
     await act(async () => {
       push(0, 'The first issue is that the function mutates its')
@@ -214,7 +214,17 @@ describe('AgentRunner: stream cancellation lifecycle', () => {
     expect(await screen.findByText(/Overloaded/)).toBeInTheDocument()
     expect(screen.queryByText(/Streaming\.\.\.\./)).toBeNull()
     expect(screen.queryByTestId('output')).toBeNull()
-    expect(history()).toHaveLength(0)
+    await waitFor(() => expect(history()).toHaveLength(1))
+    expect(history()[0]).toMatchObject({
+      agentId: 'test-agent',
+      agentName: 'Test Agent',
+      inputs: { text: 'some input' },
+      output: '',
+      error: 'Overloaded',
+      status: 'failed',
+      provider: 'openai',
+    })
+    expect(history()[0].model).toBeTruthy()
     expect(analyticsFor('test-agent')).toHaveLength(0)
     expect(screen.getByRole('button', { name: /run agent/i })).toBeInTheDocument()
   })
