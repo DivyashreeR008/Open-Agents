@@ -42,6 +42,22 @@
   color: '6f42c1'
   description: 'NSoC 2026 program issue'
 
+- name: 'nsoc26'
+  color: '6f42c1'
+  description: 'NSoC 2026 season'
+
+- name: 'level1'
+  color: 'c2e0c6'
+  description: 'NSoC Level 1 - easy (+3)'
+
+- name: 'level2'
+  color: 'fbca04'
+  description: 'NSoC Level 2 - medium (+5)'
+
+- name: 'level3'
+  color: 'b60205'
+  description: 'NSoC Level 3 - hard (+10)'
+
 - name: 'difficulty: easy'
   color: 'c2e0c6'
   description: 'Small, well-scoped NSoC 2026 task'

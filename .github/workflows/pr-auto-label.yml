@@ -1,0 +1,40 @@
+name: Auto Label New Pull Requests
+
+# The NSoC leaderboard penalises every merged PR that carries no `nsoc26`
+# label (-5 each). This workflow makes sure no PR can land unlabelled.
+on:
+  pull_request_target:
+    types: [opened, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  auto-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add the NSoC season label
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const labels = ['nsoc26'];
+
+            // Mirror the conventional-commit type into a GitHub label so the
+            // board can tell features from fixes.
+            const title = (context.payload.pull_request?.title || '').trim();
+            if (/^feat(\(|!|:)/i.test(title)) labels.push('enhancement');
+            else if (/^fix(\(|!|:)/i.test(title)) labels.push('bug');
+            else if (/^docs?(\s|\(|:)/i.test(title)) labels.push('documentation');
+
+            // Automated dependency PRs are not participant work.
+            if (context.payload.pull_request?.user?.login === 'dependabot[bot]') {
+              labels.push('automated', 'dependencies');
+            }
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              labels: [...new Set(labels)],
+            });

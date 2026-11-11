@@ -39,12 +39,18 @@ jobs:
             const labels = new Set();
 
             // Every issue belongs to the current NSoC season.
+            // `nsoc26` is the exact label the NSoC leaderboard scores on;
+            // `nsoc-2026` is kept for the repo's own history/filters.
             labels.add('nsoc-2026');
+            labels.add('nsoc26');
 
             if (type) labels.add(type);
 
             if (difficulty) {
               labels.add(`difficulty: ${difficulty}`);
+              // NSoC scoring label: easy => level1 (+3), medium => level2 (+5),
+              // hard => level3 (+10).
+              labels.add({ easy: 'level1', medium: 'level2', hard: 'level3' }[difficulty]);
               // Repo convention: good first issue <=> difficulty: easy
               if (difficulty === 'easy') labels.add('good first issue');
             }
