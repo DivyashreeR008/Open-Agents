@@ -1,5 +1,8 @@
+import { useState } from 'react'
 import { RotateCcw, Copy, Trash2, History } from 'lucide-react'
+import ConfirmDialog from './ConfirmDialog'
 import { formatExactTime, formatRelativeTime, useNow } from '../lib/formatting'
+import { useTimedState } from '../lib/useTimedState'
 
 const providerDot = (provider) => {
   const p = provider?.toLowerCase() || ''
@@ -11,11 +14,29 @@ const providerDot = (provider) => {
 
 export default function RecentRuns({ history, onRerun, onCopy, onDelete, onClearAll }) {
   const now = useNow()
+  const [confirmingClear, setConfirmingClear] = useState(false)
+  const [clearNotice, setClearNotice] = useTimedState(null)
 
-  if (!history || history.length === 0) {
+  const runCount = history?.length || 0
+
+  const handleClear = () => {
+    onClearAll?.()
+    setConfirmingClear(false)
+    setClearNotice('Run history cleared.', 4000)
+  }
+
+  if (runCount === 0) {
     return (
       <div className="animate-fade-in">
         <span className="eyebrow">Recent runs</span>
+        {clearNotice && (
+          <p
+            role="status"
+            className="mt-2 border border-zinc-200 px-3 py-2 text-xs text-zinc-700 dark:border-border dark:text-text-secondary"
+          >
+            {clearNotice}
+          </p>
+        )}
         <div className="mt-2 flex flex-col items-center justify-center gap-2 border border-dashed border-zinc-300 px-4 py-10 text-center dark:border-border-light">
           <History size={16} className="text-zinc-300 dark:text-text-muted" aria-hidden="true" />
           <p className="text-xs leading-relaxed text-zinc-500 dark:text-text-secondary">
@@ -25,6 +46,11 @@ export default function RecentRuns({ history, onRerun, onCopy, onDelete, onClear
       </div>
     )
   }
+
+  const clearDescription =
+    runCount === 1
+      ? 'This removes the saved run, including its input and output. This cannot be undone.'
+      : `This removes all ${runCount} saved runs, including their inputs and outputs. This cannot be undone.`
 
   return (
     <div className="animate-fade-in">
@@ -36,13 +62,23 @@ export default function RecentRuns({ history, onRerun, onCopy, onDelete, onClear
           </span>
         </div>
         <button
-          onClick={onClearAll}
+          onClick={() => setConfirmingClear(true)}
           className="font-mono text-[10px] uppercase tracking-[0.1em] text-zinc-400 transition-colors hover:text-black dark:hover:text-white dark:text-text-muted"
           aria-label="Clear all history"
+          aria-haspopup="dialog"
         >
           Clear
         </button>
       </div>
+
+      {clearNotice && (
+        <p
+          role="status"
+          className="mb-2 border border-zinc-200 px-3 py-2 text-xs text-zinc-700 dark:border-border dark:text-text-secondary"
+        >
+          {clearNotice}
+        </p>
+      )}
 
       <div className="space-y-2 lg:max-h-[calc(100vh-150px)] lg:min-h-[280px] lg:overflow-y-auto">
         {history.map((run) => (
@@ -101,6 +137,16 @@ export default function RecentRuns({ history, onRerun, onCopy, onDelete, onClear
           </article>
         ))}
       </div>
+
+      {confirmingClear && (
+        <ConfirmDialog
+          title="Clear run history?"
+          description={clearDescription}
+          confirmLabel="Clear history"
+          onConfirm={handleClear}
+          onClose={() => setConfirmingClear(false)}
+        />
+      )}
     </div>
   )
 }

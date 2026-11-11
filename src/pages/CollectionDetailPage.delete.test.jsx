@@ -35,6 +35,9 @@ describe('CollectionDetailPage deletion', () => {
     )
 
     fireEvent.click(screen.getByRole('button', { name: 'Delete' }))
+    expect(actions.deleteCollection).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Delete collection' }))
 
     expect(actions.deleteCollection).toHaveBeenCalledWith('c1')
     expect(screen.getByText('collection index')).toBeInTheDocument()

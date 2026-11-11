@@ -87,9 +87,32 @@ describe('CollectionsPage actions', () => {
     expect(mocks.flash).toHaveBeenLastCalledWith('Limit reached')
   })
 
-  it('deletes the selected collection by id', () => {
+  it('asks for confirmation before deleting the selected collection', () => {
+    mocks.deleteCollection.mockReturnValue({ ok: true })
     renderPage()
+
     fireEvent.click(screen.getByRole('button', { name: 'Delete Launch' }))
+
+    expect(mocks.deleteCollection).not.toHaveBeenCalled()
+    const dialog = screen.getByRole('alertdialog')
+    expect(dialog).toHaveTextContent('Delete collection?')
+    expect(dialog).toHaveTextContent('"Launch"')
+    expect(dialog).toHaveTextContent('1 saved agent stays available in All Agents')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Delete collection' }))
+
     expect(mocks.deleteCollection).toHaveBeenCalledWith('launch')
+    expect(mocks.flash).toHaveBeenCalledWith('Deleted "Launch".')
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
+  })
+
+  it('keeps the collection when deletion is cancelled', () => {
+    renderPage()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Delete Launch' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+
+    expect(mocks.deleteCollection).not.toHaveBeenCalled()
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
   })
 })

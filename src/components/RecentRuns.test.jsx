@@ -1,4 +1,5 @@
-import { act, fireEvent, render, screen } from '@testing-library/react'
+import { useState } from 'react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import RecentRuns from './RecentRuns'
 
@@ -177,8 +178,50 @@ describe('RecentRuns', () => {
     expect(screen.getByText('unknown')).toBeInTheDocument()
   })
 
-  it('wires clear, delete, rerun, and copy actions to their handlers', () => {
+  it('asks before clearing history and confirms when it completes', () => {
     const onClearAll = vi.fn()
+    const runs = [makeRun(), makeRun({ id: 'run-2', output: 'Second output.' })]
+
+    render(<RecentRuns history={runs} onClearAll={onClearAll} />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Clear all history' }))
+
+    expect(onClearAll).not.toHaveBeenCalled()
+    const dialog = screen.getByRole('alertdialog')
+    expect(within(dialog).getByText('Clear run history?')).toBeInTheDocument()
+    expect(dialog).toHaveTextContent('all 2 saved runs')
+    expect(dialog).toHaveTextContent('inputs and outputs')
+
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }))
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
+    expect(onClearAll).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Clear all history' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Clear history' }))
+
+    expect(onClearAll).toHaveBeenCalledTimes(1)
+    expect(screen.getByRole('status')).toHaveTextContent('Run history cleared.')
+  })
+
+  it('shows the completion message briefly after the list becomes empty', () => {
+    function HistoryHarness() {
+      const [history, setHistory] = useState([makeRun()])
+      return <RecentRuns history={history} onClearAll={() => setHistory([])} />
+    }
+
+    render(<HistoryHarness />)
+    fireEvent.click(screen.getByRole('button', { name: 'Clear all history' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Clear history' }))
+
+    expect(screen.getByText('Runs you start will show up here.')).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('Run history cleared.')
+
+    act(() => vi.advanceTimersByTime(4000))
+
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+  })
+
+  it('wires delete, rerun, and copy actions to their handlers', () => {
     const onDelete = vi.fn()
     const onRerun = vi.fn()
     const onCopy = vi.fn()
@@ -190,12 +233,9 @@ describe('RecentRuns', () => {
         onRerun={onRerun}
         onCopy={onCopy}
         onDelete={onDelete}
-        onClearAll={onClearAll}
+        onClearAll={vi.fn()}
       />
     )
-
-    fireEvent.click(screen.getByRole('button', { name: 'Clear all history' }))
-    expect(onClearAll).toHaveBeenCalledTimes(1)
 
     const deleteButtons = screen.getAllByRole('button', { name: 'Delete run' })
     expect(deleteButtons[0]).toHaveClass('opacity-0')

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Copy, Download, Edit3, FolderPlus, Plus, Trash2, Upload } from 'lucide-react'
 import CollectionModal from '../components/CollectionModal'
+import ConfirmDialog from '../components/ConfirmDialog'
 import ImportCollectionModal from '../components/collections/ImportCollectionModal'
 import PageHeader from '../components/layout/PageHeader'
 import EmptyState from '../components/layout/EmptyState'
@@ -25,6 +26,7 @@ export default function CollectionsPage() {
   const { notice, flash } = useFlashNotice()
   const { agents, loading, error: agentsError } = useAgents()
   const [modal, setModal] = useState(null)
+  const [pendingDelete, setPendingDelete] = useState(null)
   const [name, setName] = useState('')
   const [error, setError] = useState('')
 
@@ -67,6 +69,21 @@ export default function CollectionsPage() {
     const result = duplicateCollection(collection.id)
     flash(result.ok ? `Created "${result.collection.name}".` : result.error)
   }
+
+  const confirmDelete = () => {
+    if (!pendingDelete) return
+    const result = deleteCollection(pendingDelete.id)
+    flash(result?.ok === false ? result.error : `Deleted "${pendingDelete.name}".`)
+    setPendingDelete(null)
+  }
+
+  const deleteDescription = pendingDelete
+    ? pendingDelete.agentIds.length === 0
+      ? `"${pendingDelete.name}" will be removed. The agents themselves stay available in All Agents. This cannot be undone.`
+      : `"${pendingDelete.name}" will be removed. Its ${pendingDelete.agentIds.length} saved ${
+          pendingDelete.agentIds.length === 1 ? 'agent stays' : 'agents stay'
+        } available in All Agents. This cannot be undone.`
+    : ''
 
   const handleImport = (data) => {
     const result = importCollection(data)
@@ -204,9 +221,10 @@ export default function CollectionsPage() {
                   <Copy size={13} />
                 </button>
                 <button
-                  onClick={() => deleteCollection(collection.id)}
+                  onClick={() => setPendingDelete(collection)}
                   className="btn-ghost h-7 px-2 hover:text-black dark:hover:text-white"
                   aria-label={`Delete ${collection.name}`}
+                  aria-haspopup="dialog"
                   title="Delete"
                 >
                   <Trash2 size={13} />
@@ -245,6 +263,16 @@ export default function CollectionsPage() {
           onClose={() => setModal(null)}
           onSubmit={submitRename}
           submitLabel="Save"
+        />
+      )}
+
+      {pendingDelete && (
+        <ConfirmDialog
+          title="Delete collection?"
+          description={deleteDescription}
+          confirmLabel="Delete collection"
+          onConfirm={confirmDelete}
+          onClose={() => setPendingDelete(null)}
         />
       )}
     </div>
