@@ -21,7 +21,9 @@ describe('global key save and clear behavior', () => {
     expect(result).toEqual({
       stored: ['openai'],
       skipped: ['anthropic'],
+      failed: [],
       defaultProvider: 'openai',
+      defaultProviderFailed: false,
     })
     expect(getGlobalKeys()).toMatchObject({ openai: 'sk-test', defaultProvider: 'openai' })
   })
