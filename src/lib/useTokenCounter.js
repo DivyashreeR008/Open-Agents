@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 
 function estimateTokens(text) {
-  if (!text) return 0
+  if (typeof text !== 'string' || !text) return 0
   const cleaned = text.trim()
   if (!cleaned) return 0
 
