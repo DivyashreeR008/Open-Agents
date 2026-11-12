@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { X, Clock, Zap, AlertCircle, ShieldCheck, Mail, Lock } from 'lucide-react'
 import { SCHEDULE_PRESETS, createAutomation } from '../lib/automationsService'
 import { MODEL_MAP, MODELS } from '../lib/resolveAgentModel'
+import { apiKeyFieldProps } from '../lib/apiKeyFieldProps'
 
 /**
  * ScheduleAgentModal
@@ -202,6 +203,7 @@ export default function ScheduleAgentModal({
               <input
                 aria-label="Provider API key"
                 type="password"
+                {...apiKeyFieldProps('scheduled-run-api-key')}
                 value={keyOverride}
                 onChange={(e) => setKeyOverride(e.target.value)}
                 placeholder="Enter provider API key"

@@ -22,6 +22,7 @@ import {
   normalizeMissedPolicy,
 } from '../lib/missedRuns'
 import { MODEL_MAP, MODELS } from '../lib/resolveAgentModel'
+import { apiKeyFieldProps } from '../lib/apiKeyFieldProps'
 import { useAgents } from '../lib/useAgents'
 import { useProgressiveList } from '../lib/useProgressiveList'
 import { useApiKey } from '../lib/useApiKey'
@@ -500,6 +501,7 @@ export default function CreateAutomationModal({
               <input
                 aria-label={`${provider} API key`}
                 type="password"
+                {...apiKeyFieldProps(`automation-api-key-${provider}`)}
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
                 placeholder={
