@@ -28,6 +28,7 @@ describe('Privacy policy content', () => {
     expect(headings).toEqual([
       'Information We Collect',
       'Cookies & Local Storage',
+      'Network Activity',
       'How We Use Your Information',
       'Data Security',
       'Your Privacy Rights',

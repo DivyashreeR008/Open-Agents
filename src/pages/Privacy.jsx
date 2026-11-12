@@ -14,6 +14,12 @@ const sections = [
       "OpenAgents uses your browser's local storage to improve your experience. For example, recently viewed agents and certain user preferences may be stored locally on your device. This information stays in your browser and can be cleared at any time through your browser settings.",
   },
   {
+    icon: Globe,
+    title: 'Network Activity',
+    content:
+      'Typefaces and styles are served from the same origin as the application, so opening a page does not contact a third-party font service. Requests to an AI provider occur only when you run an agent with the API key you supply. Optional cloud features contact the configured backend only when you use them.',
+  },
+  {
     icon: Eye,
     title: 'How We Use Your Information',
     content:

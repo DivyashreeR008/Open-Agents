@@ -41,9 +41,9 @@ export default {
         warning: '#D4D4D4',
       },
       fontFamily: {
-        display: ['Inter Tight', 'Inter', 'system-ui', 'sans-serif'],
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'ui-monospace', 'monospace'],
+        display: ['Inter Tight Variable', 'Inter Variable', 'system-ui', 'sans-serif'],
+        sans: ['Inter Variable', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['JetBrains Mono Variable', 'Fira Code', 'ui-monospace', 'monospace'],
       },
       borderRadius: {
         // Square everything. Structure comes from rules, not from radii.

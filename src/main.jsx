@@ -4,6 +4,9 @@ import { BrowserRouter } from 'react-router-dom'
 import { AgentsProvider } from './lib/useAgents'
 import App from './App'
 import Preloader from './components/Preloader'
+import '@fontsource-variable/inter'
+import '@fontsource-variable/inter-tight'
+import '@fontsource-variable/jetbrains-mono'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
