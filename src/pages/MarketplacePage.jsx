@@ -20,6 +20,7 @@ import { useDialogFocus } from '../hooks/useDialogFocus'
 import {
   MARKETPLACE_CATEGORIES,
   MARKETPLACE_SORTS,
+  createAgentSnapshot,
   loadListings,
   publishAgent,
   importAgent,
@@ -173,6 +174,7 @@ function PublishModal({ agents, onClose, onPublished }) {
         provider: selected.provider,
         systemPrompt: selected.systemPrompt,
         outputType: selected.outputType ?? 'text',
+        agentSnapshot: createAgentSnapshot(selected),
       },
     })
     onPublished(listing)
@@ -349,7 +351,9 @@ function PublishModal({ agents, onClose, onPublished }) {
             <ShieldCheck size={14} className="text-zinc-400 flex-shrink-0 mt-0.5" />
             <p className="text-[11px] text-zinc-400/90">
               Credential fields (API keys, tokens, secrets) are replaced with placeholders before
-              publishing. Importers must supply their own values.
+              publishing. The rest of the agent definition, including its inputs, model, and output
+              settings, travels with the listing so importers get the same behavior. Importers must
+              supply their own credentials.
             </p>
           </div>
 

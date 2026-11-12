@@ -101,7 +101,7 @@ export default function MarketplaceDraftPage() {
       {loading ? null : !draftAgent ? (
         <EmptyState
           title="This draft cannot run"
-          description="The agent it was built from is no longer in the catalogue. You can still remove the draft."
+          description="The agent it was built from is no longer in the catalogue, and this listing does not include a runnable snapshot. You can still remove the draft."
         />
       ) : missing.length > 0 ? (
         <p
