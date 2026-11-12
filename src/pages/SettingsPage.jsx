@@ -163,10 +163,15 @@ export default function SettingsPage() {
 
   const handleSave = () => {
     try {
-      const { stored, skipped, failed, defaultProviderFailed } = saveGlobalKeys({
+      const {
+        stored = [],
+        skipped = [],
+        failed = [],
+        defaultProviderFailed = false,
+      } = saveGlobalKeys({
         ...keys,
         defaultProvider,
-      })
+      }) || {}
       // Refresh saved status from the storage layer so the badges reflect what
       // was actually written, not what the form happened to contain.
       const current = getGlobalKeys()
