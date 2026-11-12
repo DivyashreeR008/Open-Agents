@@ -12,10 +12,15 @@ const expectedLinks = [
   ],
   ['Issues & Tasks', 'Issues', 'https://github.com/DivyashreeR008/Open-Agents/issues'],
   ['Discussions', 'Community', 'https://github.com/DivyashreeR008/Open-Agents/discussions'],
+  [
+    'Accessibility',
+    'Access',
+    'https://github.com/DivyashreeR008/Open-Agents/blob/main/ACCESSIBILITY.md',
+  ],
 ]
 
 describe('AboutResources', () => {
-  it('renders the section heading and five ordered resource links', () => {
+  it('renders the section heading and six ordered resource links', () => {
     render(<AboutResources />)
 
     expect(
@@ -28,7 +33,7 @@ describe('AboutResources', () => {
     ).toBeInTheDocument()
 
     const links = screen.getAllByRole('link')
-    expect(links).toHaveLength(5)
+    expect(links).toHaveLength(6)
     expect(links.map((link) => link.getAttribute('href'))).toEqual(
       expectedLinks.map((entry) => entry[2])
     )
@@ -48,7 +53,7 @@ describe('AboutResources', () => {
     render(<AboutResources />)
     const headings = screen.getAllByRole('heading', { level: 3 })
 
-    expect(headings).toHaveLength(5)
+    expect(headings).toHaveLength(6)
     expectedLinks.forEach(([title], index) => {
       expect(headings[index]).toHaveTextContent(title)
     })
@@ -64,7 +69,7 @@ describe('AboutResources', () => {
     const { container } = render(<AboutResources />)
     const icons = [...container.querySelectorAll('svg')]
 
-    expect(icons).toHaveLength(10)
+    expect(icons).toHaveLength(expectedLinks.length * 2)
     for (const icon of icons) {
       expect(icon).toHaveAttribute('aria-hidden', 'true')
     }

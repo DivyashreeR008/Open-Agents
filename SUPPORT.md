@@ -39,6 +39,11 @@ That is it. No need to be formal. Just tell us where you are stuck and we will h
 
 ---
 
+## Accessibility
+
+If you hit an accessibility barrier, please read [ACCESSIBILITY.md](./ACCESSIBILITY.md)
+for our current status, known limitations, and how to report the issue.
+
 ## Stay Connected
 
 If you enjoy working on Open-Agents, hit **Watch** on the repo
