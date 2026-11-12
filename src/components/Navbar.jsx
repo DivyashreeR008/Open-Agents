@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   Sun,
   Moon,
+  Monitor,
   Menu,
   X,
   HelpCircle,
@@ -19,6 +20,19 @@ import KeyboardShortcutsModal from './KeyboardShortcutsModal'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 import { useSessionSpend } from '../lib/useSessionSpend'
 import { formatCost } from '../lib/formatting'
+import {
+  applyResolvedTheme,
+  readThemeMode,
+  resolveThemeMode,
+  systemPrefersDark,
+  writeThemeMode,
+} from '../lib/theme'
+
+const THEME_OPTIONS = [
+  { value: 'system', label: 'System', Icon: Monitor },
+  { value: 'light', label: 'Light', Icon: Sun },
+  { value: 'dark', label: 'Dark', Icon: Moon },
+]
 
 function updateThemeMeta(isDark) {
   if (typeof document === 'undefined') return
@@ -36,43 +50,71 @@ function updateThemeMeta(isDark) {
  * navigation lives in the Sidebar so this row never gets crowded.
  */
 export default function Navbar({ sidebarOpen, setSidebarOpen, onOpenCommandPalette }) {
-  const [darkMode, setDarkMode] = useState(true)
+  const [themeMode, setThemeMode] = useState(() => readThemeMode())
+  const [systemDark, setSystemDark] = useState(() => systemPrefersDark())
+  const [showThemeMenu, setShowThemeMenu] = useState(false)
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showSpendPopup, setShowSpendPopup] = useState(false)
+  const themeMenuRef = useRef(null)
   const { totalSpend, runs, clearSession } = useSessionSpend()
   const navigate = useNavigate()
+
+  const resolvedTheme = resolveThemeMode(themeMode, systemDark)
+  const darkMode = resolvedTheme === 'dark'
 
   useKeyboardShortcuts({
     '?': () => setShowShortcuts(true),
   })
 
   useEffect(() => {
-    const saved = localStorage.getItem('oa_theme')
+    applyResolvedTheme(resolvedTheme)
+    updateThemeMeta(darkMode)
+  }, [resolvedTheme, darkMode])
 
-    if (saved === 'light') {
-      setDarkMode(false)
-      document.documentElement.classList.remove('dark')
-      updateThemeMeta(false)
-    } else {
-      document.documentElement.classList.add('dark')
-      updateThemeMeta(true)
+  useEffect(() => {
+    if (themeMode !== 'system') return undefined
+
+    const media = window.matchMedia?.('(prefers-color-scheme: dark)')
+    if (!media) return undefined
+
+    if (typeof media.matches === 'boolean') setSystemDark(media.matches)
+    const handleChange = (event) => setSystemDark(event.matches)
+
+    if (media.addEventListener) media.addEventListener('change', handleChange)
+    else media.addListener?.(handleChange)
+
+    return () => {
+      if (media.removeEventListener) media.removeEventListener('change', handleChange)
+      else media.removeListener?.(handleChange)
     }
-  }, [])
+  }, [themeMode])
 
-  const toggleTheme = () => {
-    const next = !darkMode
-    setDarkMode(next)
+  useEffect(() => {
+    if (!showThemeMenu) return undefined
 
-    if (next) {
-      document.documentElement.classList.add('dark')
-      localStorage.setItem('oa_theme', 'dark')
-      updateThemeMeta(true)
-    } else {
-      document.documentElement.classList.remove('dark')
-      localStorage.setItem('oa_theme', 'light')
-      updateThemeMeta(false)
+    const handlePointerDown = (event) => {
+      if (!themeMenuRef.current?.contains(event.target)) setShowThemeMenu(false)
     }
+    const handleKeyDown = (event) => {
+      if (event.key !== 'Escape') return
+      setShowThemeMenu(false)
+      document.getElementById('nav-theme-toggle')?.focus()
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown)
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [showThemeMenu])
+
+  const chooseTheme = (mode) => {
+    if (mode === 'system') setSystemDark(systemPrefersDark())
+    setThemeMode(mode)
+    writeThemeMode(mode)
+    setShowThemeMenu(false)
   }
 
   const handleSearchClick = () => {
@@ -212,14 +254,52 @@ export default function Navbar({ sidebarOpen, setSidebarOpen, onOpenCommandPalet
               </div>
             )}
 
-            <button
-              id="nav-theme-toggle"
-              onClick={toggleTheme}
-              className="btn-icon"
-              aria-label="Toggle theme"
-            >
-              {darkMode ? <Sun size={16} /> : <Moon size={16} />}
-            </button>
+            <div className="relative" ref={themeMenuRef}>
+              <button
+                id="nav-theme-toggle"
+                type="button"
+                onClick={() => setShowThemeMenu((open) => !open)}
+                className="btn-icon"
+                aria-label="Theme settings"
+                aria-haspopup="menu"
+                aria-expanded={showThemeMenu}
+                title={`Theme: ${themeMode}`}
+              >
+                {themeMode === 'system' ? (
+                  <Monitor size={16} />
+                ) : darkMode ? (
+                  <Sun size={16} />
+                ) : (
+                  <Moon size={16} />
+                )}
+              </button>
+
+              {showThemeMenu && (
+                <div
+                  role="menu"
+                  aria-label="Theme"
+                  className="absolute right-0 top-full z-50 mt-2 w-36 animate-fade-in border border-zinc-200 bg-white p-1 shadow-pop dark:border-border dark:bg-surface-card"
+                >
+                  {THEME_OPTIONS.map(({ value, label, Icon }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      role="menuitemradio"
+                      aria-checked={themeMode === value}
+                      onClick={() => chooseTheme(value)}
+                      className={`flex w-full items-center gap-2 px-2 py-1.5 text-left text-xs transition-colors ${
+                        themeMode === value
+                          ? 'bg-zinc-500/10 font-semibold text-zinc-900 dark:text-text-primary'
+                          : 'text-zinc-600 hover:bg-zinc-500/10 dark:text-text-secondary'
+                      }`}
+                    >
+                      <Icon size={13} aria-hidden="true" />
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
 
             <Link
               id="nav-settings-link"
