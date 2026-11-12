@@ -67,6 +67,7 @@ export default function ApiKeyBar({
   agentProvider,
   model,
   setModel,
+  apiKeyInputRef,
 }) {
   const [showKey, setShowKey] = useState(false)
   const [geminiModels, setGeminiModels] = useState([])
@@ -187,6 +188,7 @@ export default function ApiKeyBar({
         {/* API Key Input */}
         <div className="flex-1 min-w-[180px] relative">
           <input
+            ref={apiKeyInputRef}
             aria-label="API key"
             type={showKey ? 'text' : 'password'}
             value={apiKey}
