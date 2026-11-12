@@ -8,15 +8,24 @@ describe('useHistory storage quota failure', () => {
     localStorage.clear()
   })
 
-  it('keeps the new run in memory when persistence throws', () => {
+  it('does not expose a run that storage rejected', () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {})
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
       throw new DOMException('Quota exceeded', 'QuotaExceededError')
     })
     const { result } = renderHook(() => useHistory())
 
-    act(() => result.current.saveRun({ agentId: 'a1', agentName: 'Writer', output: 'done' }))
+    let outcome
+    act(() => {
+      outcome = result.current.saveRun({
+        agentId: 'a1',
+        agentName: 'Writer',
+        output: 'done',
+      })
+    })
 
-    expect(result.current.history).toHaveLength(1)
-    expect(result.current.history[0].agentName).toBe('Writer')
+    expect(outcome).toMatchObject({ ok: false, reason: 'quota' })
+    expect(result.current.history).toEqual([])
+    expect(localStorage.getItem('OpenAgents_history')).toBeNull()
   })
 })

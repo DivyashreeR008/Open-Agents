@@ -43,6 +43,9 @@ export default function RecentRuns({ history, onRerun, onCopy, onDelete, onClear
           Clear
         </button>
       </div>
+      <p className="mb-2 text-[10px] leading-relaxed text-zinc-400 dark:text-text-muted">
+        Stored locally. Long outputs are trimmed in history.
+      </p>
 
       <div className="space-y-2 lg:max-h-[calc(100vh-150px)] lg:min-h-[280px] lg:overflow-y-auto">
         {history.map((run) => (
