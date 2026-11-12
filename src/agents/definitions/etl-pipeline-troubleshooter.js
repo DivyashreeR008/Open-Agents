@@ -10,7 +10,7 @@ export default {
   defaultProvider: 'gemini',
   model: 'gemini-2.5-flash',
   exampleInputs: {
-    tool: 'ODI',
+    tool: 'ODI (Oracle Data Integrator)',
     errorMessage:
       'ODI-1228: Task SrcSet fails on the target connection. java.sql.SQLException: ORA-00904: invalid identifier',
     pipelineContext: 'Loading customer master data from Oracle EBS to Snowflake',
