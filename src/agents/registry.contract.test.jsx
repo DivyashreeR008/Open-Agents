@@ -26,10 +26,19 @@ vi.mock('../lib/useApiKey', () => ({
 }))
 
 import AgentRunner from '../components/AgentRunner'
+import { MODELS, resolveAgentModel } from '../lib/resolveAgentModel'
 import { AGENT_COUNT } from './registry'
 
 const rawModules = import.meta.glob('./definitions/*.js', { eager: true })
 const SUPPORTED_INPUT_TYPES = new Set(['text', 'textarea', 'code', 'select', 'multiselect'])
+const SUPPORTED_PROVIDERS = new Set(Object.keys(MODELS))
+const UNREAD_TOP_LEVEL_KEYS = new Set([
+  'defaultModels',
+  'supportedProviders',
+  'loadExampleButton',
+  'exportOptions',
+  'copyOptions',
+])
 
 function moduleEntries() {
   return Object.entries(rawModules).map(([path, module]) => ({
@@ -59,6 +68,53 @@ describe('raw agent-definition contract', () => {
           errors.push(`${identity}: ${field} must be a non-empty string`)
         }
       }
+
+      for (const key of UNREAD_TOP_LEVEL_KEYS) {
+        if (Object.prototype.hasOwnProperty.call(agent, key)) {
+          errors.push(`${identity}: "${key}" is not read by the runtime; remove it or wire it up`)
+        }
+      }
+
+      if (
+        agent.provider != null &&
+        agent.provider !== 'any' &&
+        !SUPPORTED_PROVIDERS.has(agent.provider)
+      ) {
+        errors.push(`${identity}: unsupported provider "${agent.provider}"`)
+      }
+      if (agent.defaultProvider != null && !SUPPORTED_PROVIDERS.has(agent.defaultProvider)) {
+        errors.push(`${identity}: unsupported defaultProvider "${agent.defaultProvider}"`)
+      }
+      if (agent.models != null) {
+        if (typeof agent.models !== 'object' || Array.isArray(agent.models)) {
+          errors.push(`${identity}: models must be an object`)
+        } else {
+          for (const [provider, model] of Object.entries(agent.models)) {
+            const catalog = MODELS[provider]
+            if (!catalog) {
+              errors.push(`${identity}: models has unsupported provider "${provider}"`)
+            } else if (
+              typeof model !== 'string' ||
+              !catalog.some((entry) => entry.value === model)
+            ) {
+              errors.push(`${identity}: models.${provider} must be one of the catalog model values`)
+            } else if (resolveAgentModel(agent, provider) !== model) {
+              errors.push(`${identity}: resolveAgentModel ignores models.${provider}`)
+            }
+          }
+        }
+      }
+      if (
+        agent.models &&
+        agent.defaultProvider &&
+        agent.model &&
+        !MODELS[agent.defaultProvider]?.some((entry) => entry.value === agent.model)
+      ) {
+        errors.push(
+          `${identity}: model must be in the ${agent.defaultProvider} catalog when models is configured`
+        )
+      }
+
       if (!Array.isArray(agent.inputs)) {
         errors.push(`${identity}: inputs must be an array`)
         continue

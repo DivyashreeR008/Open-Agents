@@ -7,15 +7,15 @@ const mlExperimentAutopsy = {
   icon: 'ChartSpline',
 
   provider: 'any',
-  supportedProviders: ['openai', 'anthropic', 'google', 'mistral'],
   defaultProvider: 'anthropic',
-  defaultModels: {
+  // resolveAgentModel reads this map before falling back to the single model below.
+  models: {
     openai: 'gpt-4o',
-    anthropic: 'claude-sonnet-4-20250514',
-    google: 'gemini-1.5-pro',
-    mistral: 'mistral-large-latest',
+    anthropic: 'claude-3-5-sonnet-20241022',
+    gemini: 'gemini-2.5-flash',
+    openrouter: 'openai/gpt-4o-mini',
   },
-  model: 'claude-sonnet-4-20250514',
+  model: 'claude-3-5-sonnet-20241022',
 
   exampleInputs: {
     model_type: 'CNN (Convolutional Neural Network)',
@@ -125,45 +125,6 @@ X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2)`,
       required: false,
     },
   ],
-
-  loadExampleButton: {
-    enabled: true,
-    label: 'Load example',
-    tooltip: 'Fill all fields with a sample CNN chest X-ray experiment',
-  },
-
-  exportOptions: {
-    markdown: {
-      enabled: true,
-      label: 'Export as Markdown',
-      filename: 'ml-autopsy-report.md',
-    },
-    pdf: {
-      enabled: true,
-      label: 'Export as PDF',
-      filename: 'ml-autopsy-report.pdf',
-      // PDF generation should use the rendered markdown output.
-      // Recommended: use a headless print approach (window.print or a lib like jsPDF / Puppeteer).
-    },
-  },
-
-  copyOptions: {
-    copyMarkdown: { enabled: true, label: 'Copy' },
-    copyPlainText: {
-      enabled: true,
-      label: 'Copy as plain text',
-      // Strip: ##, **, *, `, |, leading dashes, table separators
-      stripPatterns: [
-        /^#{1,6}\s/gm, // headings
-        /\*\*(.*?)\*\*/g, // bold → inner text
-        /\*(.*?)\*/g, // italic → inner text
-        /`{1,3}[^`]*`{1,3}/g, // inline + fenced code → inner text
-        /^\|.*\|$/gm, // table rows
-        /^[-|:\s]+$/gm, // table separators
-        /^-\s/gm, // bullet dashes
-      ],
-    },
-  },
 
   systemPrompt: `You are a senior ML engineer specializing in experiment debugging and model diagnostics.
 
