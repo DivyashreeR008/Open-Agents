@@ -36,6 +36,6 @@ describe('ErrorBoundary non-Error throws', () => {
       </ErrorBoundary>
     )
 
-    expect(screen.getByText('Unknown rendering error')).toBeInTheDocument()
+    expect(screen.getByText('Unknown error')).toBeInTheDocument()
   })
 })
