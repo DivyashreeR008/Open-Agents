@@ -124,6 +124,27 @@ describe('AgentRunner: stream cancellation lifecycle', () => {
     expect(analyticsFor('test-agent')).toHaveLength(1)
   })
 
+  it('shows a warning when history storage rejects the completed run', async () => {
+    const realSetItem = Storage.prototype.setItem
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function setItem(key, value) {
+      if (key === 'OpenAgents_history') {
+        throw new DOMException('Quota exceeded', 'QuotaExceededError')
+      }
+      return realSetItem.call(this, key, value)
+    })
+
+    await startRun()
+    await act(async () => {
+      push(0, 'hello world')
+      finish(0)
+    })
+
+    expect(await screen.findByTestId('output')).toHaveTextContent('hello world')
+    expect(await screen.findByRole('status')).toHaveTextContent(/not added to Recent runs/i)
+    expect(history()).toHaveLength(0)
+  })
+
   it('Stop keeps the partial output and returns the UI to idle (guard)', async () => {
     const { user } = await startRun()
     await act(async () => {

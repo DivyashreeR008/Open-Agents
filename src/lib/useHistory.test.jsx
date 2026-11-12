@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { useHistory } from './useHistory'
+import { HISTORY_LIMITS, useHistory } from './useHistory'
 
 const STORAGE_KEY = 'OpenAgents_history'
 
@@ -53,6 +53,22 @@ describe('useHistory loading', () => {
     expect(result.current.history).toEqual([])
     expect(() => act(() => result.current.deleteRun('anything'))).not.toThrow()
   })
+
+  it('bounds oversized output already present in storage', () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify([
+        storedRun('old', { output: 'x'.repeat(HISTORY_LIMITS.outputCharacters + 5000) }),
+      ])
+    )
+
+    const { result } = renderHook(() => useHistory())
+
+    expect(result.current.history[0].output).toContain('Output truncated in history')
+    expect(result.current.history[0].output.length).toBeLessThan(
+      HISTORY_LIMITS.outputCharacters + 200
+    )
+  })
 })
 
 describe('useHistory recording', () => {
@@ -61,8 +77,9 @@ describe('useHistory recording', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([storedRun('older')]))
     const { result } = renderHook(() => useHistory())
 
+    let outcome
     act(() => {
-      result.current.saveRun({
+      outcome = result.current.saveRun({
         agentId: 'writer',
         agentName: 'Writer',
         provider: 'openai',
@@ -71,6 +88,7 @@ describe('useHistory recording', () => {
       })
     })
 
+    expect(outcome).toEqual({ ok: true, pruned: false })
     expect(result.current.history[0]).toMatchObject({
       id: 'writer_1700',
       agentId: 'writer',
@@ -156,6 +174,60 @@ describe('useHistory recording', () => {
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY)).map((run) => run.id)).toEqual([
       'this-tab',
       'other-tab',
+    ])
+  })
+
+  it('truncates long output and marks the stored copy as incomplete', () => {
+    const { result } = renderHook(() => useHistory())
+    const output = 'x'.repeat(HISTORY_LIMITS.outputCharacters + 100)
+
+    act(() => {
+      result.current.saveRun({ agentId: 'long', agentName: 'Long', output })
+    })
+
+    const stored = result.current.history[0]
+    expect(stored.output).toContain('Output truncated in history')
+    expect(stored.output.length).toBeGreaterThan(HISTORY_LIMITS.outputCharacters)
+    expect(stored.output.length).toBeLessThan(HISTORY_LIMITS.outputCharacters + 200)
+  })
+
+  it('keeps the serialized history within the total character budget', () => {
+    const { result } = renderHook(() => useHistory())
+    const output = 'x'.repeat(HISTORY_LIMITS.outputCharacters)
+
+    act(() => {
+      for (let index = 0; index < 15; index += 1) {
+        result.current.saveRun({ agentId: `large-${index}`, agentName: 'Large', output })
+      }
+    })
+
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY))
+    expect(stored.length).toBeLessThanOrEqual(HISTORY_LIMITS.items)
+    expect(JSON.stringify(stored).length).toBeLessThanOrEqual(HISTORY_LIMITS.totalCharacters)
+    expect(stored[0].agentId).toBe('large-14')
+  })
+
+  it('falls back to the newest run when the merged list exceeds the quota', () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    const realSetItem = Storage.prototype.setItem
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([storedRun('old-1'), storedRun('old-2')]))
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function setItem(key, value) {
+      if (key === STORAGE_KEY && value.length > 200) {
+        throw new DOMException('Quota exceeded', 'QuotaExceededError')
+      }
+      return realSetItem.call(this, key, value)
+    })
+
+    const { result } = renderHook(() => useHistory())
+    let outcome
+    act(() => {
+      outcome = result.current.saveRun({ agentId: 'newest', agentName: 'Newest', output: 'saved' })
+    })
+
+    expect(outcome).toMatchObject({ ok: true, pruned: true })
+    expect(result.current.history.map((run) => run.agentId)).toEqual(['newest'])
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)).map((run) => run.agentId)).toEqual([
+      'newest',
     ])
   })
 })

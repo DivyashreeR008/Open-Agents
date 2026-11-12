@@ -30,12 +30,18 @@ beforeEach(() => {
 })
 
 describe('useHistory storage failures', () => {
-  it('keeps the in-memory run when the quota is exceeded and does not throw', () => {
+  it('does not expose a run the quota rejected and does not throw', () => {
     simulateQuotaExceeded()
     const { result } = renderHook(() => useHistory())
 
-    expect(() => act(() => result.current.saveRun(run('writer')))).not.toThrow()
-    expect(result.current.history).toHaveLength(1)
+    let outcome
+    expect(() => {
+      act(() => {
+        outcome = result.current.saveRun(run('writer'))
+      })
+    }).not.toThrow()
+    expect(outcome).toMatchObject({ ok: false, reason: 'quota' })
+    expect(result.current.history).toEqual([])
     expect(localStorage.getItem(HISTORY_KEY)).toBeNull()
     expect(console.error).toHaveBeenCalled()
   })

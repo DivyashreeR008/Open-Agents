@@ -17,6 +17,7 @@ import {
   CalendarClock,
   Layers,
   History,
+  AlertTriangle,
 } from 'lucide-react'
 import { resolveAgentIcon } from '../lib/agentIcons'
 import ApiKeyBar from './ApiKeyBar'
@@ -92,6 +93,7 @@ export default function AgentRunner({ agent }) {
   const [batchMode, setBatchMode] = useState(false)
   const [showModelSwitcher, setShowModelSwitcher] = useState(false)
   const [historyPanelOpen, setHistoryPanelOpen] = useState(false)
+  const [historyNotice, setHistoryNotice] = useState(null)
   const [viewMode, setViewMode] = useState('code')
   const { savePrompt } = usePromptHistory()
   const { addJob } = useScheduler({ autoRun: false })
@@ -281,6 +283,7 @@ export default function AgentRunner({ agent }) {
     setIsStreaming(false)
     setDuration(null)
     setMsgIndex(0)
+    setHistoryNotice(null)
 
     setVersionHistory((prevHistory) => [
       {
@@ -344,7 +347,7 @@ export default function AgentRunner({ agent }) {
 
       const runId = `${agent.id}_${Date.now()}`
 
-      saveRun({
+      const historyResult = saveRun({
         runId,
         agentId: agent.id,
         agentName: agent.name,
@@ -352,6 +355,15 @@ export default function AgentRunner({ agent }) {
         output: result.content,
         provider: actualProvider,
       })
+      if (historyResult.ok === false) {
+        setHistoryNotice(
+          'This run finished, but browser storage is full or unavailable, so it was not added to Recent runs. Free space or leave private browsing, then run it again to save it.'
+        )
+      } else if (historyResult.pruned) {
+        setHistoryNotice(
+          'This run was saved, but older Recent runs were removed to keep history within its storage limit.'
+        )
+      }
 
       recordAnalyticsRun({
         runId,
@@ -1036,6 +1048,27 @@ export default function AgentRunner({ agent }) {
                 />
               ) : (
                 error && <ErrorCard message={error.message || error} />
+              )}
+
+              {historyNotice && (
+                <div
+                  role="status"
+                  className="mb-4 flex items-start gap-3 border border-zinc-300 bg-zinc-50 px-4 py-3 text-xs leading-relaxed text-zinc-700 dark:border-border dark:bg-surface-card dark:text-text-secondary"
+                >
+                  <AlertTriangle
+                    size={14}
+                    className="mt-0.5 flex-shrink-0 text-zinc-500"
+                    aria-hidden="true"
+                  />
+                  <p className="flex-1">{historyNotice}</p>
+                  <button
+                    type="button"
+                    onClick={() => setHistoryNotice(null)}
+                    className="btn-ghost h-6 px-2 text-[11px]"
+                  >
+                    Dismiss
+                  </button>
+                </div>
               )}
 
               {loading && !isStreaming && (
