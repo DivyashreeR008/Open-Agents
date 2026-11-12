@@ -126,7 +126,10 @@ function getPath(obj, path) {
     .replace(/\[(\d+)\]/g, '.$1')
     .split('.')
     .filter(Boolean)
-    .reduce((acc, key) => (acc == null ? undefined : acc[key]), obj)
+    .reduce((acc, key) => {
+      if (acc == null || !Object.prototype.hasOwnProperty.call(acc, key)) return undefined
+      return acc[key]
+    }, obj)
 }
 
 /**
