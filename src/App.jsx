@@ -11,6 +11,7 @@ import ScrollToBottom from './components/ScrollToBottom'
 import ErrorBoundary from './components/ErrorBoundary'
 import PageTransition from './components/PageTransition'
 import RouteAnnouncer from './components/RouteAnnouncer'
+import ScrollRestoration from './components/ScrollRestoration'
 
 const HomePage = lazy(() => import('./pages/HomePage'))
 const AgentPage = lazy(() => import('./pages/AgentPage'))
@@ -112,6 +113,7 @@ export default function App() {
       <ScrollToTopButton />
       <ScrollToBottom />
       <RouteAnnouncer />
+      <ScrollRestoration />
       <CommandPalette isOpen={commandPaletteOpen} onClose={() => setCommandPaletteOpen(false)} />
       <ErrorBoundary>
         <Suspense fallback={<PageLoader />}>
