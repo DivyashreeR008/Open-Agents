@@ -204,11 +204,13 @@ export async function incrementUsage(id) {
   // 2. If we reach this point, the RPC failed. Attempt client-side fallback.
   console.warn('RPC failed, executing client-side fallback:', rpcError.message)
 
-  const { data: current } = await supabase
+  const { data: current, error: readError } = await supabase
     .from('workflows')
     .select('usage_count')
     .eq('id', id)
     .single()
+
+  if (readError) return { error: readError }
 
   if (current) {
     const { error: updateError } = await supabase
