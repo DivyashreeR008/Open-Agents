@@ -444,9 +444,11 @@ export default function SettingsPage() {
           <div className="flex items-start gap-3 mb-5 p-3 dark:bg-surface-hover bg-gray-50">
             <ShieldCheck size={16} className="text-zinc-500 flex-shrink-0 mt-0.5" />
             <p className="text-xs dark:text-text-secondary text-gray-600 leading-relaxed">
-              Saved provider keys stay in this browser session. Scheduled jobs keep a separate,
-              encrypted browser copy (and a synced copy when cloud storage is configured). Clearing
-              a key here also removes the matching scheduled-job credentials.
+              Saved provider keys last for this tab and are removed after eight hours or when the
+              tab closes. Scheduled jobs use a separate encrypted vault in this browser; that key is
+              not uploaded. Clearing a key here also removes the matching scheduled-job credential.
+              Automation definitions and saved inputs may sync to the configured Supabase project,
+              but provider keys are not included in that sync.
             </p>
           </div>
 
