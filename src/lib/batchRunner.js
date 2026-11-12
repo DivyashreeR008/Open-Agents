@@ -98,7 +98,7 @@ export function buildBatchUserMessage(agent, fixedInputs, batchFieldId, itemValu
   const parts = []
   agent.inputs.forEach((input) => {
     const val = input.id === batchFieldId ? itemValue : fixedInputs[input.id]
-    if (!val || (Array.isArray(val) && val.length === 0)) return
+    if (val == null || val === '' || (Array.isArray(val) && val.length === 0)) return
 
     const sanitizedVal = typeof val === 'string' ? val.trim() : val
     if (sanitizedVal === '') return
