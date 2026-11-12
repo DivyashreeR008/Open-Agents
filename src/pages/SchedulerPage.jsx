@@ -20,7 +20,9 @@ import { useDocumentTitle } from '../lib/useDocumentTitle'
 
 function formatNextRun(nextRunAt) {
   if (!nextRunAt) return '—'
-  const diff = nextRunAt - Date.now()
+  const target = typeof nextRunAt === 'number' ? nextRunAt : new Date(nextRunAt).getTime()
+  if (!Number.isFinite(target)) return '—'
+  const diff = target - Date.now()
   if (diff <= 0) return 'Due now'
   const mins = Math.floor(diff / 60_000)
   const hrs = Math.floor(mins / 60)
@@ -32,7 +34,9 @@ function formatNextRun(nextRunAt) {
 
 function formatDate(ts) {
   if (!ts) return 'Never'
-  return new Date(ts).toLocaleString(undefined, {
+  const date = new Date(ts)
+  if (Number.isNaN(date.getTime())) return 'Unknown'
+  return date.toLocaleString(undefined, {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
@@ -41,7 +45,7 @@ function formatDate(ts) {
 }
 
 function formatDuration(ms) {
-  if (!ms) return ''
+  if (!Number.isFinite(ms) || ms <= 0) return ''
   if (ms < 1000) return `${ms}ms`
   return `${(ms / 1000).toFixed(1)}s`
 }
@@ -272,6 +276,8 @@ export default function SchedulerPage() {
 }
 
 function ResultCard({ result, expanded, onToggle, onDelete }) {
+  const durationLabel = formatDuration(result.duration)
+
   return (
     <div className=" border dark:border-border border-gray-100 dark:bg-surface-hover bg-gray-50 overflow-hidden">
       <div className="flex items-center gap-2 px-3 py-2">
@@ -282,7 +288,7 @@ function ResultCard({ result, expanded, onToggle, onDelete }) {
         )}
         <span className="text-[11px] dark:text-text-secondary text-gray-600 flex-1">
           {formatDate(result.ranAt)}
-          {result.duration ? ` · ${formatDuration(result.duration)}` : ''}
+          {durationLabel ? ` · ${durationLabel}` : ''}
         </span>
         <button
           onClick={onToggle}
