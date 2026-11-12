@@ -39,15 +39,17 @@ export function resolveAgentModel(agent, actualProvider, selectedModel) {
     return selectedModel
   }
 
-  if (agent.models && hasOwn(agent.models, actualProvider)) {
-    return agent.models[actualProvider]
+  const definition = agent && typeof agent === 'object' ? agent : {}
+
+  if (definition.models && hasOwn(definition.models, actualProvider)) {
+    return definition.models[actualProvider]
   }
 
   if (
-    agent.model &&
-    (actualProvider === agent.defaultProvider || actualProvider === agent.provider)
+    definition.model &&
+    (actualProvider === definition.defaultProvider || actualProvider === definition.provider)
   ) {
-    return agent.model
+    return definition.model
   }
 
   return hasOwn(MODEL_MAP, actualProvider) ? MODEL_MAP[actualProvider] : MODEL_MAP.openai
