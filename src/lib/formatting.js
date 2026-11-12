@@ -8,7 +8,8 @@ function timestampValue(timestamp) {
   if (timestamp == null || timestamp === '') return NaN
   if (typeof timestamp === 'number') return timestamp
   if (timestamp instanceof Date) return timestamp.getTime()
-  return new Date(timestamp).getTime()
+  if (typeof timestamp === 'string') return new Date(timestamp).getTime()
+  return NaN
 }
 
 /**
