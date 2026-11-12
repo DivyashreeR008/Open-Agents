@@ -17,6 +17,7 @@ vi.mock('../lib/automationsService', () => ({ clearAutomationKeys: mocks.clearAu
 
 import SettingsPage from './SettingsPage'
 import { getGlobalKeys } from '../lib/globalKeys'
+import { simulateQuotaExceeded, simulateStorageDisabled } from '../test/storageFailures'
 
 function renderSettings() {
   return render(
@@ -97,6 +98,55 @@ describe('Settings feedback and storage handling', () => {
       'Keys could not be saved. Check that browser storage is available and try again.'
     )
     expect(screen.queryByText('Saved')).not.toBeInTheDocument()
+  })
+
+  it('explains blocked storage when the page loads', () => {
+    simulateStorageDisabled()
+    renderSettings()
+
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'API keys cannot be saved because browser storage is unavailable or full. Allow site data for this page or free up space, then reload. You can still enter a key for a single run on an agent page.'
+    )
+  })
+
+  it('reports a total save failure instead of a success message', () => {
+    simulateQuotaExceeded()
+    renderSettings()
+
+    fireEvent.change(screen.getByLabelText('OpenAI API key'), {
+      target: { value: 'sk-openai' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Save Keys' }))
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Keys could not be saved because browser storage is unavailable or full. Skipped empty fields: Anthropic, Google Gemini, OpenRouter. Allow site data for this page or free up space, then try again.'
+    )
+    expect(screen.queryByText('Saved')).not.toBeInTheDocument()
+  })
+
+  it('reports which keys were stored when only one write fails', () => {
+    const originalSetItem = Storage.prototype.setItem
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function setItem(key, value) {
+      if (this === sessionStorage && key === 'OpenAgents_anthropic_key') {
+        throw new Error('QuotaExceededError')
+      }
+      return originalSetItem.call(this, key, value)
+    })
+    renderSettings()
+
+    fireEvent.change(screen.getByLabelText('OpenAI API key'), {
+      target: { value: 'sk-openai' },
+    })
+    fireEvent.change(screen.getByLabelText('Anthropic API key'), {
+      target: { value: 'sk-ant' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Save Keys' }))
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Saved keys for OpenAI. Could not save keys for Anthropic because browser storage is unavailable or full. Skipped empty fields: Google Gemini, OpenRouter. Allow site data for this page or free up space, then try again.'
+    )
+    expect(screen.getByText('Saved')).toBeInTheDocument()
+    expect(getGlobalKeys()).toMatchObject({ openai: 'sk-openai', anthropic: '' })
   })
 
   it('reports a rejected scheduled-job cleanup after clearing one key', async () => {

@@ -38,6 +38,42 @@ function safeStorage(action, fallback = null) {
   }
 }
 
+function writeStorage(action) {
+  try {
+    action()
+    return true
+  } catch {
+    return false
+  }
+}
+
+function probeStorage(name) {
+  try {
+    const storage = globalThis[name]
+    if (!storage) return false
+    const probeKey = `__oa_storage_probe_${Date.now()}_${Math.random()}`
+    storage.setItem(probeKey, '1')
+    storage.removeItem(probeKey)
+    return true
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Report whether the storage used by API keys and the default provider can be
+ * written. A failed probe means the Settings page must explain the condition
+ * before the user spends time entering a key that cannot be saved.
+ *
+ * @returns {{ sessionAvailable: boolean, localAvailable: boolean }}
+ */
+export function getKeyStorageStatus() {
+  return {
+    sessionAvailable: probeStorage('sessionStorage'),
+    localAvailable: probeStorage('localStorage'),
+  }
+}
+
 /**
  * Read a secret from sessionStorage, honoring its expiry. Also removes any
  * legacy plaintext key an older version may have left in localStorage.
@@ -75,9 +111,10 @@ function readSecret(storageKey) {
 
 /**
  * Store a secret in sessionStorage with a fresh 8-hour expiry.
+ * @returns {boolean} whether the write succeeded
  */
 function writeSecret(storageKey, value) {
-  safeStorage(() =>
+  return writeStorage(() =>
     sessionStorage.setItem(
       storageKey,
       JSON.stringify({
@@ -122,12 +159,13 @@ export function getGlobalKeys() {
  * was stored.
  *
  * @param {{ openai?: string, anthropic?: string, gemini?: string, openrouter?: string, defaultProvider?: string }} keys
- * @returns {{ stored: string[], skipped: string[], defaultProvider: string | undefined }}
+ * @returns {{ stored: string[], skipped: string[], failed: string[], defaultProvider: string | undefined, defaultProviderFailed: boolean }}
  */
 export function saveGlobalKeys({ openai, anthropic, gemini, openrouter, defaultProvider } = {}) {
   const edits = { openai, anthropic, gemini, openrouter }
   const stored = []
   const skipped = []
+  const failed = []
 
   Object.entries(edits).forEach(([provider, value]) => {
     if (value === undefined) return
@@ -136,21 +174,25 @@ export function saveGlobalKeys({ openai, anthropic, gemini, openrouter, defaultP
       skipped.push(provider)
       return
     }
-    writeSecret(KEYS[provider], trimmed)
-    stored.push(provider)
+    if (writeSecret(KEYS[provider], trimmed)) {
+      stored.push(provider)
+    } else {
+      failed.push(provider)
+    }
   })
 
   let savedDefault
+  let defaultProviderFailed = false
   if (defaultProvider !== undefined) {
     savedDefault = defaultProvider.trim()
-    if (savedDefault === '') {
-      safeStorage(() => localStorage.removeItem(DEFAULT_PROVIDER_KEY))
-    } else {
-      safeStorage(() => localStorage.setItem(DEFAULT_PROVIDER_KEY, savedDefault))
-    }
+    const persisted =
+      savedDefault === ''
+        ? writeStorage(() => localStorage.removeItem(DEFAULT_PROVIDER_KEY))
+        : writeStorage(() => localStorage.setItem(DEFAULT_PROVIDER_KEY, savedDefault))
+    if (!persisted) defaultProviderFailed = true
   }
 
-  return { stored, skipped, defaultProvider: savedDefault }
+  return { stored, skipped, failed, defaultProvider: savedDefault, defaultProviderFailed }
 }
 
 /**

@@ -10,6 +10,7 @@ import {
   ExternalLink,
   ShieldCheck,
   KeyRound,
+  AlertTriangle,
 } from 'lucide-react'
 import {
   getGlobalKeys,
@@ -17,6 +18,7 @@ import {
   clearGlobalKey,
   clearAllGlobalKeys,
   getAvailableProviders,
+  getKeyStorageStatus,
 } from '../lib/globalKeys'
 import { clearAutomationKeys } from '../lib/automationsService'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
@@ -91,7 +93,9 @@ export default function SettingsPage() {
     openrouter: false,
   })
   const [saveMessage, setSaveMessage] = useState('')
+  const [messageTone, setMessageTone] = useState('success')
   const [announcement, setAnnouncement] = useState('')
+  const [storageStatus, setStorageStatus] = useState(() => getKeyStorageStatus())
   const [confirmClearAll, setConfirmClearAll] = useState(false)
   const [confirmClearProvider, setConfirmClearProvider] = useState(null)
   const messageTimer = useRef(null)
@@ -99,10 +103,11 @@ export default function SettingsPage() {
   const clearAllConfirmRef = useRef(null)
   const restoreClearAllFocus = useRef(false)
 
-  const showMessage = (message) => {
+  const showMessage = (message, tone = 'success') => {
     if (messageTimer.current) clearTimeout(messageTimer.current)
     setAnnouncement(message)
     setSaveMessage(message)
+    setMessageTone(tone)
     messageTimer.current = setTimeout(() => {
       setSaveMessage('')
       messageTimer.current = null
@@ -149,10 +154,18 @@ export default function SettingsPage() {
   }, [])
 
   const availableForDefault = getAvailableProviders()
+  const storageWarning = !storageStatus.sessionAvailable
+    ? 'API keys cannot be saved because browser storage is unavailable or full. Allow site data for this page or free up space, then reload. You can still enter a key for a single run on an agent page.'
+    : !storageStatus.localAvailable
+      ? 'API keys can be saved for this tab, but the default provider preference cannot be saved because local storage is unavailable or full.'
+      : ''
 
   const handleSave = () => {
     try {
-      const { stored, skipped } = saveGlobalKeys({ ...keys, defaultProvider })
+      const { stored, skipped, failed, defaultProviderFailed } = saveGlobalKeys({
+        ...keys,
+        defaultProvider,
+      })
       // Refresh saved status from the storage layer so the badges reflect what
       // was actually written, not what the form happened to contain.
       const current = getGlobalKeys()
@@ -162,19 +175,38 @@ export default function SettingsPage() {
         gemini: !!current.gemini,
         openrouter: !!current.openrouter,
       })
+      setStorageStatus(getKeyStorageStatus())
 
       const parts = []
       if (stored.length > 0) {
         parts.push(`Saved keys for ${formatProviderList(stored)}.`)
-      } else {
+      }
+      if (failed.length > 0) {
+        parts.push(
+          stored.length > 0
+            ? `Could not save keys for ${formatProviderList(failed)} because browser storage is unavailable or full.`
+            : 'Keys could not be saved because browser storage is unavailable or full.'
+        )
+      }
+      if (defaultProviderFailed) {
+        parts.push('The default provider preference could not be saved.')
+      }
+      if (stored.length === 0 && failed.length === 0) {
         parts.push('No keys were saved. Enter a key for at least one provider.')
       }
       if (skipped.length > 0) {
         parts.push(`Skipped empty fields: ${formatProviderList(skipped)}.`)
       }
-      showMessage(parts.join(' '))
+      if (failed.length > 0 || defaultProviderFailed) {
+        parts.push('Allow site data for this page or free up space, then try again.')
+      }
+      showMessage(parts.join(' '), failed.length > 0 || defaultProviderFailed ? 'error' : 'success')
     } catch {
-      showMessage('Keys could not be saved. Check that browser storage is available and try again.')
+      setStorageStatus(getKeyStorageStatus())
+      showMessage(
+        'Keys could not be saved. Check that browser storage is available and try again.',
+        'error'
+      )
     }
   }
 
@@ -245,6 +277,16 @@ export default function SettingsPage() {
           </p>
         </div>
       </div>
+
+      {storageWarning && (
+        <div
+          role="alert"
+          className="mb-6 flex items-start gap-2 border border-amber-300 bg-amber-50 p-3 text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100"
+        >
+          <AlertTriangle size={15} className="mt-0.5 flex-shrink-0" aria-hidden="true" />
+          <p className="text-xs leading-relaxed">{storageWarning}</p>
+        </div>
+      )}
 
       {/* ─────────────────────────────────────────── */}
       {/* SECTION 1 — API Keys                        */}
@@ -371,8 +413,16 @@ export default function SettingsPage() {
         {/* Save button */}
         <div className="px-5 py-4 border-t dark:border-border border-gray-100 flex items-center justify-between">
           {saveMessage ? (
-            <span className="text-xs font-medium text-zinc-500 flex items-center gap-1.5">
-              <Check size={13} />
+            <span
+              className={`text-xs font-medium flex items-center gap-1.5 ${
+                messageTone === 'error' ? 'text-amber-700 dark:text-amber-300' : 'text-zinc-500'
+              }`}
+            >
+              {messageTone === 'error' ? (
+                <AlertTriangle size={13} aria-hidden="true" />
+              ) : (
+                <Check size={13} aria-hidden="true" />
+              )}
               {saveMessage}
             </span>
           ) : (
@@ -411,8 +461,17 @@ export default function SettingsPage() {
               value={defaultProvider}
               onChange={(e) => {
                 const val = e.target.value
+                const result = saveGlobalKeys({ defaultProvider: val })
+                if (result?.defaultProviderFailed) {
+                  setDefaultProvider(getGlobalKeys().defaultProvider || '')
+                  setStorageStatus(getKeyStorageStatus())
+                  showMessage(
+                    'The default provider preference could not be saved because browser storage is unavailable or full. Allow site data for this page or free up space, then try again.',
+                    'error'
+                  )
+                  return
+                }
                 setDefaultProvider(val)
-                saveGlobalKeys({ defaultProvider: val })
                 showMessage(
                   val
                     ? `Default provider set to ${PROVIDER_LABEL_BY_ID[val] || val}.`
