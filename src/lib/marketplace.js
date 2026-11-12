@@ -467,7 +467,9 @@ export function getAverageRating(listing) {
  */
 export function filterListings(listings, { search = '', category = '' } = {}) {
   const q = search.trim().toLowerCase()
-  return listings.filter((l) => {
+  const safeListings = Array.isArray(listings) ? listings : []
+  return safeListings.filter((l) => {
+    if (!l || typeof l !== 'object') return false
     if (category && l.category !== category) return false
     if (!q) return true
     const tags = Array.isArray(l.tags) ? l.tags : []
