@@ -15,7 +15,11 @@ export default {
       '- API returns 5xx errors under high traffic (Black Friday spikes)\n- Database connection pool exhaustion during batch processing\n- Stripe webhook delivery failures causing payment status desync\n- Redis cache invalidation storms after deployments\n- SSL certificate expiry on payment gateway endpoint\n- Memory leak in payment reconciliation worker (OOM kills after ~72hrs)',
     infrastructure:
       '- Kubernetes cluster on AWS EKS (3 node groups, us-east-1)\n- PostgreSQL 15 on RDS Multi-AZ (db.r6g.xlarge)\n- Redis 7 on ElastiCache (2 replica nodes)\n- ALB with WAF in front of API pods\n- Datadog for monitoring, PagerDuty for alerting\n- ArgoCD for deployments, GitHub Actions for CI\n- Stripe for payment processing, SQS for async jobs',
-    severity_levels: 'SEV1 (Critical),SEV2 (Major),SEV3 (Minor)',
+    severity_levels: [
+      'SEV1 (Critical — service down)',
+      'SEV2 (Major — degraded performance)',
+      'SEV3 (Minor — limited impact)',
+    ],
     runbook_format: 'Step-by-step procedures',
   },
   inputs: [
