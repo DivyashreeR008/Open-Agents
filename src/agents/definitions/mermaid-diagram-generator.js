@@ -13,7 +13,7 @@ export default {
   exampleInputs: {
     topic: 'User signup flow: form, email verification, trial provisioning, welcome email',
     diagramType: 'Flowchart',
-    detail: 'Standard',
+    detail: 'Standard (8-15 nodes)',
   },
   inputs: [
     {
