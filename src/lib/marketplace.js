@@ -62,20 +62,21 @@ export function sanitizeAgentConfig(config) {
  * @returns {object} the stored listing
  */
 export function publishAgent(entry) {
-  const { config, sanitizedFields } = sanitizeAgentConfig(entry.config)
+  const safeEntry = entry && typeof entry === 'object' && !Array.isArray(entry) ? entry : {}
+  const { config, sanitizedFields } = sanitizeAgentConfig(safeEntry.config)
   const listing = {
     id: `mkt_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-    name: String(entry.name ?? '').trim(),
-    description: String(entry.description ?? '').trim(),
-    tags: (entry.tags ?? [])
+    name: String(safeEntry.name ?? '').trim(),
+    description: String(safeEntry.description ?? '').trim(),
+    tags: (Array.isArray(safeEntry.tags) ? safeEntry.tags : [])
       .map((t) => String(t).trim())
       .filter(Boolean)
       .slice(0, 8),
-    category: MARKETPLACE_CATEGORIES.includes(entry.category)
-      ? entry.category
+    category: MARKETPLACE_CATEGORIES.includes(safeEntry.category)
+      ? safeEntry.category
       : MARKETPLACE_CATEGORIES[0],
-    readme: entry.readme ? String(entry.readme) : '',
-    author: String(entry.author ?? 'Anonymous').trim() || 'Anonymous',
+    readme: safeEntry.readme ? String(safeEntry.readme) : '',
+    author: String(safeEntry.author ?? 'Anonymous').trim() || 'Anonymous',
     config,
     sanitizedFields,
     importCount: 0,
