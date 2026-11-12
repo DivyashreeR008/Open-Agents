@@ -18,6 +18,7 @@ function AgentPill({ agentId }) {
 
 function WorkflowCard({ workflow, onRun, onView, onFork }) {
   const usageCount = workflow.usage_count ?? 0
+  const agentIds = Array.isArray(workflow.agents) ? workflow.agents : []
 
   return (
     <div className="flex flex-col border border-zinc-200 bg-white p-3.5 transition-colors hover:border-zinc-400 dark:hover:border-zinc-400 dark:border-border dark:bg-surface-card">
@@ -47,10 +48,10 @@ function WorkflowCard({ workflow, onRun, onView, onFork }) {
 
       {/* Agent Sequence */}
       <div className="flex flex-wrap items-center gap-1.5 mb-4">
-        {(workflow.agents ?? []).map((agentId, index) => (
+        {agentIds.map((agentId, index) => (
           <span key={agentId + index} className="flex items-center gap-1">
             <AgentPill agentId={agentId} />
-            {index < workflow.agents.length - 1 && (
+            {index < agentIds.length - 1 && (
               <ArrowRight size={10} className="dark:text-text-muted text-gray-400 flex-shrink-0" />
             )}
           </span>
@@ -84,7 +85,7 @@ function WorkflowCard({ workflow, onRun, onView, onFork }) {
           Fork
         </button>
         <span className="ml-auto text-[11px] dark:text-text-muted text-gray-400">
-          {(workflow.agents ?? []).length} agent{workflow.agents?.length !== 1 ? 's' : ''}
+          {agentIds.length} agent{agentIds.length !== 1 ? 's' : ''}
         </span>
       </div>
     </div>
@@ -137,7 +138,8 @@ export default function WorkflowLibrary() {
     return workflows.filter((w) => {
       const titleMatch = w.title?.toLowerCase().includes(query)
       const descriptionMatch = w.description?.toLowerCase().includes(query)
-      const categoryMatch = (w.agents ?? []).some((agentId) => {
+      const agentIds = Array.isArray(w.agents) ? w.agents : []
+      const categoryMatch = agentIds.some((agentId) => {
         const agent = agents.find((a) => a.id === agentId)
         return agent?.category?.toLowerCase().includes(query)
       })
