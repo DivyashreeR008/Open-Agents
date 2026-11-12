@@ -10,14 +10,27 @@ const isPlainObject = (value) => {
   return prototype === Object.prototype || prototype === null
 }
 
-export function stripCredentialFields(value) {
-  if (Array.isArray(value)) return value.map(stripCredentialFields)
+function stripValue(value, seen) {
+  if (Array.isArray(value)) {
+    if (seen.has(value)) return seen.get(value)
+    const output = []
+    seen.set(value, output)
+    for (const child of value) output.push(stripValue(child, seen))
+    return output
+  }
   if (!value || typeof value !== 'object') return value
   if (!isPlainObject(value)) return value
+  if (seen.has(value)) return seen.get(value)
 
-  return Object.fromEntries(
-    Object.entries(value)
-      .filter(([key]) => !CREDENTIAL_FIELD.test(key.trim()))
-      .map(([key, child]) => [key, stripCredentialFields(child)])
-  )
+  const output = {}
+  seen.set(value, output)
+  for (const [key, child] of Object.entries(value)) {
+    if (CREDENTIAL_FIELD.test(key.trim())) continue
+    output[key] = stripValue(child, seen)
+  }
+  return output
+}
+
+export function stripCredentialFields(value) {
+  return stripValue(value, new WeakMap())
 }
