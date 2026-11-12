@@ -8,7 +8,7 @@ export function escapeHtml(text) {
 
 export function buildPdfHtml(agentName, content) {
   const title = agentName || 'Agent output'
-  const body = escapeHtml(content || '')
+  const body = escapeHtml(content ?? '')
   return (
     '<!doctype html><html><head><meta charset="utf-8"><title>' +
     escapeHtml(title) +
