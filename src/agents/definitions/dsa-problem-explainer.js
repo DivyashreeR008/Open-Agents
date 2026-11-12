@@ -1,5 +1,6 @@
 const dsaProblemExplainer = {
   id: 'dsa-problem-explainer',
+  createdAt: '2026-10-11',
 
   name: 'DSA Problem Explainer',
 

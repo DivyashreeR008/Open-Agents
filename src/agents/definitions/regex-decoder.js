@@ -1,5 +1,6 @@
 const regexDecoder = {
   id: 'regex-decoder',
+  createdAt: '2026-10-11',
   name: 'Regex Decoder',
   description:
     'Decodes an existing regex pattern into a plain-English, token-by-token breakdown with examples and edge cases.',

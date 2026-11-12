@@ -31,10 +31,10 @@ const agents = [
 ]
 
 // Mutable so individual tests can control the favourites list.
-const state = vi.hoisted(() => ({ favorites: [] }))
+const state = vi.hoisted(() => ({ favorites: [], newAgentIds: new Set() }))
 
 vi.mock('../lib/useAgents', () => ({
-  useAgents: () => ({ agents, loading: false }),
+  useAgents: () => ({ agents, newAgentIds: state.newAgentIds, loading: false }),
 }))
 
 vi.mock('../lib/useFavorites', () => ({
@@ -85,6 +85,7 @@ describe('HomePage', () => {
   beforeEach(() => {
     localStorage.clear()
     state.favorites = []
+    state.newAgentIds = new Set()
   })
 
   it('renders the masthead, filter rails and agent results', () => {
@@ -98,6 +99,18 @@ describe('HomePage', () => {
 
     expect(screen.getByText('Alpha Agent')).toBeInTheDocument()
     expect(screen.getByText('Beta Agent')).toBeInTheDocument()
+  })
+
+  it('uses the catalogue freshness decision for the new badge', () => {
+    state.newAgentIds = new Set(['alpha'])
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /grid view/i }))
+
+    const alpha = screen.getByText('Alpha Agent').closest('[role="listitem"]')
+    const beta = screen.getByText('Beta Agent').closest('[role="listitem"]')
+
+    expect(within(alpha).getByText('new')).toBeInTheDocument()
+    expect(within(beta).queryByText('new')).not.toBeInTheDocument()
   })
 
   it('defaults to the index view and can switch to the grid view', () => {

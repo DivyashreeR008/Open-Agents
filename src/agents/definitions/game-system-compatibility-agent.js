@@ -1,5 +1,6 @@
 const gameCompatibilityAgent = {
   id: 'game-system-compatibility-agent', // lowercase, kebab-case, URL safe
+  createdAt: '2026-11-05',
   name: 'Game System Compatibility Analyser',
   description:
     'The agent takes in the game you would like to install along with specifications of your system and provides a verdict with explanation regarding whether the game can be run or not.',

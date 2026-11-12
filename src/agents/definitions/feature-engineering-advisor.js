@@ -1,5 +1,6 @@
 const featureEngineeringAdvisor = {
   id: 'feature-engineering-advisor',
+  createdAt: '2026-10-11',
 
   name: 'Feature Engineering Advisor',
 

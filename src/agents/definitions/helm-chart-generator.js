@@ -1,5 +1,6 @@
 const helmChartGenerator = {
   id: 'helm-chart-generator',
+  createdAt: '2026-10-11',
   name: 'Helm Chart Generator',
   description:
     'Describe your app and get a complete Helm chart with Chart.yaml, values.yaml, and templated manifests ready to install.',

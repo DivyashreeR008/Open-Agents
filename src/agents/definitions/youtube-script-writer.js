@@ -1,5 +1,6 @@
 const youtubeScriptWriter = {
   id: 'youtube-script-writer',
+  createdAt: '2026-10-11',
   name: 'YouTube Script Writer',
   description:
     'Turn any topic into a ready-to-record YouTube script with intro hook, sections, and outro.',

@@ -1,5 +1,6 @@
 const dsaProgressAnalyzer = {
   id: 'dsa-progress-analyzer',
+  createdAt: '2026-10-11',
   name: 'DSA Progress Analyzer',
   description:
     'Analyzes your DSA practice log to find weak topics and suggest what to practice next.',

@@ -1,5 +1,6 @@
 const imagePromptGenerator = {
   id: 'image-prompt-generator',
+  createdAt: '2026-10-11',
   name: 'Master Image Prompt Generator',
   description:
     'Turn a basic idea into a highly detailed, professional prompt for Midjourney, DALL-E 3 or other AI image generation tools.',

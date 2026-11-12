@@ -16,6 +16,7 @@ import { useState } from 'react'
 import { useTimedState } from '../lib/useTimedState'
 import CollectionPicker from './CollectionPicker'
 import { resolveAgentIcon } from '../lib/agentIcons'
+import { isRecentCreation } from '../lib/agentFreshness'
 
 const providerMeta = {
   openai: { label: 'OpenAI', dot: 'bg-zinc-500' },
@@ -25,15 +26,7 @@ const providerMeta = {
   any: { label: 'Any provider', dot: 'bg-zinc-500' },
 }
 
-function isWithinLast7Days(dateStr) {
-  if (!dateStr) return false
-  const created = new Date(dateStr)
-  if (Number.isNaN(created.getTime())) return false
-  const diffMs = Date.now() - created
-  return diffMs >= 0 && diffMs <= 7 * 24 * 60 * 60 * 1000
-}
-
-export default function AgentCard({ agent, variant = 'grid', index = null }) {
+export default function AgentCard({ agent, variant = 'grid', index = null, isNew }) {
   const IconComponent = resolveAgentIcon(agent?.icon)
   const provider = providerMeta[agent?.provider] || providerMeta.any
   const { isFavorite, toggleFavorite } = useFavorites()
@@ -43,6 +36,7 @@ export default function AgentCard({ agent, variant = 'grid', index = null }) {
 
   const name = agent?.name || 'Unnamed agent'
   const description = agent?.description || 'No description provided.'
+  const showNewBadge = isNew === undefined ? isRecentCreation(agent?.createdAt) : isNew
 
   const handleDragStart = (event) => {
     event.dataTransfer.setData('text/plain', agent.id)
@@ -146,6 +140,8 @@ export default function AgentCard({ agent, variant = 'grid', index = null }) {
 
           <span className="eyebrow ml-auto hidden shrink-0 lg:block">{agent?.category}</span>
 
+          {showNewBadge && <span className="badge hidden shrink-0 sm:inline-flex">new</span>}
+
           <span className="badge hidden shrink-0 items-center gap-1.5 sm:inline-flex">
             <span className={`h-1.5 w-1.5 ${provider.dot}`} aria-hidden="true" />
             {provider.label}
@@ -183,7 +179,7 @@ export default function AgentCard({ agent, variant = 'grid', index = null }) {
             </h3>
             <div className="mt-1 flex items-center gap-1.5">
               <span className="eyebrow truncate">{agent?.category}</span>
-              {isWithinLast7Days(agent?.createdAt) && <span className="badge">new</span>}
+              {showNewBadge && <span className="badge">new</span>}
             </div>
           </div>
 

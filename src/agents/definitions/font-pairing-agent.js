@@ -1,5 +1,6 @@
 const fontPairingAgent = {
   id: 'font-pairing-agent', // lowercase, kebab-case, URL safe
+  createdAt: '2026-11-05',
   name: 'Font Pairing Agent',
   description:
     'The agent takes in mood and industry as input and generates 3 font pairings for design',

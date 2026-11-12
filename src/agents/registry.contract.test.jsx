@@ -59,6 +59,18 @@ describe('raw agent-definition contract', () => {
           errors.push(`${identity}: ${field} must be a non-empty string`)
         }
       }
+
+      const createdAt = agent.createdAt
+      const parsedCreatedAt =
+        typeof createdAt === 'string' ? new Date(`${createdAt}T00:00:00.000Z`) : null
+      if (
+        !parsedCreatedAt ||
+        Number.isNaN(parsedCreatedAt.getTime()) ||
+        parsedCreatedAt.toISOString().slice(0, 10) !== createdAt
+      ) {
+        errors.push(`${identity}: createdAt must be a valid YYYY-MM-DD date`)
+      }
+
       if (!Array.isArray(agent.inputs)) {
         errors.push(`${identity}: inputs must be an array`)
         continue

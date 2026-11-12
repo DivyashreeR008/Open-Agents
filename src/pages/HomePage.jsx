@@ -39,6 +39,7 @@ const providerLabels = {
 }
 
 const CATALOG_PAGE_SIZE = 60
+const EMPTY_AGENT_IDS = new Set()
 
 /** A filter is a word, not a pill: active options invert to a solid block. */
 function RailOption({ selected, onClick, children }) {
@@ -61,7 +62,7 @@ function RailOption({ selected, onClick, children }) {
 export default function HomePage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { agents, loading: agentsLoading, catalogSize } = useAgents()
+  const { agents, newAgentIds = EMPTY_AGENT_IDS, loading: agentsLoading, catalogSize } = useAgents()
   const [isRecommendationWizardOpen, setIsRecommendationWizardOpen] = useState(false)
   const recommendationWizardHeroTriggerRef = useRef(null)
   const recommendationWizardReturnFocusRef = useRef(null)
@@ -594,7 +595,7 @@ export default function HomePage() {
               >
                 {visibleAgents.map((agent) => (
                   <div role="listitem" key={agent.id}>
-                    <AgentCard agent={agent} variant="grid" />
+                    <AgentCard agent={agent} variant="grid" isNew={newAgentIds.has(agent.id)} />
                   </div>
                 ))}
               </div>
@@ -606,7 +607,12 @@ export default function HomePage() {
               >
                 {visibleAgents.map((agent, i) => (
                   <div role="listitem" key={agent.id}>
-                    <AgentCard agent={agent} variant="row" index={i + 1} />
+                    <AgentCard
+                      agent={agent}
+                      variant="row"
+                      index={i + 1}
+                      isNew={newAgentIds.has(agent.id)}
+                    />
                   </div>
                 ))}
               </div>

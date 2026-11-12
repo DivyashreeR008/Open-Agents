@@ -1,5 +1,6 @@
 const passwordStrengthAgent = {
   id: 'password-strength-reviewer-agent', // lowercase, kebab-case, URL safe
+  createdAt: '2026-11-05',
   name: 'Password Strength Reviewer',
   description: 'The agent takes in the password and reviews whether it is strong enough.',
   category: 'Cybersecurity', // Productivity | Research | Marketing | Engineering | HR | Business | Education | Design | Product | Legal

@@ -1,5 +1,6 @@
 const healthWellnessPlan = {
   id: 'health-wellness-plan',
+  createdAt: '2026-10-11',
   name: 'Health & Wellness Plan Generator',
   description:
     'Generates a personalized 4-week wellness plan with diet, exercise, and sleep guidance based on your goals.',

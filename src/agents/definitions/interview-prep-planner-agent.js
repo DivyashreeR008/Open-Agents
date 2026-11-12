@@ -1,5 +1,6 @@
 const interview_prep_planner_agent = {
   id: 'interview-prep-planner-agent',
+  createdAt: '2026-10-11',
   name: 'Interview Preparation Planner Agent',
   description:
     'Creates a personalized interview preparation plan based on your target role, experience level, and available time — with a topic-wise study schedule, daily practice tasks, and a mock interview plan.',

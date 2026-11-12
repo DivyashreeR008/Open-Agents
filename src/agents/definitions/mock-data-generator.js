@@ -1,5 +1,6 @@
 const mockDataGenerator = {
   id: 'mock-data-generator',
+  createdAt: '2026-10-11',
   name: 'Mock Data Generator',
   description:
     'Describe a data schema and get realistic mock data in JSON format instantly — names, emails, addresses, dates, and more.',

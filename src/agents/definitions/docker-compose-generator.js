@@ -1,5 +1,6 @@
 const dockerComposeGenerator = {
   id: 'docker-compose-generator',
+  createdAt: '2026-10-11',
   name: 'Docker Compose Generator',
   description:
     'Describe your multi-service application stack and get a production-ready docker-compose.yml with named volumes, networks, environment variables, depends_on ordering, and optional health checks.',

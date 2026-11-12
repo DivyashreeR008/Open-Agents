@@ -1,5 +1,6 @@
 const mealPlannerAgent = {
   id: 'meal-planner-agent',
+  createdAt: '2026-10-11',
   name: 'Meal Planner Agent',
   description:
     'Creates personalized meal plans based on dietary preferences, health goals, budget, available ingredients, and nutritional requirements.',

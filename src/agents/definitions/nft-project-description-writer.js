@@ -1,5 +1,6 @@
 const nftProjectDescriptionWriter = {
   id: 'nft-project-description-writer',
+  createdAt: '2026-10-11',
   name: 'NFT Project Description Writer',
   description: 'Writes engaging and compelling descriptions for NFT collections.',
   category: 'Marketing',

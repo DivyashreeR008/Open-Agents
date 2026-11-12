@@ -1,5 +1,6 @@
 const aiStudyPlanner = {
   id: 'ai-study-planner',
+  createdAt: '2026-10-11',
 
   name: 'AI Study Planner',
 

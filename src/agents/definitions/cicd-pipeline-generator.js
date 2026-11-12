@@ -1,5 +1,6 @@
 const cicdPipelineGenerator = {
   id: 'cicd-pipeline-generator',
+  createdAt: '2026-10-11',
   name: 'CI/CD Pipeline Generator',
   description:
     'Describe your stack and deployment target to get a ready-to-use CI/CD pipeline YAML with step-by-step comments.',

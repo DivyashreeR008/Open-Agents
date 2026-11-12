@@ -1,5 +1,6 @@
 const memoryCardBuilder = {
   id: 'memory-card-builder',
+  createdAt: '2026-10-11',
   name: 'Memory Card Builder',
   description:
     'Transforms study notes or raw learning material into active recall cards with prompts, hints, answers, and self-test questions for better memory retention.',

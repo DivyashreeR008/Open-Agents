@@ -1,5 +1,6 @@
 const databaseMigrationScriptGenerator = {
   id: 'database-migration-script-generator',
+  createdAt: '2026-10-11',
 
   name: 'Database Migration Script Generator',
 

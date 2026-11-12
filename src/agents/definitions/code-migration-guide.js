@@ -1,5 +1,6 @@
 const codeMigrationGuideGenerator = {
   id: 'code-migration-guide',
+  createdAt: '2026-10-11',
   name: 'Code Migration Guide Generator',
   description:
     'Generate a step-by-step checklist, identify common pitfalls, and highlight breaking changes for tech stack migrations.',

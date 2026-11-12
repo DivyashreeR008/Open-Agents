@@ -1,5 +1,6 @@
 const medicalResearchSummarizer = {
   id: 'medical-research-summarizer',
+  createdAt: '2026-10-11',
   name: 'Medical Research Summarizer',
   description:
     'Summarizes medical research papers and abstracts into plain English with key findings, methodology, limitations, and clinical implications.',

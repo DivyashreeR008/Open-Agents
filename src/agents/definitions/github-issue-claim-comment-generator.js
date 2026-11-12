@@ -1,5 +1,6 @@
 const githubIssueClaimCommentGenerator = {
   id: 'github-issue-claim-comment-generator', // lowercase, kebab-case, URL safe
+  createdAt: '2026-10-11',
   name: 'Github Issue Claim Comment Generator',
   description:
     'Paste the github issue description and your approach to solve it and any additional notes and get the issue claim comment generated in seconds! ',

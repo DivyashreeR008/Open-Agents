@@ -10,13 +10,15 @@ import PageHeader from '../components/layout/PageHeader'
 import SectionHeader from '../components/layout/SectionHeader'
 import EmptyState from '../components/layout/EmptyState'
 
+const EMPTY_AGENT_IDS = new Set()
+
 export default function CollectionDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
 
   const { getCollectionById, deleteCollection, addAgentToCollection, removeAgentFromCollection } =
     useCollections()
-  const { agents, loading, error } = useAgents()
+  const { agents, newAgentIds = EMPTY_AGENT_IDS, loading, error } = useAgents()
 
   const collection = getCollectionById(id)
 
@@ -121,7 +123,7 @@ export default function CollectionDetailPage() {
           <div className="grid grid-cols-1 gap-2.5 pt-1.5 sm:grid-cols-2 xl:grid-cols-3">
             {collectionAgents.map((agent) => (
               <div key={agent.id} className="relative">
-                <AgentCard agent={agent} />
+                <AgentCard agent={agent} isNew={newAgentIds.has(agent.id)} />
 
                 <button
                   onClick={() => handleRemoveAgent(agent.id)}

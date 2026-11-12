@@ -1,5 +1,6 @@
 const pathPilot = {
   id: 'path-pilot',
+  createdAt: '2026-10-11',
   name: 'PathPilot',
   description:
     'Takes your life choices and predicts all possibilities for each one, helping you make better decisions based on your personal priorities.',

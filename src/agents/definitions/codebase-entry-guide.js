@@ -1,5 +1,6 @@
 const codebaseEntryGuide = {
   id: 'codebase-entry-guide',
+  createdAt: '2026-10-11',
   name: 'Codebase Entry Guide Agent',
   description:
     'Understand a new codebase quickly with key files, entry points, and architecture overview.',

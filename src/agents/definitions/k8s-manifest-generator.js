@@ -1,5 +1,6 @@
 export default {
   id: 'k8s-manifest-generator',
+  createdAt: '2026-10-11',
   name: 'Kubernetes Manifest Generator',
   description:
     'Generates a complete Kubernetes Deployment, Service, and ConfigMap manifest from a few app inputs.',

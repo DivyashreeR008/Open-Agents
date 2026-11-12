@@ -1,5 +1,6 @@
 const threatSummariserAgent = {
   id: 'threat-intelligence-summariser-agent', // lowercase, kebab-case, URL safe
+  createdAt: '2026-11-05',
   name: 'Threat Intelligence Summariser',
   description:
     'The agent converts threat intelligence reports, CVEs, security advisories, malware analyses, and incident writeups into concise, structured summaries. ',
