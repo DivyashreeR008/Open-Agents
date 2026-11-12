@@ -313,6 +313,13 @@ export function useCollections() {
         return { ok: false, error: 'Collection and agent are required.' }
       }
 
+      if (collectionId === DEFAULT_COLLECTION_ID) {
+        return {
+          ok: false,
+          error: 'The All agents view already includes every agent. Choose a custom collection.',
+        }
+      }
+
       const normalizedAgentId = typeof agentId === 'string' ? agentId.trim() : ''
 
       if (!normalizedAgentId) {
@@ -388,6 +395,13 @@ export function useCollections() {
         return { ok: false, error: 'Collection and agent are required.' }
       }
 
+      if (collectionId === DEFAULT_COLLECTION_ID) {
+        return {
+          ok: false,
+          error: 'The All agents view already includes every agent. Choose a custom collection.',
+        }
+      }
+
       const normalizedAgentId = typeof agentId === 'string' ? agentId.trim() : ''
 
       if (!normalizedAgentId) {
@@ -415,10 +429,21 @@ export function useCollections() {
           }
         }
 
+        const movedFrom = current
+          .filter(
+            (collection) =>
+              collection.id !== collectionId &&
+              collection.id !== DEFAULT_COLLECTION_ID &&
+              collection.agentIds.includes(normalizedAgentId)
+          )
+          .map((collection) => ({ id: collection.id, name: collection.name }))
+          .sort((left, right) => left.name.localeCompare(right.name))
+
         const now = new Date().toISOString()
 
         return {
           ok: true,
+          movedFrom,
           collections: current.map((collection) => {
             if (collection.id === collectionId) {
               return {

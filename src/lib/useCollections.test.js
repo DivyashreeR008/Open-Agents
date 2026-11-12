@@ -118,9 +118,54 @@ describe('useCollections editing', () => {
       const result = run(hook, (c) => c.moveAgentToCollection('a1', b.id))
 
       expect(result.ok).toBe(true)
+      expect(result.movedFrom).toEqual([{ id: a.id, name: 'Reads' }])
       expect(find(hook, a.id).agentIds).toEqual(['a2'])
       expect(find(hook, b.id).agentIds).toEqual(['a1'])
       expect(hook.result.current.getAgentCollectionId('a1')).toBe(b.id)
+    })
+
+    it('refuses to move an agent into the built-in view and preserves its memberships', () => {
+      const hook = setup()
+      const a = create(hook, 'Reads').collection
+      run(hook, (c) => c.addAgentToCollection(a.id, 'a1'))
+      const before = JSON.stringify(hook.result.current.collections)
+
+      const result = run(hook, (c) => c.moveAgentToCollection('a1', DEFAULT_COLLECTION_ID))
+
+      expect(result.ok).toBe(false)
+      expect(result.error).toMatch(/already includes every agent/i)
+      expect(find(hook, a.id).agentIds).toEqual(['a1'])
+      expect(find(hook, DEFAULT_COLLECTION_ID).agentIds).toEqual([])
+      expect(JSON.stringify(hook.result.current.collections)).toBe(before)
+    })
+
+    it('refuses to add directly to the built-in view', () => {
+      const hook = setup()
+      const result = run(hook, (c) => c.addAgentToCollection(DEFAULT_COLLECTION_ID, 'a1'))
+
+      expect(result.ok).toBe(false)
+      expect(result.error).toMatch(/already includes every agent/i)
+      expect(find(hook, DEFAULT_COLLECTION_ID).agentIds).toEqual([])
+    })
+
+    it('names every custom collection an agent leaves during a move', () => {
+      const hook = setup()
+      const a = create(hook, 'Reads').collection
+      const b = create(hook, 'Work').collection
+      const target = create(hook, 'Later').collection
+      run(hook, (c) => c.addAgentToCollection(a.id, 'a1'))
+      run(hook, (c) => c.addAgentToCollection(b.id, 'a1'))
+
+      const result = run(hook, (c) => c.moveAgentToCollection('a1', target.id))
+
+      expect(result.ok).toBe(true)
+      expect(result.movedFrom).toEqual([
+        { id: a.id, name: 'Reads' },
+        { id: b.id, name: 'Work' },
+      ])
+      expect(find(hook, a.id).agentIds).toEqual([])
+      expect(find(hook, b.id).agentIds).toEqual([])
+      expect(find(hook, target.id).agentIds).toEqual(['a1'])
     })
 
     it('never leaves a moved agent in two collections', () => {
