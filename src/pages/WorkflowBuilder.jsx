@@ -41,7 +41,10 @@ export default function WorkflowBuilder() {
   useEffect(() => {
     if (!hasResolvedPreselected && agents.length > 0 && location.state?.preselectedAgents) {
       const preselected = location.state.preselectedAgents
-      const loaded = preselected.map((id) => agents.find((a) => a.id === id)).filter(Boolean)
+      const loaded = preselected
+        .map((id) => agents.find((a) => a.id === id))
+        .filter(Boolean)
+        .slice(0, MAX_AGENTS)
       if (loaded.length > 0) {
         setSelectedAgents(loaded)
       }
@@ -57,6 +60,7 @@ export default function WorkflowBuilder() {
       const loaded = (forkedWorkflow.agents || [])
         .map((id) => agents.find((a) => a.id === id))
         .filter(Boolean)
+        .slice(0, MAX_AGENTS)
       setSelectedAgents(loaded)
     }
   }, [forkedWorkflow, agents])
