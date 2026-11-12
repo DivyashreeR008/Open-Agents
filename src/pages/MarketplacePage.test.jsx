@@ -89,7 +89,7 @@ describe('MarketplacePage publishing and import', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 
-  it('keeps Publish disabled until agent, name and description are filled', async () => {
+  it('keeps Publish disabled until required fields and attribution are provided', async () => {
     const user = userEvent.setup()
     render(
       <MemoryRouter>
@@ -110,6 +110,9 @@ describe('MarketplacePage publishing and import', () => {
     expect(publish).toBeDisabled()
 
     await user.type(within(dialog).getByPlaceholderText('What does this agent do?'), 'Does things')
+    expect(publish).toBeDisabled()
+
+    await user.type(within(dialog).getByLabelText('Author'), 'Chanchal')
     expect(publish).toBeEnabled()
   })
 
@@ -242,6 +245,7 @@ describe('MarketplacePage publishing and import', () => {
     await user.selectOptions(within(dialog).getByLabelText('Agent to publish'), 'a2')
     await user.type(within(dialog).getByPlaceholderText('My Agent Pack'), 'Persisted')
     await user.type(within(dialog).getByPlaceholderText('What does this agent do?'), 'Stays')
+    await user.click(within(dialog).getByRole('checkbox', { name: /publish anonymously/i }))
     await user.click(within(dialog).getByRole('button', { name: 'Publish' }))
     unmount()
 
@@ -264,6 +268,7 @@ describe('MarketplacePage publishing and import', () => {
     await user.selectOptions(within(dialog).getByLabelText('Agent to publish'), 'a1')
     await user.type(within(dialog).getByPlaceholderText('My Agent Pack'), 'Unsaved Pack')
     await user.type(within(dialog).getByPlaceholderText('What does this agent do?'), 'Does things')
+    await user.click(within(dialog).getByRole('checkbox', { name: /publish anonymously/i }))
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
       throw new Error('QuotaExceededError')
     })
