@@ -12,8 +12,8 @@ export default {
   outputType: 'markdown',
   exampleInputs: {
     stack: 'Node.js, Next.js, TypeScript',
-    os: 'macOS, Windows',
-    editor: 'VS Code',
+    os: ['macOS', 'Windows'],
+    editor: ['VS Code'],
   },
   inputs: [
     {
