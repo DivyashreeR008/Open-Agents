@@ -41,6 +41,9 @@ jobs:
       - name: Run format check
         run: npm run format:check
 
+      - name: Check agent index
+        run: npm run check:agents
+
       - name: Run tests with coverage
         run: npm run test:coverage
 
