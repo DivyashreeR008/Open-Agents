@@ -38,7 +38,7 @@ export default function RecommendationResultCard({ rank, agent, result, onOpenAg
               {agent?.name || 'Unnamed Agent'}
             </h3>
             <span className="text-[10px] font-semibold px-2 py-0.5 bg-zinc-500/10 text-zinc-600 dark:text-zinc-300 border border-zinc-500/20">
-              {result.matchPercentage}% match
+              {result?.matchPercentage ?? 0}% match
             </span>
           </div>
           <div className="mt-1 flex flex-wrap gap-1.5">
@@ -56,7 +56,7 @@ export default function RecommendationResultCard({ rank, agent, result, onOpenAg
       <p className="text-xs leading-relaxed text-gray-500 dark:text-text-secondary">
         {agent?.description || 'No description provided.'}
       </p>
-      {(result.reasons || []).length > 0 && (
+      {(result?.reasons || []).length > 0 && (
         <div>
           <h4 className="text-xs font-semibold text-gray-700 dark:text-text-primary mb-1">
             Why this agent?
@@ -70,7 +70,7 @@ export default function RecommendationResultCard({ rank, agent, result, onOpenAg
       )}
       <div className="flex justify-end">
         <Link
-          to={`/agent/${agent.id}`}
+          to={`/agent/${agent?.id ?? ''}`}
           onClick={onOpenAgent}
           className="inline-flex items-center gap-1.5 bg-black px-3 py-2 text-xs font-semibold text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 transition-colors"
         >
