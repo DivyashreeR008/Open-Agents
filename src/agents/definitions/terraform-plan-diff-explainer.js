@@ -159,12 +159,6 @@ Rules:
    approving the change) while remaining precise enough for the engineer running \`apply\`.
 7. If the pasted input is not actually Terraform plan output, say so clearly instead of guessing.`,
   outputType: 'markdown',
-  loadExampleButton: {
-    enabled: true,
-    label: 'Load example',
-    tooltip:
-      'Fill the form with a sample plan showing a create, an update, a destroy, and a forced replacement',
-  },
 }
 
 export default terraformPlanDiffExplainer
