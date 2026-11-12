@@ -77,7 +77,7 @@ export function useRecommendationWizard(agents = []) {
     setCurrentStepIndex((idx) => Math.max(idx - 1, 0))
   }
   const completeWizard = () => {
-    if (!validateStep()) return false
+    if (!validateStep(0) || !validateStep(1)) return false
     setHasCompleted(true)
     return true
   }
