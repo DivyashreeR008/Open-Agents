@@ -609,8 +609,12 @@ export async function fetchGeminiModels(apiKey) {
   const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   const data = await res.json()
-  return (data.models || [])
-    .filter((m) => m.supportedGenerationMethods?.includes('generateContent'))
+  const models = Array.isArray(data.models) ? data.models : []
+  return models
+    .filter(
+      (m) =>
+        m && typeof m.name === 'string' && m.supportedGenerationMethods?.includes('generateContent')
+    )
     .map((m) => ({
       value: m.name.replace('models/', ''),
       label: m.displayName || m.name.replace('models/', ''),
