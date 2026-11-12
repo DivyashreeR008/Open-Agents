@@ -52,7 +52,7 @@ export function parseCSV(text) {
         field += char
       }
     } else {
-      if (char === '"') {
+      if (char === '"' && field === '') {
         inQuotes = true
       } else if (char === ',') {
         pushField()
