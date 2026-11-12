@@ -41,7 +41,12 @@ export default function AutomationRunDrawer({ run, isOpen, onClose }) {
     const element = document.createElement('a')
     const file = new Blob([run.output || run.error || ''], { type: 'text/markdown' })
     element.href = URL.createObjectURL(file)
-    element.download = `${run.automationName.replace(/\s+/g, '_')}_${new Date(run.startedAt).toISOString().split('T')[0]}.md`
+    const safeName = (run.automationName || 'run').replace(/\s+/g, '_')
+    const started = run.startedAt ? new Date(run.startedAt) : new Date()
+    const stamp = Number.isNaN(started.getTime())
+      ? new Date().toISOString().split('T')[0]
+      : started.toISOString().split('T')[0]
+    element.download = `${safeName}_${stamp}.md`
     document.body.appendChild(element)
     element.click()
     document.body.removeChild(element)
