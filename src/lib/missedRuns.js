@@ -83,8 +83,13 @@ export function planDueRuns(due, policy, { maxCatchUp = MAX_CATCH_UP_RUNS } = {}
 
   let runCount
   if (chosen === 'skip') runCount = lastOnTime ? 1 : 0
-  else if (chosen === 'catch_up') runCount = Math.min(count, Math.max(1, maxCatchUp))
-  else runCount = 1
+  else if (chosen === 'catch_up') {
+    const requested = Number(maxCatchUp)
+    const limit = Number.isFinite(requested)
+      ? Math.max(1, Math.floor(requested))
+      : MAX_CATCH_UP_RUNS
+    runCount = Math.min(count, limit)
+  } else runCount = 1
 
   const runWindows = []
   for (let i = runCount; i >= 1; i--) runWindows.push(last - (i - 1) * intervalMs)
