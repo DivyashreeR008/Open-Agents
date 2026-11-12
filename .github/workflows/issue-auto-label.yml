@@ -48,12 +48,14 @@ jobs:
 
             if (difficulty) {
               labels.add(`difficulty: ${difficulty}`);
-              // NSoC scoring label: easy => level1 (+3), medium => level2 (+5),
-              // hard => level3 (+10).
-              labels.add({ easy: 'level1', medium: 'level2', hard: 'level3' }[difficulty]);
               // Repo convention: good first issue <=> difficulty: easy
               if (difficulty === 'easy') labels.add('good first issue');
             }
+
+            // The NSoC leaderboard scores an item on `nsoc26` + a level label
+            // (level1 +3, level2 +5, level3 +10). An item without a level
+            // scores 0, so every issue gets one before it can be counted.
+            labels.add('level3');
 
             // Fallback: no recognised type and no usable difficulty needs a human.
             if (!type && !difficulty) labels.add('triage');

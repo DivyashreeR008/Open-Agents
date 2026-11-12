@@ -32,6 +32,11 @@ jobs:
               labels.push('automated', 'dependencies');
             }
 
+            // The NSoC leaderboard scores a merged PR on its level label
+            // (level1 +3, level2 +5, level3 +10). A PR that carries `nsoc26`
+            // but no level scores 0, so every PR gets one before it can merge.
+            labels.push('nsoc26', 'level3');
+
             await github.rest.issues.addLabels({
               owner: context.repo.owner,
               repo: context.repo.repo,
