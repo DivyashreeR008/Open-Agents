@@ -143,6 +143,8 @@ export default function WorkflowDetail() {
     )
   }
 
+  const agentIds = Array.isArray(workflow.agents) ? workflow.agents : []
+
   return (
     <div className="max-w-xl mx-auto animate-fade-in">
       {/* Back */}
@@ -186,7 +188,7 @@ export default function WorkflowDetail() {
           </div>
           <div className="flex items-center gap-1.5">
             <span className="text-xs dark:text-text-muted text-gray-400">
-              {(workflow.agents ?? []).length} agent{workflow.agents?.length !== 1 ? 's' : ''}
+              {agentIds.length} agent{agentIds.length !== 1 ? 's' : ''}
             </span>
           </div>
         </div>
@@ -225,12 +227,12 @@ export default function WorkflowDetail() {
       <div className=" border p-5 dark:bg-surface-card dark:border-border bg-white border-gray-200">
         <h2 className="eyebrow mb-4">Agent Sequence</h2>
         <div>
-          {(workflow.agents ?? []).map((agentId, index) => (
+          {agentIds.map((agentId, index) => (
             <AgentRow
               key={agentId + index}
               agentId={agentId}
               index={index}
-              total={workflow.agents.length}
+              total={agentIds.length}
               agents={agents}
             />
           ))}
