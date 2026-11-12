@@ -633,7 +633,7 @@ export default function HomePage() {
               >
                 {visibleAgents.map((agent) => (
                   <div role="listitem" key={agent.id}>
-                    <AgentCard agent={agent} variant="grid" />
+                    <AgentCard agent={agent} variant="grid" searchQuery={searchQuery} />
                   </div>
                 ))}
               </div>
@@ -645,7 +645,12 @@ export default function HomePage() {
               >
                 {visibleAgents.map((agent, i) => (
                   <div role="listitem" key={agent.id}>
-                    <AgentCard agent={agent} variant="row" index={i + 1} />
+                    <AgentCard
+                      agent={agent}
+                      variant="row"
+                      index={i + 1}
+                      searchQuery={searchQuery}
+                    />
                   </div>
                 ))}
               </div>

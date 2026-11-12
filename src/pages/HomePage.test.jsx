@@ -131,6 +131,23 @@ describe('HomePage', () => {
     expect(screen.getByText('Beta Agent')).toBeInTheDocument()
   })
 
+  it('highlights the matching fragment and explains why the card matched', () => {
+    renderPage()
+
+    fireEvent.change(screen.getByPlaceholderText(/search agents/i), {
+      target: { value: 'draws' },
+    })
+
+    const link = screen.getByRole('link', { name: /Beta Agent/ })
+    expect([...link.querySelectorAll('mark')].map((mark) => mark.textContent)).toEqual(['Draws'])
+
+    const descriptionId = link.getAttribute('aria-describedby')
+    expect(descriptionId).toBeTruthy()
+    expect(document.getElementById(descriptionId)).toHaveTextContent(
+      'Matches search "draws" in description.'
+    )
+  })
+
   it('hydrates the search filter from the URL', () => {
     renderPage(['/agents?q=draws'])
 
