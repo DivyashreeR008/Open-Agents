@@ -85,15 +85,19 @@ export function getPricing(modelId) {
   return MODEL_PRICING[modelId]
 }
 
+function isValidTokenCount(value) {
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0
+}
+
 export function estimateInputCost(modelId, inputTokens) {
   const pricing = getPricing(modelId)
-  if (!pricing) return null
+  if (!pricing || !isValidTokenCount(inputTokens)) return null
   return (inputTokens / 1_000_000) * pricing.inputCostPer1M
 }
 
 export function estimateOutputCost(modelId, outputTokens) {
   const pricing = getPricing(modelId)
-  if (!pricing) return null
+  if (!pricing || !isValidTokenCount(outputTokens)) return null
   return (outputTokens / 1_000_000) * pricing.outputCostPer1M
 }
 
