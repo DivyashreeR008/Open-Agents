@@ -6,7 +6,7 @@ export const COLLECTION_EXPORT_VERSION = 1
 export const MAX_COLLECTION_IMPORT_BYTES = 64 * 1024
 
 const AGENT_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$/
-const CONTROL_CHARS = /[\u0000-\u001f\u007f]/g
+const CONTROL_CHARS = /[\u0000-\u001f\u007f\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/g
 
 /**
  * The file contents for one collection. Only the name and agent ids are
