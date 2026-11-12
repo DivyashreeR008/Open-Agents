@@ -19,8 +19,8 @@ export function serializeCollection(collection) {
       version: COLLECTION_EXPORT_VERSION,
       exportedAt: new Date().toISOString(),
       collection: {
-        name: collection.name,
-        agentIds: [...collection.agentIds],
+        name: collection?.name,
+        agentIds: [...(collection?.agentIds ?? [])],
       },
     },
     null,
@@ -29,7 +29,7 @@ export function serializeCollection(collection) {
 }
 
 export function collectionExportFilename(collection) {
-  const slug = collection.name
+  const slug = String(collection?.name ?? '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
