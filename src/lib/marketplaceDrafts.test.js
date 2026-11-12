@@ -222,9 +222,104 @@ describe('buildDraftAgent', () => {
     expect(agent.systemPrompt).toBe('base prompt')
   })
 
-  it('returns null when the base agent is gone', () => {
+  it('returns null when the base agent is gone and no snapshot exists', () => {
     const draft = importAgent(publish({ baseAgentId: 'missing' }).id)
     expect(buildDraftAgent(draft, baseAgents)).toBeNull()
     expect(buildDraftAgent(draft, [])).toBeNull()
+  })
+
+  it('rebuilds a complete published snapshot without the source agent', () => {
+    const snapshot = {
+      id: 'snapshot-agent',
+      name: 'Snapshot Agent',
+      description: 'snapshot description',
+      category: 'Research',
+      icon: 'FileText',
+      provider: 'openai',
+      defaultProvider: 'openai',
+      model: 'gpt-4o',
+      inputs: [{ id: 'text', label: 'Text', type: 'textarea', required: true }],
+      exampleInputs: { text: 'Example input' },
+      systemPrompt: 'snapshot prompt',
+      outputType: 'markdown',
+    }
+    const draft = importAgent(
+      publish({
+        baseAgentId: 'removed-base',
+        provider: 'any',
+        systemPrompt: 'draft prompt',
+        agentSnapshot: snapshot,
+      }).id
+    )
+
+    expect(buildDraftAgent(draft, [])).toMatchObject({
+      id: 'snapshot-agent',
+      name: 'Pack (imported)',
+      description: 'does things',
+      provider: 'any',
+      defaultProvider: 'openai',
+      model: 'gpt-4o',
+      inputs: snapshot.inputs,
+      exampleInputs: { text: 'Example input' },
+      systemPrompt: 'draft prompt',
+      outputType: 'markdown',
+      icon: 'FileText',
+      category: 'Research',
+    })
+  })
+
+  it('keeps snapshot fields when the live base definition changes', () => {
+    const snapshotInputs = [{ id: 'snapshot-input', label: 'Snapshot input', type: 'text' }]
+    const draft = importAgent(
+      publish({
+        agentSnapshot: {
+          ...baseAgents[0],
+          model: 'snapshot-model',
+          inputs: snapshotInputs,
+          exampleInputs: { text: 'snapshot example' },
+        },
+      }).id
+    )
+    const changedBase = [
+      {
+        ...baseAgents[0],
+        model: 'changed-model',
+        inputs: [{ id: 'changed-input', label: 'Changed input', type: 'text' }],
+        exampleInputs: { text: 'changed example' },
+      },
+    ]
+
+    expect(buildDraftAgent(draft, changedBase)).toMatchObject({
+      model: 'snapshot-model',
+      inputs: snapshotInputs,
+      exampleInputs: { text: 'snapshot example' },
+    })
+  })
+
+  it('sanitizes credentials inside a snapshot and names their paths', () => {
+    const listing = publish({
+      agentSnapshot: {
+        ...baseAgents[0],
+        headers: { authorization: 'Bearer secret', accept: 'application/json' },
+      },
+    })
+
+    expect(listing.config.agentSnapshot.headers.authorization).toBe('YOUR_AUTHORIZATION_HERE')
+    expect(listing.config.agentSnapshot.headers.accept).toBe('application/json')
+    expect(listing.sanitizedFields).toContain('agentSnapshot.headers.authorization')
+  })
+
+  it('falls back to the live base when a stored snapshot is malformed', () => {
+    const draft = importAgent(
+      publish({ agentSnapshot: { inputs: null, systemPrompt: 7, model: 'bad-model' } }).id
+    )
+    const agent = buildDraftAgent(draft, baseAgents)
+
+    expect(agent).toMatchObject({
+      id: 'summarizer',
+      inputs: [],
+      systemPrompt: 'custom prompt',
+    })
+    expect(agent.model).toBeUndefined()
   })
 })

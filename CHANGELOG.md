@@ -44,7 +44,7 @@ changelog tooling is planned but not yet in place (see ROADMAP.md, section 6).
 
 ### Fixed
 
-- None.
+- Marketplace listings now store a sanitized snapshot of the complete agent definition. Imported drafts keep their inputs, model, default provider, example inputs, and output settings, and can run even if the source agent is later removed (#171).
 
 ### Security
 

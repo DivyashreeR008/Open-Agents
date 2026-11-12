@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import {
+  createAgentSnapshot,
   getAverageRating,
   filterListings,
   sanitizeAgentConfig,
@@ -104,6 +105,35 @@ describe('sanitizeAgentConfig', () => {
   it('returns empty sanitizedFields when no credentials', () => {
     const { sanitizedFields } = sanitizeAgentConfig({ name: 'Agent', model: 'gpt-4o' })
     expect(sanitizedFields).toHaveLength(0)
+  })
+})
+
+describe('createAgentSnapshot', () => {
+  it('returns a detached serializable copy of the agent', () => {
+    const agent = {
+      id: 'agent-1',
+      model: 'gpt-4o',
+      inputs: [{ id: 'topic', type: 'text' }],
+      run: () => 'not serializable',
+    }
+
+    const snapshot = createAgentSnapshot(agent)
+    agent.inputs[0].id = 'changed'
+
+    expect(snapshot).toEqual({
+      id: 'agent-1',
+      model: 'gpt-4o',
+      inputs: [{ id: 'topic', type: 'text' }],
+    })
+  })
+
+  it('returns null for invalid or circular input', () => {
+    const circular = {}
+    circular.self = circular
+
+    expect(createAgentSnapshot(null)).toBeNull()
+    expect(createAgentSnapshot([])).toBeNull()
+    expect(createAgentSnapshot(circular)).toBeNull()
   })
 })
 

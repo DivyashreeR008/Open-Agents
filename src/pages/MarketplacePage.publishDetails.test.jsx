@@ -13,7 +13,12 @@ vi.mock('../lib/useAgents', () => ({
         name: 'Summarizer',
         description: 'Summarizes text',
         category: 'Research',
+        icon: 'FileText',
         provider: 'openai',
+        defaultProvider: 'openai',
+        model: 'gpt-4o',
+        inputs: [{ id: 'text', label: 'Text', type: 'textarea', required: true }],
+        exampleInputs: { text: 'Example input' },
         systemPrompt: 'Summarize.',
         outputType: 'text',
       },
@@ -89,6 +94,21 @@ describe('MarketplacePage publish details and import outcomes', () => {
       name: 'Research Pack',
       category: 'Content Generation',
       readme: 'Use a short source list.',
+      config: {
+        baseAgentId: 'a1',
+        provider: 'openai',
+        systemPrompt: 'Summarize.',
+        outputType: 'text',
+        agentSnapshot: {
+          id: 'a1',
+          icon: 'FileText',
+          model: 'gpt-4o',
+          defaultProvider: 'openai',
+          inputs: [{ id: 'text', label: 'Text', type: 'textarea', required: true }],
+          exampleInputs: { text: 'Example input' },
+          outputType: 'text',
+        },
+      },
     })
   })
 

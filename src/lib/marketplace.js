@@ -65,8 +65,26 @@ export function sanitizeAgentConfig(config) {
 }
 
 /**
+ * Copy the complete runnable definition of an agent for storage in a listing.
+ * The snapshot is serializable and independent of the live catalogue, so an
+ * imported listing keeps its inputs, model, defaults, and output settings even
+ * when the source definition changes or disappears.
+ * @param {object} agent
+ * @returns {object|null}
+ */
+export function createAgentSnapshot(agent) {
+  if (!agent || typeof agent !== 'object' || Array.isArray(agent)) return null
+  try {
+    return JSON.parse(JSON.stringify(agent))
+  } catch {
+    return null
+  }
+}
+
+/**
  * Publish an agent to the marketplace. The config is always sanitized before
- * it is stored.
+ * it is stored. New publish flows should include an `agentSnapshot` in the
+ * config, created with createAgentSnapshot, so the listing is self-contained.
  * @param {{ name: string, description: string, tags: string[], category: string, readme?: string, author?: string, config: object }} entry
  * @returns {object} the stored listing
  */
@@ -333,28 +351,54 @@ export function getMissingDraftFields(draft, values = {}) {
   })
 }
 
+const hasCompleteSnapshot = (snapshot) =>
+  Boolean(snapshot) &&
+  typeof snapshot.id === 'string' &&
+  Boolean(snapshot.id) &&
+  Array.isArray(snapshot.inputs) &&
+  typeof snapshot.systemPrompt === 'string'
+
 /**
- * Turn a draft into something AgentRunner can run: the base agent it was
- * published from, with the draft's name, provider and system prompt on top.
- * The base agent id is kept so history and ratings stay attached to a real
- * agent. Returns null when the base agent is no longer in the catalogue.
+ * Turn a draft into something AgentRunner can run. Newer listings carry an
+ * agentSnapshot with the complete definition; older listings only carry the
+ * base id, provider, instructions, and output type, so the live catalogue is
+ * still used as a fallback. The original id is preserved so history and
+ * ratings stay attached to a real agent.
  * @param {object} draft
  * @param {Array<object>} agents
  * @returns {object|null}
  */
 export function buildDraftAgent(draft, agents) {
-  const baseId = draft?.config?.baseAgentId
+  const config =
+    draft?.config && typeof draft.config === 'object' && !Array.isArray(draft.config)
+      ? draft.config
+      : {}
+  const baseId = config.baseAgentId
   const base = Array.isArray(agents) ? agents.find((a) => a.id === baseId) : null
-  if (!base) return null
+  const snapshot =
+    config.agentSnapshot &&
+    typeof config.agentSnapshot === 'object' &&
+    !Array.isArray(config.agentSnapshot)
+      ? config.agentSnapshot
+      : null
+  const source = hasCompleteSnapshot(snapshot) ? { ...(base || {}), ...snapshot } : base
+  if (!source) return null
 
-  const { provider, systemPrompt } = draft.config
+  const provider = [config.provider, source.provider, base?.provider, 'openai'].find((value) =>
+    DRAFT_PROVIDERS.includes(value)
+  )
+  const systemPrompt =
+    [config.systemPrompt, source.systemPrompt, base?.systemPrompt].find(
+      (value) => typeof value === 'string' && value.trim()
+    ) ?? ''
+
   return {
-    ...base,
+    ...source,
+    inputs: Array.isArray(source.inputs) ? source.inputs : [],
     name: draft.name,
-    description: draft.description || base.description,
-    provider: DRAFT_PROVIDERS.includes(provider) ? provider : base.provider,
-    systemPrompt:
-      typeof systemPrompt === 'string' && systemPrompt.trim() ? systemPrompt : base.systemPrompt,
+    description: draft.description || source.description,
+    provider: provider ?? 'openai',
+    systemPrompt,
   }
 }
 
