@@ -1,5 +1,6 @@
 export default {
   id: 'cloud-cost-estimator',
+  createdAt: '2026-10-11',
   name: 'Cloud Cost Estimator',
   description:
     'Describe your cloud infrastructure and get a realistic monthly cost estimate with line-by-line breakdown, hidden cost warnings, tier comparisons, and actionable optimization tips',

@@ -1,5 +1,6 @@
 export default {
   id: 'pr-description-generator',
+  createdAt: '2026-10-11',
   name: 'Pull Request Description Generator',
   description:
     'Turn a diff summary or bullet points of changes into a full, structured PR description with summary, changes list, testing instructions, and a screenshots section.',

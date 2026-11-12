@@ -1,5 +1,6 @@
 const apiRateLimiterDesigner = {
   id: 'api-rate-limiter-designer',
+  createdAt: '2026-10-11',
 
   name: 'API Rate Limiter Designer',
 

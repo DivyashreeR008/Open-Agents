@@ -46,6 +46,11 @@ describe('AgentCard row variant', () => {
     expect(screen.getByText('Gemini')).toBeInTheDocument()
   })
 
+  it('shows the new badge when the catalogue marks the agent as new', () => {
+    renderRow({ isNew: true })
+    expect(screen.getByText('new')).toBeInTheDocument()
+  })
+
   it('keeps actions available to keyboard focus', () => {
     const { container } = renderRow({ index: 2 })
     const actions = screen.getByRole('button', { name: 'Add to favorites' }).parentElement

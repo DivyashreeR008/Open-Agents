@@ -1,5 +1,6 @@
 export default {
   id: 'git-error-decoder',
+  createdAt: '2026-10-11',
   name: 'Git Error Decoder',
   description:
     'Translates confusing Git/terminal errors into plain English and provides safe fix commands.',

@@ -1,5 +1,6 @@
 const gameDesignDocumentGenerator = {
   id: 'game-design-document-generator',
+  createdAt: '2026-10-11',
   name: 'Game Design Document Generator',
   description: 'Generates a comprehensive Game Design Document (GDD) based on your game concept.',
   category: 'Design',

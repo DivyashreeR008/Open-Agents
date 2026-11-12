@@ -39,8 +39,9 @@ git commit -m "emergency commit" --no-verify
 
 Agent definitions are checked directly from the raw registry modules and mounted
 through `AgentRunner` by the test suite. Run `npm test` before submitting a new or
-updated definition; invalid input types, option lists, duplicate IDs, and stale
-`exampleInputs` keys will fail with the affected agent's file and ID.
+updated definition; invalid input types, option lists, duplicate IDs, stale
+`exampleInputs` keys, and missing or malformed `createdAt` dates will fail with
+the affected agent's file and ID.
 
 ## Merge Requirements & Quality Gates
 

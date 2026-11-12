@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { AGENT_COUNT, loadAllAgents } from '../agents/registry'
+import { selectNewAgentIds } from './agentFreshness'
 
 export const AgentsContext = createContext(null)
 
@@ -9,6 +10,7 @@ export const AgentsContext = createContext(null)
  */
 export function AgentsProvider({ children }) {
   const [agents, setAgents] = useState([])
+  const [newAgentIds, setNewAgentIds] = useState(() => new Set())
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -18,6 +20,7 @@ export function AgentsProvider({ children }) {
     loadAllAgents()
       .then((loaded) => {
         setAgents(loaded)
+        setNewAgentIds(selectNewAgentIds(loaded))
         setLoading(false)
       })
       .catch((err) => {
@@ -33,7 +36,7 @@ export function AgentsProvider({ children }) {
 
   return (
     <AgentsContext.Provider
-      value={{ agents, loading, error, reloadAgents, catalogSize: AGENT_COUNT }}
+      value={{ agents, newAgentIds, loading, error, reloadAgents, catalogSize: AGENT_COUNT }}
     >
       {children}
     </AgentsContext.Provider>
@@ -42,7 +45,7 @@ export function AgentsProvider({ children }) {
 
 /**
  * Hook to access the lazily-loaded agents list.
- * @returns {{ agents: Array, loading: boolean, error: Error | null, reloadAgents: () => void, catalogSize: number }}
+ * @returns {{ agents: Array, newAgentIds: Set<string>, loading: boolean, error: Error | null, reloadAgents: () => void, catalogSize: number }}
  */
 export function useAgents() {
   const context = useContext(AgentsContext)

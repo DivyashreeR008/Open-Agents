@@ -1,5 +1,6 @@
 const javaDsaInterviewPrep = {
   id: 'java-dsa-interview-prep',
+  createdAt: '2026-10-11',
   name: 'Java DSA Interview Prep',
   description:
     'Generates Java DSA problems, provides hints, reviews attempts, and simulates coding interviews.',

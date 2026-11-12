@@ -1,5 +1,6 @@
 export default {
   id: 'prompt-engineering-coach',
+  createdAt: '2026-10-11',
   name: 'Prompt Engineering Coach',
   category: 'Productivity',
   description:

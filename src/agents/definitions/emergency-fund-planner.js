@@ -1,5 +1,6 @@
 export default {
   id: 'emergency-fund-planner',
+  createdAt: '2026-10-11',
   name: 'Emergency Fund Planner',
   description:
     'Plan an emergency fund based on essential expenses, current savings, monthly contributions, and a target coverage period.',

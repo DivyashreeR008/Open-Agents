@@ -59,4 +59,16 @@ describe('AgentCard grid variant', () => {
     renderCard({ ...baseAgent, id: 'none', name: 'None', createdAt: undefined })
     expect(screen.queryByText('new')).not.toBeInTheDocument()
   })
+
+  it('honors an explicit freshness decision from the catalogue', () => {
+    const selected = renderCard(
+      { ...baseAgent, name: 'Selected', createdAt: '2020-01-01T00:00:00.000Z' },
+      { isNew: true }
+    )
+    expect(screen.getByText('new')).toBeInTheDocument()
+    selected.unmount()
+
+    renderCard({ ...baseAgent, id: 'suppressed', name: 'Suppressed' }, { isNew: false })
+    expect(screen.queryByText('new')).not.toBeInTheDocument()
+  })
 })

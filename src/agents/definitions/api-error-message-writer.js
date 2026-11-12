@@ -1,5 +1,6 @@
 export default {
   id: 'api-error-message-writer',
+  createdAt: '2026-10-11',
   name: 'API Error Message Writer',
   description:
     'Transforms technical, raw, or cryptic backend error codes and system logs into tailored, user-friendly notifications and precise diagnostic debugging steps.',

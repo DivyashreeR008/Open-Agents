@@ -1,5 +1,6 @@
 const mlExperimentAutopsy = {
   id: 'ml-experiment-autopsy',
+  createdAt: '2026-10-11',
   name: 'Model Meltdown Detective',
   description:
     'Diagnose failed or underperforming ML experiments using model details, dataset context, metrics, hyperparameters, and code snippets.',

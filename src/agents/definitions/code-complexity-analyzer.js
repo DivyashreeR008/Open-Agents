@@ -1,5 +1,6 @@
 export default {
   id: 'code-complexity-analyzer',
+  createdAt: '2026-10-11',
 
   name: 'Code Complexity Analyzer',
 

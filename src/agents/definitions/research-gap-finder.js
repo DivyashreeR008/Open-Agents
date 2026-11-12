@@ -1,5 +1,6 @@
 const researchGapFinder = {
   id: 'research-gap-finder',
+  createdAt: '2026-10-11',
   name: 'Research Gap Finder',
   description:
     'Paste paper summaries and get unexplored areas, shared limits, and future research directions.',

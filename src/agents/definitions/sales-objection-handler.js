@@ -1,5 +1,6 @@
 const salesObjectionHandler = {
   id: 'sales-objection-handler',
+  createdAt: '2026-10-11',
 
   name: 'Sales Objection Handler',
 

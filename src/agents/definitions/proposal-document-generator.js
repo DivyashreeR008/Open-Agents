@@ -1,5 +1,6 @@
 const proposalDocumentGenerator = {
   id: 'proposal-document-generator',
+  createdAt: '2026-10-11',
 
   name: 'Proposal Document Generator',
 

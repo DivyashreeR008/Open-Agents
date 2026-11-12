@@ -1,5 +1,6 @@
 const realEstateListingGenerator = {
   id: 'real-estate-listing-generator',
+  createdAt: '2026-10-11',
   name: 'Real Estate Listing Generator',
   description:
     'Generates compelling real estate listing descriptions for property portals and marketplaces.',

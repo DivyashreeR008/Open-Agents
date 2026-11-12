@@ -1,5 +1,6 @@
 export default {
   id: 'error-message-writer',
+  createdAt: '2026-10-11',
   name: 'Error Message Writer',
   description:
     'Paste a raw stack trace or error log and get a plain English explanation plus actionable fix suggestions.',

@@ -1,5 +1,6 @@
 const graphqlSchemaGenerator = {
   id: 'graphql-schema-generator',
+  createdAt: '2026-10-11',
 
   name: 'GraphQL Schema Generator',
 

@@ -1,5 +1,6 @@
 export default {
   id: 'debt-payoff-strategist',
+  createdAt: '2026-10-11',
   name: 'Debt Payoff Strategist',
   description:
     'Compare debt repayment strategies, estimate payoff timelines, and build a realistic plan for becoming debt-free.',

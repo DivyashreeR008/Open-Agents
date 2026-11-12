@@ -1,5 +1,6 @@
 export default {
   id: 'personal-budget-analyzer',
+  createdAt: '2026-10-11',
   name: 'Personal Budget Analyzer',
   description:
     'Analyze your monthly income and expenses to get a clear breakdown, savings rate, and actionable financial recommendations.',

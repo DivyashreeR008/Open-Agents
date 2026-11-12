@@ -1,5 +1,6 @@
 const k8sManifestSecurityAuditOptimizer = {
   id: 'k8s-manifest-security-audit-optimizer',
+  createdAt: '2026-10-11',
   name: 'Kubernetes Manifest Security Audit & Optimizer Agent',
   description:
     'Audit Kubernetes YAML configurations for security vulnerabilities, container misconfigurations, and performance bottlenecks, and generate optimized manifests.',

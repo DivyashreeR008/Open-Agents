@@ -13,11 +13,12 @@ vi.mock('../agents/registry', () => ({
 import { AgentsProvider, useAgents } from './useAgents'
 
 function Probe() {
-  const { agents, loading, error, reloadAgents, catalogSize } = useAgents()
+  const { agents, newAgentIds, loading, error, reloadAgents, catalogSize } = useAgents()
   return (
     <div>
       <span>loading:{String(loading)}</span>
       <span>count:{agents.length}</span>
+      <span>new:{newAgentIds.size}</span>
       <span>catalog:{catalogSize}</span>
       <span>error:{error ? error.message : 'none'}</span>
       <button onClick={reloadAgents}>reload</button>
@@ -35,7 +36,7 @@ describe('AgentsProvider edge behavior', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {})
     mocks.loadAllAgents
       .mockRejectedValueOnce(new Error('registry offline'))
-      .mockResolvedValueOnce([{ id: 'a1' }])
+      .mockResolvedValueOnce([{ id: 'a1', createdAt: new Date().toISOString() }])
 
     render(
       <AgentsProvider>
@@ -49,6 +50,7 @@ describe('AgentsProvider edge behavior', () => {
     fireEvent.click(screen.getByRole('button', { name: 'reload' }))
 
     expect(await screen.findByText('count:1')).toBeInTheDocument()
+    expect(screen.getByText('new:1')).toBeInTheDocument()
     expect(screen.getByText('error:none')).toBeInTheDocument()
     expect(screen.getByText('catalog:2')).toBeInTheDocument()
   })

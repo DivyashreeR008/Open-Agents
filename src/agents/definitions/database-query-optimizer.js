@@ -1,5 +1,6 @@
 const databaseQueryOptimizer = {
   id: 'database-query-optimizer',
+  createdAt: '2026-10-11',
   name: 'Database Query Optimizer',
   description:
     'This agent takes a SQL query and optional schema context as input and returns an optimized version with an explanation of what changed, what indexes to add, and why the original was slow.',

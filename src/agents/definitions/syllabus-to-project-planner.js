@@ -1,5 +1,6 @@
 const syllabusToProjectPlanner = {
   id: 'syllabus-to-project-planner',
+  createdAt: '2026-10-11',
   name: 'Syllabus-to-Project Planner',
   description:
     'Turns dry, academic syllabus topics or engineering course chapters into highly practical, resume-worthy coding project ideas.',

@@ -1,5 +1,6 @@
 const agent_evaluation_benchmark_assistant = {
   id: 'agent-evaluation-benchmark-assistant',
+  createdAt: '2026-10-11',
   name: 'Agent Evaluation & Benchmark Assistant',
   description:
     "Evaluate an AI agent's response against its prompt for accuracy, completeness, hallucination risk, and clarity, then get concrete suggestions and an improved response.",

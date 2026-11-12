@@ -1,5 +1,6 @@
 export default {
   id: 'project-architecture-planner',
+  createdAt: '2026-10-11',
   name: 'Project Architecture Planner',
   description:
     'Analyzes a project idea and recommends a practical technology stack, architecture, authentication strategy, AI components, deployment approach, and development roadmap.',

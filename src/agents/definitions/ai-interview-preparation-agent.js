@@ -1,5 +1,6 @@
 const aiInterviewPreparationAgent = {
   id: 'ai-interview-preparation-agent',
+  createdAt: '2026-10-11',
   name: 'InterviewAI',
   description:
     'Simulates real software engineering interviews and provides comprehensive performance feedback.',

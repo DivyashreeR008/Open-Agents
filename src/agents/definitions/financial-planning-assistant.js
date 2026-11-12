@@ -1,5 +1,6 @@
 export default {
   id: 'financial-planning-assistant',
+  createdAt: '2026-10-11',
   name: 'Financial Planning Assistant',
   description:
     'Create practical financial plans for savings goals, debt payoff, emergency funds, and major spending decisions.',

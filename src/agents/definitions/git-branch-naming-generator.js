@@ -1,5 +1,6 @@
 export default {
   id: 'git-branch-naming-generator',
+  createdAt: '2026-10-11',
   name: 'Git Branch Naming Generator',
   description:
     'Generate 3-5 clean, consistent branch name options from a ticket number, title, and branch type following common conventions like feature/ILA-123-add-login-page.',

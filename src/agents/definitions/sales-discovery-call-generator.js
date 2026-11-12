@@ -1,5 +1,6 @@
 const salesDiscoveryCallGenerator = {
   id: 'sales-discovery-call-generator',
+  createdAt: '2026-10-11',
 
   name: 'Sales Discovery Call Script Generator',
 

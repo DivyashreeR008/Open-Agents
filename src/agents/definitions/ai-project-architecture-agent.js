@@ -1,5 +1,6 @@
 const aiProjectArchitectureAgent = {
   id: 'ai-project-architecture-agent',
+  createdAt: '2026-10-11',
   name: 'AI Project Architecture Agent',
   description:
     'Analyzes software or AI project ideas and recommends the most suitable frontend, backend, database, AI tools, and deployment stack.',

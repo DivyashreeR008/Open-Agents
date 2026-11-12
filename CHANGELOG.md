@@ -44,7 +44,7 @@ changelog tooling is planned but not yet in place (see ROADMAP.md, section 6).
 
 ### Fixed
 
-- None.
+- New-agent badges now use a curated recent set, treat oversized same-day groups as bulk imports, and show in both catalogue views. Sixty-four definitions gained their missing creation dates, and the definition contract now rejects missing dates (#178).
 
 ### Security
 

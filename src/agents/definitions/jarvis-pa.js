@@ -1,5 +1,6 @@
 export default {
   id: 'jarvis-pa',
+  createdAt: '2026-10-11',
   name: 'Jarvis PA',
   description:
     'Your personal AI assistant for planning, task breakdown, scheduling, prioritization, and daily productivity support.',

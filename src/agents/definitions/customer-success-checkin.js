@@ -1,5 +1,6 @@
 export default {
   id: 'customer-success-checkin',
+  createdAt: '2026-10-11',
 
   name: 'Customer Success Check-in Generator',
 

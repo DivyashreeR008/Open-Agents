@@ -1,5 +1,6 @@
 const terraformConfigGeneratorAgent = {
   id: 'terraform-config-generator',
+  createdAt: '2026-10-11',
   name: 'Terraform Config Generator Agent',
   description:
     'Turns a plain-English infrastructure description into ready-to-use Terraform configuration (main.tf, variables.tf, outputs.tf) for your chosen cloud provider.',

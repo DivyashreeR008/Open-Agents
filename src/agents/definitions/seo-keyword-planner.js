@@ -1,5 +1,6 @@
 const seoKeywordStrategyPlanner = {
   id: 'seo-keyword-planner',
+  createdAt: '2026-10-11',
   name: 'SEO Keyword Strategy Planner',
   description:
     'Helps marketers generate a comprehensive SEO keyword strategy by identifying high-value keywords and content opportunities.',

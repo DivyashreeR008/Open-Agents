@@ -1,5 +1,6 @@
 const terms_and_conditions_simplifier = {
   id: 'terms-and-conditions-simplifier',
+  createdAt: '2026-10-11',
   name: 'Terms and Conditions Simplifier',
   description:
     'Paste a website URL (or its Terms & Conditions link directly) and get the terms explained in plain English, with red flags highlighted.',

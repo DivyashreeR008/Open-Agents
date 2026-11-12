@@ -1,5 +1,6 @@
 const excel_sheets_formula_generator = {
   id: 'excel-sheets-formula-generator',
+  createdAt: '2026-10-11',
   name: 'Excel/Sheets Formula Generator',
   description:
     'Describe what you want to calculate or extract in plain English and get a correct, ready-to-paste Excel or Google Sheets formula with a plain-English explanation of how it works.',

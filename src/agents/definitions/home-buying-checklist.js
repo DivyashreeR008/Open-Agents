@@ -1,5 +1,6 @@
 const homeBuyingChecklist = {
   id: 'home-buying-checklist',
+  createdAt: '2026-10-11',
   name: 'Home Buying Checklist Generator',
   description:
     'Generates a complete property viewing checklist based on property type, building age, and location.',

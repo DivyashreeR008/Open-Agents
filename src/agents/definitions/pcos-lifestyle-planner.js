@@ -1,6 +1,7 @@
 import { HeartPulse } from 'lucide-react'
 const pcosLifestylePlanner = {
   id: 'pcos-lifestyle-planner',
+  createdAt: '2026-10-11',
   name: 'PCOS Lifestyle Planner',
   description:
     'Creates a personalized 4-week lifestyle plan for managing PCOS with nutrition, exercise, sleep, and healthy habits.',
