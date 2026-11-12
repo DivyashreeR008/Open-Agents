@@ -4,7 +4,7 @@
  */
 
 function slugifyFilename(name) {
-  const slug = name
+  const slug = String(name ?? '')
     .toLowerCase()
     .replace(/\s+/g, '-')
     .replace(/[^a-z0-9-]/g, '')
@@ -44,7 +44,13 @@ export function exportBatchAsCSV(agentName, results) {
 
   const header = ['#', 'Input', 'Status', 'Output', 'Error']
   const safeResults = Array.isArray(results) ? results : []
-  const rows = safeResults.map((r, i) => [i + 1, r.input, r.status, r.output || '', r.error || ''])
+  const rows = safeResults.map((r, i) => [
+    i + 1,
+    r?.input ?? '',
+    r?.status ?? '',
+    r?.output || '',
+    r?.error || '',
+  ])
 
   const csv = [header, ...rows].map((row) => row.map(csvEscape).join(',')).join('\n')
 
@@ -67,20 +73,21 @@ export function exportBatchAsMarkdown(agentName, results) {
   const safeResults = Array.isArray(results) ? results : []
   const sections = safeResults
     .map((r, i) => {
+      const status = r?.status
       const label =
-        r.status === 'done'
+        status === 'done'
           ? 'Success'
-          : r.status === 'failed'
+          : status === 'failed'
             ? 'Failed'
-            : r.status === 'stopped'
+            : status === 'stopped'
               ? 'Stopped'
               : 'Pending'
       const heading = `## Item ${i + 1} — ${label}`
-      const inputBlock = `**Input:**\n\n${r.input}`
+      const inputBlock = `**Input:**\n\n${r?.input ?? ''}`
       const bodyBlock =
-        r.status === 'failed'
-          ? `**Error:**\n\n${r.error || 'Unknown error'}`
-          : `**Output:**\n\n${r.output || '(empty)'}`
+        status === 'failed'
+          ? `**Error:**\n\n${r?.error || 'Unknown error'}`
+          : `**Output:**\n\n${r?.output || '(empty)'}`
       return `${heading}\n\n${inputBlock}\n\n${bodyBlock}`
     })
     .join('\n\n---\n\n')
