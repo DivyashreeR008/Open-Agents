@@ -155,6 +155,7 @@ export default function WorkflowRunner() {
         return {
           kind: 'conditional',
           stepDef: entry,
+          branches: entry.branches,
           agentId: entry.id ?? 'conditional',
           agentName: entry.id ? `Branch: ${entry.id}` : 'Conditional Branch',
           agent: null,
