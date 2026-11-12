@@ -73,7 +73,7 @@ const gameCompatibilityAgent = {
       label: 'Target Resolution',
       type: 'select', // text | textarea | code | select | multiselect
       options: ['720p', '1080p', '1440p', '4K'],
-      defaultValue: 'HDD',
+      defaultValue: '1080p',
       required: true,
     },
   ],
