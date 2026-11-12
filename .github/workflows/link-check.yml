@@ -1,0 +1,143 @@
+# Weekly advisory check. Broken links open or update one tracking issue; a
+# passing run closes it. The workflow never blocks pull request checks.
+name: Documentation Link Check
+
+on:
+  schedule:
+    # Weekly on Monday at 06:17 UTC. The offset avoids the top of the hour.
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: documentation-link-check
+  cancel-in-progress: true
+
+jobs:
+  check-links:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Check documentation links
+        id: lychee
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          # Keep the check advisory: a broken link should produce a report, not
+          # block unrelated work. The step output still records the exit code.
+          fail: false
+          args: >-
+            --no-progress
+            --max-concurrency 8
+            --accept 200,206,429
+            --include-fragments
+            './*.md'
+            './.github/ISSUE_TEMPLATE/*.yml'
+            './.github/*.md'
+          output: ./link-check-report.md
+
+      - name: Add the report to the job summary
+        if: always()
+        run: |
+          {
+            echo '## Documentation link check'
+            echo
+            if [ -f link-check-report.md ]; then
+              cat link-check-report.md
+            else
+              echo 'The link checker did not produce a report.'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Maintain the tracking issue
+        if: always()
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          LYCHEE_EXIT_CODE: ${{ steps.lychee.outputs.exit_code }}
+        with:
+          script: |
+            const fs = require('fs');
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const runUrl = `https://github.com/${owner}/${repo}/actions/runs/${context.runId}`;
+            const exitCode = process.env.LYCHEE_EXIT_CODE || 'unknown';
+            const issueTitle = 'Automated documentation link check';
+            const reportPath = 'link-check-report.md';
+
+            let report = '';
+            try {
+              report = fs.readFileSync(reportPath, 'utf8').trim();
+            } catch {
+              report = '';
+            }
+
+            const { data: openIssues } = await github.rest.issues.listForRepo({
+              owner,
+              repo,
+              state: 'open',
+              labels: 'automated',
+              per_page: 100,
+            });
+            const existing = openIssues.find((issue) => issue.title === issueTitle) || null;
+
+            if (exitCode === '0') {
+              if (existing) {
+                await github.rest.issues.createComment({
+                  owner,
+                  repo,
+                  issue_number: existing.number,
+                  body: `The scheduled documentation link check passed on ${new Date().toISOString()}.\n\nRun: ${runUrl}`,
+                });
+                await github.rest.issues.update({
+                  owner,
+                  repo,
+                  issue_number: existing.number,
+                  state: 'closed',
+                });
+              }
+              return;
+            }
+
+            const reportLimit = 55000;
+            const reportText = report
+              ? report.slice(0, reportLimit)
+              : 'The link checker did not produce a report file.';
+            const truncationNote =
+              report.length > reportLimit
+                ? '\n\nReport truncated. Open the workflow run for the complete output.'
+                : '';
+            const body = [
+              'The scheduled documentation link check found broken links or did not finish.',
+              '',
+              `Checked: ${new Date().toISOString()}`,
+              `Exit code: \`${exitCode}\``,
+              `Run: ${runUrl}`,
+              '',
+              '<details><summary>Link checker report</summary>',
+              '',
+              reportText + truncationNote,
+              '',
+              '</details>',
+            ].join('\n');
+
+            if (existing) {
+              await github.rest.issues.update({
+                owner,
+                repo,
+                issue_number: existing.number,
+                body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner,
+                repo,
+                title: issueTitle,
+                body,
+                labels: ['documentation', 'automated'],
+              });
+            }

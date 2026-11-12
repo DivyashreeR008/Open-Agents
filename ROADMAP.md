@@ -19,7 +19,7 @@ Welcome to the Open-Agents roadmap! This document publicly communicates the proj
    - [4. Provider Integrations & Offline Development](#4-provider-integrations--offline-development)
    - [5. Accessibility, UX & Frontend Polish](#5-accessibility-ux--frontend-polish)
    - [6. Testing, CI/CD & Developer Experience (DX)](#6-testing-cicd--developer-experience-dx)
-4. [ðŸ¤ Areas Seeking Help (Where Contributors Count Most)](#-areas-seeking-help-where-contributors-count-most)
+4. [Areas Seeking Help (Where Contributors Count Most)](#areas-seeking-help-where-contributors-count-most)
 5. [Roadmap Lifecycle & Refresh Process](#roadmap-lifecycle--refresh-process)
 6. [Milestone Archive (Completed Goals)](#milestone-archive-completed-goals)
 
@@ -106,7 +106,7 @@ Building a reliable foundation where contributors can ship code with high confid
 
 ---
 
-## ðŸ¤ Areas Seeking Help (Where Contributors Count Most)
+## Areas Seeking Help (Where Contributors Count Most)
 
 If you are looking for an issue to pick upâ€”especially during **NSoC 2026**â€”these areas are actively looking for contributions:
 
