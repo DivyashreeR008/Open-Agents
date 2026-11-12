@@ -33,11 +33,20 @@ const CREDENTIAL_KEY_PATTERN = /(api[_-]?key|token|secret|password|credential|au
  */
 export function sanitizeAgentConfig(config) {
   const sanitizedFields = []
+  const seen = new WeakMap()
 
   const walk = (value, path) => {
-    if (Array.isArray(value)) return value.map((v, i) => walk(v, `${path}[${i}]`))
+    if (Array.isArray(value)) {
+      if (seen.has(value)) return seen.get(value)
+      const out = []
+      seen.set(value, out)
+      value.forEach((v, i) => out.push(walk(v, `${path}[${i}]`)))
+      return out
+    }
     if (value && typeof value === 'object') {
+      if (seen.has(value)) return seen.get(value)
       const out = {}
+      seen.set(value, out)
       for (const [key, v] of Object.entries(value)) {
         const childPath = path ? `${path}.${key}` : key
         if (CREDENTIAL_KEY_PATTERN.test(key) && typeof v === 'string' && v !== '') {
