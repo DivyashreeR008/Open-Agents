@@ -6,6 +6,7 @@ import CollectionAgentPicker from '../components/collections/CollectionAgentPick
 import { useAgents } from '../lib/useAgents'
 import { MAX_AGENTS_PER_COLLECTION, useCollections } from '../lib/useCollections'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
+import { useTimedState } from '../lib/useTimedState'
 import PageHeader from '../components/layout/PageHeader'
 import SectionHeader from '../components/layout/SectionHeader'
 import EmptyState from '../components/layout/EmptyState'
@@ -19,6 +20,7 @@ export default function CollectionDetailPage() {
   const { agents, loading, error } = useAgents()
 
   const collection = getCollectionById(id)
+  const [removalNotice, setRemovalNotice] = useTimedState(null)
 
   useDocumentTitle(collection ? `${collection.name} Collection` : 'Collection not found')
 
@@ -77,6 +79,56 @@ export default function CollectionDetailPage() {
     return removeAgentFromCollection(collection.id, agentId)
   }
 
+  const handleRemoveFromCard = (agent) => {
+    const result = removeAgentFromCollection(collection.id, agent.id)
+
+    if (!result?.ok) {
+      setRemovalNotice(
+        {
+          tone: 'error',
+          message: result?.error || `Unable to remove ${agent.name} from this collection.`,
+        },
+        10000
+      )
+      return
+    }
+
+    setRemovalNotice(
+      {
+        tone: 'success',
+        message: `Removed ${agent.name} from ${collection.name}.`,
+        removedAgentId: agent.id,
+        removedAgentName: agent.name,
+      },
+      10000
+    )
+  }
+
+  const handleUndoRemove = () => {
+    if (!removalNotice?.removedAgentId) return
+
+    const result = addAgentToCollection(collection.id, removalNotice.removedAgentId)
+
+    if (!result?.ok) {
+      setRemovalNotice(
+        {
+          tone: 'error',
+          message: result?.error || `Could not restore ${removalNotice.removedAgentName}.`,
+        },
+        10000
+      )
+      return
+    }
+
+    setRemovalNotice(
+      {
+        tone: 'success',
+        message: `Restored ${removalNotice.removedAgentName} to ${collection.name}.`,
+      },
+      4000
+    )
+  }
+
   return (
     <div className="animate-fade-in">
       <Link
@@ -105,6 +157,30 @@ export default function CollectionDetailPage() {
         }
       />
 
+      {removalNotice && (
+        <div
+          className={`mb-3 flex flex-wrap items-center justify-between gap-3 border bg-white px-3 py-2 text-sm dark:bg-surface-card ${
+            removalNotice.tone === 'error'
+              ? 'border-zinc-400 text-zinc-900 dark:border-zinc-500 dark:text-text-primary'
+              : 'border-zinc-200 text-zinc-700 dark:border-border dark:text-text-secondary'
+          }`}
+        >
+          <span role="status" aria-live="polite" aria-atomic="true">
+            {removalNotice.message}
+          </span>
+          {removalNotice.removedAgentId && (
+            <button
+              type="button"
+              onClick={handleUndoRemove}
+              aria-label={`Undo removal of ${removalNotice.removedAgentName}`}
+              className="shrink-0 border-b border-current font-semibold text-zinc-900 transition-colors hover:text-black dark:text-white dark:hover:text-zinc-200"
+            >
+              Undo
+            </button>
+          )}
+        </div>
+      )}
+
       <section>
         <SectionHeader
           title="Agents in this collection"
@@ -124,7 +200,7 @@ export default function CollectionDetailPage() {
                 <AgentCard agent={agent} />
 
                 <button
-                  onClick={() => handleRemoveAgent(agent.id)}
+                  onClick={() => handleRemoveFromCard(agent)}
                   aria-label={`Remove ${agent.name} from collection`}
                   title="Remove from collection"
                   className="absolute -right-1 -top-1 z-10 inline-flex h-5 w-5 items-center justify-center border border-zinc-200 bg-white text-zinc-400 transition-colors hover:border-zinc-400 hover:text-black dark:hover:text-white dark:border-border dark:bg-surface-card"
