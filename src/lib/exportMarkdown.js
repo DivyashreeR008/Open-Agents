@@ -18,7 +18,7 @@ export function exportWorkflowAsMarkdown(workflowTitle, steps) {
 
   const safeSteps = Array.isArray(steps) ? steps : []
   const stepContent = safeSteps
-    .filter((s) => s.status === 'done' && s.output)
+    .filter((s) => s?.status === 'done' && s.output)
     .map((s, i) => `## Step ${i + 1} — ${s.agentName || 'Agent'}\n\n${s.output}`)
     .join('\n\n---\n\n')
 
