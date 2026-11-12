@@ -103,4 +103,17 @@ describe('Settings credential state', () => {
     expect(anthropicLink).toBeDefined()
     expect(anthropicLink.textContent).not.toMatch(/free/i)
   })
+
+  it('states the real lifetime and storage boundaries for saved keys', () => {
+    renderSettings()
+
+    const privacyNote = screen.getByText(/Saved provider keys last for this tab/)
+    expect(privacyNote).toHaveTextContent(/removed after eight hours or when the tab closes/)
+    expect(privacyNote).toHaveTextContent(/Scheduled jobs use a separate encrypted vault/)
+    expect(privacyNote).toHaveTextContent(/that key is not uploaded/)
+    expect(privacyNote).toHaveTextContent(/Automation definitions and saved inputs may sync/)
+    expect(privacyNote).toHaveTextContent(/provider keys are not included in that sync/)
+    expect(privacyNote).not.toHaveTextContent(/synced copy/i)
+    expect(privacyNote).not.toHaveTextContent(/localStorage/i)
+  })
 })
