@@ -30,7 +30,9 @@ _(One or two sentences explaining what this agent does)_
 
 ### Category
 
-_(Pick one: `Productivity` · `Research` · `Marketing` · `Engineering` · `HR` — or suggest a new one)_
+_Pick one canonical category: `Business`, `Content Writing`, `Cybersecurity`, `Data Science`, `Design`, `Developer Tools`, `Education`, `Engineering`, `Finance`, `HR`, `Legal`, `Marketing`, `Personal Development`, `Product`, `Productivity`, `Research`, `Healthcare`, `Sales`, `DevOps`, `Web3`, `Gaming`, `Real Estate`._
+
+The source of truth is [`src/agents/categories.js`](src/agents/categories.js). A new category needs a separate taxonomy proposal.
 
 ### Problem It Solves
 
@@ -48,10 +50,10 @@ _(What pain point does this agent address? Who would use it and why?)_
 
 ### Suggested Provider & Model
 
-| Field    | Value                                                |
-| -------- | ---------------------------------------------------- |
-| Provider | _(openai / anthropic / gemini / any)_                |
-| Model    | _(e.g. gpt-4o, claude-sonnet-4-0, gemini-2.0-flash)_ |
+| Field    | Value                                                                             |
+| -------- | --------------------------------------------------------------------------------- |
+| Provider | _(openai / anthropic / gemini / openrouter / any)_                                |
+| Model    | _(e.g. gpt-4o, claude-3-5-sonnet-20241022, gemini-2.5-flash, openai/gpt-4o-mini)_ |
 
 ### Input Fields
 

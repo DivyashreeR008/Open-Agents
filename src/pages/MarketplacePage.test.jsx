@@ -19,7 +19,7 @@ vi.mock('../lib/useAgents', () => {
       id: 'a2',
       name: 'Translator',
       description: 'Translates text',
-      category: 'Content Generation',
+      category: 'Content Writing',
       provider: 'openai',
       systemPrompt: 'Translate.',
     },
@@ -533,7 +533,7 @@ describe('MarketplacePage listing order and dates', () => {
         seedListing({
           id: 'mkt_beta',
           name: 'Beta',
-          category: 'Content Generation',
+          category: 'Content Writing',
           publishedAt: '2026-02-01T12:00:00.000Z',
           ratingTotal: 5,
           ratingCount: 1,

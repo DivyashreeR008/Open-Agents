@@ -11,13 +11,7 @@ import geminiLogo from '../assets/gemini.svg'
 import openrouterLogo from '../assets/openrouter.svg'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 import { getGlobalKeys, getAvailableProviders } from '../lib/globalKeys'
-
-const PROVIDERS = [
-  { value: 'openai', label: 'OpenAI' },
-  { value: 'anthropic', label: 'Anthropic' },
-  { value: 'gemini', label: 'Gemini' },
-  { value: 'openrouter', label: 'OpenRouter' },
-]
+import { PROVIDERS } from '../agents/categories'
 
 const providerLogos = {
   openai: openaiLogo,

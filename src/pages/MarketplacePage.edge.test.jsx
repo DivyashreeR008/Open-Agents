@@ -20,7 +20,7 @@ vi.mock('../lib/useAgents', () => ({
         id: 'a2',
         name: 'Translator',
         description: 'Translates text',
-        category: 'Content Generation',
+        category: 'Content Writing',
         provider: 'openai',
         systemPrompt: 'Translate.',
       },
@@ -67,7 +67,7 @@ describe('MarketplacePage filter and picker edges', () => {
       LISTINGS_KEY,
       JSON.stringify([
         seedListing({ id: 'mkt_alpha', name: 'Alpha', category: 'Research' }),
-        seedListing({ id: 'mkt_beta', name: 'Beta', category: 'Data Processing' }),
+        seedListing({ id: 'mkt_beta', name: 'Beta', category: 'Data Science' }),
       ])
     )
     const user = userEvent.setup()
@@ -88,7 +88,7 @@ describe('MarketplacePage filter and picker edges', () => {
     await user.clear(screen.getByLabelText('Search marketplace'))
     expect(headingNames()).toEqual(['Alpha', 'Beta'])
 
-    await user.selectOptions(screen.getByLabelText('Filter by category'), 'Data Processing')
+    await user.selectOptions(screen.getByLabelText('Filter by category'), 'Data Science')
     expect(headingNames()).toEqual(['Beta'])
     expect(screen.getByText('1 of 2 listings')).toBeInTheDocument()
   })

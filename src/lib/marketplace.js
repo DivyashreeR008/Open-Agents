@@ -8,11 +8,27 @@
  * throwing.
  */
 
+import { CATEGORIES } from '../agents/categories.js'
+
 const LISTINGS_KEY = 'oa_marketplace_listings'
 const DRAFTS_KEY = 'oa_marketplace_drafts'
 const VOTES_KEY = 'oa_marketplace_votes'
 
-export const MARKETPLACE_CATEGORIES = ['Data Processing', 'Content Generation', 'Research']
+export const MARKETPLACE_CATEGORIES = CATEGORIES
+
+// Values written by the pre-taxonomy publish form. Keep reading them so old
+// listings remain visible, but normalize them to canonical categories.
+const LEGACY_MARKETPLACE_CATEGORIES = new Map([
+  ['Data Processing', 'Data Science'],
+  ['Content Generation', 'Content Writing'],
+])
+
+function normalizeMarketplaceCategory(value) {
+  if (typeof value !== 'string') return MARKETPLACE_CATEGORIES[0]
+  const trimmed = value.trim()
+  const mapped = LEGACY_MARKETPLACE_CATEGORIES.get(trimmed) ?? trimmed
+  return MARKETPLACE_CATEGORIES.includes(mapped) ? mapped : MARKETPLACE_CATEGORIES[0]
+}
 
 export const MARKETPLACE_SORTS = [
   { value: 'newest', label: 'Newest first' },
@@ -71,9 +87,7 @@ export function publishAgent(entry) {
       .map((t) => String(t).trim())
       .filter(Boolean)
       .slice(0, 8),
-    category: MARKETPLACE_CATEGORIES.includes(entry.category)
-      ? entry.category
-      : MARKETPLACE_CATEGORIES[0],
+    category: normalizeMarketplaceCategory(entry.category),
     readme: entry.readme ? String(entry.readme) : '',
     author: String(entry.author ?? 'Anonymous').trim() || 'Anonymous',
     config,
@@ -126,10 +140,7 @@ export function normalizeListing(listing) {
     tags: Array.isArray(listing.tags)
       ? listing.tags.filter((t) => typeof t === 'string' && t.trim())
       : [],
-    category:
-      typeof listing.category === 'string' && listing.category
-        ? listing.category
-        : MARKETPLACE_CATEGORIES[0],
+    category: normalizeMarketplaceCategory(listing.category),
     readme: typeof listing.readme === 'string' ? listing.readme : '',
     author:
       typeof listing.author === 'string' && listing.author.trim()

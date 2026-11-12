@@ -79,7 +79,7 @@ describe('MarketplacePage publish details and import outcomes', () => {
       within(dialog).getByPlaceholderText('What does this agent do?'),
       'Finds sources'
     )
-    await user.selectOptions(within(dialog).getByLabelText('Category'), 'Content Generation')
+    await user.selectOptions(within(dialog).getByLabelText('Category'), 'Content Writing')
     await user.type(within(dialog).getByLabelText('README, optional'), 'Use a short source list.')
     await user.click(within(dialog).getByRole('button', { name: 'Publish' }))
 
@@ -87,7 +87,7 @@ describe('MarketplacePage publish details and import outcomes', () => {
     expect(stored).toHaveLength(1)
     expect(stored[0]).toMatchObject({
       name: 'Research Pack',
-      category: 'Content Generation',
+      category: 'Content Writing',
       readme: 'Use a short source list.',
     })
   })

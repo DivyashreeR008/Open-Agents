@@ -41,11 +41,20 @@ body:
       label: Which part of the app is this about?
       options:
         - Agent Runner
-        - Homepage / Agent Grid
-        - API Key / Provider Bar
-        - Output Panel
-        - Sidebar / Navigation
+        - Agent Catalogue
+        - Collections
+        - Suites
+        - Workflows
+        - Automations
+        - Marketplace
+        - Battle Mode
+        - Analytics
+        - Settings and API Keys
+        - Navigation and Sidebar
+        - Output and Export
+        - Search
         - Mobile Experience
+        - Accessibility
         - Performance
         - Other
     validations:
