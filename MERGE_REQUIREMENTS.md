@@ -35,7 +35,7 @@ Every proposal submitted to Open-Agents moves through the following stages:
 [ Open Pull Request ]  ──► Target 'main', complete PR template, link issue
        │
        ▼
-[ Automated Checks ]   ──► GitHub Actions run CI, Build Check, Smoke Test
+[ Automated Checks ]   ──► GitHub Actions run CI and Smoke Test
        │
        ├─► Failed? Automated bot comment left on PR; fix locally and push
        │
@@ -52,13 +52,20 @@ Every proposal submitted to Open-Agents moves through the following stages:
 
 ## Automated CI Status Checks
 
-Every pull request targeting `main` (and every push to `main`) triggers three GitHub Actions workflows. A change cannot merge if any of these checks fail.
+Every pull request targeting `main` (and every push to `main`) triggers two GitHub Actions workflows. A change cannot merge if any of these checks fail.
 
 ### 1. CI (`.github/workflows/ci.yml`)
 
-Runs on `ubuntu-latest` with Node.js 22 and `npm ci`.
+Runs on `ubuntu-latest` with the Node.js release pinned in `.nvmrc` and `npm ci`.
 
+- **Runtime Contract**:
+  - `actions/setup-node` reads `.nvmrc`, currently Node 22.23.5, so every job uses the same runtime.
+  - `package.json` declares the supported range `^22.22.2 || ^24.15.0 || >=26.0.0`, matching the locked test tooling.
+  - `.npmrc` sets `engine-strict=true`, so `npm install` and `npm ci` fail with `EBADENGINE` on an unsupported runtime instead of allowing tests to run there.
 - **Test Job (`test`)**:
+  - Executes `npm run check:security` to enforce the policies in [SECURITY.md](SECURITY.md): no unauthorized network transmissions or telemetry, no insecurely stored credentials, no tracking scripts in the client bundle, and explicit records for reviewed exceptions in `security-exceptions.json`.
+  - Runs the registry default-import guard and rejects `import agents from`.
+  - Executes `npm run lint` and `npm run format:check`.
   - Executes `npm run test:coverage` (Vitest with V8 coverage).
   - Validates that all unit and integration tests pass across components, hooks, utilities, and agent definitions.
   - Enforces minimum code coverage thresholds configured in `vitest.config.js`:
@@ -70,37 +77,12 @@ Runs on `ubuntu-latest` with Node.js 22 and `npm ci`.
   - Automatically formats and publishes a coverage summary to the GitHub Actions Step Summary via `scripts/coverage-summary.mjs`.
 - **Build Job (`build`)**:
   - Depends on `test` completing successfully.
-  - Executes `npm run build` (`vite build`).
-  - Asserts that the production bundle compiles with zero syntax, import, or build errors.
+  - Executes `npm run build` (`vite build`) and `npm run check:bundle-size`.
+  - Asserts that the production bundle compiles with zero syntax, import, or build errors and stays within the route budgets.
 
-### 2. Build Check (`.github/workflows/build-check.yml`)
+### 2. Smoke Test (Built Output) (`.github/workflows/smoke-test.yml`)
 
-Runs on `ubuntu-latest` with Node.js 22 and cached `node_modules`.
-
-- **Broken Registry Import Check**:
-  - Scans `src/` to prevent regressions:
-    ```bash
-    grep -r "import agents from" src/
-    ```
-  - Forbids direct default imports of the agent registry. Components must use the registry hook instead:
-    ```javascript
-    const { agents } = useAgents()
-    ```
-- **Contributor Security Rules Check**:
-  - Runs `node scripts/check-security-rules.mjs` (`npm run check:security`).
-  - Enforces the security policies defined in [SECURITY.md](SECURITY.md):
-    1. No unauthorized third-party network transmissions or telemetry.
-    2. No credentials, access tokens, or API keys logged or stored insecurely.
-    3. No analytics or tracking scripts added to the client bundle.
-    4. Any intentional, reviewed exceptions must be explicitly recorded in `security-exceptions.json`.
-- **Production Build**:
-  - Executes `npm run build` to verify clean output.
-- **Failure Notification**:
-  - If this check fails on a pull request, an automated bot comment is posted directly to the PR with instructions to run `npm run verify` locally.
-
-### 3. Smoke Test (Built Output) (`.github/workflows/smoke-test.yml`)
-
-Runs on `ubuntu-latest` with Node.js 22 and `npm ci`.
+Runs on `ubuntu-latest` with the Node.js release pinned in `.nvmrc` and `npm ci`.
 
 - **Job (`smoke-test`)**:
   - Executes `npm run test:smoke` (`scripts/smoke-test.mjs`).
@@ -120,7 +102,7 @@ Contributors should run the full verification suite locally before opening or up
 
 | Command                  | Purpose                                        | When to Run                                     |
 | ------------------------ | ---------------------------------------------- | ----------------------------------------------- |
-| `npm run verify`         | Runs `npm test` and `npm run build`            | Before every commit/PR                          |
+| `npm run verify`         | Runs tests, build, and bundle-size checks      | Before every commit/PR                          |
 | `npm run test:coverage`  | Runs test suite and checks coverage thresholds | When adding or changing code logic              |
 | `npm run check:security` | Runs contributor security scanner              | When touching network, storage, or dependencies |
 | `npm run test:smoke`     | Tests preview server and asset resolution      | When modifying build configs, assets, or routes |
@@ -199,14 +181,14 @@ To be eligible for merge, a pull request must satisfy these criteria:
 
 When a gate fails, consult the table below to locate the failure surface and apply the fix:
 
-| Failure Surface                         | Root Cause                                                                        | Remediation                                                                                                                                                      |
-| --------------------------------------- | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **CI: Test / Coverage Failure**         | A test failed, or statement/branch/line coverage fell below threshold.            | Run `npm run test:coverage` locally. Check `coverage/index.html` to find untested paths and add unit tests.                                                      |
-| **Build Check: Broken Registry Import** | Direct import `import agents from '.../registry'` was introduced.                 | Replace with `const { agents } = useAgents()`.                                                                                                                   |
-| **Build Check: Security Scan Failure**  | Code touches external URLs, stores credentials insecurely, or includes telemetry. | Run `npm run check:security` locally. Review findings against [SECURITY.md](SECURITY.md); record verified exceptions in `security-exceptions.json` if justified. |
-| **Smoke Test: Missing or Empty Asset**  | A built bundle file or stylesheet failed to load (HTTP 404 or 0 bytes).           | Run `npm run build && npm run test:smoke` locally to inspect asset manifests and preview outputs.                                                                |
-| **Lint / Build Compile Error**          | Syntax error, missing dependency, or invalid JSX/CSS.                             | Run `npm run build` locally to see the Vite compilation trace.                                                                                                   |
-| **Merge Conflict**                      | Upstream `main` was updated with overlapping edits.                               | Fetch `upstream/main`, merge or rebase onto your branch, resolve conflicts, and re-run `npm run verify`.                                                         |
+| Failure Surface                        | Root Cause                                                                        | Remediation                                                                                                                                                      |
+| -------------------------------------- | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **CI: Test / Coverage Failure**        | A test failed, or statement/branch/line coverage fell below threshold.            | Run `npm run test:coverage` locally. Check `coverage/index.html` to find untested paths and add unit tests.                                                      |
+| **CI: Broken Registry Import**         | Direct import `import agents from '.../registry'` was introduced.                 | Replace with `const { agents } = useAgents()`.                                                                                                                   |
+| **CI: Security Scan Failure**          | Code touches external URLs, stores credentials insecurely, or includes telemetry. | Run `npm run check:security` locally. Review findings against [SECURITY.md](SECURITY.md); record verified exceptions in `security-exceptions.json` if justified. |
+| **Smoke Test: Missing or Empty Asset** | A built bundle file or stylesheet failed to load (HTTP 404 or 0 bytes).           | Run `npm run build && npm run test:smoke` locally to inspect asset manifests and preview outputs.                                                                |
+| **Lint / Build Compile Error**         | Syntax error, missing dependency, or invalid JSX/CSS.                             | Run `npm run build` locally to see the Vite compilation trace.                                                                                                   |
+| **Merge Conflict**                     | Upstream `main` was updated with overlapping edits.                               | Fetch `upstream/main`, merge or rebase onto your branch, resolve conflicts, and re-run `npm run verify`.                                                         |
 
 ---
 

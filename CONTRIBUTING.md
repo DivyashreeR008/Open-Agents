@@ -10,6 +10,19 @@ Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before participating.
 
 Before picking an issue or proposing a new feature, please review our [Roadmap & Priorities](ROADMAP.md). It outlines what is actively being built, what is prioritized for the current season, and specific areas where we are looking for contributor help.
 
+## Environment Requirements
+
+Use the Node.js release pinned in `.nvmrc` (currently Node 22.23.5). The full supported range is declared in `package.json`, and `.npmrc` enables `engine-strict`, so `npm install` and `npm ci` fail with an `EBADENGINE` error on an unsupported runtime instead of letting the test suite run there.
+
+If you use nvm:
+
+```bash
+nvm install
+nvm use
+```
+
+The tested default is the pinned Node 22 release. Node 24.15 or newer within the 24.x line, and Node 26 or newer, are also supported by the declared engine range.
+
 ## Development Process
 
 1. **Fork the repository** - Click the "Fork" button on the top right of the GitHub page
@@ -49,8 +62,7 @@ What every pull request must pass before it can merge into `main` is formally do
 In summary, every change must satisfy:
 
 - **Automated CI Status Checks**:
-  - `CI` workflow (`.github/workflows/ci.yml`): Unit & integration test suite pass, coverage thresholds met, and clean production build.
-  - `Build Check` workflow (`.github/workflows/build-check.yml`): Broken registry import validation, contributor security rules scan (`scripts/check-security-rules.mjs`), and clean production build.
+  - `CI` workflow (`.github/workflows/ci.yml`): Broken registry import guard, contributor security rules scan (`scripts/check-security-rules.mjs`), lint and formatting checks, unit and integration tests with coverage thresholds, clean production build, and bundle-size budget.
   - `Smoke Test` workflow (`.github/workflows/smoke-test.yml`): Built output preview test (`scripts/smoke-test.mjs`) verifying server startup and zero missing (404) or empty assets.
 - **Codeowner Review & Approval**:
   - At least one review approval from the designated maintainer / code owner per `.github/CODEOWNERS` ([@DivyashreeR008](https://github.com/DivyashreeR008)).
