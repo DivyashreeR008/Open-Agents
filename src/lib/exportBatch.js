@@ -28,7 +28,7 @@ function csvEscape(value) {
   // A cell that starts with one of these characters can be interpreted as a
   // formula by spreadsheet software. Prefixing an apostrophe keeps the value
   // literal without changing the displayed text.
-  if (/^[=+\-@\t\r]/.test(str)) str = `'${str}`
+  if (/^[\n=+\-@\t\r]/.test(str)) str = `'${str}`
   if (/[",\r\n]/.test(str)) {
     return `"${str.replace(/"/g, '""')}"`
   }
