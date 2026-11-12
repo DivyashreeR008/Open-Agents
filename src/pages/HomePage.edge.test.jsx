@@ -124,7 +124,12 @@ describe('HomePage edge states', () => {
     fireEvent.change(screen.getByPlaceholderText(/search agents/i), {
       target: { value: 'no-such-agent' },
     })
-    expect(screen.getByText(/This collection is empty/i)).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { level: 3, name: 'No agents match "no-such-agent"' })
+    ).toBeInTheDocument()
+    expect(screen.getByText(/Nothing in/)).toHaveTextContent(
+      'Nothing in Design picks matches "no-such-agent".'
+    )
 
     fireEvent.click(screen.getByRole('button', { name: 'Show all agents' }))
 
