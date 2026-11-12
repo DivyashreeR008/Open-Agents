@@ -32,7 +32,7 @@ changelog tooling is planned but not yet in place (see ROADMAP.md, section 6).
 
 ### Changed
 
-- None.
+- Agent categories and providers now come from one canonical taxonomy. Marketplace listings map the two legacy category names, and a contract test keeps the issue templates and proposal template aligned with the runtime (#191).
 
 ### Deprecated
 

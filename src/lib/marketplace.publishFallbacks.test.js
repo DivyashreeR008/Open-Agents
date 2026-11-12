@@ -1,5 +1,10 @@
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest'
-import { loadListings, publishAgent, sanitizeAgentConfig } from './marketplace'
+import {
+  MARKETPLACE_CATEGORIES,
+  loadListings,
+  publishAgent,
+  sanitizeAgentConfig,
+} from './marketplace'
 
 beforeEach(() => {
   localStorage.clear()
@@ -21,7 +26,7 @@ describe('publish and load fallbacks', () => {
     expect(listing.name).toBe('')
     expect(listing.description).toBe('')
     expect(listing.tags).toEqual([])
-    expect(listing.category).toBe('Data Processing')
+    expect(listing.category).toBe(MARKETPLACE_CATEGORIES[0])
     expect(listing.author).toBe('Anonymous')
     expect(listing.persisted).toBe(true)
   })
@@ -38,7 +43,7 @@ describe('publish and load fallbacks', () => {
 
   it('uses the first category when the requested one is unknown', () => {
     const listing = publishAgent({ name: 'Unknown category', category: 'Nope', config: {} })
-    expect(listing.category).toBe('Data Processing')
+    expect(listing.category).toBe(MARKETPLACE_CATEGORIES[0])
   })
 
   it('returns an empty list when stored listings are not an array', () => {

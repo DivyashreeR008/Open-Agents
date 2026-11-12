@@ -47,7 +47,8 @@ body:
       options:
         - OpenAI
         - Anthropic
-        - Google Gemini
+        - Gemini
+        - OpenRouter
         - Not applicable
     validations:
       required: true
