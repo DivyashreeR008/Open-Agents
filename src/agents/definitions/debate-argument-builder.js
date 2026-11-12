@@ -12,7 +12,7 @@ export default {
   model: 'claude-sonnet-4-6',
   exampleInputs: {
     motion: 'Cities should ban cars from downtown areas',
-    stance: 'For the ban',
+    stance: 'For the motion',
     draftArgument:
       "Cars pollute a lot and everyone I know supports the ban, so opponents just don't care about health.",
   },
