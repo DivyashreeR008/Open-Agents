@@ -51,12 +51,33 @@ afterEach(() => {
 })
 
 describe('CollectionDetailPage actions', () => {
-  it('deletes the collection and returns to the index', () => {
+  it('confirms before deleting the collection and returns to the index', () => {
     mocks.removeAgentFromCollection.mockReturnValue({ ok: true })
     renderPage()
+
     fireEvent.click(screen.getByRole('button', { name: 'Delete' }))
+    expect(mocks.deleteCollection).not.toHaveBeenCalled()
+
+    const dialog = screen.getByRole('alertdialog')
+    expect(dialog).toHaveTextContent('Delete collection?')
+    expect(dialog).toHaveTextContent('"Launch"')
+    expect(dialog).toHaveTextContent('1 saved agent stays available in All Agents')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Delete collection' }))
+
     expect(mocks.deleteCollection).toHaveBeenCalledWith('c1')
     expect(screen.getByText('Collections index')).toBeInTheDocument()
+  })
+
+  it('stays on the collection when deletion is cancelled', () => {
+    renderPage()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Delete' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+
+    expect(mocks.deleteCollection).not.toHaveBeenCalled()
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
+    expect(screen.queryByText('Collections index')).not.toBeInTheDocument()
   })
 
   it('removes an agent with both collection and agent ids', () => {

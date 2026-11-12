@@ -1,8 +1,9 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, FolderPlus, Trash2, X } from 'lucide-react'
 import AgentCard from '../components/AgentCard'
 import CollectionAgentPicker from '../components/collections/CollectionAgentPicker'
+import ConfirmDialog from '../components/ConfirmDialog'
 import { useAgents } from '../lib/useAgents'
 import { MAX_AGENTS_PER_COLLECTION, useCollections } from '../lib/useCollections'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
@@ -14,6 +15,7 @@ import EmptyState from '../components/layout/EmptyState'
 export default function CollectionDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
 
   const { getCollectionById, deleteCollection, addAgentToCollection, removeAgentFromCollection } =
     useCollections()
@@ -70,6 +72,13 @@ export default function CollectionDetailPage() {
     deleteCollection(collection.id)
     navigate('/collections')
   }
+
+  const deleteDescription =
+    collection.agentIds.length === 0
+      ? `"${collection.name}" will be removed. The agents themselves stay available in All Agents. This cannot be undone.`
+      : `"${collection.name}" will be removed. Its ${collection.agentIds.length} saved ${
+          collection.agentIds.length === 1 ? 'agent stays' : 'agents stay'
+        } available in All Agents. This cannot be undone.`
 
   const handleAddAgent = (agentId) => {
     return addAgentToCollection(collection.id, agentId)
@@ -148,8 +157,9 @@ export default function CollectionDetailPage() {
         }
         actions={
           <button
-            onClick={handleDelete}
+            onClick={() => setConfirmingDelete(true)}
             className="btn-ghost hover:text-black dark:hover:text-white"
+            aria-haspopup="dialog"
           >
             <Trash2 size={14} aria-hidden="true" />
             Delete
@@ -220,6 +230,16 @@ export default function CollectionDetailPage() {
         onRemoveAgent={handleRemoveAgent}
         maxAgents={MAX_AGENTS_PER_COLLECTION}
       />
+
+      {confirmingDelete && (
+        <ConfirmDialog
+          title="Delete collection?"
+          description={deleteDescription}
+          confirmLabel="Delete collection"
+          onConfirm={handleDelete}
+          onClose={() => setConfirmingDelete(false)}
+        />
+      )}
     </div>
   )
 }
