@@ -13,6 +13,7 @@ import {
   LayoutGrid,
   Rows3,
   ExternalLink,
+  SlidersHorizontal,
 } from 'lucide-react'
 import AgentCardSkeleton from '../components/AgentCardSkeleton'
 import AgentCard from '../components/AgentCard'
@@ -39,6 +40,12 @@ const providerLabels = {
 }
 
 const CATALOG_PAGE_SIZE = 60
+
+function formatFilterList(items) {
+  if (items.length < 2) return items[0] ?? ''
+  if (items.length === 2) return `${items[0]} and ${items[1]}`
+  return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`
+}
 
 /** A filter is a word, not a pill: active options invert to a solid block. */
 function RailOption({ selected, onClick, children }) {
@@ -149,6 +156,13 @@ export default function HomePage() {
       })),
     ]
   }, [allProviders, providerCounts, agents.length])
+
+  const suggestedCategories = useMemo(() => {
+    return dropdownOptions
+      .filter((option) => option.value && option.value !== selectedCategory)
+      .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label))
+      .slice(0, 3)
+  }, [dropdownOptions, selectedCategory])
 
   useDocumentTitle()
 
@@ -304,6 +318,31 @@ export default function HomePage() {
         next.delete('q')
         next.delete('category')
         next.delete('provider')
+        return next
+      },
+      { replace: true }
+    )
+  }
+
+  const trimmedSearchQuery = searchQuery.trim()
+  const narrowingFilters = []
+
+  if (selectedCategory) narrowingFilters.push(`category ${selectedCategory}`)
+  if (selectedProvider) {
+    narrowingFilters.push(`provider ${providerLabels[selectedProvider] || selectedProvider}`)
+  }
+
+  const hasLimitingScope =
+    narrowingFilters.length > 0 || activeCollectionId !== DEFAULT_COLLECTION_ID
+
+  const applySuggestedCategory = (category) => {
+    setSearchParams(
+      (previous) => {
+        const next = new URLSearchParams(previous)
+        next.delete('q')
+        next.delete('provider')
+        next.delete('collection')
+        next.set('category', category)
         return next
       },
       { replace: true }
@@ -613,19 +652,67 @@ export default function HomePage() {
             )
           ) : (
             <div className="flex flex-col items-start py-14">
-              <span className="eyebrow mb-2">No entries</span>
+              <span className="eyebrow mb-2">
+                {trimmedSearchQuery
+                  ? 'No matches'
+                  : activeCollectionId === DEFAULT_COLLECTION_ID
+                    ? 'No entries'
+                    : 'Empty collection'}
+              </span>
               <h3 className="font-display text-[20px] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-text-primary">
-                No agents match those filters
+                {trimmedSearchQuery
+                  ? `No agents match "${trimmedSearchQuery}"`
+                  : activeCollectionId === DEFAULT_COLLECTION_ID
+                    ? 'No agents match those filters'
+                    : 'This collection is empty'}
               </h3>
-              <p className="mt-1.5 max-w-sm text-[13px] leading-relaxed text-zinc-500 dark:text-text-secondary">
-                {activeCollectionId === DEFAULT_COLLECTION_ID
-                  ? 'Try a different search term, or clear the category and provider filters.'
-                  : 'This collection is empty. Switch back to all agents or drag an agent into it from the index.'}
-              </p>
-              <div className="mt-4 flex items-center gap-2">
-                <button onClick={clearFilters} className="btn-secondary h-7 text-[11px]">
-                  Clear filters
-                </button>
+
+              {trimmedSearchQuery ? (
+                <>
+                  <p className="mt-1.5 max-w-md text-[13px] leading-relaxed text-zinc-500 dark:text-text-secondary">
+                    Nothing in{' '}
+                    {activeCollectionId === DEFAULT_COLLECTION_ID
+                      ? 'the catalogue'
+                      : selectedCollection?.name || 'this collection'}{' '}
+                    matches &quot;{trimmedSearchQuery}&quot;.
+                    {narrowingFilters.length > 0 && (
+                      <> The view is also limited by {formatFilterList(narrowingFilters)}.</>
+                    )}
+                  </p>
+                  <p className="mt-2 max-w-md text-[13px] leading-relaxed text-zinc-500 dark:text-text-secondary">
+                    {hasLimitingScope
+                      ? 'This can happen when a collection or several filters narrow the view. Clear one before assuming the agent is missing.'
+                      : 'Check the spelling first. If the capability is genuinely missing, use the guided flow or start from a category.'}
+                  </p>
+                </>
+              ) : (
+                <p className="mt-1.5 max-w-sm text-[13px] leading-relaxed text-zinc-500 dark:text-text-secondary">
+                  {activeCollectionId === DEFAULT_COLLECTION_ID
+                    ? 'Try a different search term, or clear the category and provider filters.'
+                    : 'Switch back to all agents or drag an agent into it from the index.'}
+                </p>
+              )}
+
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                {trimmedSearchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="btn-secondary h-7 text-[11px]"
+                    aria-label="Clear search query from results"
+                  >
+                    Clear search
+                  </button>
+                )}
+                {(selectedCategory || selectedProvider) && (
+                  <button
+                    type="button"
+                    onClick={clearFilters}
+                    className="btn-secondary h-7 text-[11px]"
+                  >
+                    Clear filters
+                  </button>
+                )}
                 {activeCollectionId !== DEFAULT_COLLECTION_ID && (
                   <button
                     type="button"
@@ -635,7 +722,45 @@ export default function HomePage() {
                     Show all agents
                   </button>
                 )}
+                <button
+                  type="button"
+                  onClick={handleOpenRecommendationWizard}
+                  className="btn-primary h-7 text-[11px]"
+                  aria-label="Open recommendation wizard for this search"
+                >
+                  <SlidersHorizontal size={12} aria-hidden="true" />
+                  Find my agent
+                </button>
               </div>
+
+              {suggestedCategories.length > 0 && (
+                <section
+                  className="mt-7 w-full max-w-xl border-t border-zinc-200 pt-4 dark:border-border"
+                  aria-labelledby="empty-categories-heading"
+                >
+                  <h4 id="empty-categories-heading" className="eyebrow">
+                    Start from a category
+                  </h4>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {suggestedCategories.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => applySuggestedCategory(option.value)}
+                        aria-label={`Browse ${option.label} (${option.count} ${
+                          option.count === 1 ? 'agent' : 'agents'
+                        })`}
+                        className="inline-flex items-center gap-1.5 border border-zinc-200 px-2.5 py-1 text-[12px] text-zinc-600 transition-colors hover:border-black hover:text-black dark:border-border dark:text-text-secondary dark:hover:border-white dark:hover:text-white"
+                      >
+                        {option.label}
+                        <span className="font-mono text-[10px] tabular-nums text-zinc-400 dark:text-text-muted">
+                          {option.count}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </section>
+              )}
             </div>
           )}
 
