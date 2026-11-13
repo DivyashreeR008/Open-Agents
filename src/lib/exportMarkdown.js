@@ -16,10 +16,41 @@ export function exportWorkflowAsMarkdown(workflowTitle, steps) {
 
   const filename = `${slug}-output.md`
 
-  const safeSteps = Array.isArray(steps) ? steps : []
+  const safeSteps = Array.isArray(steps) ? steps.filter(Boolean) : []
+
+  const statusLabel = (status) =>
+    ({
+      done: 'Completed',
+      failed: 'Failed',
+      running: 'Still running',
+      cancelled: 'Stopped',
+      skipped: 'Skipped',
+    })[status] || 'Not run'
+
+  const stepBody = (step) => {
+    if (step.status === 'failed') {
+      const detail = step.error || 'No error details were recorded.'
+      return step.output
+        ? `**Error:**\n\n${detail}\n\n**Partial output:**\n\n${step.output}`
+        : `**Error:**\n\n${detail}`
+    }
+
+    if (step.status === 'done') {
+      return `**Output:**\n\n${step.output || '(empty)'}`
+    }
+
+    if (step.status === 'running') {
+      return 'This step was still running when the export was created.'
+    }
+
+    return 'This step did not run before the export was created.'
+  }
+
   const stepContent = safeSteps
-    .filter((s) => s?.status === 'done' && s.output)
-    .map((s, i) => `## Step ${i + 1} — ${s.agentName || 'Agent'}\n\n${s.output}`)
+    .map(
+      (step, i) =>
+        `## Step ${i + 1} — ${step.agentName || 'Agent'}\n\n**Status:** ${statusLabel(step.status)}\n\n${stepBody(step)}`
+    )
     .join('\n\n---\n\n')
 
   const content = `# ${safeTitle} — Workflow Output\nGenerated on ${date}\n\n${stepContent}`

@@ -24,10 +24,10 @@ describe('exportWorkflowAsMarkdown', () => {
     delete URL.revokeObjectURL
   })
 
-  it('keeps only completed steps with output and renumbers them continuously', async () => {
+  it('includes every step and distinguishes failures from steps that never ran', async () => {
     exportWorkflowAsMarkdown('Release workflow', [
       { agentName: 'Reviewer', status: 'done', output: 'Review complete' },
-      { agentName: 'Tester', status: 'failed', output: 'Tests failed' },
+      { agentName: 'Tester', status: 'failed', error: 'Assertion failed on line 4' },
       { agentName: 'Writer', status: 'done', output: 'Notes written' },
       { agentName: 'Pending', status: 'running', output: 'Still going' },
       { agentName: 'Empty', status: 'done', output: '' },
@@ -36,12 +36,18 @@ describe('exportWorkflowAsMarkdown', () => {
     const content = await createdBlob.text()
 
     expect(content).toContain('## Step 1 — Reviewer')
+    expect(content).toContain('**Status:** Completed')
     expect(content).toContain('Review complete')
-    expect(content).toContain('## Step 2 — Writer')
+    expect(content).toContain('## Step 2 — Tester')
+    expect(content).toContain('**Status:** Failed')
+    expect(content).toContain('Assertion failed on line 4')
+    expect(content).toContain('## Step 3 — Writer')
     expect(content).toContain('Notes written')
-    expect(content).not.toContain('Tester')
-    expect(content).not.toContain('Still going')
-    expect(content).not.toContain('## Step 3')
+    expect(content).toContain('## Step 4 — Pending')
+    expect(content).toContain('**Status:** Still running')
+    expect(content).toContain('This step was still running')
+    expect(content).toContain('## Step 5 — Empty')
+    expect(content).toContain('(empty)')
   })
 
   it('writes a dated markdown document and downloads it as a blob', async () => {
