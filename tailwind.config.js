@@ -32,7 +32,9 @@ export default {
         text: {
           primary: '#FAFAFA',
           secondary: '#A1A1A1',
-          muted: '#737373',
+          // Muted metadata stays readable on every dark surface:
+          // 6.1:1 on black, 5.7:1 on cards, 5.3:1 on hover rows.
+          muted: '#8A8A8A',
         },
         // Semantic states are luminance-only; callsites pair them with icons
         // and explicit labels so meaning never depends on hue.
