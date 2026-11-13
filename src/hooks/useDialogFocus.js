@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { inertBackground } from './useInertBackground'
+import { inertBackground, lockBodyScroll } from './useInertBackground'
 
 const FOCUSABLE = [
   'a[href]',
@@ -54,6 +54,7 @@ export function useDialogFocus(containerRef, { active = true, onClose } = {}) {
     // opener body and lose the return target. Cleanup restores the background
     // first so the opener is focusable again when focus returns to it.
     const restoreBackground = inertBackground(container)
+    const restoreScroll = lockBodyScroll()
 
     const onKeyDown = (event) => {
       if (event.key === 'Escape') {
@@ -88,6 +89,7 @@ export function useDialogFocus(containerRef, { active = true, onClose } = {}) {
     return () => {
       window.removeEventListener('keydown', onKeyDown)
       restoreBackground()
+      restoreScroll()
       if (opener instanceof HTMLElement && opener !== document.body && opener.isConnected) {
         focusWithoutScroll(opener)
       }
