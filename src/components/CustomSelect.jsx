@@ -43,28 +43,58 @@ export default function CustomSelect({
 
   const selectedIcon = selectedOption && typeof selectedOption === 'object' && selectedOption.icon
 
+  const optionCount = options.length
+
+  const optionValue = (option) => (typeof option === 'object' ? option.value : option)
+
+  const openMenu = () => {
+    const selectedIndex = options.findIndex((option) => optionValue(option) === value)
+    setHighlightedIndex(optionCount === 0 ? -1 : selectedIndex >= 0 ? selectedIndex : 0)
+    setIsOpen(true)
+  }
+
+  const closeMenu = () => {
+    setIsOpen(false)
+    setHighlightedIndex(-1)
+    triggerRef.current?.focus()
+  }
+
+  const moveHighlight = (delta) => {
+    if (optionCount === 0) return
+    setHighlightedIndex((prev) => {
+      if (prev < 0) return delta > 0 ? 0 : optionCount - 1
+      return (prev + delta + optionCount) % optionCount
+    })
+  }
+
   const handleSelect = (val) => {
     onChange(val)
     setIsOpen(false)
+    setHighlightedIndex(-1)
     triggerRef.current.focus()
   }
 
   // Keyboard navigation within the open dropdown
   const handleTriggerKeyDown = (e) => {
-    if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+    if (e.key === 'ArrowDown') {
       e.preventDefault()
-      if (!isOpen) {
-        setIsOpen(true)
-        setHighlightedIndex(0)
-      } else {
-        setHighlightedIndex((prev) => Math.min(prev + 1, options.length - 1))
-      }
+      if (!isOpen) openMenu()
+      else moveHighlight(1)
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
-      if (isOpen) setHighlightedIndex((prev) => Math.max(prev - 1, 0))
-    } else if (e.key === 'Escape') {
-      setIsOpen(false)
-      triggerRef.current?.focus()
+      if (isOpen) moveHighlight(-1)
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      if (!isOpen) {
+        openMenu()
+      } else if (highlightedIndex >= 0 && highlightedIndex < optionCount) {
+        handleSelect(optionValue(options[highlightedIndex]))
+      } else {
+        closeMenu()
+      }
+    } else if (e.key === 'Escape' && isOpen) {
+      e.preventDefault()
+      closeMenu()
     }
   }
 
@@ -74,13 +104,22 @@ export default function CustomSelect({
       handleSelect(val)
     } else if (e.key === 'ArrowDown') {
       e.preventDefault()
-      setHighlightedIndex((prev) => Math.min(prev + 1, options.length - 1))
+      moveHighlight(1)
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
-      setHighlightedIndex((prev) => Math.max(prev - 1, 0))
+      moveHighlight(-1)
+    } else if (e.key === 'Home') {
+      e.preventDefault()
+      setHighlightedIndex(0)
+    } else if (e.key === 'End') {
+      e.preventDefault()
+      setHighlightedIndex(optionCount - 1)
     } else if (e.key === 'Escape') {
+      e.preventDefault()
+      closeMenu()
+    } else if (e.key === 'Tab') {
       setIsOpen(false)
-      triggerRef.current?.focus()
+      setHighlightedIndex(-1)
     }
   }
 
@@ -108,7 +147,7 @@ export default function CustomSelect({
         ref={triggerRef}
         type="button"
         disabled={disabled}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => (isOpen ? closeMenu() : openMenu())}
         onKeyDown={handleTriggerKeyDown}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -170,6 +209,11 @@ export default function CustomSelect({
               </button>
             )
           })}
+          {optionCount === 0 && (
+            <p role="status" className="px-3 py-2 text-sm text-gray-500 dark:text-text-muted">
+              No options available
+            </p>
+          )}
         </div>
       )}
     </div>
