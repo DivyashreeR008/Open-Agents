@@ -16,12 +16,23 @@ export default function LegalDoc({
   footerBody,
 }) {
   const handleBack = () => {
-    if (typeof window !== 'undefined') window.history.back()
+    if (typeof window === 'undefined') return
+
+    const historyIndex = window.history.state?.idx
+    if (typeof historyIndex === 'number' && historyIndex > 0) {
+      window.history.back()
+      return
+    }
+
+    // Direct visits and new tabs have no in-app history to return to.
+    window.history.pushState({}, '', '/agents')
+    window.dispatchEvent(new PopStateEvent('popstate'))
   }
 
   return (
     <div className="animate-fade-in mx-auto max-w-3xl">
       <button
+        type="button"
         onClick={handleBack}
         className="mb-4 inline-flex items-center gap-1.5 font-mono text-[11px] text-zinc-400 transition-colors hover:text-black dark:text-text-muted dark:hover:text-white"
       >
