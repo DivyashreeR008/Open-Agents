@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useTimedState } from '../lib/useTimedState'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Trophy, Copy, Check, RotateCcw, ArrowLeft } from 'lucide-react'
@@ -23,8 +24,13 @@ export default function BattleModeWinner() {
   const [copied, setCopied] = useTimedState(false)
   useDocumentTitle(agentName ? `${agentName} Battle Winner` : 'Battle Winner')
 
+  useEffect(() => {
+    if (!provider || !content) {
+      navigate('/battle', { replace: true })
+    }
+  }, [provider, content, navigate])
+
   if (!provider || !content) {
-    navigate('/battle', { replace: true })
     return null
   }
 
