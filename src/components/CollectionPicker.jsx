@@ -4,8 +4,15 @@ import { DEFAULT_COLLECTION_ID, MAX_COLLECTIONS, useCollections } from '../lib/u
 import { useDialogFocus } from '../hooks/useDialogFocus'
 
 export default function CollectionPicker({ agentId, onClose }) {
-  const { collections, createCollection, addAgentToCollection, isAgentInCollection } =
-    useCollections()
+  const {
+    collections,
+    createCollection,
+    addAgentToCollection,
+    removeAgentFromCollection,
+    moveAgentToCollection,
+    getAgentCollectionId,
+    isAgentInCollection,
+  } = useCollections()
   const [name, setName] = useState('')
   const [message, setMessage] = useState('')
 
@@ -25,9 +32,20 @@ export default function CollectionPicker({ agentId, onClose }) {
     setMessage(addResult.ok ? `Added to ${result.collection.name}.` : addResult.error)
   }
 
-  const handleAdd = (collection) => {
-    const result = addAgentToCollection(collection.id, agentId)
-    setMessage(result.ok ? `Added to ${collection.name}.` : result.error)
+  const currentCollectionId = getAgentCollectionId(agentId)
+  const currentCollection = visibleCollections.find(
+    (collection) => collection.id === currentCollectionId
+  )
+
+  const handleMove = (collection) => {
+    const result = moveAgentToCollection(agentId, collection.id)
+    const source = currentCollection ? ` from ${currentCollection.name}` : ''
+    setMessage(result.ok ? `Moved to ${collection.name}${source}.` : result.error)
+  }
+
+  const handleRemove = (collection) => {
+    const result = removeAgentFromCollection(collection.id, agentId)
+    setMessage(result.ok ? `Removed from ${collection.name}.` : result.error)
   }
 
   return (
@@ -68,22 +86,41 @@ export default function CollectionPicker({ agentId, onClose }) {
               <p className="text-sm text-gray-500 dark:text-text-secondary">No collections yet.</p>
             ) : (
               visibleCollections.map((collection) => {
-                const alreadyAdded = isAgentInCollection(collection.id, agentId)
+                const isCurrent = collection.id === currentCollectionId
                 return (
-                  <button
+                  <div
                     key={collection.id}
-                    type="button"
-                    onClick={() => handleAdd(collection)}
-                    disabled={alreadyAdded}
-                    className="flex w-full items-center justify-between border border-gray-200 px-3 py-2 text-left text-sm transition hover:border-zinc-400 dark:hover:border-zinc-400 disabled:cursor-not-allowed disabled:opacity-60 dark:border-border"
+                    className="flex items-stretch border border-gray-200 dark:border-border"
                   >
-                    <span className="font-medium text-gray-800 dark:text-text-primary">
-                      {collection.name}
-                    </span>
-                    <span className="text-xs text-gray-500 dark:text-text-muted">
-                      {alreadyAdded ? 'Already added' : `${collection.agentIds.length} agents`}
-                    </span>
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => handleMove(collection)}
+                      disabled={isCurrent}
+                      title={
+                        isCurrent
+                          ? `This agent is already in ${collection.name}.`
+                          : `Move this agent to ${collection.name}.`
+                      }
+                      className="flex min-w-0 flex-1 items-center justify-between px-3 py-2 text-left text-sm transition hover:border-zinc-400 disabled:cursor-not-allowed disabled:opacity-70 dark:hover:border-zinc-400"
+                    >
+                      <span className="truncate font-medium text-gray-800 dark:text-text-primary">
+                        {collection.name}
+                      </span>
+                      <span className="ml-2 shrink-0 text-xs text-gray-500 dark:text-text-muted">
+                        {isCurrent ? 'Current collection' : `${collection.agentIds.length} agents`}
+                      </span>
+                    </button>
+                    {isCurrent && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemove(collection)}
+                        aria-label={`Remove from ${collection.name}`}
+                        className="border-l border-gray-200 px-3 text-xs font-semibold text-zinc-700 hover:bg-gray-100 dark:border-border dark:text-zinc-300 dark:hover:bg-white/10"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
                 )
               })
             )}

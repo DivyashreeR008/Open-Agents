@@ -47,7 +47,9 @@ describe('CollectionPicker empty and create states', () => {
 
     expect(screen.getByText('Added to Research.')).toBeInTheDocument()
     expect(name).toHaveValue('')
-    expect(screen.getByRole('button', { name: /Research/ })).toHaveTextContent('Already added')
+    expect(screen.getByRole('button', { name: /^Research/ })).toHaveTextContent(
+      'Current collection'
+    )
     expect(storedCustomCollections()).toEqual([
       expect.objectContaining({ name: 'Research', agentIds: ['a1'] }),
     ])
@@ -108,10 +110,16 @@ describe('CollectionPicker empty and create states', () => {
     ])
     render(<CollectionPicker agentId="a1" onClose={() => {}} />)
 
-    expect(screen.getByRole('button', { name: /Has agent/ })).toBeDisabled()
-    expect(screen.getByText('Already added')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /^Has agent/ })).toBeDisabled()
+    expect(screen.getByText('Current collection')).toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole('button', { name: /Full set/ }))
+    fireEvent.click(screen.getByRole('button', { name: 'Remove from Has agent' }))
+    expect(screen.getByText('Removed from Has agent.')).toBeInTheDocument()
+    expect(
+      storedCustomCollections().find((item) => item.id === 'has-agent').agentIds
+    ).not.toContain('a1')
+
+    fireEvent.click(screen.getByRole('button', { name: /^Full set/ }))
     expect(screen.getByText('Collections can contain up to 15 agents.')).toBeInTheDocument()
     expect(storedCustomCollections().find((item) => item.id === 'full-set').agentIds).not.toContain(
       'a1'
