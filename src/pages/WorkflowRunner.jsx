@@ -35,10 +35,10 @@ import { useDocumentTitle } from '../lib/useDocumentTitle'
 import { getGlobalKeys } from '../lib/globalKeys'
 
 const STATUS_COLORS = {
-  waiting: 'dark:text-text-muted text-gray-400',
-  running: 'text-zinc-900 dark:text-white',
-  done: 'text-zinc-400',
-  failed: 'text-zinc-400',
+  waiting: 'dark:text-text-muted text-gray-500',
+  running: 'text-amber-700 dark:text-amber-300',
+  done: 'text-emerald-700 dark:text-emerald-300',
+  failed: 'text-red-700 dark:text-red-300',
 }
 
 // Read a key saved by useApiKey for a provider other than the one currently

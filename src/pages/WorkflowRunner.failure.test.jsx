@@ -68,6 +68,7 @@ describe('WorkflowRunner failure recovery', () => {
 
     expect(await screen.findByText('Provider timeout')).toBeInTheDocument()
     expect(screen.getByText('Step failed')).toBeInTheDocument()
+    expect(screen.getByText('failed')).toHaveClass('text-red-700')
     expect(mocks.runAgent).toHaveBeenCalledTimes(1)
     expect(mocks.incrementUsage).not.toHaveBeenCalled()
     expect(screen.queryByText(/Workflow complete/)).not.toBeInTheDocument()

@@ -1,15 +1,48 @@
 import { useState } from 'react'
-import { ChevronDown, CheckCircle2, XCircle, Timer } from 'lucide-react'
+import { ChevronDown, CheckCircle2, XCircle, Timer, Loader2 } from 'lucide-react'
 import { formatDuration } from '../lib/executionTrace'
 
 const BAR_COLORS = {
-  done: 'bg-zinc-400/70',
-  failed: 'bg-zinc-400/70',
+  done: 'bg-emerald-500/80',
+  failed: 'bg-red-500',
+  running: 'bg-amber-500',
+}
+
+const STATUS_META = {
+  done: {
+    label: 'Completed',
+    className: 'border-emerald-600/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300',
+  },
+  failed: {
+    label: 'Failed',
+    className: 'border-red-600/30 bg-red-500/10 text-red-800 dark:text-red-300',
+  },
+  running: {
+    label: 'Running',
+    className: 'border-amber-600/30 bg-amber-500/10 text-amber-800 dark:text-amber-300',
+  },
 }
 
 function StepStatusIcon({ status }) {
-  if (status === 'failed') return <XCircle size={14} className="text-zinc-400" />
-  return <CheckCircle2 size={14} className="text-zinc-400" />
+  if (status === 'failed')
+    return <XCircle size={14} className="text-red-700 dark:text-red-300" aria-hidden="true" />
+  if (status === 'running')
+    return (
+      <Loader2
+        size={14}
+        className="animate-spin text-amber-700 dark:text-amber-300"
+        aria-hidden="true"
+      />
+    )
+  if (status === 'done')
+    return (
+      <CheckCircle2
+        size={14}
+        className="text-emerald-700 dark:text-emerald-300"
+        aria-hidden="true"
+      />
+    )
+  return <Timer size={14} className="text-zinc-500 dark:text-zinc-400" aria-hidden="true" />
 }
 
 function TraceStep({ step, index, defaultOpen }) {
@@ -32,10 +65,18 @@ function TraceStep({ step, index, defaultOpen }) {
           <span className="text-[11px] dark:text-text-muted text-gray-400">{step.stepType}</span>
         </div>
         <span className="flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium dark:bg-surface-hover dark:text-text-secondary bg-gray-100 text-gray-600">
-          <Timer size={11} />
+          <Timer size={11} aria-hidden="true" />
           {formatDuration(step.durationMs)}
         </span>
-        <StepStatusIcon status={step.status} />
+        <span
+          className={`flex items-center gap-1 border px-1.5 py-0.5 text-[10px] font-semibold ${
+            STATUS_META[step.status]?.className ||
+            'border-zinc-400/30 bg-zinc-500/10 text-zinc-700 dark:text-zinc-300'
+          }`}
+        >
+          <StepStatusIcon status={step.status} />
+          {STATUS_META[step.status]?.label || 'Unknown'}
+        </span>
         <ChevronDown
           size={14}
           className={`dark:text-text-muted text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`}
@@ -45,9 +86,11 @@ function TraceStep({ step, index, defaultOpen }) {
       {open && (
         <div className="border-t dark:border-border border-gray-100 p-3 space-y-3">
           {step.error && (
-            <div className="p-2.5 bg-zinc-500/10 border border-zinc-500/20">
-              <p className="text-xs font-medium text-zinc-400 mb-0.5">Error</p>
-              <p className="text-xs text-zinc-400/80 break-words">{step.error}</p>
+            <div className="border border-red-600/30 bg-red-500/10 p-2.5">
+              <p className="mb-0.5 text-xs font-semibold text-red-800 dark:text-red-300">Error</p>
+              <p className="break-words text-xs text-red-800/90 dark:text-red-200/90">
+                {step.error}
+              </p>
             </div>
           )}
           <TracePayload label="Input" value={step.input} />
