@@ -2,31 +2,52 @@ import { useRef } from 'react'
 import { X, Command, CornerDownLeft, Search, Type, HelpCircle } from 'lucide-react'
 import { useDialogFocus } from '../hooks/useDialogFocus'
 
+export const KEYBOARD_SHORTCUTS = [
+  {
+    key: 'Ctrl / Cmd + K',
+    description: 'Open the command palette',
+    icon: Command,
+  },
+  {
+    key: 'Ctrl + Enter',
+    description: 'Run the current agent',
+    icon: CornerDownLeft,
+  },
+  {
+    key: '/',
+    description: 'Focus the agent search on the catalogue',
+    icon: Search,
+  },
+  {
+    key: 'Esc',
+    description: 'Clear agent inputs or close the playground',
+    icon: X,
+  },
+  {
+    key: 'Alt + 1 / 2 / 3 / 4',
+    description: 'Switch provider (OpenAI, Anthropic, Gemini, OpenRouter)',
+    icon: Type,
+  },
+  {
+    key: '?',
+    description: 'Open this shortcut guide',
+    icon: HelpCircle,
+  },
+]
+
 export default function KeyboardShortcutsModal({ isOpen, onClose }) {
   const panelRef = useRef(null)
   useDialogFocus(panelRef, { active: isOpen, onClose })
 
   if (!isOpen) return null
 
-  const shortcuts = [
-    { key: 'Ctrl / Cmd + K', description: 'Open Command Palette', icon: <Command size={14} /> },
-    {
-      key: 'Ctrl + Enter',
-      description: 'Run Agent or Workflow',
-      icon: <CornerDownLeft size={14} />,
-    },
-    { key: '/', description: 'Focus Search Bar', icon: <Search size={14} /> },
-    { key: 'Esc', description: 'Clear Inputs / Collapse Playground', icon: <X size={14} /> },
-    {
-      key: 'Alt + 1 / 2 / 3',
-      description: 'Toggle Provider (OpenAI, Anthropic, Gemini)',
-      icon: <Type size={14} />,
-    },
-    { key: '?', description: 'Open this help menu', icon: <HelpCircle size={14} /> },
-  ]
-
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in"
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose()
+      }}
+    >
       <div
         ref={panelRef}
         role="dialog"
@@ -48,27 +69,33 @@ export default function KeyboardShortcutsModal({ isOpen, onClose }) {
             className="p-1.5 text-gray-400 hover:text-gray-900 dark:hover:text-text-primary hover:bg-gray-100 dark:hover:bg-surface-hover transition-colors"
             aria-label="Close keyboard shortcuts dialog"
           >
-            <X size={20} />
+            <X size={20} aria-hidden="true" />
           </button>
         </div>
 
-        <div className="px-6 py-4 space-y-4">
-          {shortcuts.map((s, idx) => (
-            <div key={idx} className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-zinc-500/10 flex items-center justify-center text-zinc-600 dark:text-zinc-300">
-                  {s.icon}
+        <ul aria-label="Available keyboard shortcuts" className="px-6 py-4 space-y-4">
+          {KEYBOARD_SHORTCUTS.map((shortcut) => {
+            const Icon = shortcut.icon
+            return (
+              <li key={shortcut.key} className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div
+                    aria-hidden="true"
+                    className="w-8 h-8 bg-zinc-500/10 flex items-center justify-center text-zinc-600 dark:text-zinc-300"
+                  >
+                    <Icon size={14} />
+                  </div>
+                  <span className="text-sm font-medium text-gray-700 dark:text-text-secondary">
+                    {shortcut.description}
+                  </span>
                 </div>
-                <span className="text-sm font-medium text-gray-700 dark:text-text-secondary">
-                  {s.description}
-                </span>
-              </div>
-              <kbd className="px-2 py-1 text-xs font-semibold text-gray-500 bg-gray-100 border border-gray-300 dark:bg-surface-input dark:border-border dark:text-text-muted font-mono">
-                {s.key}
-              </kbd>
-            </div>
-          ))}
-        </div>
+                <kbd className="px-2 py-1 text-xs font-semibold text-gray-500 bg-gray-100 border border-gray-300 dark:bg-surface-input dark:border-border dark:text-text-muted font-mono shrink-0">
+                  {shortcut.key}
+                </kbd>
+              </li>
+            )
+          })}
+        </ul>
       </div>
     </div>
   )
