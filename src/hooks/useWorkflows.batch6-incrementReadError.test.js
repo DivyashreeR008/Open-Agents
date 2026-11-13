@@ -8,6 +8,7 @@ const state = vi.hoisted(() => ({
 }))
 
 vi.mock('../lib/supabase', () => ({
+  isSupabaseConfigured: () => true,
   supabase: {
     auth: { getUser: state.getUser },
     from: state.from,

@@ -1,4 +1,217 @@
-import { supabase } from '../lib/supabase'
+import { isSupabaseConfigured, supabase } from '../lib/supabase'
+
+const LOCAL_WORKFLOWS_KEY = 'open-agents-workflows'
+const LOCAL_USER_ID = 'local-user'
+
+function backendIsConfigured() {
+  // A literal false means the optional backend is absent. Undefined keeps the
+  // backend path for callers that provide a client without the flag.
+  return isSupabaseConfigured !== false
+}
+
+function localError(message, error) {
+  const detail = error?.message ? ` (${error.message})` : ''
+  return { message: `${message}${detail}` }
+}
+
+function readLocalWorkflows() {
+  let storage
+  try {
+    storage = window.localStorage
+  } catch (error) {
+    return {
+      data: null,
+      error: localError(
+        'Local workflow storage is unavailable in this browser. Allow site data and try again.',
+        error
+      ),
+    }
+  }
+
+  let raw
+  try {
+    raw = storage.getItem(LOCAL_WORKFLOWS_KEY)
+  } catch (error) {
+    return {
+      data: null,
+      error: localError(
+        'Local workflow storage could not be read. Allow site data for this page and try again.',
+        error
+      ),
+    }
+  }
+
+  if (!raw) return { data: [], error: null }
+
+  try {
+    const parsed = JSON.parse(raw)
+    if (!Array.isArray(parsed)) throw new Error('stored value is not a list')
+    return { data: parsed, error: null }
+  } catch (error) {
+    return {
+      data: null,
+      error: localError(
+        `Saved workflows are unreadable. Clear the "${LOCAL_WORKFLOWS_KEY}" entry in browser storage and refresh.`,
+        error
+      ),
+    }
+  }
+}
+
+function writeLocalWorkflows(workflows) {
+  try {
+    window.localStorage.setItem(LOCAL_WORKFLOWS_KEY, JSON.stringify(workflows))
+    return { error: null }
+  } catch (error) {
+    return {
+      error: localError(
+        'Could not store the workflow in this browser. Delete unused workflows or free browser storage, then try again.',
+        error
+      ),
+    }
+  }
+}
+
+function makeLocalId() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+  return `local-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+}
+
+function findLocalWorkflow(workflows, id) {
+  return workflows.findIndex((workflow) => workflow.id === id)
+}
+
+function sortNewestFirst(workflows) {
+  return [...workflows].sort((a, b) =>
+    String(b.created_at ?? '').localeCompare(String(a.created_at ?? ''))
+  )
+}
+
+function localSaveWorkflow(workflow) {
+  const { data: workflows, error } = readLocalWorkflows()
+  if (error) return { data: null, error }
+
+  const now = new Date().toISOString()
+  const stored = {
+    id: makeLocalId(),
+    user_id: LOCAL_USER_ID,
+    title: workflow.title,
+    description: workflow.description || '',
+    agents: Array.isArray(workflow.agents) ? workflow.agents : [],
+    is_public: true,
+    usage_count: 0,
+    created_at: now,
+    updated_at: now,
+  }
+
+  const write = writeLocalWorkflows([stored, ...workflows])
+  if (write.error) return { data: null, error: write.error }
+  return { data: stored, error: null }
+}
+
+function localUpdateWorkflow(id, updates) {
+  const { data: workflows, error } = readLocalWorkflows()
+  if (error) return { data: null, error }
+
+  const index = findLocalWorkflow(workflows, id)
+  if (index === -1) {
+    return {
+      data: null,
+      error: {
+        message: `Workflow ${id} was not found in local storage. Refresh the workflow library and try again.`,
+      },
+    }
+  }
+
+  const updated = {
+    ...workflows[index],
+    ...updates,
+    updated_at: new Date().toISOString(),
+  }
+  const next = workflows.map((workflow, position) => (position === index ? updated : workflow))
+  const write = writeLocalWorkflows(next)
+  if (write.error) return { data: null, error: write.error }
+  return { data: updated, error: null }
+}
+
+function localDeleteWorkflow(id) {
+  const { data: workflows, error } = readLocalWorkflows()
+  if (error) return { error }
+
+  const next = workflows.filter((workflow) => workflow.id !== id)
+  if (next.length === workflows.length) {
+    return {
+      error: {
+        message: `Workflow ${id} was not found in local storage. Refresh the workflow library and try again.`,
+      },
+    }
+  }
+
+  const write = writeLocalWorkflows(next)
+  if (write.error) return { error: write.error }
+  return { error: null }
+}
+
+function localIncrementUsage(id) {
+  const { data: workflows, error } = readLocalWorkflows()
+  if (error) return { error }
+
+  const index = findLocalWorkflow(workflows, id)
+  if (index === -1) {
+    return {
+      error: {
+        message: `Workflow ${id} was not found in local storage. Refresh the workflow library and try again.`,
+      },
+    }
+  }
+
+  const count = Number(workflows[index].usage_count)
+  const next = workflows.map((workflow, position) =>
+    position === index
+      ? { ...workflow, usage_count: (Number.isFinite(count) ? count : 0) + 1 }
+      : workflow
+  )
+  const write = writeLocalWorkflows(next)
+  if (write.error) return { error: write.error }
+  return { error: null }
+}
+
+function localFetchWorkflows() {
+  const { data, error } = readLocalWorkflows()
+  if (error) return { data: [], error }
+  return { data: sortNewestFirst(data), error: null }
+}
+
+function localFetchWorkflowById(id) {
+  const { data, error } = readLocalWorkflows()
+  if (error) return { data: null, error }
+
+  const workflow = data.find((item) => item.id === id)
+  if (!workflow) {
+    return {
+      data: null,
+      error: {
+        message: `Workflow ${id} was not found in local storage. Open the workflow library and choose an existing workflow.`,
+      },
+    }
+  }
+  return { data: workflow, error: null }
+}
+
+function localSubscription(name) {
+  if (typeof supabase.channel === 'function') return supabase.channel(name)
+  const channel = {
+    on() {
+      return channel
+    },
+    subscribe() {
+      return channel
+    },
+  }
+  return channel
+}
 
 /**
  * Get the currently authenticated user's ID.
@@ -24,6 +237,8 @@ async function getCurrentUserId() {
  * @returns {Promise<{ data: Array, error: object|null }>}
  */
 export async function fetchWorkflows() {
+  if (!backendIsConfigured()) return localFetchWorkflows()
+
   const { data, error } = await supabase
     .from('workflows')
     .select('*')
@@ -39,6 +254,8 @@ export async function fetchWorkflows() {
  * @returns {Promise<{ data: object|null, error: object|null }>}
  */
 export async function fetchWorkflowById(id) {
+  if (!backendIsConfigured()) return localFetchWorkflowById(id)
+
   const { data, error } = await supabase.from('workflows').select('*').eq('id', id).single()
 
   return { data: data ?? null, error }
@@ -51,6 +268,8 @@ export async function fetchWorkflowById(id) {
  * @returns {Promise<{ data: object|null, error: object|null }>}
  */
 export async function saveWorkflow(workflow) {
+  if (!backendIsConfigured()) return localSaveWorkflow(workflow)
+
   const userId = await getCurrentUserId()
 
   // Require user authentication to prevent unauthorized writes
@@ -89,6 +308,8 @@ export async function saveWorkflow(workflow) {
  * @returns {Promise<{ data: object|null, error: object|null }>}
  */
 export async function updateWorkflow(id, updates) {
+  if (!backendIsConfigured()) return localUpdateWorkflow(id, updates)
+
   const userId = await getCurrentUserId()
 
   if (!userId) {
@@ -143,6 +364,8 @@ export async function updateWorkflow(id, updates) {
  * @returns {Promise<{ error: object|null }>}
  */
 export async function deleteWorkflow(id) {
+  if (!backendIsConfigured()) return localDeleteWorkflow(id)
+
   const userId = await getCurrentUserId()
 
   if (!userId) {
@@ -194,6 +417,8 @@ export async function deleteWorkflow(id) {
  * @returns {Promise<{ error: object|null }>}
  */
 export async function incrementUsage(id) {
+  if (!backendIsConfigured()) return localIncrementUsage(id)
+
   const { error: rpcError } = await supabase.rpc('increment_workflow_usage', { workflow_id: id })
 
   // 1. If the RPC works perfectly, exit immediately with no error.
@@ -238,6 +463,8 @@ export async function incrementUsage(id) {
  * @returns {RealtimeChannel}
  */
 export function subscribeToWorkflow(workflowId, callback) {
+  if (!backendIsConfigured()) return localSubscription(`workflow-usage-${workflowId}`)
+
   const channel = supabase
     .channel(`workflow-usage-${workflowId}`)
     .on(
@@ -264,6 +491,8 @@ export function subscribeToWorkflow(workflowId, callback) {
  * @returns {RealtimeChannel}
  */
 export function subscribeToAllWorkflows(callback) {
+  if (!backendIsConfigured()) return localSubscription('workflow-usage-all')
+
   const channel = supabase
     .channel('workflow-usage-all')
     .on(
