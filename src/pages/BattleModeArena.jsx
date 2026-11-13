@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { runAgent } from '../lib/llmAdapter'
 import { recordAnalyticsRun } from '../lib/useAnalytics'
+import * as agentRunMetrics from '../lib/useAgentRunMetrics'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
@@ -25,6 +26,43 @@ import { useDocumentTitle } from '../lib/useDocumentTitle'
 const LLM_REQUEST_TIMEOUT_MS = 60000 // 60 seconds - reasonable for most LLM calls
 const TIMEOUT_ERROR_MESSAGE =
   'Request timed out - the LLM took too long to respond. Please try again.'
+
+function makeAgentRunId(agentId, providerId) {
+  const unique =
+    typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+  return `${agentId || 'agent'}:${providerId}:${unique}`
+}
+
+function getTokenFields(result) {
+  const inputTokens = Number(result?.inputTokens)
+  const outputTokens = Number(result?.outputTokens)
+  if (Number.isFinite(inputTokens) || Number.isFinite(outputTokens)) {
+    return {
+      inputTokens: Number.isFinite(inputTokens) ? inputTokens : 0,
+      outputTokens: Number.isFinite(outputTokens) ? outputTokens : 0,
+    }
+  }
+
+  // runAgent currently reports a single token total, so keep that total visible
+  // in the run record rather than dropping token usage entirely.
+  const totalTokens = Number(result?.tokens)
+  return { inputTokens: 0, outputTokens: Number.isFinite(totalTokens) ? totalTokens : 0 }
+}
+
+function recordAgentRun(run) {
+  const log = agentRunMetrics.logAgentRun
+  if (typeof log !== 'function') return
+
+  try {
+    Promise.resolve(log(run)).catch(() => {
+      // Run logging is best-effort and must never interrupt the battle.
+    })
+  } catch {
+    // Synchronous logging failures are also non-fatal.
+  }
+}
 
 export const PROVIDERS = [
   {
@@ -195,6 +233,8 @@ export default function BattleModeArena() {
         controller.abort()
       }, LLM_REQUEST_TIMEOUT_MS)
 
+      const startedAt = Date.now()
+
       runAgent(
         {
           provider: prov.id,
@@ -209,6 +249,16 @@ export default function BattleModeArena() {
       )
         .then((result) => {
           clearTimeout(timeoutId)
+          const durationMs = Number.isFinite(result?.duration)
+            ? result.duration
+            : Date.now() - startedAt
+          recordAgentRun({
+            agentRunId: makeAgentRunId(agent.id, prov.id),
+            model: prov.model,
+            ...getTokenFields(result),
+            status: 'success',
+            durationMs,
+          })
           recordAnalyticsRun({
             agentId: agent.id,
             agentName: agent.name,
@@ -230,9 +280,17 @@ export default function BattleModeArena() {
         })
         .catch((err) => {
           clearTimeout(timeoutId)
+          recordAgentRun({
+            agentRunId: makeAgentRunId(agent.id, prov.id),
+            model: prov.model,
+            inputTokens: 0,
+            outputTokens: 0,
+            status: 'failed',
+            durationMs: Date.now() - startedAt,
+          })
           // Handle timeout errors specifically
-          let errorMessage = err.message || 'An unknown error occurred'
-          if (err.name === 'AbortError' || err.code === 'ABORT_ERR') {
+          let errorMessage = err?.message || 'An unknown error occurred'
+          if (err?.name === 'AbortError' || err?.code === 'ABORT_ERR') {
             errorMessage = TIMEOUT_ERROR_MESSAGE
           }
           setResults((prev) => ({
