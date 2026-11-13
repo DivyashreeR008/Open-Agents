@@ -129,13 +129,29 @@ function persist(updater) {
   const current = loadCollections()
   const result = updater(current)
 
+  if (!result.ok) {
+    return { ...result, collections: current }
+  }
+
   const next = Array.isArray(result.collections) ? result.collections : current
 
-  saveCollections(next)
+  try {
+    saveCollections(next)
+  } catch {
+    return {
+      ...result,
+      ok: false,
+      saved: false,
+      error: 'Could not save this collection change. Your previous collections are unchanged.',
+      collections: current,
+    }
+  }
+
   notify()
 
   return {
     ...result,
+    saved: true,
     collections: loadCollections(),
   }
 }
@@ -179,7 +195,7 @@ export function useCollections() {
           }
         }
 
-        const duplicateName = customCollections.some(
+        const duplicateName = current.some(
           (collection) => collection.name.toLowerCase() === trimmedName.toLowerCase()
         )
 
@@ -274,10 +290,7 @@ export function useCollections() {
       }
 
       return runMutation((current) => {
-        const customCollections = current.filter(
-          (collection) => collection.id !== DEFAULT_COLLECTION_ID
-        )
-        const duplicateName = customCollections.some(
+        const duplicateName = current.some(
           (collection) =>
             collection.id !== collectionId &&
             collection.name.toLowerCase() === trimmedName.toLowerCase()
@@ -373,18 +386,39 @@ export function useCollections() {
         return { ok: false, error: 'Collection and agent are required.' }
       }
 
-      return runMutation((current) => ({
-        ok: true,
-        collections: current.map((collection) =>
-          collection.id === collectionId
-            ? {
-                ...collection,
-                agentIds: collection.agentIds.filter((id) => id !== agentId),
-                updatedAt: new Date().toISOString(),
-              }
-            : collection
-        ),
-      }))
+      if (collectionId === DEFAULT_COLLECTION_ID) {
+        return {
+          ok: false,
+          error: 'The All agents view includes every agent and cannot be changed.',
+        }
+      }
+
+      const normalizedAgentId = typeof agentId === 'string' ? agentId.trim() : ''
+
+      return runMutation((current) => {
+        const collection = current.find((item) => item.id === collectionId)
+
+        if (!collection) {
+          return { ok: false, error: 'Collection not found.' }
+        }
+
+        if (!collection.agentIds.includes(normalizedAgentId)) {
+          return { ok: false, error: 'This agent is not in that collection.' }
+        }
+
+        return {
+          ok: true,
+          collections: current.map((item) =>
+            item.id === collectionId
+              ? {
+                  ...item,
+                  agentIds: item.agentIds.filter((id) => id !== normalizedAgentId),
+                  updatedAt: new Date().toISOString(),
+                }
+              : item
+          ),
+        }
+      })
     },
     [runMutation]
   )
