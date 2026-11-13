@@ -61,6 +61,7 @@ Be specific and practical. Consider context window, speed, cost and output quali
     gemini: 'gemini-2.5-flash',
     anthropic: 'claude-3-5-haiku-20241022',
     openai: 'gpt-4o-mini',
+    openrouter: 'openai/gpt-4o-mini',
   }
 
   const result = await streamAgent({
