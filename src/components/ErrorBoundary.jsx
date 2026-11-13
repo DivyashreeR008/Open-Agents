@@ -30,6 +30,16 @@ const STORAGE_COPY = {
     'A browser storage error stopped this screen from loading. Reload the page to try again, or clear the data saved by this site if the problem continues.',
 }
 
+const REPORT_URL =
+  'https://github.com/DivyashreeR008/Open-Agents/issues/new?template=bug_report.yml'
+
+function resetKeysChanged(previous, next) {
+  if (previous === next) return false
+  if (!Array.isArray(previous) || !Array.isArray(next)) return true
+  if (previous.length !== next.length) return true
+  return previous.some((value, index) => !Object.is(value, next[index]))
+}
+
 const PRIMARY_BUTTON =
   'px-4 py-2 bg-zinc-900 text-sm font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-white dark:text-black dark:hover:bg-zinc-200'
 const SECONDARY_BUTTON =
@@ -54,7 +64,12 @@ function reloadPage() {
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { hasError: false, error: null, confirmingClear: false }
+    this.state = {
+      hasError: false,
+      error: null,
+      confirmingClear: false,
+      componentStack: '',
+    }
   }
 
   static getDerivedStateFromError(error) {
@@ -62,11 +77,24 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
+    this.setState({ componentStack: errorInfo?.componentStack || '' })
     console.error('ErrorBoundary caught an error:', error, errorInfo)
   }
 
+  componentDidUpdate(previousProps) {
+    if (this.state.hasError && resetKeysChanged(previousProps.resetKeys, this.props.resetKeys)) {
+      this.handleReset()
+    }
+  }
+
   handleReset = () => {
-    this.setState({ hasError: false, error: null, confirmingClear: false })
+    this.setState({
+      hasError: false,
+      error: null,
+      confirmingClear: false,
+      componentStack: '',
+    })
+    this.props.onReset?.()
   }
 
   handleReload = () => {
@@ -138,6 +166,30 @@ class ErrorBoundary extends React.Component {
             </>
           )}
         </div>
+
+        {this.state.componentStack && (
+          <details className="mx-auto mt-4 max-w-2xl text-left">
+            <summary className="cursor-pointer text-xs font-medium text-gray-600 dark:text-text-secondary">
+              Component stack
+            </summary>
+            <pre
+              aria-label="Component stack"
+              className="mt-2 overflow-x-auto whitespace-pre-wrap border border-gray-200 bg-white p-3 text-left text-[11px] text-gray-600 dark:border-border dark:bg-surface-card dark:text-zinc-400"
+            >
+              {this.state.componentStack}
+            </pre>
+          </details>
+        )}
+
+        <a
+          href={this.props.reportUrl || REPORT_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 inline-block border-b border-current text-xs font-medium text-gray-700 transition-colors hover:text-black dark:text-zinc-300 dark:hover:text-white"
+        >
+          Report this problem
+          <span className="sr-only"> (opens in new tab)</span>
+        </a>
 
         {storageFailure && this.state.confirmingClear && (
           <div className="mt-4 border-t border-zinc-500/30 pt-4">

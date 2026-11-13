@@ -201,4 +201,48 @@ describe('ErrorBoundary', () => {
     expect(screen.getByText('Error: still broken')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Try Again' })).toBeInTheDocument()
   })
+
+  it('offers a report path with a component stack for context', () => {
+    render(
+      <ErrorBoundary>
+        <Bomb message="reported failure" />
+      </ErrorBoundary>
+    )
+
+    const report = screen.getByRole('link', { name: /report this problem/i })
+    expect(report).toHaveAttribute(
+      'href',
+      'https://github.com/DivyashreeR008/Open-Agents/issues/new?template=bug_report.yml'
+    )
+    expect(report).toHaveAttribute('target', '_blank')
+    expect(screen.getByLabelText('Component stack')).toHaveTextContent(/Bomb|ErrorBoundary/)
+  })
+
+  it('resets automatically when route reset keys change', async () => {
+    const user = userEvent.setup()
+    const onReset = vi.fn()
+
+    function RouteHarness() {
+      const [path, setPath] = React.useState('/broken')
+      return (
+        <>
+          <button type="button" onClick={() => setPath('/healthy')}>
+            Go healthy
+          </button>
+          <ErrorBoundary resetKeys={[path]} onReset={onReset}>
+            {path === '/broken' ? <Bomb message="route failed" /> : <p>healthy route</p>}
+          </ErrorBoundary>
+        </>
+      )
+    }
+
+    render(<RouteHarness />)
+    expect(screen.getByText('Error: route failed')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Go healthy' }))
+
+    expect(screen.getByText('healthy route')).toBeInTheDocument()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(onReset).toHaveBeenCalledTimes(1)
+  })
 })

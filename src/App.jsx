@@ -1,5 +1,5 @@
 import { useState, Suspense, lazy } from 'react'
-import { Routes, Route, Outlet, Link } from 'react-router-dom'
+import { Routes, Route, Outlet, Link, useLocation } from 'react-router-dom'
 import { Loader2, MessageSquare } from 'lucide-react'
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
@@ -57,7 +57,7 @@ export function PageLoader() {
   )
 }
 
-export function MainLayout({ sidebarOpen, setSidebarOpen, onOpenCommandPalette }) {
+export function MainLayout({ sidebarOpen, setSidebarOpen, onOpenCommandPalette, resetKey }) {
   return (
     <>
       <SkipToMainContentLink />
@@ -86,7 +86,9 @@ export function MainLayout({ sidebarOpen, setSidebarOpen, onOpenCommandPalette }
       </Link>
       <main id={MAIN_CONTENT_ID} tabIndex={-1} className="pt-12 lg:pl-60 focus:outline-none">
         <div className="p-4 sm:p-6 lg:p-8">
-          <Outlet />
+          <ErrorBoundary resetKeys={[resetKey]}>
+            <Outlet />
+          </ErrorBoundary>
         </div>
       </main>
     </>
@@ -94,6 +96,7 @@ export function MainLayout({ sidebarOpen, setSidebarOpen, onOpenCommandPalette }
 }
 
 export default function App() {
+  const location = useLocation()
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false)
 
   useKeyboardShortcuts({
@@ -115,7 +118,7 @@ export default function App() {
       <RouteAnnouncer />
       <ScrollRestoration />
       <CommandPalette isOpen={commandPaletteOpen} onClose={() => setCommandPaletteOpen(false)} />
-      <ErrorBoundary>
+      <ErrorBoundary resetKeys={[location.pathname]}>
         <Suspense fallback={<PageLoader />}>
           <PageTransition>
             <Routes>
@@ -125,6 +128,7 @@ export default function App() {
                     sidebarOpen={sidebarOpen}
                     setSidebarOpen={setSidebarOpen}
                     onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+                    resetKey={location.pathname}
                   />
                 }
               >
