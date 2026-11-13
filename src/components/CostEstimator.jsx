@@ -1,3 +1,5 @@
+import { AlertTriangle } from 'lucide-react'
+
 import { formatCost } from '../lib/formatting'
 import { useTokenCounter } from '../lib/useTokenCounter'
 import { getPricing, getContextWindow } from '../lib/modelPricing'
@@ -20,7 +22,35 @@ export default function CostEstimator({ inputText = '', systemPrompt = '', model
   const outputCost = pricing ? (projectedOutputTokens / 1_000_000) * pricing.outputCostPer1M : null
   const totalCost = (inputCost ?? 0) + (outputCost ?? 0)
 
-  if (!pricing) return null
+  const contextLabel = isOverLimit
+    ? 'Over context limit'
+    : isNearLimit
+      ? 'Near context limit'
+      : null
+
+  if (!pricing) {
+    return (
+      <div
+        role="status"
+        className="border dark:bg-surface-card dark:border-border bg-white border-gray-200 p-3 text-xs"
+      >
+        <div className="flex items-center gap-1.5 mb-2">
+          <AlertTriangle
+            size={12}
+            className="text-zinc-600 dark:text-zinc-300"
+            aria-hidden="true"
+          />
+          <span className="font-semibold dark:text-text-primary text-gray-900">Cost Estimate</span>
+          <span className="dark:text-text-muted text-gray-400">·</span>
+          <span className="dark:text-text-muted text-gray-500">Pricing unavailable</span>
+        </div>
+        <p className="dark:text-text-secondary text-gray-600">
+          No published pricing is available for {modelId || 'this model'}. The run may still be
+          billed by the provider, so the cost cannot be estimated here.
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div className=" border dark:bg-surface-card dark:border-border bg-white border-gray-200 p-3 text-xs">
@@ -43,6 +73,11 @@ export default function CostEstimator({ inputText = '', systemPrompt = '', model
         <span className="dark:text-text-muted text-gray-400">·</span>
         <span className="dark:text-text-muted text-gray-400">{pricing.provider}</span>
       </div>
+
+      <p className="mb-2 text-[10px] leading-relaxed dark:text-text-muted text-gray-500">
+        Assumes output uses 50% of the input tokens, capped at 4,096 tokens, at published list
+        prices.
+      </p>
 
       <div className="space-y-1.5">
         <div className="flex justify-between">
@@ -72,6 +107,15 @@ export default function CostEstimator({ inputText = '', systemPrompt = '', model
       </div>
 
       <div className="mt-2">
+        {contextLabel && (
+          <div
+            role="status"
+            className="mb-1 flex items-center gap-1 font-medium text-[10px] text-zinc-800 dark:text-zinc-200"
+          >
+            <AlertTriangle size={11} aria-hidden="true" />
+            {contextLabel}
+          </div>
+        )}
         <div className="flex justify-between text-[10px] mb-1">
           <span className="dark:text-text-muted text-gray-400">Context window</span>
           <span
