@@ -47,7 +47,15 @@ export default function SuiteWizard({ suite, onBack }) {
   const navigate = useNavigate()
   const { agents: allAgents } = useAgents()
 
-  const questions = suite.quiz?.questions ?? []
+  const questions = useMemo(
+    () =>
+      Array.isArray(suite.quiz?.questions)
+        ? suite.quiz.questions.filter(
+            (question) => question && typeof question === 'object' && !Array.isArray(question)
+          )
+        : [],
+    [suite.quiz?.questions]
+  )
 
   // ── State
   const [step, setStep] = useState(0) // current question index, -1 = results
@@ -93,7 +101,9 @@ export default function SuiteWizard({ suite, onBack }) {
   // ── Helpers
 
   // Look up a full agent object by id from the loaded agents list
-  const findAgent = (id) => allAgents.find((a) => a.id === id)
+  const allKnownAgents = Array.isArray(allAgents) ? allAgents : []
+  const suiteAgentIds = Array.isArray(suite.agents) ? suite.agents : []
+  const optionsFor = (question) => (Array.isArray(question?.options) ? question.options : [])
 
   // Commit the current answer and advance
   const handleNext = () => {
@@ -105,9 +115,12 @@ export default function SuiteWizard({ suite, onBack }) {
 
       newAnsweredCount++
 
-      const option = questions[questionIndex].options[selected]
+      const option = optionsFor(questions[questionIndex])[selected]
+      if (!option) return
 
-      option.tags.forEach((tag) => {
+      const tags = Array.isArray(option.tags) ? option.tags : []
+      tags.forEach((tag) => {
+        if (typeof tag !== 'string') return
         newCounts[tag] = (newCounts[tag] || 0) + 1
       })
     })
@@ -147,15 +160,15 @@ export default function SuiteWizard({ suite, onBack }) {
   const rankedAgents = useMemo(() => {
     const totalQ = answeredCount || 0
 
-    return suite.agents
+    return suiteAgentIds
       .map((id) => {
-        const agent = findAgent(id)
+        const agent = allKnownAgents.find((a) => a.id === id)
         const mentions = tagCounts[id] || 0
         const pct = totalQ > 0 ? Math.round((mentions / totalQ) * 100) : 0
         return { id, agent, mentions, pct }
       })
       .sort((a, b) => b.pct - a.pct || (a.agent?.name ?? a.id).localeCompare(b.agent?.name ?? b.id))
-  }, [tagCounts, answeredCount, suite.agents, allAgents])
+  }, [tagCounts, answeredCount, suiteAgentIds, allKnownAgents])
 
   // ── Badge colour based on match %
   const badgeClass = (pct, answeredCount) => {
@@ -258,8 +271,55 @@ export default function SuiteWizard({ suite, onBack }) {
   // ─────────────────────────────────────────────────────
   // QUIZ VIEW
   // ─────────────────────────────────────────────────────
+  if (questions.length === 0) {
+    const SuiteIcon = SUITE_ICONS[suite.icon] || Code2
+    return (
+      <div className="max-w-xl mx-auto animate-fade-in">
+        <div className="flex items-center gap-3 mb-6">
+          <button
+            onClick={onBack}
+            className="p-1.5 transition-colors dark:hover:bg-surface-hover hover:bg-gray-100 dark:text-text-secondary text-gray-500"
+            aria-label="Back to suites"
+          >
+            <ArrowLeft size={16} />
+          </button>
+          <div className="flex items-center gap-2">
+            <SuiteIcon size={16} style={{ color: suite.color }} />
+            <h2 className="font-display text-[17px] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-text-primary">
+              {suite.name}
+            </h2>
+          </div>
+        </div>
+        <div
+          role="status"
+          className="border border-zinc-200 bg-white p-8 text-center dark:border-border dark:bg-surface-card"
+        >
+          <p className="text-sm font-medium text-zinc-900 dark:text-text-primary">
+            This suite has no quiz questions.
+          </p>
+          <p className="mt-1 text-xs text-gray-500 dark:text-text-muted">
+            You can still browse every agent included in the suite.
+          </p>
+          <button
+            onClick={handleViewAll}
+            className="mt-4 h-8 border border-zinc-300 px-3 text-sm font-semibold text-zinc-900 transition-colors hover:bg-zinc-50 dark:border-border dark:text-white dark:hover:bg-surface-hover"
+          >
+            View all agents
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   const question = questions[step]
-  const progress = questions.length > 0 ? ((step + 1) / questions.length) * 100 : 0
+  const options = optionsFor(question)
+  const progress =
+    questions.length > 0
+      ? Math.min(
+          100,
+          Math.max(0, ((Math.min(step, questions.length - 1) + 1) / questions.length) * 100)
+        )
+      : 0
   const SuiteIcon = SUITE_ICONS[suite.icon] || Code2
 
   return (
@@ -306,32 +366,41 @@ export default function SuiteWizard({ suite, onBack }) {
 
       {/* Question */}
       <h3 className="font-display text-[17px] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-text-primary mb-6 leading-snug">
-        {question.question}
+        {question?.question || 'Untitled question'}
       </h3>
 
       {/* Options — 2-col grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
-        {question.options.map((opt, idx) => (
-          <button
-            key={idx}
-            data-option="true"
-            data-index={idx}
-            onClick={() => {
-              const updated = [...answers]
-              updated[step] = idx
-              setAnswers(updated)
-            }}
-            className={`text-left px-4 py-3.5 border text-sm font-medium transition-all duration-150
+      {options.length === 0 ? (
+        <div
+          role="status"
+          className="mb-8 border border-dashed border-zinc-300 p-6 text-center text-sm text-gray-500 dark:border-border dark:text-text-muted"
+        >
+          No answer options are available for this question. Skip it to continue.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+          {options.map((opt, idx) => (
+            <button
+              key={idx}
+              data-option="true"
+              data-index={idx}
+              onClick={() => {
+                const updated = [...answers]
+                updated[step] = idx
+                setAnswers(updated)
+              }}
+              className={`text-left px-4 py-3.5 border text-sm font-medium transition-all duration-150
               ${
                 answers[step] === idx
                   ? 'border-zinc-900 bg-zinc-900/5 dark:bg-white/10 dark:border-white text-zinc-900 dark:text-white'
                   : 'dark:bg-surface-card dark:border-border dark:text-text-primary dark:hover:border-zinc-400 bg-white border-gray-200 text-gray-700 hover:border-zinc-400/60'
               }`}
-          >
-            {opt.label}
-          </button>
-        ))}
-      </div>
+            >
+              {opt?.label || 'Untitled option'}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Footer controls */}
       <div className="flex items-center justify-between">
