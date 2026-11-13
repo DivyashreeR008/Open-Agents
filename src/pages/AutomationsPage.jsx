@@ -114,7 +114,8 @@ export default function AutomationsPage() {
   // Missed and skipped windows did not run, so they are not counted as runs here.
   const totalRunsCount = runs.filter((r) => !isUnexecutedRun(r)).length
   const successfulRuns = runs.filter((r) => r.status === 'success').length
-  const successRate = totalRunsCount > 0 ? Math.round((successfulRuns / totalRunsCount) * 100) : 100
+  const successRate =
+    totalRunsCount > 0 ? Math.round((successfulRuns / totalRunsCount) * 100) : null
 
   // Runs that did not happen since the banner was last dismissed (looking back at most a week)
   const bannerSince = Math.max(missedDismissedAt, Date.now() - MISSED_BANNER_WINDOW_MS)
@@ -327,10 +328,12 @@ export default function AutomationsPage() {
             <CheckCircle2 size={16} className="text-zinc-500" />
           </div>
           <div className="text-2xl sm:text-3xl font-extrabold text-zinc-500 tabular-nums">
-            {successRate}%
+            {successRate === null ? 'No runs' : `${successRate}%`}
           </div>
           <p className="text-[11px] text-gray-400 mt-1">
-            {successfulRuns} of {totalRunsCount} completed
+            {successRate === null
+              ? 'No executed runs recorded yet'
+              : `All executed runs · ${successfulRuns} of ${totalRunsCount} succeeded`}
           </p>
         </div>
       </div>
