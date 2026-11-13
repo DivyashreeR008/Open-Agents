@@ -74,7 +74,9 @@ describe('automation email HTML safety', () => {
     expect(logs[0]).toMatchObject({
       to: 'user@example.com',
       automationName: 'Local only',
-      status: 'Delivered',
+      status: 'Not sent',
+      delivered: false,
+      deliveryError: 'No email sending credential is configured.',
     })
   })
 })

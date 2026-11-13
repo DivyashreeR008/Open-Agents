@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { getEmailLogs, sendResendNotification } from './automationsService'
 
 const EMAIL_LOGS_KEY = 'oa_automation_email_logs_v2'
@@ -7,6 +7,13 @@ const EMAIL_LOGS_KEY = 'oa_automation_email_logs_v2'
 describe('automation email delivery log', () => {
   beforeEach(() => {
     localStorage.clear()
+    vi.stubEnv('VITE_RESEND_API_KEY', 're_test_key')
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true }))
+  })
+
+  afterEach(() => {
+    vi.unstubAllEnvs()
+    vi.unstubAllGlobals()
   })
 
   it('records a delivered run and truncates a long output preview', async () => {
@@ -44,7 +51,8 @@ describe('automation email delivery log', () => {
       error: 'Provider returned 503',
     })
 
-    expect(entry.status).toBe('Failed')
+    expect(entry.runStatus).toBe('failed')
+    expect(entry.status).toBe('Delivered')
     expect(entry.subject).toBe('[Open Agents Hub] Failed: Nightly audit')
     expect(entry.preview).toBe('Provider returned 503')
   })

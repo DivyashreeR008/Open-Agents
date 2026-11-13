@@ -281,6 +281,10 @@ function emailSubjectName(value) {
     .trim()
 }
 
+export function isEmailDeliveryConfigured() {
+  return Boolean(import.meta.env.VITE_RESEND_API_KEY)
+}
+
 export async function sendResendNotification({
   to,
   automationName,
@@ -291,32 +295,30 @@ export async function sendResendNotification({
   error,
 }) {
   const safeAutomationName = emailSubjectName(automationName)
+  const runStatus = status === 'failed' ? 'failed' : 'success'
   const logEntry = {
     id: `email_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
     to,
     automationName,
     agentName,
-    status: status === 'failed' ? 'Failed' : 'Delivered',
+    status: 'Not sent',
+    runStatus,
+    delivered: false,
+    deliveryError: null,
     sentAt: Date.now(),
-    subject: `[Open Agents Hub] ${status === 'failed' ? 'Failed' : 'Completed'}: ${safeAutomationName}`,
+    subject: `[Open Agents Hub] ${runStatus === 'failed' ? 'Failed' : 'Completed'}: ${safeAutomationName}`,
     preview: output ? output.slice(0, 180) + '...' : error || 'Run finished',
   }
 
-  // Save to local email delivery log
-  let existingLogs = []
-  try {
-    const parsedLogs = JSON.parse(localStorage.getItem(EMAIL_LOGS_KEY) || '[]')
-    if (Array.isArray(parsedLogs)) existingLogs = parsedLogs
-  } catch {}
-  try {
-    localStorage.setItem(EMAIL_LOGS_KEY, JSON.stringify([logEntry, ...existingLogs].slice(0, 50)))
-  } catch {}
-
-  // Check if Resend API key is available in environment
   const resendApiKey = import.meta.env.VITE_RESEND_API_KEY
-  if (resendApiKey && to) {
+
+  if (!to) {
+    logEntry.deliveryError = 'No recipient email is configured.'
+  } else if (!resendApiKey) {
+    logEntry.deliveryError = 'No email sending credential is configured.'
+  } else {
     try {
-      await fetch('https://api.resend.com/emails', {
+      const response = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -333,7 +335,7 @@ export async function sendResendNotification({
                 <p style="margin: 4px 0 0 0; color: #9E9E9E; font-size: 14px;">Automation: <strong>${escapeEmailHtml(automationName)}</strong> (${escapeEmailHtml(agentName)})</p>
               </div>
               <div style="background: #FAFAFA; border: 1px solid #E4E4E4; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-                <p style="margin: 0 0 8px 0; font-size: 13px;"><strong>Status:</strong> <span style="color: ${status === 'failed' ? '#919191' : '#C7C7C7'}; font-weight: 600;">${escapeEmailHtml(String(status).toUpperCase())}</span></p>
+                <p style="margin: 0 0 8px 0; font-size: 13px;"><strong>Status:</strong> <span style="color: ${runStatus === 'failed' ? '#919191' : '#C7C7C7'}; font-weight: 600;">${escapeEmailHtml(String(status).toUpperCase())}</span></p>
                 <p style="margin: 0 0 8px 0; font-size: 13px;"><strong>Execution Time:</strong> ${new Date().toLocaleString()}</p>
                 <p style="margin: 0; font-size: 13px;"><strong>Duration:</strong> ${(duration / 1000).toFixed(2)}s</p>
               </div>
@@ -350,10 +352,29 @@ export async function sendResendNotification({
           `,
         }),
       })
+
+      if (!response?.ok) {
+        const detail = response?.status ? `HTTP ${response.status}` : 'an unsuccessful response'
+        throw new Error(`Email service rejected the message (${detail}).`)
+      }
+
+      logEntry.status = 'Delivered'
+      logEntry.delivered = true
     } catch (e) {
+      logEntry.status = 'Failed'
+      logEntry.deliveryError = e?.message || 'Email service did not accept the message.'
       console.warn('Resend API dispatch error:', e)
     }
   }
+
+  let existingLogs = []
+  try {
+    const parsedLogs = JSON.parse(localStorage.getItem(EMAIL_LOGS_KEY) || '[]')
+    if (Array.isArray(parsedLogs)) existingLogs = parsedLogs
+  } catch {}
+  try {
+    localStorage.setItem(EMAIL_LOGS_KEY, JSON.stringify([logEntry, ...existingLogs].slice(0, 50)))
+  } catch {}
 
   return logEntry
 }
@@ -471,17 +492,30 @@ const INITIAL_SEED_RUNS = [
 ]
 
 // ── Local Storage Load & Save Helpers ──
-export function loadAutomations() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_SEED_AUTOMATIONS))
-      return INITIAL_SEED_AUTOMATIONS
-    }
-    return JSON.parse(raw)
-  } catch {
-    return INITIAL_SEED_AUTOMATIONS
+function loadStoredList(key, fallback) {
+  const reset = () => {
+    try {
+      localStorage.setItem(key, JSON.stringify(fallback))
+    } catch {}
+    return fallback
   }
+
+  try {
+    const raw = localStorage.getItem(key)
+    if (!raw) return reset()
+
+    const parsed = JSON.parse(raw)
+    const valid =
+      Array.isArray(parsed) &&
+      parsed.every((item) => item && typeof item === 'object' && !Array.isArray(item))
+    return valid ? parsed : reset()
+  } catch {
+    return reset()
+  }
+}
+
+export function loadAutomations() {
+  return loadStoredList(STORAGE_KEY, INITIAL_SEED_AUTOMATIONS)
 }
 
 export function saveAutomations(automations) {
@@ -491,16 +525,7 @@ export function saveAutomations(automations) {
 }
 
 export function loadRuns() {
-  try {
-    const raw = localStorage.getItem(RUNS_KEY)
-    if (!raw) {
-      localStorage.setItem(RUNS_KEY, JSON.stringify(INITIAL_SEED_RUNS))
-      return INITIAL_SEED_RUNS
-    }
-    return JSON.parse(raw)
-  } catch {
-    return INITIAL_SEED_RUNS
-  }
+  return loadStoredList(RUNS_KEY, INITIAL_SEED_RUNS)
 }
 
 export function saveRuns(runs) {
@@ -702,6 +727,7 @@ export async function runAutomationNow(automationId, options = {}) {
     output: '',
     error: null,
     emailSent: false,
+    emailError: null,
     // Set when the scheduler runs a window that was due: the time it was due, and whether it was
     // run late to catch up for time the app was closed.
     ...(options.scheduledFor
@@ -765,11 +791,12 @@ export async function runAutomationNow(automationId, options = {}) {
   const duration = completedAt - startedAt
   const status = errorMsg ? 'failed' : 'success'
   let emailSent = false
+  let emailError = null
 
   // Email Notification if enabled
   if (automation.emailNotification && automation.notificationEmail) {
     try {
-      await sendResendNotification({
+      const emailResult = await sendResendNotification({
         to: automation.notificationEmail,
         automationName: automation.name,
         agentName: automation.agentName,
@@ -778,8 +805,10 @@ export async function runAutomationNow(automationId, options = {}) {
         duration,
         error: errorMsg,
       })
-      emailSent = true
+      emailSent = Boolean(emailResult?.delivered)
+      emailError = emailResult?.deliveryError || null
     } catch (e) {
+      emailError = e?.message || 'Email dispatch failed.'
       console.warn('Email dispatch failed:', e)
     }
   }
@@ -794,6 +823,7 @@ export async function runAutomationNow(automationId, options = {}) {
     output: outputContent,
     error: errorMsg,
     emailSent,
+    emailError,
   }
 
   const allRuns = loadRuns().map((r) => (r.id === runId ? finishedRunRecord : r))

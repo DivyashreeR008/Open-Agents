@@ -43,26 +43,50 @@ describe('Resend notification dispatch', () => {
     expect(body.html).toContain('4.20s')
   })
 
-  it('keeps the local delivery record when Resend rejects the request', async () => {
+  it('records a failed delivery when Resend rejects the request', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network down')))
 
     const entry = await sendResendNotification(BASE_RUN)
 
-    expect(entry.status).toBe('Delivered')
+    expect(entry).toMatchObject({
+      status: 'Failed',
+      delivered: false,
+      deliveryError: 'network down',
+    })
     expect(getEmailLogs()).toEqual([entry])
     expect(warn).toHaveBeenCalledWith('Resend API dispatch error:', expect.any(Error))
+  })
+
+  it('records an unsuccessful HTTP response as a failed delivery', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 429 }))
+
+    const entry = await sendResendNotification(BASE_RUN)
+
+    expect(entry.status).toBe('Failed')
+    expect(entry.deliveryError).toContain('HTTP 429')
   })
 
   it('skips the network call without a key or recipient', async () => {
     const fetchMock = vi.fn().mockResolvedValue({ ok: true })
     vi.stubGlobal('fetch', fetchMock)
 
-    await sendResendNotification({ ...BASE_RUN, to: '' })
+    const missingRecipient = await sendResendNotification({ ...BASE_RUN, to: '' })
     vi.stubEnv('VITE_RESEND_API_KEY', '')
-    await sendResendNotification(BASE_RUN)
+    const missingKey = await sendResendNotification(BASE_RUN)
 
     expect(fetchMock).not.toHaveBeenCalled()
+    expect(missingRecipient).toMatchObject({
+      status: 'Not sent',
+      delivered: false,
+      deliveryError: 'No recipient email is configured.',
+    })
+    expect(missingKey).toMatchObject({
+      status: 'Not sent',
+      delivered: false,
+      deliveryError: 'No email sending credential is configured.',
+    })
     expect(getEmailLogs()).toHaveLength(2)
   })
 })

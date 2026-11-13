@@ -22,7 +22,9 @@ describe('automation notification fallbacks', () => {
     expect(entry).toMatchObject({
       automationName: null,
       agentName: null,
-      status: 'Failed',
+      status: 'Not sent',
+      runStatus: 'failed',
+      deliveryError: 'No recipient email is configured.',
       subject: '[Open Agents Hub] Failed: ',
       preview: 'Run finished',
     })

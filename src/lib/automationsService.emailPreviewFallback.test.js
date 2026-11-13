@@ -6,7 +6,8 @@ const EMAIL_LOGS_KEY = 'oa_automation_email_logs_v2'
 
 beforeEach(() => {
   localStorage.clear()
-  vi.unstubAllEnvs()
+  vi.stubEnv('VITE_RESEND_API_KEY', 're_test_key')
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true }))
 })
 
 afterEach(() => {
@@ -39,7 +40,8 @@ describe('email preview and status fallbacks', () => {
       error: 'Provider unavailable',
     })
     expect(log.preview).toBe('Provider unavailable')
-    expect(log.status).toBe('Failed')
+    expect(log.runStatus).toBe('failed')
+    expect(log.status).toBe('Delivered')
     expect(log.subject).toContain('Failed: Daily digest')
   })
 
