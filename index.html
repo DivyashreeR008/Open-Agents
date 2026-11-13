@@ -23,9 +23,48 @@
       content="Open Agents — Run AI agents directly in your browser. Open source, community-built. Bring your own API key."
     />
     <title>Open Agents</title>
+    <style>
+      .boot-shell {
+        box-sizing: border-box;
+        min-height: 100vh;
+        display: grid;
+        place-content: center;
+        gap: 0.5rem;
+        padding: 2rem;
+        text-align: center;
+        color: #18181b;
+        background: #ffffff;
+        font-family: ui-sans-serif, system-ui, sans-serif;
+      }
+      .boot-shell h1 {
+        margin: 0;
+        font-size: 1.5rem;
+        letter-spacing: -0.02em;
+      }
+      .boot-shell p {
+        margin: 0;
+        color: #52525b;
+        font-size: 0.875rem;
+      }
+      @media (prefers-color-scheme: dark) {
+        .boot-shell {
+          color: #fafafa;
+          background: #09090b;
+        }
+        .boot-shell p {
+          color: #a1a1aa;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="boot-shell">
+        <h1>Open Agents</h1>
+        <p role="status">Loading the agent workspace...</p>
+      </div>
+    </div>
+    <noscript>Open Agents needs JavaScript enabled to run agents in your browser.</noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
