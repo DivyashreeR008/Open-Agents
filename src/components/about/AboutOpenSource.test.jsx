@@ -26,7 +26,7 @@ describe('AboutOpenSource', () => {
     render(<AboutOpenSource />)
 
     expect(
-      screen.getByText('git clone https://github.com/YOUR_USERNAME/OpenAgents.git')
+      screen.getByText('git clone https://github.com/DivyashreeR008/Open-Agents.git')
     ).toBeInTheDocument()
     expect(screen.getByText('git checkout -b agent/my-new-agent')).toBeInTheDocument()
     expect(screen.getByText('src/agents/definitions/my-new-agent.js')).toBeInTheDocument()
