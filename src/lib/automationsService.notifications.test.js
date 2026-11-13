@@ -104,7 +104,9 @@ describe('run completion notifications', () => {
       output: '',
     })
     expect(getEmailLogs()[0]).toMatchObject({
-      status: 'Failed',
+      status: 'Delivered',
+      runStatus: 'failed',
+      delivered: true,
       subject: '[Open Agents Hub] Failed: Nightly report',
       preview: 'provider exploded',
     })
