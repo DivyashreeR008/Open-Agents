@@ -99,6 +99,12 @@ describe('recommendation scoring edge inputs', () => {
     expect(scored.score).toBe(
       DEFAULT_RECOMMENDATION_WEIGHTS.goalCategory + DEFAULT_RECOMMENDATION_WEIGHTS.taskType
     )
-    expect(getMaxPossibleScore(preferences, weightsWithoutCapability)).toBe(scored.score)
+    expect(getMaxPossibleScore(preferences, weightsWithoutCapability)).toBe(
+      scored.score +
+        weightsWithoutCapability.providerExact +
+        weightsWithoutCapability.freeTextName +
+        weightsWithoutCapability.experience +
+        weightsWithoutCapability.urgency
+    )
   })
 })

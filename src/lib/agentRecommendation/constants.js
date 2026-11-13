@@ -14,6 +14,7 @@ export const RESULT_LIMIT = 10
 // list confident on one hit. Thirty requires a direct category match or a
 // combination of several independent signals.
 export const MIN_CONFIDENT_SCORE = 30
+export const MIN_CONFIDENT_PERCENTAGE = 30
 
 export const DEFAULT_RECOMMENDATION_WEIGHTS = {
   exactCategory: 30,

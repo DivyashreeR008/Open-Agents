@@ -466,8 +466,10 @@ describe('Recommendation Engine Test Suite (Issue #175)', () => {
       ).toBe(30)
     })
 
-    it('counts goal categories and task types without requiring a category selection', () => {
-      expect(getMaxPossibleScore({ primaryGoal: 'coding-development' })).toBe(92)
+    it('reserves every questionnaire step so skipped answers cannot inflate a percentage', () => {
+      // goal category (20) + 4 task opportunities (72) + one extra (6)
+      // + provider (8) + one free-text token (10) + experience (3) + urgency (3)
+      expect(getMaxPossibleScore({ primaryGoal: 'coding-development' })).toBe(122)
     })
   })
 
@@ -574,6 +576,20 @@ describe('Recommendation Engine Test Suite (Issue #175)', () => {
 
         expect(results[0].score).toBe(DEFAULT_RECOMMENDATION_WEIGHTS.taskType)
         expect(results[0].isConfident).toBe(false)
+      })
+
+      it('does not mark a task-only hit as confident when most of the quiz is unanswered', () => {
+        const agent = {
+          id: 'single-signal',
+          name: 'Single Signal',
+          category: 'Other',
+          description: 'Handles code.',
+        }
+        const [result] = recommendAgents([agent], { primaryGoal: 'coding-development' })
+
+        expect(result.score).toBe(DEFAULT_RECOMMENDATION_WEIGHTS.taskType)
+        expect(result.matchPercentage).toBeLessThan(30)
+        expect(result.isConfident).toBe(false)
       })
 
       it('marks a direct category match as confident', () => {
