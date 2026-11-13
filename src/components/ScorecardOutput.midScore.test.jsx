@@ -15,7 +15,7 @@ describe('ScorecardOutput mid-range scores', () => {
     )
 
     expect(screen.getByText('55/100')).toBeInTheDocument()
-    expect(screen.getByText('55', { selector: '.score-value' })).toHaveStyle({ color: '#8A8A8A' })
+    expect(screen.getByText('55', { selector: '.score-value' })).toHaveClass('text-amber-700')
     expect(screen.getByText('50/100')).toBeInTheDocument()
   })
 })
