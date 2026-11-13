@@ -1,9 +1,32 @@
 import { useState, useEffect, useCallback } from 'react'
-import { supabase } from './supabase'
+import * as supabaseModule from './supabase'
+
+const { supabase } = supabaseModule
 
 const PRICING = {
   'gpt-4o': { input: 0.005, output: 0.015 },
   'claude-sonnet': { input: 0.003, output: 0.015 },
+}
+
+export const AGENT_RUN_PAGE_SIZE = 250
+
+const METRICS_UNAVAILABLE_MESSAGE =
+  'Run history requires the optional Supabase backend. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, then retry.'
+
+function backendIsConfigured() {
+  // Lightweight test doubles may only provide the client. Fall back to the
+  // configured path when the optional flag is absent.
+  try {
+    return supabaseModule.isSupabaseConfigured !== false
+  } catch {
+    return true
+  }
+}
+
+function normalizeError(error) {
+  if (typeof error === 'string' && error.trim()) return { message: error }
+  if (error?.message) return { ...error, message: error.message }
+  return { message: 'Run history could not be loaded. Check your connection and try again.' }
 }
 
 export function estimateCost(model, inputTokens, outputTokens) {
@@ -23,35 +46,79 @@ export async function logAgentRun({
   status,
   durationMs,
 }) {
+  if (!backendIsConfigured()) {
+    return {
+      data: null,
+      error: { message: 'Agent run logging requires Supabase configuration.' },
+    }
+  }
+
   const cost = estimateCost(model, inputTokens, outputTokens)
-  return supabase.from('agent_runs').insert({
-    agent_run_id: agentRunId,
-    model,
-    input_tokens: inputTokens,
-    output_tokens: outputTokens,
-    estimated_cost_usd: cost, // null when pricing is unknown, not 0
-    status,
-    duration_ms: durationMs,
-    timestamp: new Date().toISOString(),
-  })
+  try {
+    return await supabase.from('agent_runs').insert({
+      agent_run_id: agentRunId,
+      model,
+      input_tokens: inputTokens,
+      output_tokens: outputTokens,
+      estimated_cost_usd: cost, // null when pricing is unknown, not 0
+      status,
+      duration_ms: durationMs,
+      timestamp: new Date().toISOString(),
+    })
+  } catch (error) {
+    return { data: null, error: normalizeError(error) }
+  }
 }
 
 export function useAgentRunMetrics(rangeDays = 30) {
   const [runs, setRuns] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   const fetchRuns = useCallback(async () => {
     setLoading(true)
+    setError(null)
+
+    if (!backendIsConfigured()) {
+      setRuns([])
+      setError({ message: METRICS_UNAVAILABLE_MESSAGE })
+      setLoading(false)
+      return
+    }
+
     try {
       const since = new Date(Date.now() - rangeDays * 24 * 60 * 60 * 1000).toISOString()
-      const { data, error } = await supabase
-        .from('agent_runs')
-        .select('*')
-        .gte('timestamp', since)
-        .order('timestamp', { ascending: false })
-      if (!error && data) {
-        setRuns(data)
+      const allRuns = []
+      let offset = 0
+
+      while (true) {
+        const query = supabase
+          .from('agent_runs')
+          .select('*')
+          .gte('timestamp', since)
+          .order('timestamp', { ascending: false })
+
+        // Support older lightweight test doubles that expose the ordered
+        // query as a thenable without PostgREST's range builder.
+        const response =
+          typeof query?.range === 'function'
+            ? await query.range(offset, offset + AGENT_RUN_PAGE_SIZE - 1)
+            : await query
+
+        if (response?.error) {
+          setError(normalizeError(response.error))
+          return
+        }
+
+        const page = Array.isArray(response?.data) ? response.data : []
+        allRuns.push(...page)
+        if (page.length < AGENT_RUN_PAGE_SIZE) break
+        offset += AGENT_RUN_PAGE_SIZE
       }
+
+      setRuns(allRuns)
+    } catch (err) {
+      setError(normalizeError(err))
     } finally {
       setLoading(false)
     }
@@ -79,6 +146,9 @@ export function useAgentRunMetrics(rangeDays = 30) {
   return {
     runs,
     loading,
+    error,
+    errorMessage: error?.message || '',
+    isEmpty: !loading && !error && totalRuns === 0,
     totalRuns,
     successRate,
     totalTokens,
