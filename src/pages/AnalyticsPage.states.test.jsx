@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi, beforeEach } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 
 const state = vi.hoisted(() => ({
@@ -84,6 +84,25 @@ describe('AnalyticsPage empty and filtered states', () => {
     expect(screen.getByText('1,000 in · 500 out')).toBeInTheDocument()
   })
 
+  it('moves and announces the selected time range from the keyboard', () => {
+    renderPage()
+    const group = screen.getByRole('group', { name: 'Analytics time range' })
+    const allTime = within(group).getByRole('button', { name: 'All Time' })
+    expect(allTime).toHaveAttribute('aria-pressed', 'true')
+
+    fireEvent.keyDown(allTime, { key: 'ArrowRight' })
+    const sevenDays = within(group).getByRole('button', { name: 'Last 7 Days' })
+    expect(sevenDays).toHaveAttribute('aria-pressed', 'true')
+    expect(sevenDays).toHaveFocus()
+    expect(within(group).getByRole('status')).toHaveTextContent('Showing Last 7 Days')
+
+    fireEvent.keyDown(sevenDays, { key: 'End' })
+    expect(within(group).getByRole('button', { name: 'Last 90 Days' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    )
+  })
+
   it('recovers from a range with no data and can clear saved analytics', () => {
     state.stats = { ...emptyStats, totalRuns: 4, uniqueAgents: 1 }
     state.byRange = { '7d': emptyStats }
@@ -97,6 +116,11 @@ describe('AnalyticsPage empty and filtered states', () => {
     expect(screen.getByText('Total Runs')).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: 'Clear Data' }))
+    expect(state.clearAnalytics).not.toHaveBeenCalled()
+    expect(screen.getByRole('alertdialog')).toHaveTextContent(
+      'Recent run history and agent ratings are not affected.'
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Clear analytics' }))
     expect(state.clearAnalytics).toHaveBeenCalledTimes(1)
   })
 })

@@ -200,10 +200,12 @@ describe('RecentRuns', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Clear history' }))
 
     expect(onClearAll).toHaveBeenCalledTimes(1)
-    expect(screen.getByRole('status')).toHaveTextContent('Run history cleared.')
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Run history and analytics usage records cleared.'
+    )
   })
 
-  it('shows the completion message briefly after the list becomes empty', () => {
+  it('shows the completion message briefly after the list becomes empty', async () => {
     function HistoryHarness() {
       const [history, setHistory] = useState([makeRun()])
       return <RecentRuns history={history} onClearAll={() => setHistory([])} />
@@ -214,9 +216,13 @@ describe('RecentRuns', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Clear history' }))
 
     expect(screen.getByText('Runs you start will show up here.')).toBeInTheDocument()
-    expect(screen.getByRole('status')).toHaveTextContent('Run history cleared.')
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Run history and analytics usage records cleared.'
+    )
 
-    act(() => vi.advanceTimersByTime(4000))
+    await act(async () => {
+      vi.advanceTimersByTime(4000)
+    })
 
     expect(screen.queryByRole('status')).not.toBeInTheDocument()
   })
