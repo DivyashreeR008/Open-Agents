@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useTimedState } from '../lib/useTimedState'
-import { X, Search, Star, Trash2, Copy, RotateCcw, History } from 'lucide-react'
+import { X, Search, Star, Trash2, Copy, Check, RotateCcw, History } from 'lucide-react'
 import { usePromptHistory } from '../lib/usePromptHistory'
+import { useDialogFocus } from '../hooks/useDialogFocus'
 import { formatExactTime, formatRelativeTime, useNow } from '../lib/formatting'
 
 function truncate(text, max = 140) {
@@ -9,7 +10,7 @@ function truncate(text, max = 140) {
   return text.length > max ? text.slice(0, max).trim() + '…' : text
 }
 
-function PromptItem({ entry, now, onUse, onToggleFavorite, onDelete, onCopy }) {
+function PromptItem({ entry, now, onUse, onToggleFavorite, onDelete, onCopy, copied }) {
   return (
     <div className="group border p-3 dark:bg-surface-input dark:border-border bg-gray-50 border-gray-200 transition-colors hover:border-zinc-400">
       <p className="text-xs dark:text-text-primary text-gray-800 leading-relaxed mb-2 whitespace-pre-wrap">
@@ -26,38 +27,51 @@ function PromptItem({ entry, now, onUse, onToggleFavorite, onDelete, onCopy }) {
             {formatRelativeTime(entry.createdAt, now)}
           </time>
         </div>
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
           <button
+            type="button"
             onClick={() => onUse(entry)}
             title="Use this prompt"
+            aria-label="Use this prompt"
             className="p-1 dark:text-text-muted text-gray-500 hover:text-black hover:bg-zinc-500/10 dark:hover:text-white transition-colors"
           >
-            <RotateCcw size={13} />
+            <RotateCcw size={13} aria-hidden="true" />
           </button>
           <button
+            type="button"
             onClick={() => onCopy(entry)}
-            title="Copy to clipboard"
+            title={copied ? 'Copied' : 'Copy to clipboard'}
+            aria-label={copied ? 'Copied' : 'Copy prompt to clipboard'}
             className="p-1 dark:text-text-muted text-gray-500 hover:text-black hover:bg-zinc-500/10 dark:hover:text-white transition-colors"
           >
-            <Copy size={13} />
+            {copied ? (
+              <Check size={13} aria-hidden="true" />
+            ) : (
+              <Copy size={13} aria-hidden="true" />
+            )}
           </button>
           <button
+            type="button"
             onClick={() => onToggleFavorite(entry.id)}
             title={entry.favorite ? 'Remove from favorites' : 'Add to favorites'}
+            aria-label={entry.favorite ? 'Remove from favorites' : 'Add to favorites'}
+            aria-pressed={Boolean(entry.favorite)}
             className={`p-1 transition-colors ${
               entry.favorite
                 ? 'text-zinc-400 hover:text-zinc-300'
                 : 'dark:text-text-muted text-gray-500 hover:text-zinc-400'
             }`}
           >
-            <Star size={13} className={entry.favorite ? 'fill-zinc-400' : ''} />
+            <Star size={13} aria-hidden="true" className={entry.favorite ? 'fill-zinc-400' : ''} />
           </button>
           <button
+            type="button"
             onClick={() => onDelete(entry.id)}
             title="Delete"
+            aria-label="Delete prompt"
             className="p-1 dark:text-text-muted text-gray-500 hover:text-zinc-500 hover:bg-zinc-500/10 transition-colors"
           >
-            <Trash2 size={13} />
+            <Trash2 size={13} aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -79,7 +93,15 @@ export default function PromptHistoryPanel({ open, onClose, onUsePrompt }) {
   const now = useNow()
   const [query, setQuery] = useState('')
   const [copiedId, setCopiedId] = useTimedState(null, open)
+  const [copyError, setCopyError] = useState('')
   const [confirmClear, setConfirmClear] = useState(false)
+  const panelRef = useRef(null)
+
+  useDialogFocus(panelRef, { active: open, onClose })
+
+  useEffect(() => {
+    if (open) setCopyError('')
+  }, [open])
 
   if (!open) return null
 
@@ -95,8 +117,11 @@ export default function PromptHistoryPanel({ open, onClose, onUsePrompt }) {
   const handleCopy = async (entry) => {
     try {
       await navigator.clipboard.writeText(entry.text)
+      setCopyError('')
       setCopiedId(entry.id, 1500)
-    } catch {}
+    } catch {
+      setCopyError('Copy failed. Select the prompt text to copy it manually.')
+    }
   }
 
   return (
@@ -105,20 +130,31 @@ export default function PromptHistoryPanel({ open, onClose, onUsePrompt }) {
       <div className="absolute inset-0 bg-black/40 animate-fade-in" onClick={onClose} />
 
       {/* Panel */}
-      <div className="relative w-full max-w-sm h-full dark:bg-surface-card bg-white border-l dark:border-border border-gray-200 shadow-pop flex flex-col animate-fade-in">
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="prompt-history-title"
+        className="relative w-full max-w-sm h-full dark:bg-surface-card bg-white border-l dark:border-border border-gray-200 shadow-pop flex flex-col animate-fade-in"
+      >
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b dark:border-border border-gray-200">
           <div className="flex items-center gap-2">
-            <History size={16} className="text-zinc-900 dark:text-white" />
-            <h2 className="text-sm font-semibold dark:text-text-primary text-gray-900">
+            <History size={16} className="text-zinc-900 dark:text-white" aria-hidden="true" />
+            <h2
+              id="prompt-history-title"
+              className="text-sm font-semibold dark:text-text-primary text-gray-900"
+            >
               Prompt History
             </h2>
           </div>
           <button
+            type="button"
             onClick={onClose}
+            aria-label="Close prompt history"
             className="p-1.5 dark:text-text-muted text-gray-500 hover:bg-gray-100 dark:hover:bg-surface-hover transition-colors"
           >
-            <X size={16} />
+            <X size={16} aria-hidden="true" />
           </button>
         </div>
 
@@ -142,6 +178,14 @@ export default function PromptHistoryPanel({ open, onClose, onUsePrompt }) {
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto px-4 py-3 space-y-5">
+          <p role="status" className="sr-only">
+            {copiedId ? 'Prompt copied to clipboard.' : ''}
+          </p>
+          {copyError && (
+            <p role="alert" className="text-xs text-red-700 dark:text-red-300">
+              {copyError}
+            </p>
+          )}
           {prompts.length === 0 && (
             <p className="text-xs dark:text-text-muted text-gray-400 text-center py-8">
               No saved prompts yet. Save a prompt from any agent to see it here.
@@ -164,6 +208,7 @@ export default function PromptHistoryPanel({ open, onClose, onUsePrompt }) {
                     onToggleFavorite={toggleFavorite}
                     onDelete={deletePrompt}
                     onCopy={handleCopy}
+                    copied={copiedId === entry.id}
                   />
                 ))}
               </div>
@@ -218,6 +263,7 @@ export default function PromptHistoryPanel({ open, onClose, onUsePrompt }) {
                     onToggleFavorite={toggleFavorite}
                     onDelete={deletePrompt}
                     onCopy={handleCopy}
+                    copied={copiedId === entry.id}
                   />
                 ))}
               </div>
