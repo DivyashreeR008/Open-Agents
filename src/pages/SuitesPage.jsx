@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Sparkles,
@@ -24,6 +24,8 @@ import PageHeader from '../components/layout/PageHeader'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
 import { generateCustomSuite } from '../lib/customSuiteGenerator'
 import { useApiKey } from '../lib/useApiKey'
+import { AgentsContext } from '../lib/useAgents'
+import { classifySuiteGenerationError } from '../lib/suiteGenerationError'
 import ApiKeyBar from '../components/ApiKeyBar'
 
 // Map icon name string → Lucide component
@@ -52,6 +54,7 @@ export default function SuitesPage() {
   const navigate = useNavigate()
   const { provider, setProvider, apiKey, setApiKey, saveForSession, setSaveForSession } =
     useApiKey()
+  const agents = useContext(AgentsContext)?.agents ?? []
 
   const [activeSuite, setActiveSuite] = useState(null)
   const [selectedModel, setSelectedModel] = useState(null)
@@ -62,20 +65,47 @@ export default function SuitesPage() {
   const [generating, setGenerating] = useState(false)
   const [generatorError, setGeneratorError] = useState(null)
 
+  const trimmedGoal = goal.trim()
+  const requirementMessage =
+    !trimmedGoal && !apiKey
+      ? `Enter a goal and add an API key for ${provider} to generate a suite.`
+      : !trimmedGoal
+        ? 'Enter a goal to generate a suite.'
+        : !apiKey
+          ? `Add an API key for ${provider} to generate a suite.`
+          : null
+
   const handleGenerateSuite = async () => {
-    if (!goal.trim() || !apiKey) return
+    if (!trimmedGoal) {
+      setGeneratorError({ kind: 'missing-goal', retryable: false, message: requirementMessage })
+      return
+    }
+    if (!apiKey) {
+      setGeneratorError({ kind: 'missing-key', retryable: false, message: requirementMessage })
+      return
+    }
+
     setGenerating(true)
     setCustomSuite(null)
     setGeneratorError(null)
     try {
-      const result = await generateCustomSuite(goal, apiKey, provider)
+      const result = await generateCustomSuite(trimmedGoal, apiKey, provider)
       setCustomSuite(result)
     } catch (err) {
-      setGeneratorError("Couldn't generate your suite. Please try again.")
+      setGeneratorError(classifySuiteGenerationError(err, provider))
     } finally {
       setGenerating(false)
     }
   }
+
+  const humanizeAgentId = (id) =>
+    id
+      .replace(/[-_]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .replace(/\b\w/g, (letter) => letter.toUpperCase())
+
+  const agentName = (id) => agents.find((agent) => agent.id === id)?.name ?? humanizeAgentId(id)
 
   const handleCreateWorkflow = () => {
     navigate('/workflows/build', {
@@ -137,14 +167,20 @@ export default function SuitesPage() {
             aria-label="Goal for the agent suite"
             type="text"
             value={goal}
-            onChange={(e) => setGoal(e.target.value)}
+            onChange={(e) => {
+              setGoal(e.target.value)
+              if (generatorError) setGeneratorError(null)
+            }}
             onKeyDown={(e) => e.key === 'Enter' && handleGenerateSuite()}
             placeholder="e.g. I want to prepare for a Goldman Sachs interview..."
             className="field h-9 min-w-0 flex-1"
           />
           <button
             onClick={handleGenerateSuite}
-            disabled={!goal.trim() || !apiKey || generating}
+            disabled={!trimmedGoal || !apiKey || generating}
+            aria-describedby={
+              !generatorError && requirementMessage ? 'suite-requirement' : undefined
+            }
             className="btn-primary w-full shrink-0 sm:w-auto"
           >
             {generating ? <Loader2 size={13} className="animate-spin" /> : <Wand2 size={13} />}
@@ -152,7 +188,33 @@ export default function SuitesPage() {
           </button>
         </div>
 
-        {generatorError && <p className="text-[11px] text-zinc-500 mt-2">{generatorError}</p>}
+        {!generatorError && requirementMessage && (
+          <p
+            id="suite-requirement"
+            role="status"
+            className="mt-2 text-[11px] text-zinc-500 dark:text-text-muted"
+          >
+            {requirementMessage}
+          </p>
+        )}
+        {generatorError && (
+          <div
+            role="alert"
+            className="mt-2 flex flex-wrap items-center gap-2 border border-zinc-300 bg-zinc-50 px-2.5 py-2 text-[11px] text-zinc-700 dark:border-border dark:bg-surface-input dark:text-text-secondary"
+          >
+            <span>{generatorError.message}</span>
+            {generatorError.retryable && (
+              <button
+                type="button"
+                onClick={handleGenerateSuite}
+                disabled={generating}
+                className="font-semibold text-zinc-900 underline underline-offset-2 disabled:opacity-50 dark:text-white"
+              >
+                Retry
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Custom Suite Result */}
         {customSuite && (
@@ -167,29 +229,35 @@ export default function SuitesPage() {
               {customSuite.description}
             </p>
             <div className="flex flex-col gap-2">
-              {customSuite.agents.map((agent, index) => (
-                <div
-                  key={agent.id}
-                  className="flex items-center gap-3 border border-zinc-200 bg-zinc-50/60 p-2.5 dark:border-border dark:bg-surface-input/60"
-                >
-                  <span className="text-[11px] font-bold text-zinc-900 dark:text-white w-5 flex-shrink-0">
-                    {index + 1}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold dark:text-text-primary text-gray-900 truncate">
-                      {agent.id}
-                    </p>
-                    <p className="text-[11px] dark:text-text-muted text-gray-400">{agent.reason}</p>
-                  </div>
-                  <button
-                    onClick={() => navigate(`/agent/${agent.id}`)}
-                    className="flex items-center gap-1 text-[11px] font-semibold text-zinc-900 hover:text-black dark:text-white dark:hover:text-zinc-200 transition-colors flex-shrink-0"
+              {customSuite.agents.map((agent, index) => {
+                const displayName = agentName(agent.id)
+                return (
+                  <div
+                    key={agent.id}
+                    className="flex items-center gap-3 border border-zinc-200 bg-zinc-50/60 p-2.5 dark:border-border dark:bg-surface-input/60"
                   >
-                    Open
-                    <ArrowRight size={11} />
-                  </button>
-                </div>
-              ))}
+                    <span className="text-[11px] font-bold text-zinc-900 dark:text-white w-5 flex-shrink-0">
+                      {index + 1}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold dark:text-text-primary text-gray-900 truncate">
+                        {displayName}
+                      </p>
+                      <p className="text-[11px] dark:text-text-muted text-gray-400">
+                        {agent.reason}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => navigate(`/agent/${agent.id}`)}
+                      aria-label={`Open ${displayName}`}
+                      className="flex items-center gap-1 text-[11px] font-semibold text-zinc-900 hover:text-black dark:text-white dark:hover:text-zinc-200 transition-colors flex-shrink-0"
+                    >
+                      Open
+                      <ArrowRight size={11} />
+                    </button>
+                  </div>
+                )
+              })}
             </div>
 
             {/* Action buttons */}

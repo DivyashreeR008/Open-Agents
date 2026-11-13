@@ -75,7 +75,7 @@ describe('SuitesPage custom generation', () => {
 
     await screen.findByRole('heading', { name: 'Interview sprint' })
     expect(screen.getByText('A focused interview plan')).toBeInTheDocument()
-    expect(screen.getByText('summarizer')).toBeInTheDocument()
+    expect(screen.getByText('Summarizer')).toBeInTheDocument()
     expect(screen.getByText('Condenses notes')).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: /Create workflow/ }))
@@ -91,7 +91,7 @@ describe('SuitesPage custom generation', () => {
 
     await screen.findByRole('heading', { name: 'Interview sprint' })
     expect(mocks.generateCustomSuite).toHaveBeenCalledWith('Interview prep', 'key', 'openai')
-    fireEvent.click(screen.getByRole('button', { name: 'Open' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Open Summarizer' }))
     expect(screen.getByText('Agent detail')).toBeInTheDocument()
   })
 })

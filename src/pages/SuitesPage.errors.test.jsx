@@ -22,6 +22,7 @@ function renderPage() {
 
 beforeEach(() => {
   vi.clearAllMocks()
+  mocks.generateCustomSuite.mockReset()
   mocks.useApiKey.mockReturnValue({
     provider: 'openai',
     setProvider: vi.fn(),
@@ -45,12 +46,14 @@ describe('SuitesPage generation failures', () => {
     })
     fireEvent.click(screen.getByRole('button', { name: /Generate/ }))
 
-    await screen.findByText(/Couldn't generate your suite/)
+    await screen.findByText(
+      'The OpenAI service could not be reached. Check your connection, then retry.'
+    )
     expect(screen.getByRole('button', { name: /Generate/ })).toBeEnabled()
 
-    fireEvent.click(screen.getByRole('button', { name: /Generate/ }))
+    fireEvent.click(screen.getByRole('button', { name: 'Retry' }))
     await screen.findByRole('heading', { name: 'Retry suite' })
-    expect(screen.queryByText(/Couldn't generate your suite/)).not.toBeInTheDocument()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
   it('clears the generated suite and goal on Reset', async () => {
