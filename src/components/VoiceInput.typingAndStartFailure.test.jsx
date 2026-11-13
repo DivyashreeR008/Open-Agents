@@ -51,7 +51,7 @@ describe('VoiceInput manual typing and start failures', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Start voice input' }))
 
-    expect(screen.getByRole('status')).toHaveTextContent('Voice input failed')
+    expect(screen.getByRole('status')).toHaveTextContent('Voice input could not start')
     expect(screen.getByRole('button', { name: 'Start voice input' })).toHaveAttribute(
       'aria-pressed',
       'false'
