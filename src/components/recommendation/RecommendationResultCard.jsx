@@ -9,6 +9,35 @@ const providerLabels = {
   openrouter: 'OpenRouter',
   any: 'Any Provider',
 }
+const MATCH_TIERS = [
+  {
+    id: 'strong',
+    label: 'Strong match',
+    min: 60,
+    classes:
+      'border-emerald-700 bg-emerald-900 text-white dark:border-emerald-200 dark:bg-emerald-200 dark:text-emerald-950',
+  },
+  {
+    id: 'moderate',
+    label: 'Moderate match',
+    min: 30,
+    classes:
+      'border-amber-300 bg-amber-100 text-amber-950 dark:border-amber-200 dark:bg-amber-200 dark:text-amber-950',
+  },
+  {
+    id: 'low',
+    label: 'Low match',
+    min: 0,
+    classes:
+      'border-zinc-300 bg-zinc-100 text-zinc-700 dark:border-zinc-600 dark:bg-surface-input dark:text-zinc-100',
+  },
+]
+
+export function getMatchTier(matchPercentage) {
+  const percentage = Number.isFinite(Number(matchPercentage)) ? Number(matchPercentage) : 0
+  return MATCH_TIERS.find((tier) => percentage >= tier.min) || MATCH_TIERS[MATCH_TIERS.length - 1]
+}
+
 const providerClasses = {
   openai: 'bg-zinc-500/10 text-zinc-500 border-zinc-500/20',
   anthropic: 'bg-zinc-500/10 text-zinc-500 border-zinc-500/20',
@@ -20,6 +49,8 @@ const providerClasses = {
 export default function RecommendationResultCard({ rank, agent, result, onOpenAgent }) {
   const Icon = resolveAgentIcon(agent?.icon)
   const provider = agent?.provider || 'any'
+  const matchPercentage = result?.matchPercentage ?? 0
+  const matchTier = getMatchTier(matchPercentage)
   return (
     <article className=" border bg-white border-gray-200 dark:bg-surface-card dark:border-border p-4 space-y-3">
       <div className="flex items-start gap-3">
@@ -37,8 +68,14 @@ export default function RecommendationResultCard({ rank, agent, result, onOpenAg
             <h3 className="text-sm font-semibold text-gray-900 dark:text-text-primary">
               {agent?.name || 'Unnamed Agent'}
             </h3>
-            <span className="text-[10px] font-semibold px-2 py-0.5 bg-zinc-500/10 text-zinc-600 dark:text-zinc-300 border border-zinc-500/20">
-              {result?.matchPercentage ?? 0}% match
+            <span
+              data-match-tier={matchTier.id}
+              className={`text-[10px] font-semibold px-2 py-0.5 border ${matchTier.classes}`}
+            >
+              {matchTier.label}
+            </span>
+            <span className="text-[10px] font-semibold px-2 py-0.5 bg-zinc-500/10 text-zinc-600 border border-zinc-500/20 dark:text-zinc-300">
+              {matchPercentage}% match
             </span>
           </div>
           <div className="mt-1 flex flex-wrap gap-1.5">

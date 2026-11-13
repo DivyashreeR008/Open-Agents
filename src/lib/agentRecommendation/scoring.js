@@ -5,6 +5,7 @@ import {
   STOP_WORDS,
   RESULT_LIMIT,
   MIN_CONFIDENT_SCORE,
+  MIN_CONFIDENT_PERCENTAGE,
 } from './constants.js'
 import { TASK_KEYWORDS, CAPABILITY_KEYWORDS } from './rules.js'
 import { buildRecommendationReasons } from './explanations.js'
@@ -162,6 +163,7 @@ export function getMaxPossibleScore(preferences = {}, weights = DEFAULT_RECOMMEN
     : 0
   const taskCount = getGoal(preferences.primaryGoal)?.taskTypes?.length || 0
   const freeTextTokenCount = tokenizeFreeText(preferences.freeTextGoal).length
+  const hasGoal = Boolean(preferences.primaryGoal)
   const hasProviderPreference =
     Boolean(preferences.providerPreference) && preferences.providerPreference !== 'any'
   const hasExperiencePreference =
@@ -169,15 +171,25 @@ export function getMaxPossibleScore(preferences = {}, weights = DEFAULT_RECOMMEN
   const hasUrgencyPreference =
     preferences.budgetPreference === 'fast' || preferences.budgetPreference === 'capable'
 
+  // The quiz is always the same five steps. Once a goal is chosen, every step
+  // contributes to the denominator even when the user skips it. Optional
+  // answers reserve at least one scoring opportunity so skipping them cannot
+  // turn a partial answer into a perfect match.
+  const extraOpportunities = hasGoal ? Math.max(extras, 1) : extras
+  const freeTextOpportunities = hasGoal ? Math.max(freeTextTokenCount, 1) : freeTextTokenCount
+  const providerOpportunity = hasGoal || hasProviderPreference
+  const experienceOpportunity = hasGoal || hasExperiencePreference
+  const urgencyOpportunity = hasGoal || hasUrgencyPreference
+
   return (
     (categories.length ? weights.exactCategory : 0) +
     (goalCategories ? weights.goalCategory : 0) +
     taskCount * weights.taskType +
-    extras * (weights.capabilityKeyword ?? 0) +
-    (hasProviderPreference ? weights.providerExact : 0) +
-    freeTextTokenCount * weights.freeTextName +
-    (hasExperiencePreference ? weights.experience : 0) +
-    (hasUrgencyPreference ? weights.urgency : 0)
+    extraOpportunities * (weights.capabilityKeyword ?? 0) +
+    (providerOpportunity ? weights.providerExact : 0) +
+    freeTextOpportunities * weights.freeTextName +
+    (experienceOpportunity ? weights.experience : 0) +
+    (urgencyOpportunity ? weights.urgency : 0)
   )
 }
 
@@ -193,11 +205,17 @@ export function recommendAgents(agents = [], preferences = {}, options = {}) {
       ).values(),
     ]
       .map((agent) => ({ agent, ...scoreAgent(agent, preferences, weights) }))
-      .map((result) => ({
-        ...result,
-        isConfident: result.score >= (options.minScore ?? MIN_CONFIDENT_SCORE),
-        matchPercentage: normalizeScore(result.score, maxScore),
-      }))
+      .map((result) => {
+        const matchPercentage = normalizeScore(result.score, maxScore)
+
+        return {
+          ...result,
+          matchPercentage,
+          isConfident:
+            result.score >= (options.minScore ?? MIN_CONFIDENT_SCORE) &&
+            matchPercentage >= (options.minPercentage ?? MIN_CONFIDENT_PERCENTAGE),
+        }
+      })
       // A ranked list is an assertion of relevance. Entries with no matched
       // signal belong in the catalogue, not in the recommendation results.
       .filter((result) => result.score > 0)

@@ -86,6 +86,27 @@ describe('RecommendationResultCard', () => {
     expect(screen.queryAllByRole('listitem')).toHaveLength(0)
   })
 
+  it('gives strong, moderate, and low percentages distinct visible tiers', () => {
+    const { rerender } = renderCard()
+    expect(screen.getByText('Strong match')).toHaveAttribute('data-match-tier', 'strong')
+
+    for (const [percentage, label, tier] of [
+      [45, 'Moderate match', 'moderate'],
+      [12, 'Low match', 'low'],
+    ]) {
+      rerender(
+        <MemoryRouter>
+          <RecommendationResultCard
+            rank={1}
+            agent={agent}
+            result={{ ...recommendation, matchPercentage: percentage }}
+          />
+        </MemoryRouter>
+      )
+      expect(screen.getByText(label)).toHaveAttribute('data-match-tier', tier)
+    }
+  })
+
   it('marks the decorative icons as hidden from assistive technology', () => {
     const { container } = renderCard()
 
