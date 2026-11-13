@@ -1,46 +1,43 @@
 /**
  * useRecentAgents — tracks the last N distinct agents the user has run.
  *
- * Piggybacks on the OpenAgents_history key written by useHistory so no
- * separate storage is needed. Derives a deduplicated, newest-first list
- * of agent ids/names for the "Recently Used" homepage section.
+ * Reads the small index maintained by useHistory instead of parsing the full
+ * run history (which contains prompts and outputs) on every page entry.
  */
 import { useState, useEffect, useCallback } from 'react'
+import {
+  HISTORY_KEY,
+  RECENT_AGENTS_KEY,
+  clearRecentAgents,
+  loadRecentAgents,
+  replaceRecentAgentsFromHistory,
+} from './recentAgentsIndex'
 
-const HISTORY_KEY = 'OpenAgents_history'
-const MAX_RECENT = 8
-
-function getRecentFromHistory() {
+function rebuildFromHistory() {
   try {
     const raw = localStorage.getItem(HISTORY_KEY)
-    if (!raw) return []
-    const runs = JSON.parse(raw)
-    if (!Array.isArray(runs)) return []
-
-    // Deduplicate by agentId, keeping the most recent run per agent
-    const seen = new Set()
-    return runs
-      .filter((run) => run?.agentId && !seen.has(run.agentId) && seen.add(run.agentId))
-      .slice(0, MAX_RECENT)
-      .map((run) => ({
-        id: run.agentId,
-        name: run.agentName || run.agentId,
-        category: run.agentCategory || run.category || '',
-        lastUsedAt: run.timestamp,
-      }))
+    if (!raw) {
+      clearRecentAgents()
+      return []
+    }
+    return replaceRecentAgentsFromHistory(JSON.parse(raw))
   } catch {
+    clearRecentAgents()
     return []
   }
 }
 
 export function useRecentAgents() {
-  const [recentAgents, setRecentAgents] = useState(getRecentFromHistory)
+  const [recentAgents, setRecentAgents] = useState(loadRecentAgents)
 
-  // Keep in sync with writes from other tabs or concurrent runs
+  // The index is the fast path. Rebuild only when an older tab writes the
+  // history key directly and the index has not caught up yet.
   useEffect(() => {
     const handleStorage = (e) => {
-      if (e.key === HISTORY_KEY) {
-        setRecentAgents(getRecentFromHistory())
+      if (e.key === RECENT_AGENTS_KEY) {
+        setRecentAgents(loadRecentAgents())
+      } else if (e.key === HISTORY_KEY) {
+        setRecentAgents(rebuildFromHistory())
       }
     }
     window.addEventListener('storage', handleStorage)
@@ -53,6 +50,7 @@ export function useRecentAgents() {
     } catch {
       // storage unavailable — reset in-memory state regardless
     }
+    clearRecentAgents()
     setRecentAgents([])
   }, [])
 

@@ -1,5 +1,10 @@
 import { useState, useCallback, useEffect } from 'react'
 import { stripCredentialFields } from './secretPolicy'
+import {
+  clearRecentAgents,
+  recordRecentAgent,
+  replaceRecentAgentsFromHistory,
+} from './recentAgentsIndex'
 
 const STORAGE_KEY = 'OpenAgents_history'
 
@@ -138,6 +143,7 @@ export const useHistory = () => {
       if (fallbackResult.ok) {
         result = fallbackResult
         setHistory(fallback)
+        recordRecentAgent(newRun)
         return { ok: true, pruned: fallback.length < candidate.length }
       }
       result = fallbackResult
@@ -145,6 +151,7 @@ export const useHistory = () => {
 
     if (result.ok) {
       setHistory(candidate)
+      recordRecentAgent(newRun)
       return { ok: true, pruned: budgetPruned }
     }
 
@@ -165,7 +172,10 @@ export const useHistory = () => {
   const deleteRun = useCallback((runId) => {
     const updatedHistory = loadHistory().filter((run) => run.id !== runId)
     const result = persistHistory(updatedHistory)
-    if (result.ok) setHistory(updatedHistory)
+    if (result.ok) {
+      setHistory(updatedHistory)
+      replaceRecentAgentsFromHistory(updatedHistory)
+    }
     return result
   }, [])
 
@@ -175,7 +185,10 @@ export const useHistory = () => {
    */
   const clearHistory = useCallback(() => {
     const result = persistHistory([])
-    if (result.ok) setHistory([])
+    if (result.ok) {
+      setHistory([])
+      clearRecentAgents()
+    }
     return result
   }, [])
 
