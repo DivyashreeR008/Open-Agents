@@ -47,6 +47,23 @@ function formatFilterList(items) {
   return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`
 }
 
+function readRecentAgentIds() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem('recentAgents') || '[]')
+    return Array.isArray(parsed) ? parsed.filter((id) => typeof id === 'string') : []
+  } catch {
+    return []
+  }
+}
+
+function readBannerDismissed() {
+  try {
+    return localStorage.getItem('OpenAgents_banner_dismissed') === 'true'
+  } catch {
+    return false
+  }
+}
+
 /** A filter is a word, not a pill: active options invert to a solid block. */
 function RailOption({ selected, onClick, children }) {
   return (
@@ -68,7 +85,13 @@ function RailOption({ selected, onClick, children }) {
 export default function HomePage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { agents, loading: agentsLoading, catalogSize } = useAgents()
+  const {
+    agents,
+    loading: agentsLoading,
+    error: agentsError,
+    reloadAgents,
+    catalogSize,
+  } = useAgents()
   const [isRecommendationWizardOpen, setIsRecommendationWizardOpen] = useState(false)
   const recommendationWizardHeroTriggerRef = useRef(null)
   const recommendationWizardReturnFocusRef = useRef(null)
@@ -99,13 +122,17 @@ export default function HomePage() {
 
   // ── First-time banner: show only if no global keys saved and not dismissed
   const [showBanner, setShowBanner] = useState(() => {
-    if (localStorage.getItem('OpenAgents_banner_dismissed') === 'true') return false
+    if (readBannerDismissed()) return false
     const keys = getGlobalKeys()
     return !keys.openai && !keys.anthropic && !keys.gemini && !keys.openrouter
   })
 
   const dismissBanner = () => {
-    localStorage.setItem('OpenAgents_banner_dismissed', 'true')
+    try {
+      localStorage.setItem('OpenAgents_banner_dismissed', 'true')
+    } catch {
+      // The banner can still be dismissed for this visit when storage is unavailable.
+    }
     setShowBanner(false)
   }
   const allCategories = useMemo(() => {
@@ -186,7 +213,7 @@ export default function HomePage() {
   const selectedCollection = collections.find((collection) => collection.id === activeCollectionId)
 
   const recentAgents = useMemo(() => {
-    const recentIds = JSON.parse(localStorage.getItem('recentAgents') || '[]')
+    const recentIds = readRecentAgentIds()
 
     return recentIds.map((id) => agents.find((a) => a.id === id)).filter(Boolean)
   }, [agents])
@@ -296,13 +323,15 @@ export default function HomePage() {
 
   const resultsStatus = agentsLoading
     ? 'Loading agents.'
-    : filteredCount === 0
-      ? 'No agents match the current search and filters.'
-      : visibleCount < filteredCount
-        ? `Showing ${visibleCount} of ${filteredCount} agents.`
-        : showingFiltered
-          ? `${filteredCount} ${filteredCount === 1 ? 'agent matches' : 'agents match'} the current filters.`
-          : `${filteredCount} ${filteredCount === 1 ? 'agent is' : 'agents are'} in the catalogue.`
+    : agentsError
+      ? 'Agent catalogue could not be loaded.'
+      : filteredCount === 0
+        ? 'No agents match the current search and filters.'
+        : visibleCount < filteredCount
+          ? `Showing ${visibleCount} of ${filteredCount} agents.`
+          : showingFiltered
+            ? `${filteredCount} ${filteredCount === 1 ? 'agent matches' : 'agents match'} the current filters.`
+            : `${filteredCount} ${filteredCount === 1 ? 'agent is' : 'agents are'} in the catalogue.`
 
   const ledger = [
     { label: 'Agents', value: agents.length || catalogSize || 0 },
@@ -318,6 +347,7 @@ export default function HomePage() {
         next.delete('q')
         next.delete('category')
         next.delete('provider')
+        next.delete('collection')
         return next
       },
       { replace: true }
@@ -558,7 +588,10 @@ export default function HomePage() {
               </RailOption>
             ))}
 
-            {(selectedCategory || selectedProvider || searchQuery) && (
+            {(selectedCategory ||
+              selectedProvider ||
+              searchQuery ||
+              activeCollectionId !== DEFAULT_COLLECTION_ID) && (
               <button
                 type="button"
                 onClick={clearFilters}
@@ -623,6 +656,24 @@ export default function HomePage() {
               {Array.from({ length: 9 }).map((_, idx) => (
                 <AgentCardSkeleton key={idx} variant={viewMode === 'grid' ? 'grid' : 'index'} />
               ))}
+            </div>
+          ) : agentsError ? (
+            <div className="flex flex-col items-start py-14" role="alert">
+              <span className="eyebrow mb-2">Catalogue unavailable</span>
+              <h3 className="font-display text-[20px] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-text-primary">
+                The agent catalogue could not be loaded
+              </h3>
+              <p className="mt-1.5 max-w-md text-[13px] leading-relaxed text-zinc-500 dark:text-text-secondary">
+                This is a loading problem, not an empty catalogue. Retry once; if it keeps failing,
+                check your connection and try again.
+              </p>
+              <button
+                type="button"
+                onClick={reloadAgents}
+                className="btn-secondary mt-4 h-7 text-[11px]"
+              >
+                Retry loading agents
+              </button>
             </div>
           ) : filteredCount > 0 ? (
             viewMode === 'grid' ? (
