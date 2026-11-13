@@ -17,14 +17,104 @@ import { useAgents } from '../lib/useAgents'
 import { fetchWorkflowById, subscribeToWorkflow } from '../hooks/useWorkflows'
 import { supabase } from '../lib/supabase'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
+import { getWorkflowStepInfo, getWorkflowStepSummary } from '../lib/workflowStepDisplay'
 
-function AgentRow({ agentId, index, total, agents }) {
-  const agent = agents?.find((a) => a.id === agentId)
+function StepRow({ entry, index, total, agents }) {
+  const step = getWorkflowStepInfo(entry, index)
+
+  if (step.kind === 'conditional') {
+    const visibleLabels = step.labels.slice(0, 6)
+    return (
+      <div className="flex items-center gap-3">
+        <div className="flex flex-col items-center self-stretch w-6">
+          <div
+            className={`w-px flex-1 dark:bg-border bg-gray-200 ${index === 0 ? 'opacity-0' : ''}`}
+          />
+          <div className="w-6 h-6 bg-zinc-500/10 flex items-center justify-center text-[10px] font-bold text-zinc-600 dark:text-zinc-300 flex-shrink-0">
+            {index + 1}
+          </div>
+          <div
+            className={`w-px flex-1 dark:bg-border bg-gray-200 ${index === total - 1 ? 'opacity-0' : ''}`}
+          />
+        </div>
+
+        <div className="flex flex-1 items-start gap-3 border border-dashed border-zinc-500/40 bg-zinc-500/5 p-3 my-1">
+          <div className="w-8 h-8 bg-zinc-500/10 flex items-center justify-center flex-shrink-0">
+            <GitBranch size={15} className="text-zinc-600 dark:text-zinc-300" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-sm font-medium dark:text-text-primary text-gray-900">
+                Conditional step
+              </span>
+              <span className="border border-zinc-500/30 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide dark:text-text-secondary text-gray-500">
+                Branch
+              </span>
+            </div>
+            <p className="mt-1 break-words font-mono text-[11px] dark:text-text-secondary text-gray-500">
+              {step.condition ? `When ${step.condition}` : 'Condition unavailable'}
+            </p>
+            {visibleLabels.length > 0 ? (
+              <p className="mt-1 text-[11px] dark:text-text-muted text-gray-400">
+                Branches: {visibleLabels.join(', ')}
+                {step.labels.length > visibleLabels.length
+                  ? ` and ${step.labels.length - visibleLabels.length} more`
+                  : ''}
+              </p>
+            ) : (
+              <p className="mt-1 text-[11px] dark:text-text-muted text-gray-400">
+                No branch labels defined.
+              </p>
+            )}
+          </div>
+          {index < total - 1 && (
+            <ArrowRight size={12} className="dark:text-text-muted text-gray-400 flex-shrink-0" />
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  if (step.kind === 'malformed') {
+    return (
+      <div className="flex items-center gap-3">
+        <div className="flex flex-col items-center self-stretch w-6">
+          <div
+            className={`w-px flex-1 dark:bg-border bg-gray-200 ${index === 0 ? 'opacity-0' : ''}`}
+          />
+          <div className="w-6 h-6 bg-zinc-500/10 flex items-center justify-center text-[10px] font-bold text-zinc-600 dark:text-zinc-300 flex-shrink-0">
+            {index + 1}
+          </div>
+          <div
+            className={`w-px flex-1 dark:bg-border bg-gray-200 ${index === total - 1 ? 'opacity-0' : ''}`}
+          />
+        </div>
+
+        <div className="flex flex-1 items-center gap-3 border border-dashed border-zinc-500/30 bg-zinc-500/5 p-3 my-1">
+          <div className="w-8 h-8 bg-zinc-500/10 flex items-center justify-center flex-shrink-0">
+            <AlertCircle size={15} className="text-zinc-600 dark:text-zinc-300" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-sm font-medium dark:text-text-primary text-gray-900">
+              Unavailable step
+            </div>
+            <div className="text-[11px] dark:text-text-muted text-gray-400">
+              This saved entry cannot be displayed.
+            </div>
+          </div>
+          {index < total - 1 && (
+            <ArrowRight size={12} className="dark:text-text-muted text-gray-400 flex-shrink-0" />
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  const agent = agents?.find((a) => a.id === step.agentId)
   const IconComponent = resolveAgentIcon(agent?.icon)
 
   return (
     <div className="flex items-center gap-3">
-      {/* Connector line */}
       <div className="flex flex-col items-center self-stretch w-6">
         <div
           className={`w-px flex-1 dark:bg-border bg-gray-200 ${index === 0 ? 'opacity-0' : ''}`}
@@ -37,14 +127,13 @@ function AgentRow({ agentId, index, total, agents }) {
         />
       </div>
 
-      {/* Agent card */}
       <div className="flex items-center gap-3 flex-1 p-3 border my-1 dark:bg-surface-card dark:border-border bg-white border-gray-200">
         <div className="w-8 h-8 bg-zinc-500/10 flex items-center justify-center flex-shrink-0">
           <IconComponent size={15} className="text-zinc-600 dark:text-zinc-300" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="text-sm font-medium dark:text-text-primary text-gray-900 truncate">
-            {agent?.name ?? agentId}
+            {agent?.name ?? step.agentId}
           </div>
           <div className="text-[11px] dark:text-text-muted text-gray-400">
             {agent?.category ?? '—'}
@@ -143,7 +232,7 @@ export default function WorkflowDetail() {
     )
   }
 
-  const agentIds = Array.isArray(workflow.agents) ? workflow.agents : []
+  const { steps, conditionalCount, label } = getWorkflowStepSummary(workflow.agents)
 
   return (
     <div className="max-w-xl mx-auto animate-fade-in">
@@ -188,7 +277,8 @@ export default function WorkflowDetail() {
           </div>
           <div className="flex items-center gap-1.5">
             <span className="text-xs dark:text-text-muted text-gray-400">
-              {agentIds.length} agent{agentIds.length !== 1 ? 's' : ''}
+              {label}
+              {conditionalCount > 0 ? ` · ${conditionalCount} conditional` : ''}
             </span>
           </div>
         </div>
@@ -227,12 +317,12 @@ export default function WorkflowDetail() {
       <div className=" border p-5 dark:bg-surface-card dark:border-border bg-white border-gray-200">
         <h2 className="eyebrow mb-4">Agent Sequence</h2>
         <div>
-          {agentIds.map((agentId, index) => (
-            <AgentRow
-              key={agentId + index}
-              agentId={agentId}
+          {steps.map((step, index) => (
+            <StepRow
+              key={step.key}
+              entry={workflow.agents[index]}
               index={index}
-              total={agentIds.length}
+              total={steps.length}
               agents={agents}
             />
           ))}

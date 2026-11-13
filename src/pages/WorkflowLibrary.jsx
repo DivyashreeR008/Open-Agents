@@ -1,6 +1,17 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Search, Zap, Eye, ArrowRight, GitBranch, Loader2, TrendingUp, X } from 'lucide-react'
+import {
+  Plus,
+  Search,
+  Zap,
+  Eye,
+  ArrowRight,
+  GitBranch,
+  Loader2,
+  TrendingUp,
+  X,
+  AlertCircle,
+} from 'lucide-react'
 import { useAgents } from '../lib/useAgents'
 import { fetchWorkflows, subscribeToAllWorkflows } from '../hooks/useWorkflows'
 import { supabase } from '../lib/supabase'
@@ -8,6 +19,7 @@ import { useDocumentTitle } from '../lib/useDocumentTitle'
 import PageHeader from '../components/layout/PageHeader'
 import SectionHeader from '../components/layout/SectionHeader'
 import EmptyState from '../components/layout/EmptyState'
+import { getWorkflowStepSearchText, getWorkflowStepSummary } from '../lib/workflowStepDisplay'
 
 function AgentPill({ agentId }) {
   const { agents } = useAgents()
@@ -18,7 +30,7 @@ function AgentPill({ agentId }) {
 
 function WorkflowCard({ workflow, onRun, onView, onFork }) {
   const usageCount = workflow.usage_count ?? 0
-  const agentIds = Array.isArray(workflow.agents) ? workflow.agents : []
+  const { steps, conditionalCount, malformedCount, label } = getWorkflowStepSummary(workflow.agents)
 
   return (
     <div className="flex flex-col border border-zinc-200 bg-white p-3.5 transition-colors hover:border-zinc-400 dark:hover:border-zinc-400 dark:border-border dark:bg-surface-card">
@@ -48,10 +60,25 @@ function WorkflowCard({ workflow, onRun, onView, onFork }) {
 
       {/* Agent Sequence */}
       <div className="flex flex-wrap items-center gap-1.5 mb-4">
-        {agentIds.map((agentId, index) => (
-          <span key={agentId + index} className="flex items-center gap-1">
-            <AgentPill agentId={agentId} />
-            {index < agentIds.length - 1 && (
+        {steps.map((step, index) => (
+          <span key={step.key} className="flex items-center gap-1">
+            {step.kind === 'agent' ? (
+              <AgentPill agentId={step.agentId} />
+            ) : step.kind === 'conditional' ? (
+              <span
+                className="badge gap-1 border border-zinc-500/30 opacity-80"
+                title={step.condition ? `Condition: ${step.condition}` : 'Condition unavailable'}
+              >
+                <GitBranch size={10} aria-hidden="true" />
+                Conditional
+              </span>
+            ) : (
+              <span className="badge gap-1 border border-zinc-500/30 opacity-60">
+                <AlertCircle size={10} aria-hidden="true" />
+                Unavailable step
+              </span>
+            )}
+            {index < steps.length - 1 && (
               <ArrowRight size={10} className="dark:text-text-muted text-gray-400 flex-shrink-0" />
             )}
           </span>
@@ -85,7 +112,9 @@ function WorkflowCard({ workflow, onRun, onView, onFork }) {
           Fork
         </button>
         <span className="ml-auto text-[11px] dark:text-text-muted text-gray-400">
-          {agentIds.length} agent{agentIds.length !== 1 ? 's' : ''}
+          {label}
+          {conditionalCount > 0 ? ` · ${conditionalCount} conditional` : ''}
+          {malformedCount > 0 ? ` · ${malformedCount} unavailable` : ''}
         </span>
       </div>
     </div>
@@ -138,12 +167,11 @@ export default function WorkflowLibrary() {
     return workflows.filter((w) => {
       const titleMatch = w.title?.toLowerCase().includes(query)
       const descriptionMatch = w.description?.toLowerCase().includes(query)
-      const agentIds = Array.isArray(w.agents) ? w.agents : []
-      const categoryMatch = agentIds.some((agentId) => {
-        const agent = agents.find((a) => a.id === agentId)
-        return agent?.category?.toLowerCase().includes(query)
-      })
-      return titleMatch || descriptionMatch || categoryMatch
+      const entries = Array.isArray(w.agents) ? w.agents : []
+      const stepMatch = entries.some((entry) =>
+        getWorkflowStepSearchText(entry, agents).toLowerCase().includes(query)
+      )
+      return titleMatch || descriptionMatch || stepMatch
     })
   }, [workflows, searchQuery, agents])
 
