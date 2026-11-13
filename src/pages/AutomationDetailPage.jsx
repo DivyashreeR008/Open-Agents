@@ -54,6 +54,21 @@ export default function AutomationDetailPage() {
   const [runs, setRuns] = useState([])
   const [emailLogs, setEmailLogs] = useState([])
   const [activeTab, setActiveTab] = useState('history') // history | config | emails
+  const tabOrder = ['history', 'config', 'emails']
+
+  const handleTabKeyDown = (event, index) => {
+    let nextIndex = index
+    if (event.key === 'ArrowRight') nextIndex = (index + 1) % tabOrder.length
+    else if (event.key === 'ArrowLeft') nextIndex = (index - 1 + tabOrder.length) % tabOrder.length
+    else if (event.key === 'Home') nextIndex = 0
+    else if (event.key === 'End') nextIndex = tabOrder.length - 1
+    else return
+
+    event.preventDefault()
+    const nextTab = tabOrder[nextIndex]
+    setActiveTab(nextTab)
+    requestAnimationFrame(() => document.getElementById(`automation-tab-${nextTab}`)?.focus())
+  }
   const [isRunning, setIsRunning] = useState(false)
   const [selectedRun, setSelectedRun] = useState(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -316,8 +331,19 @@ export default function AutomationDetailPage() {
       )}
 
       {/* Tabs Header */}
-      <div className="flex items-center gap-2 border-b dark:border-border border-gray-200">
+      <div
+        role="tablist"
+        aria-label="Automation details sections"
+        className="flex items-center gap-2 border-b dark:border-border border-gray-200"
+      >
         <button
+          type="button"
+          role="tab"
+          id="automation-tab-history"
+          aria-selected={activeTab === 'history'}
+          aria-controls="automation-panel-history"
+          tabIndex={activeTab === 'history' ? 0 : -1}
+          onKeyDown={(event) => handleTabKeyDown(event, 0)}
           onClick={() => setActiveTab('history')}
           className={`px-4 py-3 text-xs font-bold border-b-2 transition-colors flex items-center gap-2 ${
             activeTab === 'history'
@@ -325,11 +351,18 @@ export default function AutomationDetailPage() {
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-200'
           }`}
         >
-          <Clock size={14} />
+          <Clock size={14} aria-hidden="true" />
           <span>Execution History ({runs.length})</span>
         </button>
 
         <button
+          type="button"
+          role="tab"
+          id="automation-tab-config"
+          aria-selected={activeTab === 'config'}
+          aria-controls="automation-panel-config"
+          tabIndex={activeTab === 'config' ? 0 : -1}
+          onKeyDown={(event) => handleTabKeyDown(event, 1)}
           onClick={() => setActiveTab('config')}
           className={`px-4 py-3 text-xs font-bold border-b-2 transition-colors flex items-center gap-2 ${
             activeTab === 'config'
@@ -337,11 +370,18 @@ export default function AutomationDetailPage() {
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-200'
           }`}
         >
-          <FileText size={14} />
+          <FileText size={14} aria-hidden="true" />
           <span>Agent Configuration</span>
         </button>
 
         <button
+          type="button"
+          role="tab"
+          id="automation-tab-emails"
+          aria-selected={activeTab === 'emails'}
+          aria-controls="automation-panel-emails"
+          tabIndex={activeTab === 'emails' ? 0 : -1}
+          onKeyDown={(event) => handleTabKeyDown(event, 2)}
           onClick={() => setActiveTab('emails')}
           className={`px-4 py-3 text-xs font-bold border-b-2 transition-colors flex items-center gap-2 ${
             activeTab === 'emails'
@@ -349,14 +389,20 @@ export default function AutomationDetailPage() {
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-200'
           }`}
         >
-          <Mail size={14} />
+          <Mail size={14} aria-hidden="true" />
           <span>Email & Delivery Logs</span>
         </button>
       </div>
 
       {/* Tab 1: Execution History Table */}
       {activeTab === 'history' && (
-        <div className="space-y-4">
+        <div
+          role="tabpanel"
+          id="automation-panel-history"
+          aria-labelledby="automation-tab-history"
+          tabIndex={0}
+          className="space-y-4"
+        >
           {runs.length > 0 && (
             <p id="history-summary" className="text-xs text-gray-500 dark:text-gray-400">
               <strong className="text-gray-900 dark:text-white tabular-nums">{history.ran}</strong>{' '}
@@ -504,7 +550,13 @@ export default function AutomationDetailPage() {
 
       {/* Tab 2: Agent Configuration */}
       {activeTab === 'config' && (
-        <div className="space-y-4">
+        <div
+          role="tabpanel"
+          id="automation-panel-config"
+          aria-labelledby="automation-tab-config"
+          tabIndex={0}
+          className="space-y-4"
+        >
           <div className="p-6 border dark:border-border/80 border-gray-200 dark:bg-surface-card bg-white space-y-6">
             <div>
               <h3 className="text-sm font-bold dark:text-white text-gray-900 uppercase tracking-wider mb-2">
@@ -560,7 +612,13 @@ export default function AutomationDetailPage() {
 
       {/* Tab 3: Resend Email Activity */}
       {activeTab === 'emails' && (
-        <div className="space-y-4">
+        <div
+          role="tabpanel"
+          id="automation-panel-emails"
+          aria-labelledby="automation-tab-emails"
+          tabIndex={0}
+          className="space-y-4"
+        >
           <div className="p-6 border dark:border-border/80 border-gray-200 dark:bg-surface-card bg-white space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>

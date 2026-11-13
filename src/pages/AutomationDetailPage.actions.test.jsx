@@ -110,7 +110,7 @@ describe('AutomationDetailPage actions', () => {
   it('sends a test email and reports success', async () => {
     renderPage()
     await screen.findByRole('heading', { name: 'Daily digest' })
-    fireEvent.click(screen.getByRole('button', { name: /Email & Delivery Logs/ }))
+    fireEvent.click(screen.getByRole('tab', { name: /Email & Delivery Logs/ }))
     fireEvent.click(screen.getByRole('button', { name: 'Send Test Email' }))
     await screen.findByText('Test email dispatched successfully via Resend!')
     expect(mocks.sendResendNotification).toHaveBeenCalledWith(
@@ -122,7 +122,7 @@ describe('AutomationDetailPage actions', () => {
     mocks.sendResendNotification.mockRejectedValue(new Error('blocked'))
     renderPage()
     await screen.findByRole('heading', { name: 'Daily digest' })
-    fireEvent.click(screen.getByRole('button', { name: /Email & Delivery Logs/ }))
+    fireEvent.click(screen.getByRole('tab', { name: /Email & Delivery Logs/ }))
     fireEvent.click(screen.getByRole('button', { name: 'Send Test Email' }))
     await screen.findByText('Failed to send test email.')
   })

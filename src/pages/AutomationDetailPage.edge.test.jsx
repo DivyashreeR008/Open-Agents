@@ -56,7 +56,7 @@ describe('AutomationDetailPage empty history', () => {
     expect(screen.getByText('Execution History (0)')).toBeInTheDocument()
     expect(screen.getByText('No recorded runs yet')).toBeInTheDocument()
 
-    fireEvent.click(screen.getByText('Email & Delivery Logs'))
+    fireEvent.click(screen.getByRole('tab', { name: 'Email & Delivery Logs' }))
     expect(screen.getByText('No email delivery logs recorded yet.')).toBeInTheDocument()
   })
 })
