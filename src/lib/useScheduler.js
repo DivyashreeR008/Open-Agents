@@ -7,6 +7,8 @@ const STORAGE_KEY = 'oa_scheduled_jobs'
 const HISTORY_KEY = 'oa_scheduler_results'
 const API_KEY_PREFIX = 'oa_scheduler_key_'
 const MAX_RESULTS = 50
+export const MAX_RESULT_OUTPUT_CHARS = 20_000
+const MAX_ERROR_CHARS = 2_000
 
 const activeJobIds = new Set()
 
@@ -54,7 +56,12 @@ function loadJobs() {
 }
 
 function saveJobs(jobs) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(jobs.map(stripJobSecret)))
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(jobs.map(stripJobSecret)))
+    return true
+  } catch {
+    return false
+  }
 }
 
 function loadResults() {
@@ -66,7 +73,12 @@ function loadResults() {
 }
 
 function saveResults(results) {
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(results))
+  try {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(results))
+    return true
+  } catch {
+    return false
+  }
 }
 
 // ── Browser notification helper
@@ -114,14 +126,27 @@ export function useScheduler({ autoRun = true } = {}) {
   const [jobs, setJobs] = useState(loadJobs)
   const [results, setResults] = useState(loadResults)
   const [running, setRunning] = useState({}) // jobId → boolean
+  const [storageFailures, setStorageFailures] = useState({ jobs: false, results: false })
 
-  // ── Persist whenever state changes
+  // ── Persist whenever state changes. A full or blocked storage must not take
+  // down the page or stop jobs that are already running.
   useEffect(() => {
-    saveJobs(jobs)
+    const saved = saveJobs(jobs)
+    setStorageFailures((previous) =>
+      previous.jobs === !saved ? previous : { ...previous, jobs: !saved }
+    )
   }, [jobs])
   useEffect(() => {
-    saveResults(results)
+    const saved = saveResults(results)
+    setStorageFailures((previous) =>
+      previous.results === !saved ? previous : { ...previous, results: !saved }
+    )
   }, [results])
+
+  const storageError =
+    storageFailures.jobs || storageFailures.results
+      ? 'Browser storage is full or unavailable. Job and result changes may not survive a reload.'
+      : null
 
   // ── Add a new scheduled job
   const addJob = useCallback((jobData) => {
@@ -163,6 +188,10 @@ export function useScheduler({ autoRun = true } = {}) {
     setResults((prev) => prev.filter((r) => r.jobId !== jobId))
   }, [])
 
+  const clearAllResults = useCallback(() => {
+    setResults([])
+  }, [])
+
   // ── Manually run a job right now
   const runJob = useCallback(async (job) => {
     if (activeJobIds.has(job.id)) return null
@@ -171,6 +200,8 @@ export function useScheduler({ autoRun = true } = {}) {
 
     const startTime = Date.now()
     let output = ''
+    let outputTruncated = false
+    let originalOutputLength = 0
     let errorMsg = null
 
     try {
@@ -198,7 +229,10 @@ export function useScheduler({ autoRun = true } = {}) {
         onChunk: () => {},
       })
 
-      output = result.content
+      const rawOutput = String(result.content ?? '')
+      originalOutputLength = rawOutput.length
+      outputTruncated = rawOutput.length > MAX_RESULT_OUTPUT_CHARS
+      output = rawOutput.slice(0, MAX_RESULT_OUTPUT_CHARS)
       recordAnalyticsRun({
         agentId: job.agentId,
         agentName: job.agentName,
@@ -212,7 +246,7 @@ export function useScheduler({ autoRun = true } = {}) {
         `${job.agentName} finished. Open OpenAgents to see the output.`
       )
     } catch (err) {
-      errorMsg = err.message || 'Unknown error'
+      errorMsg = String(err.message || 'Unknown error').slice(0, MAX_ERROR_CHARS)
       notify(`Failed: ${job.label} — Agent run failed`, `${job.agentName}: ${errorMsg}`)
     } finally {
       activeJobIds.delete(job.id)
@@ -230,6 +264,8 @@ export function useScheduler({ autoRun = true } = {}) {
       jobLabel: job.label,
       agentName: job.agentName,
       output,
+      outputTruncated,
+      originalOutputLength,
       ranAt: now,
       duration,
       error: errorMsg,
@@ -287,6 +323,8 @@ export function useScheduler({ autoRun = true } = {}) {
     deleteJob,
     deleteResult,
     clearResultsForJob,
+    clearAllResults,
+    storageError,
     runJob,
   }
 }
