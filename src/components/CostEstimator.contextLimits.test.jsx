@@ -37,8 +37,10 @@ describe('CostEstimator context window states', () => {
 
     const { rerender } = render(<CostEstimator inputText={'a'.repeat(80)} modelId="test-model" />)
     expect(screen.getByText('80%')).toBeInTheDocument()
+    expect(screen.getByText('Near context limit')).toBeInTheDocument()
 
     rerender(<CostEstimator inputText={'a'.repeat(100)} modelId="test-model" />)
     expect(screen.getByText('100%')).toBeInTheDocument()
+    expect(screen.getByText('Over context limit')).toBeInTheDocument()
   })
 })

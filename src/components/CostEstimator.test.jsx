@@ -13,10 +13,23 @@ afterEach(() => {
 })
 
 describe('CostEstimator', () => {
-  it('renders nothing for a model without published pricing', () => {
-    const { container } = render(<CostEstimator inputText="hello" modelId="unknown-model" />)
+  it('shows an explicit unknown state for a model without published pricing', () => {
+    render(<CostEstimator inputText="hello" modelId="unknown-model" />)
 
-    expect(container).toBeEmptyDOMElement()
+    expect(screen.getByText('Pricing unavailable')).toBeInTheDocument()
+    expect(
+      screen.getByText(/No published pricing is available for unknown-model/)
+    ).toBeInTheDocument()
+    expect(screen.queryByText('$0.00')).not.toBeInTheDocument()
+  })
+
+  it('states the output and pricing assumptions behind the estimate', () => {
+    render(<CostEstimator inputText="hello" modelId="gpt-4o" />)
+    act(() => vi.advanceTimersByTime(300))
+
+    expect(
+      screen.getByText(/Assumes output uses 50% of the input tokens, capped at 4,096 tokens/)
+    ).toBeInTheDocument()
   })
 
   it('shows zero for an empty prompt with a known model', () => {
