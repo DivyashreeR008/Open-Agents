@@ -3,6 +3,7 @@ import { estimateInputCost, estimateOutputCost, getPricing } from './modelPricin
 
 const STORAGE_KEY = 'oa_session_spend'
 const MAX_RUNS = 200
+const CUMULATIVE_TOTAL_VERSION = 2
 
 function toNonNegativeNumber(value) {
   const numeric = typeof value === 'number' ? value : Number(value)
@@ -36,14 +37,22 @@ function loadSession() {
       const data = JSON.parse(raw)
       if (data && typeof data === 'object' && Array.isArray(data.runs)) {
         const runs = data.runs.map(normalizeRun).filter(Boolean).slice(0, MAX_RUNS)
-        // Recompute rather than trusting a stored total, which may be stale,
-        // non-numeric, or from a record that was written by an older build.
-        const totalSpend = runs.reduce((sum, run) => sum + run.totalCost, 0)
-        return { runs, totalSpend }
+        // Older builds rebuilt the total from the capped run list, which made it
+        // shrink as runs fell out of history. Keep the stored cumulative total
+        // when it is larger, and only fall back to the visible sum for records
+        // that predate cumulative totals.
+        const visibleTotal = runs.reduce((sum, run) => sum + run.totalCost, 0)
+        const storedTotal = toNonNegativeNumber(data.totalSpend)
+        const totalSpend =
+          data.version === CUMULATIVE_TOTAL_VERSION
+            ? Math.max(storedTotal, visibleTotal)
+            : visibleTotal
+        const startedAt = toNonNegativeNumber(data.startedAt) || null
+        return { runs, totalSpend, startedAt }
       }
     }
   } catch {}
-  return { runs: [], totalSpend: 0 }
+  return { runs: [], totalSpend: 0, startedAt: null }
 }
 
 function saveSession(data) {
@@ -97,8 +106,16 @@ export function useSessionSpend() {
     // together) isn't silently discarded by the last write winning.
     const prev = loadSession()
     const runs = [run, ...prev.runs].slice(0, MAX_RUNS)
-    const totalSpend = runs.reduce((sum, r) => sum + r.totalCost, 0)
-    const newData = { runs, totalSpend }
+    // The run list is capped for storage and rendering, but the total must keep
+    // counting every run in the tracking window or a long session appears to
+    // spend less money over time.
+    const totalSpend = prev.totalSpend + runCost
+    const newData = {
+      runs,
+      totalSpend,
+      startedAt: prev.startedAt || run.timestamp,
+      version: CUMULATIVE_TOTAL_VERSION,
+    }
     saveSession(newData)
     setSessionData(newData)
   }, [])
@@ -107,12 +124,13 @@ export function useSessionSpend() {
     try {
       localStorage.removeItem(STORAGE_KEY)
     } catch {}
-    setSessionData({ runs: [], totalSpend: 0 })
+    setSessionData({ runs: [], totalSpend: 0, startedAt: null })
   }, [])
 
   return {
     runs: sessionData.runs,
     totalSpend: sessionData.totalSpend,
+    startedAt: sessionData.startedAt,
     addRun,
     clearSession,
   }

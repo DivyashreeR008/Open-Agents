@@ -49,6 +49,45 @@ describe('useSessionSpend loading', () => {
     expect(result.current.totalSpend).toBeCloseTo(0.85, 10)
   })
 
+  it('preserves a cumulative total after run history has been capped', () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        version: 2,
+        startedAt: 111,
+        runs: [storedRun('retained')],
+        totalSpend: 99,
+      })
+    )
+
+    const { result } = renderHook(() => useSessionSpend())
+
+    expect(result.current.runs).toHaveLength(1)
+    expect(result.current.totalSpend).toBe(99)
+    expect(result.current.startedAt).toBe(111)
+  })
+
+  it('records a start point with the first run and writes the cumulative format', () => {
+    vi.spyOn(Date, 'now').mockReturnValue(4321)
+    const { result } = renderHook(() => useSessionSpend())
+
+    act(() => {
+      result.current.addRun({
+        model: 'gpt-4o',
+        inputTokens: 1,
+        outputTokens: 1,
+        inputCost: 0.1,
+        outputCost: 0.2,
+      })
+    })
+
+    expect(result.current.startedAt).toBe(4321)
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY))
+    expect(stored.version).toBe(2)
+    expect(stored.startedAt).toBe(4321)
+    expect(stored.totalSpend).toBeCloseTo(0.3, 10)
+  })
+
   it('normalizes invalid token and cost fields and drops non-record runs', () => {
     localStorage.setItem(
       STORAGE_KEY,
@@ -191,7 +230,7 @@ describe('useSessionSpend recording', () => {
     })
   })
 
-  it('caps the session at two hundred runs and sums only the retained runs', () => {
+  it('caps the stored runs while keeping dropped runs in the cumulative total', () => {
     const previous = Array.from({ length: 200 }, (_, index) =>
       storedRun(`old-${index}`, { inputCost: 1, outputCost: 0, totalCost: 1 })
     )
@@ -211,7 +250,7 @@ describe('useSessionSpend recording', () => {
     expect(result.current.runs).toHaveLength(200)
     expect(result.current.runs[0].totalCost).toBe(2)
     expect(result.current.runs.at(-1).id).toBe('old-198')
-    expect(result.current.totalSpend).toBeCloseTo(201, 10)
+    expect(result.current.totalSpend).toBeCloseTo(202, 10)
   })
 
   it('merges a run written by another tab after this hook mounted', () => {
