@@ -25,7 +25,7 @@ function renderSelect(overrides = {}) {
 afterEach(cleanup)
 
 describe('CustomSelect keyboard and pointer edges', () => {
-  it('moves the highlight back with ArrowUp and clamps it at both ends', () => {
+  it('opens on the selected option and wraps the highlight at both ends', () => {
     renderSelect()
     const trigger = screen.getByRole('button', { name: 'Provider' })
 
@@ -33,21 +33,15 @@ describe('CustomSelect keyboard and pointer edges', () => {
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
 
     fireEvent.click(trigger)
-    fireEvent.keyDown(trigger, { key: 'ArrowDown' })
     let choices = screen.getAllByRole('option')
     expect(document.activeElement).toBe(choices[0])
 
     fireEvent.keyDown(choices[0], { key: 'ArrowUp' })
     choices = screen.getAllByRole('option')
-    expect(document.activeElement).toBe(choices[0])
-
-    fireEvent.keyDown(choices[0], { key: 'ArrowDown' })
-    fireEvent.keyDown(screen.getAllByRole('option')[1], { key: 'ArrowDown' })
-    choices = screen.getAllByRole('option')
     expect(document.activeElement).toBe(choices[2])
 
     fireEvent.keyDown(choices[2], { key: 'ArrowDown' })
-    expect(document.activeElement).toBe(screen.getAllByRole('option')[2])
+    expect(document.activeElement).toBe(screen.getAllByRole('option')[0])
   })
 
   it('toggles shut on a second trigger click and closes with Escape on the trigger', () => {
