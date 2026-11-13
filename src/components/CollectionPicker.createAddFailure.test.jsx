@@ -15,6 +15,9 @@ vi.mock('../lib/useCollections', async (importOriginal) => {
       createCollection: mocks.createCollection,
       addAgentToCollection: mocks.addAgentToCollection,
       isAgentInCollection: () => false,
+      getAgentCollectionId: () => 'all-agents',
+      removeAgentFromCollection: vi.fn(),
+      moveAgentToCollection: vi.fn(),
     }),
   }
 })
