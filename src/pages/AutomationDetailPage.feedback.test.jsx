@@ -89,7 +89,7 @@ describe('AutomationDetailPage notification and modal feedback', () => {
     mocks.getAutomation.mockReturnValue(automation)
     renderPage()
     await screen.findByRole('heading', { name: 'Daily digest' })
-    fireEvent.click(screen.getByRole('button', { name: /Email & Delivery Logs/ }))
+    fireEvent.click(screen.getByRole('tab', { name: /Email & Delivery Logs/ }))
 
     const send = screen.getByRole('button', { name: 'Send Test Email' })
     expect(send).toBeEnabled()
@@ -106,7 +106,7 @@ describe('AutomationDetailPage notification and modal feedback', () => {
     const timeoutSpy = vi.spyOn(globalThis, 'setTimeout')
     renderPage()
     await screen.findByRole('heading', { name: 'Daily digest' })
-    fireEvent.click(screen.getByRole('button', { name: /Email & Delivery Logs/ }))
+    fireEvent.click(screen.getByRole('tab', { name: /Email & Delivery Logs/ }))
     fireEvent.click(screen.getByRole('button', { name: 'Send Test Email' }))
 
     expect(
@@ -130,8 +130,8 @@ describe('AutomationDetailPage notification and modal feedback', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Close edit modal' }))
     expect(screen.queryByText('Edit modal')).not.toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole('button', { name: /Email & Delivery Logs/ }))
-    fireEvent.click(screen.getByRole('button', { name: /Execution History/ }))
+    fireEvent.click(screen.getByRole('tab', { name: /Email & Delivery Logs/ }))
+    fireEvent.click(screen.getByRole('tab', { name: /Execution History/ }))
     fireEvent.click(screen.getByRole('button', { name: 'Inspect Output' }))
     expect(screen.getByText('Run drawer: r1')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Close run drawer' }))

@@ -92,7 +92,7 @@ describe('AutomationDetailPage tabs', () => {
   it('renders the configuration snapshot and missed-run policy', async () => {
     renderPage()
     await screen.findByRole('heading', { name: 'Daily digest' })
-    fireEvent.click(screen.getByRole('button', { name: /Agent Configuration/ }))
+    fireEvent.click(screen.getByRole('tab', { name: /Agent Configuration/ }))
     expect(screen.getByText('topic')).toBeInTheDocument()
     expect(screen.getByText('AI')).toBeInTheDocument()
     expect(screen.getByText('tags')).toBeInTheDocument()
@@ -104,7 +104,7 @@ describe('AutomationDetailPage tabs', () => {
   it('renders email logs and disables test email without a recipient', async () => {
     renderPage()
     await screen.findByRole('heading', { name: 'Daily digest' })
-    fireEvent.click(screen.getByRole('button', { name: /Email & Delivery Logs/ }))
+    fireEvent.click(screen.getByRole('tab', { name: /Email & Delivery Logs/ }))
     expect(screen.getByText('Digest sent')).toBeInTheDocument()
     expect(screen.getByText(/ops@example.com/)).toBeInTheDocument()
     expect(screen.getByText('delivered')).toBeInTheDocument()
