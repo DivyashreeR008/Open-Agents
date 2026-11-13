@@ -76,7 +76,7 @@ describe('HomePage filter reset controls', () => {
     state.keys = { openai: 'stored-key', anthropic: '', gemini: '', openrouter: '' }
   })
 
-  it('clears search and rails while keeping the active collection', () => {
+  it('clears search, rails, and the active collection', () => {
     renderPage('/agents?collection=design-picks&q=draws&category=Design&provider=anthropic')
 
     expect(screen.getByRole('heading', { level: 1, name: 'Design picks' })).toBeInTheDocument()
@@ -84,12 +84,14 @@ describe('HomePage filter reset controls', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Reset' }))
 
-    expect(screen.getByTestId('location-search')).toHaveTextContent('collection=design-picks')
+    expect(screen.getByTestId('location-search')).toHaveTextContent('')
+    expect(screen.getByTestId('location-search')).not.toHaveTextContent('collection=design-picks')
     expect(screen.getByTestId('location-search')).not.toHaveTextContent('q=draws')
     expect(screen.getByTestId('location-search')).not.toHaveTextContent('category=Design')
     expect(screen.getByTestId('location-search')).not.toHaveTextContent('provider=anthropic')
-    expect(screen.getByRole('heading', { level: 1, name: 'Design picks' })).toBeInTheDocument()
-    expect(screen.queryByText('Alpha Agent')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: 'Agents' })).toBeInTheDocument()
+    expect(screen.getByText('Alpha Agent')).toBeInTheDocument()
+    expect(screen.getByText('Beta Agent')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Reset' })).toBeNull()
   })
 
