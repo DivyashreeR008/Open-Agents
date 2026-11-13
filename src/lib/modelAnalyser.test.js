@@ -22,6 +22,7 @@ describe('analyseModels', () => {
     ['openai', 'gpt-4o-mini'],
     ['anthropic', 'claude-3-5-haiku-20241022'],
     ['gemini', 'gemini-2.5-flash'],
+    ['openrouter', 'openai/gpt-4o-mini'],
   ])('uses the documented default model for %s', async (provider, model) => {
     await analyseModels(agent, 'provider-key', provider)
 
