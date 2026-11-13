@@ -55,15 +55,15 @@ describe('AutomationRunDrawer running and cleanup edges', () => {
     expect(screen.getByText('No output generated for this run.')).toBeInTheDocument()
   })
 
-  it('copies an empty string when a run has neither output nor error', () => {
+  it('explains when there is nothing to copy', () => {
     const writeText = vi.fn().mockResolvedValue(undefined)
     Object.assign(navigator, { clipboard: { writeText } })
     renderRun({ ...base, output: undefined, error: undefined })
 
     fireEvent.click(screen.getByRole('button', { name: 'Copy output' }))
 
-    expect(writeText).toHaveBeenCalledOnce()
-    expect(writeText).toHaveBeenCalledWith('')
+    expect(writeText).not.toHaveBeenCalled()
+    expect(screen.getByRole('status')).toHaveTextContent('There is no output to copy.')
   })
 
   it('closes on Escape from an action and removes the handler on unmount', () => {

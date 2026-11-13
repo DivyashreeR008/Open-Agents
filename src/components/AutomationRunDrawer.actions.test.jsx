@@ -52,7 +52,7 @@ describe('AutomationRunDrawer actions', () => {
     expect(createObjectURL).toHaveBeenCalledOnce()
     const blob = createObjectURL.mock.calls[0][0]
     expect(blob.type).toBe('text/markdown')
-    expect(revokeObjectURL).not.toHaveBeenCalled()
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:run')
     expect(click).toHaveBeenCalledOnce()
     expect(document.querySelector('a[download="Daily_digest_2023-11-14.md"]')).toBeNull()
   })

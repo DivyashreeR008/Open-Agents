@@ -1,4 +1,4 @@
-import { useId, useRef } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { useTimedState } from '../lib/useTimedState'
 import { useDialogFocus } from '../hooks/useDialogFocus'
 import {
@@ -23,38 +23,62 @@ import { describeUnexecutedRun, isUnexecutedRun } from '../lib/missedRuns'
 
 export default function AutomationRunDrawer({ run, isOpen, onClose }) {
   const [copied, setCopied] = useTimedState(false, isOpen && Boolean(run))
+  const [copyError, setCopyError] = useState('')
   const panelRef = useRef(null)
   const titleId = useId()
   useDialogFocus(panelRef, { active: isOpen && Boolean(run), onClose })
+
+  useEffect(() => {
+    if (isOpen) setCopyError('')
+  }, [isOpen, run?.id])
 
   if (!isOpen || !run) return null
 
   const unexecuted = isUnexecutedRun(run)
   const description = unexecuted ? describeUnexecutedRun(run) : null
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(run.output || run.error || '')
-    setCopied(true, 2000)
+  const handleCopy = async () => {
+    const text = run.output || run.error || ''
+    if (!text) {
+      setCopyError('There is no output to copy.')
+      return
+    }
+
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopyError('')
+      setCopied(true, 2000)
+    } catch {
+      setCopyError('Copy failed. Select the output text and copy it manually.')
+    }
   }
 
   const handleDownload = () => {
     const element = document.createElement('a')
     const file = new Blob([run.output || run.error || ''], { type: 'text/markdown' })
-    element.href = URL.createObjectURL(file)
+    const url = URL.createObjectURL(file)
     const safeName = (run.automationName || 'run').replace(/\s+/g, '_')
     const started = run.startedAt ? new Date(run.startedAt) : new Date()
     const stamp = Number.isNaN(started.getTime())
       ? new Date().toISOString().split('T')[0]
       : started.toISOString().split('T')[0]
-    element.download = `${safeName}_${stamp}.md`
-    document.body.appendChild(element)
-    element.click()
-    document.body.removeChild(element)
+
+    try {
+      element.href = url
+      element.download = `${safeName}_${stamp}.md`
+      document.body.appendChild(element)
+      element.click()
+    } finally {
+      element.remove()
+      URL.revokeObjectURL(url)
+    }
   }
 
   const formatDate = (ts) => {
     if (!ts) return '—'
-    return new Date(ts).toLocaleString(undefined, {
+    const date = new Date(ts)
+    if (Number.isNaN(date.getTime())) return '—'
+    return date.toLocaleString(undefined, {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
@@ -63,6 +87,8 @@ export default function AutomationRunDrawer({ run, isOpen, onClose }) {
       second: '2-digit',
     })
   }
+
+  const duration = Number.isFinite(run.duration) ? `${(run.duration / 1000).toFixed(2)}s` : '—'
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
@@ -184,13 +210,19 @@ export default function AutomationRunDrawer({ run, isOpen, onClose }) {
             </div>
           )}
 
+          {copyError && (
+            <p role="status" className="text-xs text-red-700 dark:text-red-300">
+              {copyError}
+            </p>
+          )}
+
           {!unexecuted && (
             <>
               {/* Metadata KPI Pills */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="p-3 dark:bg-surface-card bg-gray-50 border dark:border-border/60 border-gray-200">
                   <span className="text-[10px] font-medium text-gray-500 uppercase">Duration</span>
-                  <p className="text-sm font-bold mt-0.5">{(run.duration / 1000).toFixed(2)}s</p>
+                  <p className="text-sm font-bold mt-0.5">{duration}</p>
                 </div>
                 <div className="p-3 dark:bg-surface-card bg-gray-50 border dark:border-border/60 border-gray-200">
                   <span className="text-[10px] font-medium text-gray-500 uppercase">
