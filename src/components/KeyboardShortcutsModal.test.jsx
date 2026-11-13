@@ -17,7 +17,7 @@ describe('KeyboardShortcutsModal', () => {
     expect(dialog).toHaveAttribute('aria-labelledby', 'keyboard-shortcuts-title')
 
     expect(screen.getByText('Keyboard Shortcuts')).toBeInTheDocument()
-    expect(screen.getByText('Open Command Palette')).toBeInTheDocument()
+    expect(screen.getByText('Open the command palette')).toBeInTheDocument()
     expect(screen.getByText('Ctrl / Cmd + K')).toBeInTheDocument()
   })
 

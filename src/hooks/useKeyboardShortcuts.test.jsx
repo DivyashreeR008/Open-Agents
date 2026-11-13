@@ -173,7 +173,7 @@ describe('KeyboardShortcutsModal help listing', () => {
 
   it('lists the documented shortcuts when open', () => {
     render(<KeyboardShortcutsModal isOpen onClose={() => {}} />)
-    for (const key of ['Ctrl / Cmd + K', 'Ctrl + Enter', '/', 'Esc', 'Alt + 1 / 2 / 3', '?']) {
+    for (const key of ['Ctrl / Cmd + K', 'Ctrl + Enter', '/', 'Esc', 'Alt + 1 / 2 / 3 / 4', '?']) {
       expect(screen.getByText(key)).toBeInTheDocument()
     }
   })
