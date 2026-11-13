@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 
 const STORAGE_KEY = 'oa_ratings'
 const VOTES_KEY = 'oa_rating_votes'
+const RUN_VOTES_KEY = 'oa_run_rating_votes'
 const listeners = new Set()
 
 function isPlainObject(value) {
@@ -31,6 +32,20 @@ function sanitizeVotes(value) {
   )
 }
 
+function sanitizeRunVotes(value) {
+  if (!isPlainObject(value)) return {}
+  return Object.fromEntries(
+    Object.entries(value).filter(
+      ([runId, record]) =>
+        runId &&
+        isPlainObject(record) &&
+        typeof record.agentId === 'string' &&
+        record.agentId &&
+        (record.value === 'up' || record.value === 'down')
+    )
+  )
+}
+
 const getStoredRatings = () => {
   if (typeof window === 'undefined') return {}
   try {
@@ -52,11 +67,33 @@ const getStoredVotes = () => {
   }
 }
 
+const getStoredRunVotes = () => {
+  if (typeof window === 'undefined') return {}
+  try {
+    const saved = localStorage.getItem(RUN_VOTES_KEY)
+    return saved ? sanitizeRunVotes(JSON.parse(saved)) : {}
+  } catch {
+    return {}
+  }
+}
+
 const saveVotes = (votes) => {
   try {
     localStorage.setItem(VOTES_KEY, JSON.stringify(votes))
+    return true
   } catch (error) {
     console.error('Error saving rating votes to localStorage:', error)
+    return false
+  }
+}
+
+const saveRunVotes = (votes) => {
+  try {
+    localStorage.setItem(RUN_VOTES_KEY, JSON.stringify(votes))
+    return true
+  } catch (error) {
+    console.error('Error saving run rating votes to localStorage:', error)
+    return false
   }
 }
 
@@ -77,39 +114,65 @@ export function useAgentRatings() {
     }
   }, [])
 
-  const rateAgent = (agentId, value) => {
-    if (!agentId) return
-    if (value !== 'up' && value !== 'down') return
-
+  const applyVote = (agentId, value, previous, runId) => {
     const currentRatings = getStoredRatings()
     const votes = getStoredVotes()
-    const previous = votes[agentId] || null
+    const runVotes = getStoredRunVotes()
     const agentData = currentRatings[agentId] || { up: 0, down: 0 }
 
+    // Repeating the same choice confirms it. It must not remove a vote or add
+    // a second point for a run the user already rated.
     if (previous === value) {
-      agentData[value] = Math.max(0, agentData[value] - 1)
-      delete votes[agentId]
-    } else {
-      if (previous) {
-        agentData[previous] = Math.max(0, agentData[previous] - 1)
-      }
-      agentData[value] += 1
-      votes[agentId] = value
+      return { ok: true, value, unchanged: true }
     }
 
+    if (previous) {
+      agentData[previous] = Math.max(0, agentData[previous] - 1)
+    }
+    agentData[value] += 1
     currentRatings[agentId] = agentData
+    votes[agentId] = value
+
+    if (runId) {
+      runVotes[runId] = { agentId, value }
+    }
+
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(currentRatings))
     } catch (error) {
       console.error('Error saving ratings to localStorage:', error)
-      return
+      return { ok: false, value, error: 'Ratings could not be saved.' }
     }
-    saveVotes(votes)
+
+    if (!saveVotes(votes) || (runId && !saveRunVotes(runVotes))) {
+      listeners.forEach((listener) => listener())
+      return { ok: false, value, error: 'Rating votes could not be saved.' }
+    }
 
     listeners.forEach((listener) => listener())
+    return { ok: true, value, unchanged: false }
+  }
+
+  const rateAgent = (agentId, value, runId = null) => {
+    if (!agentId) return { ok: false, error: 'An agent is required.' }
+    if (value !== 'up' && value !== 'down') {
+      return { ok: false, error: 'Choose a valid rating.' }
+    }
+
+    if (runId) {
+      const previousRunVote = getStoredRunVotes()[runId]?.value || null
+      return applyVote(agentId, value, previousRunVote, runId)
+    }
+
+    return applyVote(agentId, value, getStoredVotes()[agentId] || null, null)
   }
 
   const getUserVote = (agentId) => getStoredVotes()[agentId] || null
+
+  const getRunVote = (runId) => {
+    if (!runId) return null
+    return getStoredRunVotes()[runId]?.value || null
+  }
 
   const getAgentRatingInfo = (agentId) => {
     const agentData = ratings[agentId] || { up: 0, down: 0 }
@@ -124,5 +187,5 @@ export function useAgentRatings() {
     }
   }
 
-  return { rateAgent, getAgentRatingInfo, getUserVote, ratings }
+  return { rateAgent, getAgentRatingInfo, getUserVote, getRunVote, ratings }
 }

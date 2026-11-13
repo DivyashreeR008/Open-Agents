@@ -79,6 +79,7 @@ export default function AgentRunner({ agent }) {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const [duration, setDuration] = useState(null)
+  const [lastRunId, setLastRunId] = useState(null)
   const [selectedModel, setSelectedModel] = useState(MODEL_MAP[provider] || MODEL_MAP.openai)
   const [versionHistory, setVersionHistory] = useState([])
   const [playgroundOpen, setPlaygroundOpen] = useState(false)
@@ -283,6 +284,7 @@ export default function AgentRunner({ agent }) {
     setStreamingOutput('')
     setIsStreaming(false)
     setDuration(null)
+    setLastRunId(null)
     setMsgIndex(0)
     setHistoryNotice(null)
 
@@ -346,10 +348,10 @@ export default function AgentRunner({ agent }) {
         outputCost: null,
       })
 
-      const runId = `${agent.id}_${Date.now()}`
+      const outputRunId = `${agent.id}_${Date.now()}`
 
       const historyResult = saveRun({
-        runId,
+        runId: outputRunId,
         agentId: agent.id,
         agentName: agent.name,
         inputs: { ...inputs },
@@ -366,8 +368,10 @@ export default function AgentRunner({ agent }) {
         )
       }
 
+      setLastRunId(outputRunId)
+
       recordAnalyticsRun({
-        runId,
+        runId: outputRunId,
         agentId: agent.id,
         agentName: agent.name,
         category: agent.category,
@@ -1209,7 +1213,7 @@ export default function AgentRunner({ agent }) {
                     )}
                   </ErrorBoundary>
                   <div className="mt-4">
-                    <RunRating agentId={agent.id} />
+                    <RunRating agentId={agent.id} runId={lastRunId} />
                     <button
                       onClick={handleSendToWorkflow}
                       className="flex items-center gap-2 h-8 px-3 text-sm font-semibold text-zinc-900 dark:text-white bg-zinc-500/10 hover:bg-zinc-500/20 transition-colors border border-zinc-500/20"
