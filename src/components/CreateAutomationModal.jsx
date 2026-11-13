@@ -25,6 +25,7 @@ import { MODEL_MAP, MODELS } from '../lib/resolveAgentModel'
 import { apiKeyFieldProps } from '../lib/apiKeyFieldProps'
 import { useAgents } from '../lib/useAgents'
 import { useProgressiveList } from '../lib/useProgressiveList'
+import { getGlobalKeys } from '../lib/globalKeys'
 import { useApiKey } from '../lib/useApiKey'
 
 export default function CreateAutomationModal({
@@ -34,8 +35,13 @@ export default function CreateAutomationModal({
   preselectedAgent = null,
   initialData = null, // for editing
 }) {
-  const { apiKey: globalKey } = useApiKey()
   const { agents } = useAgents()
+  const { apiKey: sharedKey, provider: sharedProvider } = useApiKey()
+  const initialProvider =
+    initialData?.provider ||
+    (preselectedAgent?.provider && preselectedAgent.provider !== 'any'
+      ? preselectedAgent.provider
+      : 'openai')
   const [selectedAgentId, setSelectedAgentId] = useState(
     initialData?.agentId || preselectedAgent?.id || ''
   )
@@ -44,9 +50,18 @@ export default function CreateAutomationModal({
   const [missedPolicy, setMissedPolicy] = useState(
     initialData ? normalizeMissedPolicy(initialData.missedPolicy) : DEFAULT_MISSED_POLICY
   )
-  const [provider, setProvider] = useState(initialData?.provider || 'openai')
+  const [provider, setProvider] = useState(initialProvider)
   const [selectedModel, setSelectedModel] = useState(initialData?.model || 'gpt-4o')
-  const [apiKey, setApiKey] = useState(initialData?.apiKey || globalKey || '')
+  const savedKeyFor = (providerId) =>
+    getGlobalKeys()[providerId] ||
+    (!sharedProvider || sharedProvider === providerId ? sharedKey : '')
+  const [apiKey, setApiKey] = useState(() => {
+    if (initialData) return initialData.apiKey || ''
+    return (
+      getGlobalKeys()[initialProvider] ||
+      (!sharedProvider || sharedProvider === initialProvider ? sharedKey : '')
+    )
+  })
   const [inputs, setInputs] = useState(initialData?.inputs || {})
   const [emailNotification, setEmailNotification] = useState(initialData?.emailNotification ?? true)
   const [notificationEmail, setNotificationEmail] = useState(initialData?.notificationEmail || '')
@@ -79,6 +94,7 @@ export default function CreateAutomationModal({
       const prov = selectedAgent.provider === 'any' ? 'openai' : selectedAgent.provider
       setProvider(prov)
       setSelectedModel(MODEL_MAP[prov] || MODEL_MAP.openai)
+      if (!initialData) setApiKey(savedKeyFor(prov))
     }
   }, [selectedAgentId, selectedAgent])
 
@@ -108,8 +124,11 @@ export default function CreateAutomationModal({
       setError('Please select an agent.')
       return
     }
-    if (!apiKey.trim() && !initialData?.hasKey) {
-      setError('An API key is required to run background automations.')
+    const hasSavedKeyForProvider = Boolean(
+      initialData?.hasKey && initialData?.provider === provider
+    )
+    if (!apiKey.trim() && !hasSavedKeyForProvider) {
+      setError(`Enter a ${providerLabel} API key to run background automations.`)
       return
     }
     if (!optInEncryptedConsent) {
@@ -178,6 +197,11 @@ export default function CreateAutomationModal({
   if (!isOpen) return null
 
   const modelsForProvider = MODELS[provider] || MODELS.openai
+  const providerLabel =
+    { openai: 'OpenAI', anthropic: 'Anthropic', gemini: 'Google Gemini', openrouter: 'OpenRouter' }[
+      provider
+    ] || provider
+  const hasSavedKeyForProvider = Boolean(initialData?.hasKey && initialData?.provider === provider)
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
@@ -453,8 +477,11 @@ export default function CreateAutomationModal({
                 aria-label="Model provider"
                 value={provider}
                 onChange={(e) => {
-                  setProvider(e.target.value)
-                  setSelectedModel(MODEL_MAP[e.target.value] || MODEL_MAP.openai)
+                  const nextProvider = e.target.value
+                  setProvider(nextProvider)
+                  setSelectedModel(MODEL_MAP[nextProvider] || MODEL_MAP.openai)
+                  setApiKey(initialData ? '' : savedKeyFor(nextProvider))
+                  setError('')
                 }}
                 className="w-full h-10 px-3 text-xs font-medium dark:bg-surface-input dark:border-border bg-gray-50 border border-gray-200 outline-none"
               >
@@ -489,7 +516,7 @@ export default function CreateAutomationModal({
               <div className="flex items-center gap-2">
                 <ShieldCheck size={16} className="text-zinc-500" />
                 <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                  Device-encrypted Provider Key
+                  Device-encrypted {providerLabel} Key
                 </span>
               </div>
               <span className="text-[10px] font-semibold px-2 py-0.5 bg-zinc-500/20 text-zinc-400">
@@ -505,7 +532,7 @@ export default function CreateAutomationModal({
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
                 placeholder={
-                  initialData?.hasKey
+                  hasSavedKeyForProvider
                     ? '•••••••••••••••• (Key saved and encrypted)'
                     : `Enter ${provider} API Key...`
                 }
@@ -513,6 +540,14 @@ export default function CreateAutomationModal({
               />
               <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             </div>
+
+            <p className="text-[11px] text-gray-500 dark:text-gray-400">
+              {hasSavedKeyForProvider
+                ? `A saved ${providerLabel} key will be reused for this automation.`
+                : apiKey.trim()
+                  ? `This automation will use the ${providerLabel} key shown above.`
+                  : `No ${providerLabel} key is available. Add one here before creating the automation.`}
+            </p>
 
             <label className="flex items-start gap-2 cursor-pointer pt-1">
               <input

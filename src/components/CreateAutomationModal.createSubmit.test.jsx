@@ -52,6 +52,9 @@ describe('CreateAutomationModal creation submit', () => {
     fireEvent.click(screen.getByRole('button', { name: /every hour/i }))
     fireEvent.change(screen.getByLabelText(/if runs are missed/i), { target: { value: 'skip' } })
     fireEvent.change(screen.getByLabelText('Model provider'), { target: { value: 'openrouter' } })
+    fireEvent.change(screen.getByLabelText('openrouter API key'), {
+      target: { value: 'sk-openrouter' },
+    })
     fireEvent.change(screen.getByLabelText('Model'), {
       target: { value: 'anthropic/claude-3.5-sonnet' },
     })
@@ -73,7 +76,7 @@ describe('CreateAutomationModal creation submit', () => {
       missedPolicy: 'skip',
       inputs: { brief: 'Launch notes', channels: ['email', 'slack'] },
       systemPrompt: 'Write carefully.',
-      apiKey: 'sk-create',
+      apiKey: 'sk-openrouter',
       emailNotification: true,
       notificationEmail: 'owner@example.com',
     })
