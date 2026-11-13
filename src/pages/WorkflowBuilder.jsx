@@ -16,6 +16,7 @@ import { useAgents } from '../lib/useAgents'
 import { useProgressiveList } from '../lib/useProgressiveList'
 import { saveWorkflow } from '../hooks/useWorkflows'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
+import { useDialogFocus } from '../hooks/useDialogFocus'
 
 const MAX_AGENTS = 5
 
@@ -36,6 +37,15 @@ export default function WorkflowBuilder() {
   const [error, setError] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [hasResolvedPreselected, setHasResolvedPreselected] = useState(false)
+  const pickerRef = useRef(null)
+  const pickerTriggerRef = useRef(null)
+
+  const closePicker = () => {
+    setDropdownOpen(false)
+    setSearchQuery('')
+  }
+
+  useDialogFocus(pickerRef, { active: dropdownOpen, onClose: closePicker })
 
   // Resolve pre-populated chain once agents load
   useEffect(() => {
@@ -90,8 +100,7 @@ export default function WorkflowBuilder() {
   const addAgent = (agent) => {
     if (selectedAgents.length >= MAX_AGENTS) return
     setSelectedAgents((prev) => [...prev, agent])
-    setDropdownOpen(false)
-    setSearchQuery('')
+    closePicker()
   }
 
   const removeAgent = (index) => {
@@ -292,7 +301,13 @@ export default function WorkflowBuilder() {
           <div className="relative">
             <button
               id="add-agent-btn"
-              onClick={() => setDropdownOpen((o) => !o)}
+              ref={pickerTriggerRef}
+              aria-expanded={dropdownOpen}
+              aria-controls="workflow-agent-picker"
+              onClick={() => {
+                if (dropdownOpen) closePicker()
+                else setDropdownOpen(true)
+              }}
               className="w-full flex items-center justify-between gap-2 px-4 py-2.5 border text-sm font-semibold transition-colors duration-200 dark:bg-surface-card dark:border-border dark:text-text-secondary dark:hover:border-zinc-400 dark:hover:text-text-primary bg-white border-gray-200 text-gray-600 hover:border-zinc-400 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-zinc-500/40 focus:border-zinc-500"
             >
               <span className="flex items-center gap-2">
@@ -306,59 +321,87 @@ export default function WorkflowBuilder() {
             </button>
 
             {dropdownOpen && (
-              <div className="absolute top-full mt-1.5 left-0 right-0 z-50 border shadow-pop dark:bg-surface-card dark:border-border bg-white border-gray-200 max-h-64 overflow-y-auto animate-fade-in p-1.5 space-y-1">
-                <div className="p-1.5 sticky top-0 bg-white dark:bg-surface-card border-b border-gray-100 dark:border-border/60 z-10 mb-1">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search agents by name or category..."
-                    aria-label="Search agents"
-                    className="w-full px-3 py-2 border text-xs transition-colors duration-200 dark:bg-surface-input dark:border-border dark:text-text-primary dark:placeholder-text-muted bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-zinc-500/40 focus:border-zinc-500"
-                  />
-                </div>
-
-                {matchingAgentCount === 0 ? (
-                  <div className="px-4 py-3 text-sm dark:text-text-muted text-gray-400 text-center">
-                    No agents found
-                  </div>
-                ) : (
-                  <>
-                    {visibleAgentOptions.map((agent) => {
-                      const IconComponent = resolveAgentIcon(agent.icon)
-                      return (
-                        <button
-                          key={agent.id}
-                          onClick={() => addAgent(agent)}
-                          className="w-full flex items-center gap-3 px-3 py-2 text-left transition-colors duration-150 dark:hover:bg-surface-hover dark:hover:text-text-primary hover:bg-gray-50 hover:text-gray-900"
-                        >
-                          <div className="w-7 h-7 bg-zinc-500/10 flex items-center justify-center flex-shrink-0">
-                            <IconComponent size={13} className="text-zinc-600 dark:text-zinc-300" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium dark:text-text-primary text-gray-900 truncate">
-                              {agent.name}
-                            </div>
-                            <div className="text-[11px] dark:text-text-muted text-gray-400 truncate">
-                              {agent.category}
-                            </div>
-                          </div>
-                        </button>
-                      )
-                    })}
-                    {hasMoreAgents && (
+              <>
+                <div
+                  aria-hidden="true"
+                  data-agent-picker-backdrop
+                  onClick={closePicker}
+                  className="fixed inset-0 z-40 cursor-default"
+                />
+                <div
+                  id="workflow-agent-picker"
+                  ref={pickerRef}
+                  role="dialog"
+                  aria-label="Choose an agent"
+                  className="absolute top-full mt-1.5 left-0 right-0 z-50 border shadow-pop dark:bg-surface-card dark:border-border bg-white border-gray-200 max-h-64 overflow-y-auto animate-fade-in p-1.5 space-y-1"
+                >
+                  <div className="p-1.5 sticky top-0 bg-white dark:bg-surface-card border-b border-gray-100 dark:border-border/60 z-10 mb-1">
+                    <div className="flex items-center gap-1.5">
+                      <input
+                        type="text"
+                        data-autofocus
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search agents by name or category..."
+                        aria-label="Search agents"
+                        className="min-w-0 flex-1 px-3 py-2 border text-xs transition-colors duration-200 dark:bg-surface-input dark:border-border dark:text-text-primary dark:placeholder-text-muted bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-zinc-500/40 focus:border-zinc-500"
+                      />
                       <button
                         type="button"
-                        onClick={showMoreAgents}
-                        className="w-full px-3 py-2 text-center text-[11px] font-medium text-zinc-600 transition-colors hover:bg-gray-50 dark:text-text-secondary dark:hover:bg-surface-hover"
+                        onClick={closePicker}
+                        aria-label="Close agent picker"
+                        className="p-1.5 text-zinc-500 transition-colors hover:bg-zinc-500/10 hover:text-black dark:text-text-muted dark:hover:text-white"
                       >
-                        Show {Math.min(30, remainingAgents)} more of {matchingAgentCount}
+                        <X size={14} />
                       </button>
-                    )}
-                    <div className="h-3" />
-                  </>
-                )}
-              </div>
+                    </div>
+                  </div>
+
+                  {matchingAgentCount === 0 ? (
+                    <div className="px-4 py-3 text-sm dark:text-text-muted text-gray-400 text-center">
+                      No agents found
+                    </div>
+                  ) : (
+                    <>
+                      {visibleAgentOptions.map((agent) => {
+                        const IconComponent = resolveAgentIcon(agent.icon)
+                        return (
+                          <button
+                            key={agent.id}
+                            onClick={() => addAgent(agent)}
+                            className="w-full flex items-center gap-3 px-3 py-2 text-left transition-colors duration-150 dark:hover:bg-surface-hover dark:hover:text-text-primary hover:bg-gray-50 hover:text-gray-900"
+                          >
+                            <div className="w-7 h-7 bg-zinc-500/10 flex items-center justify-center flex-shrink-0">
+                              <IconComponent
+                                size={13}
+                                className="text-zinc-600 dark:text-zinc-300"
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-medium dark:text-text-primary text-gray-900 truncate">
+                                {agent.name}
+                              </div>
+                              <div className="text-[11px] dark:text-text-muted text-gray-400 truncate">
+                                {agent.category}
+                              </div>
+                            </div>
+                          </button>
+                        )
+                      })}
+                      {hasMoreAgents && (
+                        <button
+                          type="button"
+                          onClick={showMoreAgents}
+                          className="w-full px-3 py-2 text-center text-[11px] font-medium text-zinc-600 transition-colors hover:bg-gray-50 dark:text-text-secondary dark:hover:bg-surface-hover"
+                        >
+                          Show {Math.min(30, remainingAgents)} more of {matchingAgentCount}
+                        </button>
+                      )}
+                      <div className="h-3" />
+                    </>
+                  )}
+                </div>
+              </>
             )}
           </div>
         )}
