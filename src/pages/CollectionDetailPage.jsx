@@ -16,6 +16,7 @@ export default function CollectionDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [confirmingDelete, setConfirmingDelete] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
 
   const { getCollectionById, deleteCollection, addAgentToCollection, removeAgentFromCollection } =
     useCollections()
@@ -69,7 +70,16 @@ export default function CollectionDetailPage() {
   const staleCount = collection.agentIds.length - collectionAgents.length
 
   const handleDelete = () => {
-    deleteCollection(collection.id)
+    const result = deleteCollection(collection.id)
+
+    if (result?.ok === false) {
+      setConfirmingDelete(false)
+      setDeleteError(result.error || `Unable to delete "${collection.name}".`)
+      return
+    }
+
+    setDeleteError('')
+    setConfirmingDelete(false)
     navigate('/collections')
   }
 
@@ -157,7 +167,10 @@ export default function CollectionDetailPage() {
         }
         actions={
           <button
-            onClick={() => setConfirmingDelete(true)}
+            onClick={() => {
+              setDeleteError('')
+              setConfirmingDelete(true)
+            }}
             className="btn-ghost hover:text-black dark:hover:text-white"
             aria-haspopup="dialog"
           >
@@ -166,6 +179,22 @@ export default function CollectionDetailPage() {
           </button>
         }
       />
+
+      {deleteError && (
+        <div
+          role="alert"
+          className="mb-3 flex flex-wrap items-center justify-between gap-3 border border-zinc-400 bg-white px-3 py-2 text-sm text-zinc-900 dark:border-zinc-500 dark:bg-surface-card dark:text-text-primary"
+        >
+          <span>{deleteError}</span>
+          <button
+            type="button"
+            onClick={() => setDeleteError('')}
+            className="shrink-0 border-b border-current font-semibold transition-colors hover:text-black dark:hover:text-zinc-200"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {removalNotice && (
         <div
