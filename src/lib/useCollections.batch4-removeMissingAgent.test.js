@@ -5,7 +5,7 @@ import { COLLECTIONS_STORAGE_KEY, useCollections } from './useCollections'
 describe('removing an agent that is not in the collection', () => {
   beforeEach(() => localStorage.clear())
 
-  it('reports success without changing the stored collection', () => {
+  it('reports that no agent was removed', () => {
     localStorage.setItem(
       COLLECTIONS_STORAGE_KEY,
       JSON.stringify([
@@ -21,7 +21,8 @@ describe('removing an agent that is not in the collection', () => {
       response = result.current.removeAgentFromCollection('c1', 'missing-agent')
     })
 
-    expect(response.ok).toBe(true)
+    expect(response.ok).toBe(false)
+    expect(response.error).toBe('This agent is not in that collection.')
     expect(result.current.collections.find((item) => item.id === 'c1').agentIds).toEqual(
       JSON.parse(before)
     )
