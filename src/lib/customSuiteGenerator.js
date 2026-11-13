@@ -6,6 +6,7 @@ const MODEL_DEFAULTS = {
   gemini: 'gemini-2.5-flash',
   anthropic: 'claude-3-5-haiku-20241022',
   openai: 'gpt-4o-mini',
+  openrouter: 'openai/gpt-4o-mini',
 }
 
 export async function generateCustomSuite(goal, apiKey, provider) {
@@ -67,5 +68,35 @@ Rules:
     .replace(/^\uFEFF/, '')
     .replace(/```json|```/gi, '')
     .trim()
-  return JSON.parse(clean)
+  return validateSuite(JSON.parse(clean))
+}
+
+function validateSuite(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    throw new Error('The generated suite was not usable. Please try again.')
+  }
+
+  const title = typeof value.title === 'string' ? value.title.trim() : ''
+  const description = typeof value.description === 'string' ? value.description.trim() : ''
+  const agents = Array.isArray(value.agents)
+    ? value.agents
+        .filter(
+          (agent) =>
+            agent &&
+            typeof agent === 'object' &&
+            !Array.isArray(agent) &&
+            typeof agent.id === 'string' &&
+            agent.id.trim()
+        )
+        .map((agent) => ({
+          id: agent.id.trim(),
+          reason: typeof agent.reason === 'string' ? agent.reason.trim() : '',
+        }))
+    : []
+
+  if (!title || !description || agents.length === 0) {
+    throw new Error('The generated suite was not usable. Please try again.')
+  }
+
+  return { title, description, agents }
 }
