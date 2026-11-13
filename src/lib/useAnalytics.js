@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useMemo } from 'react'
 
 const STORAGE_KEY = 'oa_analytics'
+const SEED_FLAG = 'oa_analytics_seeded'
 const MAX_EVENTS = 500
 
 // ── Persistence helpers ─────────────────────────────────────────────────────
@@ -28,8 +29,6 @@ function saveEvents(events) {
 // ── Seed from existing history (one-time) ───────────────────────────────────
 
 function seedFromHistory() {
-  const SEED_FLAG = 'oa_analytics_seeded'
-
   try {
     if (localStorage.getItem(SEED_FLAG)) return
   } catch {
@@ -92,6 +91,19 @@ function seedFromHistory() {
 }
 
 // ── Plain function (for use outside React components) ───────────────────────
+
+export function clearAnalyticsEvents() {
+  try {
+    localStorage.removeItem(STORAGE_KEY)
+    // Clearing is explicit. Do not repopulate the dashboard from run history
+    // the next time it opens.
+    localStorage.setItem(SEED_FLAG, '1')
+    window.dispatchEvent(new Event('oa_analytics_update'))
+    return true
+  } catch {
+    return false
+  }
+}
 
 export function recordAnalyticsRun({
   runId,
@@ -379,10 +391,11 @@ export function useAnalytics(timeRange = 'all') {
   const clearAnalytics = useCallback(() => {
     if (!events.length) {
       alert('No analytics data to clear.')
-      return
+      return false
     }
-    localStorage.removeItem(STORAGE_KEY)
-    setEvents([])
+    const cleared = clearAnalyticsEvents()
+    if (cleared) setEvents([])
+    return cleared
   }, [events])
 
   return { events, stats, clearAnalytics }

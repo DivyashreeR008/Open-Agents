@@ -20,6 +20,7 @@ export default function ConfirmDialog({
   cancelLabel = 'Cancel',
   onConfirm,
   onClose,
+  children,
 }) {
   const panelRef = useRef(null)
   const titleId = useId()
@@ -67,6 +68,7 @@ export default function ConfirmDialog({
             <X size={18} />
           </button>
         </div>
+        {children && <div className="px-5 pt-4">{children}</div>}
         <div className="flex justify-end gap-2 p-5">
           <button type="button" data-autofocus onClick={onClose} className={CANCEL_BUTTON}>
             {cancelLabel}

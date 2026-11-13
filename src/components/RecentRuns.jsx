@@ -3,6 +3,7 @@ import { RotateCcw, Copy, Trash2, History } from 'lucide-react'
 import ConfirmDialog from './ConfirmDialog'
 import { formatExactTime, formatRelativeTime, useNow } from '../lib/formatting'
 import { useTimedState } from '../lib/useTimedState'
+import { clearAnalyticsEvents } from '../lib/useAnalytics'
 
 const providerDot = (provider) => {
   const p = provider?.toLowerCase() || ''
@@ -15,14 +16,21 @@ const providerDot = (provider) => {
 export default function RecentRuns({ history, onRerun, onCopy, onDelete, onClearAll }) {
   const now = useNow()
   const [confirmingClear, setConfirmingClear] = useState(false)
+  const [clearAnalyticsToo, setClearAnalyticsToo] = useState(true)
   const [clearNotice, setClearNotice] = useTimedState(null)
 
   const runCount = history?.length || 0
 
   const handleClear = () => {
     onClearAll?.()
+    const analyticsCleared = clearAnalyticsToo ? clearAnalyticsEvents() : false
     setConfirmingClear(false)
-    setClearNotice('Run history cleared.', 4000)
+    setClearNotice(
+      clearAnalyticsToo && analyticsCleared
+        ? 'Run history and analytics usage records cleared.'
+        : 'Run history cleared. Analytics usage records were kept.',
+      4000
+    )
   }
 
   if (runCount === 0) {
@@ -62,7 +70,10 @@ export default function RecentRuns({ history, onRerun, onCopy, onDelete, onClear
           </span>
         </div>
         <button
-          onClick={() => setConfirmingClear(true)}
+          onClick={() => {
+            setClearAnalyticsToo(true)
+            setConfirmingClear(true)
+          }}
           className="font-mono text-[10px] uppercase tracking-[0.1em] text-zinc-400 transition-colors hover:text-black dark:hover:text-white dark:text-text-muted"
           aria-label="Clear all history"
           aria-haspopup="dialog"
@@ -148,7 +159,20 @@ export default function RecentRuns({ history, onRerun, onCopy, onDelete, onClear
           confirmLabel="Clear history"
           onConfirm={handleClear}
           onClose={() => setConfirmingClear(false)}
-        />
+        >
+          <label className="flex items-start gap-2 border border-zinc-200 p-3 text-xs leading-relaxed text-zinc-700 dark:border-border dark:text-text-secondary">
+            <input
+              type="checkbox"
+              checked={clearAnalyticsToo}
+              onChange={(event) => setClearAnalyticsToo(event.target.checked)}
+              className="mt-0.5"
+            />
+            <span>
+              Also clear analytics usage records for these runs. Uncheck to keep the dashboard
+              history.
+            </span>
+          </label>
+        </ConfirmDialog>
       )}
     </div>
   )

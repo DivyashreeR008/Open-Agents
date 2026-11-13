@@ -20,6 +20,7 @@ import {
 import { useAnalytics } from '../lib/useAnalytics'
 import { useSessionSpend } from '../lib/useSessionSpend'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
+import ConfirmDialog from '../components/ConfirmDialog'
 import { formatCost } from '../lib/formatting'
 
 // ── Provider colors ─────────────────────────────────────────────────────────
@@ -80,6 +81,7 @@ export default function AnalyticsPage() {
   useDocumentTitle('Dashboard')
   const navigate = useNavigate()
   const [timeRange, setTimeRange] = useState('all')
+  const [confirmingClear, setConfirmingClear] = useState(false)
   const { stats, clearAnalytics } = useAnalytics(timeRange)
   const { runs: spendRuns, totalSpend } = useSessionSpend()
   const totalTokens = useMemo(
@@ -87,12 +89,17 @@ export default function AnalyticsPage() {
     [spendRuns]
   )
 
+  const handleConfirmedClear = () => {
+    clearAnalytics()
+    setConfirmingClear(false)
+  }
+
   // ── Empty state ───────────────────────────────────────────────────────────
   if (stats.totalRuns === 0 && timeRange === 'all') {
     return (
       <div className="animate-fade-in max-w-4xl mx-auto">
         <PageHeader
-          onClear={clearAnalytics}
+          onClear={() => setConfirmingClear(true)}
           hasData={false}
           timeRange={timeRange}
           setTimeRange={setTimeRange}
@@ -129,6 +136,16 @@ export default function AnalyticsPage() {
             <TokenUsageSection runs={spendRuns} totalTokens={totalTokens} totalSpend={totalSpend} />
           </SectionCard>
         )}
+
+        {confirmingClear && (
+          <ConfirmDialog
+            title="Clear analytics data?"
+            description="This removes all stored analytics usage records. Recent run history and agent ratings are not affected."
+            confirmLabel="Clear analytics"
+            onConfirm={handleConfirmedClear}
+            onClose={() => setConfirmingClear(false)}
+          />
+        )}
       </div>
     )
   }
@@ -138,7 +155,7 @@ export default function AnalyticsPage() {
     return (
       <div className="animate-fade-in max-w-5xl mx-auto">
         <PageHeader
-          onClear={clearAnalytics}
+          onClear={() => setConfirmingClear(true)}
           hasData={true}
           timeRange={timeRange}
           setTimeRange={setTimeRange}
@@ -180,7 +197,7 @@ export default function AnalyticsPage() {
   return (
     <div className="animate-fade-in max-w-5xl mx-auto">
       <PageHeader
-        onClear={clearAnalytics}
+        onClear={() => setConfirmingClear(true)}
         hasData={true}
         timeRange={timeRange}
         setTimeRange={setTimeRange}
@@ -293,6 +310,16 @@ export default function AnalyticsPage() {
 
       {/* ── Export Bar ── */}
       <ExportBar stats={stats} />
+
+      {confirmingClear && (
+        <ConfirmDialog
+          title="Clear analytics data?"
+          description="This removes all stored analytics usage records. Recent run history and agent ratings are not affected."
+          confirmLabel="Clear analytics"
+          onConfirm={handleConfirmedClear}
+          onClose={() => setConfirmingClear(false)}
+        />
+      )}
     </div>
   )
 }
@@ -319,21 +346,55 @@ function PageHeader({ onClear, hasData, timeRange, setTimeRange }) {
       </div>
       <div className="flex items-center gap-2 flex-wrap">
         {/* Time range pills */}
-        <div className="flex items-center gap-1 p-0.5 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-border">
-          {TIME_RANGES.map((range) => (
-            <button
-              key={range.value}
-              onClick={() => setTimeRange(range.value)}
-              className={`px-2.5 py-1 text-[10px] font-semibold transition-colors duration-200
-                ${
-                  timeRange === range.value
-                    ? 'bg-black text-white dark:bg-white dark:text-black'
-                    : 'text-gray-500 dark:text-text-muted hover:text-gray-700 dark:hover:text-text-primary'
-                }`}
-            >
-              {range.label}
-            </button>
-          ))}
+        <div
+          role="group"
+          aria-label="Analytics time range"
+          className="flex items-center gap-1 p-0.5 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-border"
+          onKeyDown={(event) => {
+            const currentIndex = TIME_RANGES.findIndex((range) => range.value === timeRange)
+            let nextIndex = currentIndex
+            if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+              nextIndex = (currentIndex + 1) % TIME_RANGES.length
+            } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+              nextIndex = (currentIndex - 1 + TIME_RANGES.length) % TIME_RANGES.length
+            } else if (event.key === 'Home') {
+              nextIndex = 0
+            } else if (event.key === 'End') {
+              nextIndex = TIME_RANGES.length - 1
+            } else {
+              return
+            }
+            event.preventDefault()
+            setTimeRange(TIME_RANGES[nextIndex].value)
+            event.currentTarget
+              .querySelector(`[data-range="${TIME_RANGES[nextIndex].value}"]`)
+              ?.focus()
+          }}
+        >
+          {TIME_RANGES.map((range) => {
+            const selected = timeRange === range.value
+            return (
+              <button
+                key={range.value}
+                type="button"
+                data-range={range.value}
+                aria-pressed={selected}
+                tabIndex={selected ? 0 : -1}
+                onClick={() => setTimeRange(range.value)}
+                className={`px-2.5 py-1 text-[10px] font-semibold transition-colors duration-200
+                  ${
+                    selected
+                      ? 'bg-black text-white dark:bg-white dark:text-black'
+                      : 'text-gray-500 dark:text-text-muted hover:text-gray-700 dark:hover:text-text-primary'
+                  }`}
+              >
+                {range.label}
+              </button>
+            )
+          })}
+          <span role="status" className="sr-only">
+            Showing {TIME_RANGES.find((range) => range.value === timeRange)?.label}
+          </span>
         </div>
         {hasData && (
           <button
