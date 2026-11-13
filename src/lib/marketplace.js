@@ -21,8 +21,71 @@ export const MARKETPLACE_SORTS = [
   { value: 'imports', label: 'Most imported' },
 ]
 
-// Config keys that must never be published as-is
-const CREDENTIAL_KEY_PATTERN = /(api[_-]?key|token|secret|password|credential|auth)/i
+// Field names that describe configuration rather than a secret value.
+// A count or limit is not made secret by containing the word token or key.
+const NON_SECRET_SUFFIXES = new Set([
+  'count',
+  'limit',
+  'length',
+  'max',
+  'min',
+  'total',
+  'usage',
+  'budget',
+  'estimate',
+  'price',
+  'cost',
+  'type',
+  'name',
+])
+const NON_SECRET_PREFIXES = new Set(['max', 'min', 'num', 'total', 'limit'])
+const CREDENTIAL_WORDS = new Set([
+  'password',
+  'passwd',
+  'secret',
+  'credential',
+  'credentials',
+  'authorization',
+])
+
+function keySegments(key) {
+  return String(key)
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean)
+}
+
+export function isCredentialField(key) {
+  const segments = keySegments(key)
+  if (!segments.length) return false
+  if (segments.some((segment) => CREDENTIAL_WORDS.has(segment))) return true
+
+  return segments.some((segment, index) => {
+    if (segment !== 'key' && segment !== 'token') return false
+    const next = segments[index + 1]
+    const previous = segments[index - 1]
+    if (next && NON_SECRET_SUFFIXES.has(next)) return false
+    if (previous && NON_SECRET_PREFIXES.has(previous)) return false
+    return true
+  })
+}
+
+function normalizeTags(tags, { stringify = false } = {}) {
+  const seen = new Set()
+  return (Array.isArray(tags) ? tags : [])
+    .filter((tag) => stringify || typeof tag === 'string')
+    .map((tag) => String(tag).trim())
+    .filter(Boolean)
+    .filter((tag) => {
+      const key = tag.toLowerCase()
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+    .slice(0, 8)
+}
 
 /**
  * Deep-copy an agent config, replacing the value of any credential-like field
@@ -49,7 +112,7 @@ export function sanitizeAgentConfig(config) {
       seen.set(value, out)
       for (const [key, v] of Object.entries(value)) {
         const childPath = path ? `${path}.${key}` : key
-        if (CREDENTIAL_KEY_PATTERN.test(key) && typeof v === 'string' && v !== '') {
+        if (isCredentialField(key) && typeof v === 'string' && v !== '') {
           out[key] = `YOUR_${key.replace(/[^a-zA-Z0-9]/g, '_').toUpperCase()}_HERE`
           sanitizedFields.push(childPath)
         } else {
@@ -95,10 +158,7 @@ export function publishAgent(entry) {
     id: `mkt_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
     name: String(safeEntry.name ?? '').trim(),
     description: String(safeEntry.description ?? '').trim(),
-    tags: (Array.isArray(safeEntry.tags) ? safeEntry.tags : [])
-      .map((t) => String(t).trim())
-      .filter(Boolean)
-      .slice(0, 8),
+    tags: normalizeTags(safeEntry.tags, { stringify: true }),
     category: MARKETPLACE_CATEGORIES.includes(safeEntry.category)
       ? safeEntry.category
       : MARKETPLACE_CATEGORIES[0],
@@ -151,9 +211,7 @@ export function normalizeListing(listing) {
         ? listing.name.trim()
         : 'Untitled listing',
     description: typeof listing.description === 'string' ? listing.description : '',
-    tags: Array.isArray(listing.tags)
-      ? listing.tags.filter((t) => typeof t === 'string' && t.trim())
-      : [],
+    tags: normalizeTags(listing.tags),
     category:
       typeof listing.category === 'string' && listing.category
         ? listing.category
@@ -530,7 +588,14 @@ export function filterListings(listings, { search = '', category = '' } = {}) {
     return (
       String(l.name || '')
         .toLowerCase()
-        .includes(q) || tags.some((t) => String(t).toLowerCase().includes(q))
+        .includes(q) ||
+      String(l.author || '')
+        .toLowerCase()
+        .includes(q) ||
+      String(l.description || '')
+        .toLowerCase()
+        .includes(q) ||
+      tags.some((t) => String(t).toLowerCase().includes(q))
     )
   })
 }

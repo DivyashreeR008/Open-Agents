@@ -47,18 +47,46 @@ function formatPublishedDate(value) {
 }
 
 function StarRating({ listing, userVote, onRate }) {
-  const [hover, setHover] = useState(0)
+  const [preview, setPreview] = useState(0)
   const average = getAverageRating(listing)
   const ratingCount = listing.ratingCount ?? 0
-  const displayValue = hover || average
+  const displayValue = preview || average
   const hasUserVote = userVote !== null && userVote !== undefined
+  const checkedStar = userVote ?? 1
+  const ratingLabel = `Rate ${listing.name}. Average ${average > 0 ? average.toFixed(1) : 'not rated yet'} from ${ratingCount} rating${ratingCount === 1 ? '' : 's'}.`
+  const averageText =
+    average > 0
+      ? `Average ${average.toFixed(1)} from ${ratingCount} rating${ratingCount === 1 ? '' : 's'}`
+      : 'No ratings yet'
+
+  const selectStar = (event, nextStar) => {
+    const group = event.currentTarget
+    group.querySelector(`[data-star="${nextStar}"]`)?.focus()
+    onRate(listing.id, nextStar)
+  }
+
+  const handleStarKeyDown = (event) => {
+    const keys = {
+      ArrowRight: Math.min(5, checkedStar + 1),
+      ArrowUp: Math.min(5, checkedStar + 1),
+      ArrowLeft: Math.max(1, checkedStar - 1),
+      ArrowDown: Math.max(1, checkedStar - 1),
+      Home: 1,
+      End: 5,
+    }
+    const nextStar = keys[event.key]
+    if (!nextStar) return
+    event.preventDefault()
+    selectStar(event, nextStar)
+  }
 
   return (
     <div className="flex flex-wrap items-center gap-1.5">
       <div
         className="flex"
         role="radiogroup"
-        aria-label={`Rate ${listing.name}. Average ${average > 0 ? average.toFixed(1) : 'not rated yet'} from ${ratingCount} rating${ratingCount === 1 ? '' : 's'}.`}
+        aria-label={ratingLabel}
+        onKeyDown={handleStarKeyDown}
       >
         {[1, 2, 3, 4, 5].map((star) => {
           const fill = Math.max(0, Math.min(1, displayValue - (star - 1)))
@@ -69,14 +97,18 @@ function StarRating({ listing, userVote, onRate }) {
               role="radio"
               aria-checked={userVote === star}
               aria-label={`${star} star${star > 1 ? 's' : ''}`}
+              data-star={star}
+              tabIndex={checkedStar === star ? 0 : -1}
               title={
                 userVote === star
                   ? `Remove your ${star}-star rating`
                   : `Rate ${star} star${star > 1 ? 's' : ''}`
               }
               onClick={() => onRate(listing.id, userVote === star ? null : star)}
-              onMouseEnter={() => setHover(star)}
-              onMouseLeave={() => setHover(0)}
+              onFocus={() => setPreview(star)}
+              onBlur={() => setPreview(0)}
+              onMouseEnter={() => setPreview(star)}
+              onMouseLeave={() => setPreview(0)}
               className="p-0.5"
             >
               <span className="relative block h-[13px] w-[13px]" aria-hidden="true">
@@ -92,12 +124,18 @@ function StarRating({ listing, userVote, onRate }) {
           )
         })}
       </div>
-      <span className="text-[11px] dark:text-text-muted text-gray-400">
+      <span aria-hidden="true" className="text-[11px] dark:text-text-muted text-gray-400">
         {average > 0 ? `${average.toFixed(1)} (${ratingCount})` : 'No ratings'}
       </span>
+      <span className="sr-only">{averageText}</span>
       {hasUserVote && (
         <>
-          <span className="text-[10px] font-medium text-zinc-500">You: {userVote}</span>
+          <span aria-hidden="true" className="text-[10px] font-medium text-zinc-500">
+            You: {userVote}
+          </span>
+          <span className="sr-only">
+            Your vote: {userVote} star{userVote === 1 ? '' : 's'}
+          </span>
           <button
             type="button"
             onClick={() => onRate(listing.id, null)}
@@ -653,6 +691,7 @@ export default function MarketplacePage() {
   }
 
   const handleRate = (listingId, stars) => {
+    const previous = userVotes[listingId] ?? null
     const outcome = rateAgent(listingId, stars)
     setListings(loadListings())
     setUserVotes(loadUserVotes())
@@ -660,6 +699,15 @@ export default function MarketplacePage() {
       flash(
         'Rating was not saved because browser storage is unavailable or full. Free space or leave private mode, then try again.'
       )
+      return
+    }
+
+    if (stars === null) {
+      flash('Your rating was removed.')
+    } else if (previous && previous !== stars) {
+      flash(`Your rating changed from ${previous} to ${outcome.vote} stars.`)
+    } else {
+      flash(`Your ${outcome.vote}-star rating was saved.`)
     }
   }
 
@@ -724,10 +772,12 @@ export default function MarketplacePage() {
             className="absolute left-3 top-1/2 -translate-y-1/2 dark:text-text-muted text-gray-400"
           />
           <input
+            type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name or tag..."
+            placeholder="Search name, author, description, or tag..."
             aria-label="Search marketplace"
+            aria-describedby="marketplace-search-help"
             className={`${inputClass} w-full pl-9`}
           />
         </div>
@@ -757,10 +807,21 @@ export default function MarketplacePage() {
           ))}
         </select>
       </div>
+      <p
+        id="marketplace-search-help"
+        className="mb-4 text-[11px] dark:text-text-muted text-gray-400"
+      >
+        Search covers listing names, authors, descriptions, and tags.
+      </p>
 
       {/* Notice */}
       {notice && (
-        <div className="mb-4 p-3 border bg-zinc-500/10 border-zinc-500/20 animate-fade-in">
+        <div
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          className="mb-4 p-3 border bg-zinc-500/10 border-zinc-500/20 animate-fade-in"
+        >
           <p className="text-xs font-medium text-zinc-400">{notice}</p>
         </div>
       )}
