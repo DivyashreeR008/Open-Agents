@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 
 vi.mock('../lib/useAgentRatings.js', () => ({
-  useAgentRatings: () => ({ rateAgent: vi.fn() }),
+  useAgentRatings: () => ({ rateAgent: vi.fn(), getRunVote: vi.fn(() => null) }),
 }))
 
 import RunRating from './RunRating'

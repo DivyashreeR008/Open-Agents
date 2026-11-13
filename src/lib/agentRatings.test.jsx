@@ -16,7 +16,7 @@ describe('useAgentRatings one vote per user', () => {
     expect(result.current.getUserVote('a1')).toBe('up')
   })
 
-  it('toggles off a repeated vote instead of double counting', () => {
+  it('keeps a repeated vote instead of toggling it off', () => {
     const { result } = renderHook(() => useAgentRatings())
     act(() => {
       result.current.rateAgent('a1', 'up')
@@ -24,8 +24,8 @@ describe('useAgentRatings one vote per user', () => {
     act(() => {
       result.current.rateAgent('a1', 'up')
     })
-    expect(result.current.getAgentRatingInfo('a1')).toMatchObject({ up: 0, total: 0 })
-    expect(result.current.getUserVote('a1')).toBeNull()
+    expect(result.current.getAgentRatingInfo('a1')).toMatchObject({ up: 1, total: 1 })
+    expect(result.current.getUserVote('a1')).toBe('up')
   })
 
   it('moves the point when switching sides', () => {
