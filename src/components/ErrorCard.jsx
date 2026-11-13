@@ -16,24 +16,27 @@ export default function ErrorCard({ message }) {
 
   return (
     <div
-      className={` border p-4 animate-fade-in
-      ${
-        color === 'error' ? 'bg-zinc-500/5 border-zinc-500/20' : 'bg-zinc-500/5 border-zinc-500/20'
+      role={color === 'error' ? 'alert' : 'status'}
+      className={`animate-fade-in border p-4 ${
+        color === 'error' ? 'border-red-500/30 bg-red-500/5' : 'border-amber-500/30 bg-amber-500/5'
       }`}
     >
       <div className="flex items-start gap-3">
         <Icon
           size={18}
-          className={`flex-shrink-0 mt-0.5 ${
-            color === 'error' ? 'text-zinc-900 dark:text-white' : 'text-zinc-600 dark:text-zinc-300'
+          aria-hidden="true"
+          className={`mt-0.5 flex-shrink-0 ${
+            color === 'error'
+              ? 'text-red-600 dark:text-red-400'
+              : 'text-amber-600 dark:text-amber-400'
           }`}
         />
         <div>
           <h4
-            className={`text-sm font-semibold mb-1 ${
+            className={`mb-1 text-sm font-semibold ${
               color === 'error'
-                ? 'text-zinc-900 dark:text-white'
-                : 'text-zinc-600 dark:text-zinc-300'
+                ? 'text-red-700 dark:text-red-300'
+                : 'text-amber-700 dark:text-amber-300'
             }`}
           >
             {color === 'error' ? 'Error' : 'Warning'}
