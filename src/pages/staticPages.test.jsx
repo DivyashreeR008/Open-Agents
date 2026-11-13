@@ -14,6 +14,7 @@ function renderWithRouter(ui, initialEntries = ['/']) {
 afterEach(() => {
   vi.useRealTimers()
   vi.restoreAllMocks()
+  window.history.replaceState(null, '', '/')
 })
 
 describe('AboutPage', () => {
@@ -83,6 +84,7 @@ describe('NotFoundPage', () => {
 describe('legal pages', () => {
   it('renders the privacy policy and returns to the previous page', () => {
     const back = vi.spyOn(window.history, 'back').mockImplementation(() => {})
+    window.history.replaceState({ idx: 1 }, '', '/privacy')
     renderWithRouter(<Privacy />)
 
     expect(screen.getByRole('heading', { name: 'Privacy Policy' })).toBeInTheDocument()
@@ -95,6 +97,7 @@ describe('legal pages', () => {
 
   it('renders the terms of service and returns to the previous page', () => {
     const back = vi.spyOn(window.history, 'back').mockImplementation(() => {})
+    window.history.replaceState({ idx: 1 }, '', '/terms')
     renderWithRouter(<TermsOfService />)
 
     expect(screen.getByRole('heading', { name: 'Terms of Service' })).toBeInTheDocument()

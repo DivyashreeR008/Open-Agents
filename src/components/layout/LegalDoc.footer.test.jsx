@@ -26,6 +26,7 @@ describe('LegalDoc footer treatment', () => {
 
   it('calls history.back from the back control', () => {
     const back = vi.spyOn(window.history, 'back').mockImplementation(() => {})
+    window.history.replaceState({ idx: 1 }, '', '/privacy')
     render(
       <LegalDoc
         title="Policy"

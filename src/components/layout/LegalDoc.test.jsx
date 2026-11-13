@@ -10,6 +10,7 @@ afterEach(() => {
 describe('LegalDoc reading layout', () => {
   it('renders every section and navigates back through browser history', () => {
     const back = vi.spyOn(window.history, 'back').mockImplementation(() => {})
+    window.history.replaceState({ idx: 1 }, '', '/privacy')
 
     render(
       <LegalDoc
