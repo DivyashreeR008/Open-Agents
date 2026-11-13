@@ -60,8 +60,39 @@ describe('WorkflowBuilder agent selection', () => {
     fireEvent.change(screen.getByLabelText('Search agents'), { target: { value: 'alpha' } })
     expect(screen.getByText('No agents found')).toBeInTheDocument()
 
+    fireEvent.keyDown(window, { key: 'Escape' })
+    expect(screen.queryByLabelText('Search agents')).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Remove Alpha' }))
+    openPicker()
     expect(screen.getByRole('button', { name: /Alpha/ })).toBeInTheDocument()
+  })
+
+  it('dismisses the picker with Escape and returns focus without changing the chain', () => {
+    renderPage()
+    const trigger = screen.getByRole('button', { name: /Add first agent/ })
+    trigger.focus()
+    fireEvent.click(trigger)
+
+    expect(screen.getByRole('dialog', { name: 'Choose an agent' })).toBeInTheDocument()
+    expect(screen.getByLabelText('Search agents')).toHaveFocus()
+
+    fireEvent.keyDown(window, { key: 'Escape' })
+
+    expect(screen.queryByLabelText('Search agents')).not.toBeInTheDocument()
+    expect(trigger).toHaveFocus()
+    expect(screen.getByText('0/5 agents')).toBeInTheDocument()
+  })
+
+  it('dismisses the picker with its close control and from a backdrop click', () => {
+    renderPage()
+    openPicker()
+    fireEvent.click(screen.getByRole('button', { name: 'Close agent picker' }))
+    expect(screen.queryByLabelText('Search agents')).not.toBeInTheDocument()
+
+    openPicker()
+    fireEvent.click(document.querySelector('[data-agent-picker-backdrop]'))
+    expect(screen.queryByLabelText('Search agents')).not.toBeInTheDocument()
+    expect(screen.getByText('0/5 agents')).toBeInTheDocument()
   })
 
   it('caps the chain at five agents', () => {
