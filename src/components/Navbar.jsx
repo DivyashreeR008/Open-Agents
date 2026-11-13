@@ -57,7 +57,9 @@ export default function Navbar({ sidebarOpen, setSidebarOpen, onOpenCommandPalet
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showSpendPopup, setShowSpendPopup] = useState(false)
   const themeMenuRef = useRef(null)
-  const { totalSpend, runs, clearSession } = useSessionSpend()
+  const spendMenuRef = useRef(null)
+  const spendToggleRef = useRef(null)
+  const { totalSpend, runs, startedAt, clearSession } = useSessionSpend()
   const navigate = useNavigate()
 
   const resolvedTheme = resolveThemeMode(themeMode, systemDark)
@@ -89,6 +91,26 @@ export default function Navbar({ sidebarOpen, setSidebarOpen, onOpenCommandPalet
       else media.removeListener?.(handleChange)
     }
   }, [themeMode])
+
+  useEffect(() => {
+    if (!showSpendPopup) return undefined
+
+    const handlePointerDown = (event) => {
+      if (!spendMenuRef.current?.contains(event.target)) setShowSpendPopup(false)
+    }
+    const handleKeyDown = (event) => {
+      if (event.key !== 'Escape') return
+      setShowSpendPopup(false)
+      spendToggleRef.current?.focus()
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown)
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [showSpendPopup])
 
   useEffect(() => {
     if (!showThemeMenu) return undefined
@@ -207,28 +229,44 @@ export default function Navbar({ sidebarOpen, setSidebarOpen, onOpenCommandPalet
             </button>
 
             {totalSpend > 0 && (
-              <div className="relative hidden md:block">
+              <div className="relative hidden md:block" ref={spendMenuRef}>
                 <button
+                  ref={spendToggleRef}
+                  id="nav-spend-toggle"
+                  type="button"
                   onClick={() => setShowSpendPopup((p) => !p)}
                   className="inline-flex h-8 items-center gap-1 border px-2 font-mono text-[11px] font-medium tabular-nums transition-colors border-zinc-500/25 bg-zinc-500/10 text-zinc-600 hover:bg-zinc-500/20 dark:text-zinc-400"
                   aria-label="Session spend"
+                  aria-haspopup="dialog"
+                  aria-expanded={showSpendPopup}
+                  aria-controls="nav-spend-details"
                 >
                   <DollarSign size={11} />
                   {formatCost(totalSpend, { symbol: false })}
                 </button>
 
                 {showSpendPopup && (
-                  <div className="absolute right-0 top-full z-50 mt-2 w-64 animate-fade-in border border-zinc-200 bg-white p-3 shadow-pop dark:border-border dark:bg-surface-card">
+                  <div
+                    id="nav-spend-details"
+                    role="dialog"
+                    aria-label="Session spend details"
+                    className="absolute right-0 top-full z-50 mt-2 w-64 animate-fade-in border border-zinc-200 bg-white p-3 shadow-pop dark:border-border dark:bg-surface-card"
+                  >
                     <div className="mb-2 flex items-center justify-between">
                       <span className="eyebrow">Session spend</span>
                       <span className="font-mono text-[10px] text-zinc-400 dark:text-text-muted">
                         {runs.length} run{runs.length !== 1 ? 's' : ''}
                       </span>
                     </div>
-                    <div className="mb-2 font-mono text-lg font-semibold tabular-nums text-zinc-900 dark:text-text-primary">
+                    <div className="mb-1 font-mono text-lg font-semibold tabular-nums text-zinc-900 dark:text-text-primary">
                       {formatCost(totalSpend)}
                     </div>
-                    <div className="mb-2 max-h-32 space-y-1 overflow-y-auto">
+                    <p className="mb-2 font-mono text-[10px] text-zinc-500 dark:text-text-muted">
+                      {startedAt
+                        ? `Tracked since ${new Date(startedAt).toLocaleString()} · persists across reloads`
+                        : 'Persists across reloads'}
+                    </p>
+                    <div className="mb-1 max-h-32 space-y-1 overflow-y-auto">
                       {runs.slice(0, 10).map((run, i) => (
                         <div
                           key={i}
@@ -239,6 +277,11 @@ export default function Navbar({ sidebarOpen, setSidebarOpen, onOpenCommandPalet
                         </div>
                       ))}
                     </div>
+                    {runs.length > 10 && (
+                      <p className="mb-2 font-mono text-[10px] text-zinc-500 dark:text-text-muted">
+                        Showing newest 10 of {runs.length} runs
+                      </p>
+                    )}
                     <button
                       onClick={() => {
                         clearSession()
