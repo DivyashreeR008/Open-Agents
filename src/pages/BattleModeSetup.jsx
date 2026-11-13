@@ -5,6 +5,8 @@ import { useDocumentTitle } from '../lib/useDocumentTitle'
 import { useAgents } from '../lib/useAgents'
 import { useProgressiveList } from '../lib/useProgressiveList'
 import { apiKeyFieldProps } from '../lib/apiKeyFieldProps'
+import { getGlobalKeys } from '../lib/globalKeys'
+import { validateProviderKey } from '../lib/providerKeyValidation'
 
 // Input validation constants - prevent LLM calls with excessively long inputs
 const INPUT_LIMITS = {
@@ -220,12 +222,13 @@ export default function BattleModeSetup() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedAgent, setSelectedAgent] = useState(null)
   const [inputs, setInputs] = useState({})
-  const [apiKeys, setApiKeys] = useState({
-    openai: '',
-    anthropic: '',
-    gemini: '',
-    openrouter: '',
-  })
+  const [savedKeys] = useState(() => getGlobalKeys())
+  const [apiKeys, setApiKeys] = useState(() => ({
+    openai: savedKeys.openai || '',
+    anthropic: savedKeys.anthropic || '',
+    gemini: savedKeys.gemini || '',
+    openrouter: savedKeys.openrouter || '',
+  }))
   const [showKeys, setShowKeys] = useState({
     openai: false,
     anthropic: false,
@@ -271,26 +274,49 @@ export default function BattleModeSetup() {
     setStep(2)
   }
 
-  const canSubmit =
-    selectedAgent &&
-    Object.values(apiKeys).some((k) => k.trim()) &&
-    selectedAgent.inputs?.every((inp) => {
-      const val = inputs[inp.id]
-      if (!inp.required) {
-        // For optional fields, if there's a value, it must be valid
-        if (!val || (Array.isArray(val) && val.length === 0)) return true
-        return validateInput(inp, val).valid
-      }
-      // For required fields, must have value and pass validation
-      if (Array.isArray(val)) return val.length > 0 && validateInput(inp, val).valid
-      const hasValue = val && String(val).trim().length > 0
-      return hasValue && validateInput(inp, val).valid
-    })
+  const keyFormatErrors = API_KEY_FIELDS.reduce((errors, field) => {
+    const error = validateProviderKey(field.id, apiKeys[field.id])
+    if (error) errors[field.id] = error
+    return errors
+  }, {})
+
+  const enteredProviders = API_KEY_FIELDS.filter((field) => apiKeys[field.id].trim())
+  const readyProviders = enteredProviders.filter((field) => !keyFormatErrors[field.id])
+  const hasUsableKey = readyProviders.length > 0
+  const hasInvalidKey = Object.keys(keyFormatErrors).length > 0
+
+  const inputsAreValid = selectedAgent?.inputs?.every((inp) => {
+    const val = inputs[inp.id]
+    if (!inp.required) {
+      // For optional fields, if there's a value, it must be valid
+      if (!val || (Array.isArray(val) && val.length === 0)) return true
+      return validateInput(inp, val).valid
+    }
+    // For required fields, must have value and pass validation
+    if (Array.isArray(val)) return val.length > 0 && validateInput(inp, val).valid
+    const hasValue = val && String(val).trim().length > 0
+    return hasValue && validateInput(inp, val).valid
+  })
+
+  const canSubmit = Boolean(selectedAgent) && hasUsableKey && !hasInvalidKey && inputsAreValid
+
+  const startLabel = hasInvalidKey
+    ? 'Fix provider key errors'
+    : !hasUsableKey
+      ? 'Add one provider key to start'
+      : !inputsAreValid
+        ? 'Complete required agent inputs'
+        : 'Start Battle'
 
   const handleStartBattle = () => {
     if (!canSubmit) return
+    const keysToUse = Object.fromEntries(
+      API_KEY_FIELDS.map((field) => [field.id, apiKeys[field.id].trim()]).filter(
+        ([, key]) => key.length > 0
+      )
+    )
     navigate('/battle/arena', {
-      state: { agent: selectedAgent, inputs, apiKeys },
+      state: { agent: selectedAgent, inputs, apiKeys: keysToUse },
     })
   }
 
@@ -440,52 +466,99 @@ export default function BattleModeSetup() {
                   API Keys
                 </h2>
               </div>
-              <p className="text-xs dark:text-text-muted text-gray-500 mb-5 leading-relaxed">
-                Your keys are used directly in the browser and never sent to our servers. Add at
-                least one key. Providers without a key are skipped in the arena.
+              <p
+                id="battle-key-requirements"
+                className="text-xs dark:text-text-muted text-gray-500 mb-2 leading-relaxed"
+              >
+                At least one provider key is required. Keys saved elsewhere in the app are
+                pre-filled, and you can override them for this battle without changing what is
+                stored. Providers without a key are skipped in the arena.
+              </p>
+              <p role="status" className="text-xs font-medium text-zinc-300 mb-5 leading-relaxed">
+                {readyProviders.length > 0
+                  ? `Ready to run: ${readyProviders
+                      .map((field) => field.label.replace(' API Key', ''))
+                      .join(', ')}`
+                  : 'No provider is ready yet. Add a key below or save one in Settings.'}
               </p>
               <div className="space-y-4">
-                {API_KEY_FIELDS.map((field) => (
-                  <div key={field.id}>
-                    <label
-                      className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${field.color}`}
-                    >
-                      {field.label}
-                      <span className="text-zinc-400 ml-1">*</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        aria-label={field.label}
-                        type={showKeys[field.id] ? 'text' : 'password'}
-                        {...apiKeyFieldProps(`api-key-${field.id}`)}
-                        value={apiKeys[field.id]}
-                        onChange={(e) =>
-                          setApiKeys((prev) => ({
-                            ...prev,
-                            [field.id]: e.target.value,
-                          }))
-                        }
-                        placeholder={field.placeholder}
-                        className={`w-full ${field.bg} border ${field.border} px-3 py-2 pr-10
-                          text-sm dark:text-text-primary text-gray-900 placeholder-gray-600 outline-none
-                          ${field.focusBorder} focus:border transition-colors duration-200`}
-                      />
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setShowKeys((prev) => ({
-                            ...prev,
-                            [field.id]: !prev[field.id],
-                          }))
-                        }
-                        className="absolute right-3 top-1/2 -translate-y-1/2 dark:text-text-muted text-gray-500 hover:text-gray-300 transition-colors"
-                        aria-label={showKeys[field.id] ? 'Hide key' : 'Show key'}
-                      >
-                        {showKeys[field.id] ? <EyeOff size={14} /> : <Eye size={14} />}
-                      </button>
+                {API_KEY_FIELDS.map((field) => {
+                  const keyError = keyFormatErrors[field.id]
+                  const isSaved =
+                    Boolean(savedKeys[field.id]) && apiKeys[field.id] === savedKeys[field.id]
+                  const isReady = Boolean(apiKeys[field.id].trim()) && !keyError
+                  const inputId = `battle-api-key-${field.id}`
+                  const errorId = `battle-api-key-${field.id}-error`
+
+                  return (
+                    <div key={field.id}>
+                      <div className="flex items-center justify-between gap-2 mb-1.5">
+                        <label
+                          htmlFor={inputId}
+                          className={`block text-xs font-semibold uppercase tracking-wide ${field.color}`}
+                        >
+                          {field.label}
+                        </label>
+                        {(isSaved || isReady) && (
+                          <span className="text-[10px] font-semibold uppercase tracking-wide text-zinc-400">
+                            {isSaved ? 'Saved' : 'Ready'}
+                          </span>
+                        )}
+                      </div>
+                      <div className="relative">
+                        <input
+                          id={inputId}
+                          aria-label={field.label}
+                          aria-invalid={keyError ? 'true' : undefined}
+                          aria-describedby={keyError ? errorId : undefined}
+                          type={showKeys[field.id] ? 'text' : 'password'}
+                          {...apiKeyFieldProps(`api-key-${field.id}`)}
+                          value={apiKeys[field.id]}
+                          onChange={(e) => {
+                            const nextKey = e.target.value
+                            setApiKeys((prev) => ({
+                              ...prev,
+                              [field.id]: nextKey,
+                            }))
+                          }}
+                          placeholder={field.placeholder}
+                          className={`w-full ${field.bg} border ${
+                            keyError ? 'border-zinc-500/50' : field.border
+                          } px-3 py-2 pr-10
+                            text-sm dark:text-text-primary text-gray-900 placeholder-gray-600 outline-none
+                            ${field.focusBorder} focus:border transition-colors duration-200`}
+                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setShowKeys((prev) => ({
+                              ...prev,
+                              [field.id]: !prev[field.id],
+                            }))
+                          }
+                          className="absolute right-3 top-1/2 -translate-y-1/2 dark:text-text-muted text-gray-500 hover:text-gray-300 transition-colors"
+                          aria-label={showKeys[field.id] ? 'Hide key' : 'Show key'}
+                        >
+                          {showKeys[field.id] ? (
+                            <EyeOff size={14} aria-hidden="true" />
+                          ) : (
+                            <Eye size={14} aria-hidden="true" />
+                          )}
+                        </button>
+                      </div>
+                      {keyError && (
+                        <p
+                          id={errorId}
+                          role="alert"
+                          className="mt-1.5 flex items-center gap-1.5 text-xs text-zinc-400"
+                        >
+                          <AlertCircle size={12} aria-hidden="true" />
+                          {field.label}: {keyError}
+                        </p>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
 
@@ -493,6 +566,7 @@ export default function BattleModeSetup() {
             <button
               onClick={handleStartBattle}
               disabled={!canSubmit}
+              aria-describedby="battle-key-requirements"
               className={`w-full flex items-center justify-center gap-2.5 px-8 py-4 
                 text-sm font-bold transition-colors duration-200 border
                 ${
@@ -501,8 +575,8 @@ export default function BattleModeSetup() {
                     : 'bg-gray-800 text-gray-500 dark:text-text-muted border-gray-700 cursor-not-allowed'
                 }`}
             >
-              <Swords size={18} />
-              {canSubmit ? 'Start Battle' : 'Fill all required fields'}
+              <Swords size={18} aria-hidden="true" />
+              {startLabel}
             </button>
           </div>
         )}

@@ -45,6 +45,6 @@ describe('BattleModeSetup code input length', () => {
     expect(
       screen.getByText('Source code exceeds maximum length (50001/50000 characters)')
     ).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Fill all required fields' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Complete required agent inputs' })).toBeDisabled()
   })
 })

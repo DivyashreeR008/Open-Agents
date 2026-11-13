@@ -106,13 +106,13 @@ describe('BattleModeSetup filtering and selection', () => {
     expect(screen.getByText('Setting up SEO Writer')).toBeInTheDocument()
     expect(screen.getByLabelText('Topic')).toHaveValue('Default topic')
 
-    const start = screen.getByRole('button', { name: 'Fill all required fields' })
+    const start = screen.getByRole('button', { name: 'Add one provider key to start' })
     expect(start).toBeDisabled()
 
     fireEvent.change(screen.getByLabelText('OpenAI API Key'), {
       target: { value: '   ' },
     })
-    expect(screen.getByRole('button', { name: 'Fill all required fields' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Add one provider key to start' })).toBeDisabled()
 
     fireEvent.change(screen.getByLabelText('OpenAI API Key'), {
       target: { value: 'sk-live-key' },
@@ -150,7 +150,7 @@ describe('BattleModeSetup filtering and selection', () => {
     expect(
       screen.getByText('Prompt exceeds maximum length (2001/2000 characters)')
     ).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Fill all required fields' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Complete required agent inputs' })).toBeDisabled()
   })
 
   it('toggles key visibility per provider and returns to agent selection', () => {
