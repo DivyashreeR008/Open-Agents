@@ -3,6 +3,39 @@ import { useEffect } from 'react'
 const NON_RENDERED_ELEMENTS = new Set(['SCRIPT', 'STYLE', 'LINK', 'META', 'TEMPLATE'])
 const FOCUSABLE = 'a[href], button, input, select, textarea, [tabindex]'
 
+let scrollLockCount = 0
+let previousBodyOverflow = ''
+let previousBodyPaddingRight = ''
+
+export function lockBodyScroll() {
+  if (typeof document === 'undefined') return () => {}
+
+  if (scrollLockCount === 0) {
+    previousBodyOverflow = document.body.style.overflow
+    previousBodyPaddingRight = document.body.style.paddingRight
+
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
+    document.body.style.overflow = 'hidden'
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`
+    }
+  }
+
+  scrollLockCount += 1
+  let released = false
+
+  return () => {
+    if (released) return
+    released = true
+    scrollLockCount = Math.max(0, scrollLockCount - 1)
+
+    if (scrollLockCount === 0) {
+      document.body.style.overflow = previousBodyOverflow
+      document.body.style.paddingRight = previousBodyPaddingRight
+    }
+  }
+}
+
 /**
  * Remove everything outside a modal panel from the accessibility tree for as
  * long as the panel is active.
@@ -68,6 +101,11 @@ export function inertBackground(container) {
 export function useInertBackground(containerRef, active = true) {
   useEffect(() => {
     if (!active) return undefined
-    return inertBackground(containerRef.current)
+    const restoreInert = inertBackground(containerRef.current)
+    const restoreScroll = lockBodyScroll()
+    return () => {
+      restoreInert()
+      restoreScroll()
+    }
   }, [active, containerRef])
 }
