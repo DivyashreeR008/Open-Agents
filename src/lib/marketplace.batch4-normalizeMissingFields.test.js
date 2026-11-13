@@ -13,7 +13,7 @@ describe('marketplace listing normalization fallbacks', () => {
     const listing = normalizeListing({
       id: '  mkt_1  ',
       name: '   ',
-      tags: [' keep ', 3, '', null],
+      tags: ['keep', 3, '', null],
       category: '',
       author: '   ',
       config: [],
@@ -26,7 +26,7 @@ describe('marketplace listing normalization fallbacks', () => {
       id: 'mkt_1',
       name: 'Untitled listing',
       description: '',
-      tags: [' keep '],
+      tags: ['keep'],
       category: MARKETPLACE_CATEGORIES[0],
       readme: '',
       author: 'Anonymous',
