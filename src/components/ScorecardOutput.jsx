@@ -54,30 +54,62 @@ export default function ScorecardOutput({ data }) {
     )
   }
 
-  const score = parsed?.matchScore ?? 0
-  const scoreColor = score >= 70 ? '#D4D4D4' : score >= 40 ? '#8A8A8A' : '#919191'
+  const hasScore = Number.isFinite(parsed?.matchScore)
+  const score = hasScore ? Math.min(100, Math.max(0, parsed.matchScore)) : null
+  const scoreTone = !hasScore
+    ? {
+        text: 'text-gray-700 dark:text-text-secondary',
+        stroke: 'stroke-gray-500 dark:stroke-gray-400',
+        bar: 'bg-gray-400',
+        label: 'Not scored',
+      }
+    : score >= 70
+      ? {
+          text: 'text-emerald-700 dark:text-emerald-300',
+          stroke: 'stroke-emerald-700 dark:stroke-emerald-300',
+          bar: 'bg-emerald-600',
+          label: 'Strong',
+        }
+      : score >= 40
+        ? {
+            text: 'text-amber-700 dark:text-amber-300',
+            stroke: 'stroke-amber-700 dark:stroke-amber-300',
+            bar: 'bg-amber-600',
+            label: 'Average',
+          }
+        : {
+            text: 'text-red-700 dark:text-red-300',
+            stroke: 'stroke-red-700 dark:stroke-red-300',
+            bar: 'bg-red-600',
+            label: 'Needs work',
+          }
 
   const recommendation = parsed?.recommendation || 'N/A'
   const recColor =
     {
-      'Strong Yes': 'bg-zinc-500/20 text-zinc-400 border-zinc-500/30',
-      Yes: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
-      Maybe: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
-      No: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
-    }[recommendation] || 'bg-gray-500/10 text-gray-400 border-gray-500/20'
+      'Strong Yes':
+        'bg-emerald-500/10 text-emerald-800 border-emerald-500/30 dark:text-emerald-200',
+      Yes: 'bg-emerald-500/10 text-emerald-800 border-emerald-500/30 dark:text-emerald-200',
+      Maybe: 'bg-amber-500/10 text-amber-800 border-amber-500/30 dark:text-amber-200',
+      No: 'bg-red-500/10 text-red-800 border-red-500/30 dark:text-red-200',
+    }[recommendation] || 'bg-gray-500/10 text-gray-800 border-gray-500/30 dark:text-gray-200'
 
   // SVG circle params
   const radius = 54
   const circumference = 2 * Math.PI * radius
-  const offset = circumference - (score / 100) * circumference
+  const offset = circumference - ((score ?? 0) / 100) * circumference
 
   return (
     <div className="animate-fade-in space-y-4">
       {/* Top: Score + Recommendation */}
       <div className="flex flex-wrap items-center gap-6 p-5 dark:bg-surface-card bg-white border dark:border-border border-gray-200">
         {/* Circular Score */}
-        <div className="score-circle">
-          <svg width={130} height={130}>
+        <div
+          className="score-circle"
+          role="img"
+          aria-label={hasScore ? `Match score ${score} out of 100` : 'Match score not provided'}
+        >
+          <svg width={130} height={130} aria-hidden="true">
             <circle
               cx={65}
               cy={65}
@@ -92,26 +124,26 @@ export default function ScorecardOutput({ data }) {
               cy={65}
               r={radius}
               fill="none"
-              stroke={scoreColor}
+              stroke="currentColor"
               strokeWidth={6}
               strokeLinecap="round"
               strokeDasharray={circumference}
               strokeDashoffset={offset}
+              className={scoreTone.stroke}
               style={{ transition: 'stroke-dashoffset 0.8s ease-out' }}
             />
           </svg>
-          <span className="score-value" style={{ color: scoreColor }}>
-            {score}
-          </span>
+          <span className={`score-value ${scoreTone.text}`}>{hasScore ? score : 'N/A'}</span>
         </div>
 
         <div className="flex-1 min-w-[200px]">
-          <div className="text-xs uppercase tracking-wider dark:text-text-muted text-gray-400 mb-1">
+          <div className="text-xs uppercase tracking-wider dark:text-text-muted text-gray-600 mb-1">
             Match Score
           </div>
-          <div className="font-display text-[17px] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-text-primary mb-3">
-            {score}/100
+          <div className="font-display text-[17px] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-text-primary mb-1">
+            {hasScore ? `${score}/100` : 'Not provided'}
           </div>
+          <div className={`mb-3 text-xs font-medium ${scoreTone.text}`}>{scoreTone.label}</div>
           <div
             className={`inline-flex items-center px-3 py-1 text-xs font-semibold border ${recColor}`}
           >
@@ -130,33 +162,45 @@ export default function ScorecardOutput({ data }) {
             </h3>
             <div className="space-y-3">
               {Object.entries(parsed.criteria).map(([name, val]) => {
-                const criterionScore = typeof val === 'number' ? val : (val?.score ?? 0)
+                const criterionHasScore = Number.isFinite(
+                  typeof val === 'number' ? val : val?.score
+                )
+                const criterionScore = criterionHasScore
+                  ? Math.min(100, Math.max(0, typeof val === 'number' ? val : val.score))
+                  : null
+                const criterionTone =
+                  criterionScore === null
+                    ? { text: 'text-gray-700 dark:text-text-secondary', bar: 'bg-gray-400' }
+                    : criterionScore >= 70
+                      ? {
+                          text: 'text-emerald-700 dark:text-emerald-300',
+                          bar: 'bg-emerald-600',
+                        }
+                      : criterionScore >= 40
+                        ? {
+                            text: 'text-amber-700 dark:text-amber-300',
+                            bar: 'bg-amber-600',
+                          }
+                        : { text: 'text-red-700 dark:text-red-300', bar: 'bg-red-600' }
+
                 return (
                   <div key={name}>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-medium dark:text-text-secondary text-gray-600">
+                      <span className="text-xs font-medium dark:text-text-secondary text-gray-700">
                         {name}
                       </span>
-                      <span className="text-xs font-bold dark:text-text-primary text-gray-900">
-                        {criterionScore}/100
+                      <span className={`text-xs font-bold ${criterionTone.text}`}>
+                        {criterionScore === null ? 'Not scored' : `${criterionScore}/100`}
                       </span>
                     </div>
                     <div className="w-full h-2 dark:bg-surface-input bg-gray-100 overflow-hidden">
                       <div
-                        className="h-full transition-all duration-700 ease-out"
-                        style={{
-                          width: `${criterionScore}%`,
-                          backgroundColor:
-                            criterionScore >= 70
-                              ? '#D4D4D4'
-                              : criterionScore >= 40
-                                ? '#8A8A8A'
-                                : '#919191',
-                        }}
+                        className={`h-full transition-all duration-700 ease-out ${criterionTone.bar}`}
+                        style={{ width: `${criterionScore ?? 0}%` }}
                       />
                     </div>
                     {val?.comment && (
-                      <p className="text-[11px] dark:text-text-muted text-gray-400 mt-0.5">
+                      <p className="text-[11px] dark:text-text-secondary text-gray-600 mt-0.5">
                         {val.comment}
                       </p>
                     )}
@@ -171,14 +215,14 @@ export default function ScorecardOutput({ data }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {Array.isArray(parsed?.strengths) && parsed.strengths.length > 0 && (
           <div className="p-4 dark:bg-surface-card bg-white border dark:border-border border-gray-200">
-            <h3 className="text-sm font-semibold text-zinc-600 dark:text-zinc-300 mb-2">
+            <h3 className="text-sm font-semibold text-gray-700 dark:text-zinc-200 mb-2">
               Top Strengths
             </h3>
             <div className="flex flex-wrap gap-1.5">
               {parsed.strengths.map((s, i) => (
                 <span
                   key={i}
-                  className="inline-block px-2.5 py-1 text-[11px] font-medium bg-zinc-500/10 text-zinc-400 border border-zinc-500/20"
+                  className="inline-block px-2.5 py-1 text-[11px] font-medium bg-emerald-500/10 text-emerald-800 border border-emerald-500/20 dark:text-emerald-200"
                 >
                   {s}
                 </span>
@@ -194,7 +238,7 @@ export default function ScorecardOutput({ data }) {
               {parsed.gaps.map((g, i) => (
                 <span
                   key={i}
-                  className="inline-block px-2.5 py-1 text-[11px] font-medium bg-zinc-500/10 text-zinc-400 border border-zinc-500/20"
+                  className="inline-block px-2.5 py-1 text-[11px] font-medium bg-amber-500/10 text-amber-800 border border-amber-500/20 dark:text-amber-200"
                 >
                   {g}
                 </span>
