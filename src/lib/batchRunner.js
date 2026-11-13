@@ -162,7 +162,10 @@ export async function runBatch({
           { provider, model, apiKey, systemPrompt, userMessage },
           { signal }
         )
-        if (signal?.aborted) return
+        if (signal?.aborted) {
+          onItemUpdate(index, { status: 'cancelled' })
+          return
+        }
         recordAnalyticsRun({
           agentId: agent.id,
           agentName: agent.name,
@@ -173,7 +176,10 @@ export async function runBatch({
         })
         onItemUpdate(index, { status: 'done', output: result.content })
       } catch (err) {
-        if (signal?.aborted) return
+        if (signal?.aborted || err?.name === 'AbortError') {
+          onItemUpdate(index, { status: 'cancelled' })
+          return
+        }
         onItemUpdate(index, {
           status: 'failed',
           error: err?.message || err?.detail || 'Failed to process this item.',

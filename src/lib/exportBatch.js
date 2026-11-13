@@ -79,7 +79,7 @@ export function exportBatchAsMarkdown(agentName, results) {
           ? 'Success'
           : status === 'failed'
             ? 'Failed'
-            : status === 'stopped'
+            : status === 'stopped' || status === 'cancelled'
               ? 'Stopped'
               : 'Pending'
       const heading = `## Item ${i + 1} — ${label}`

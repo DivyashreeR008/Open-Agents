@@ -228,7 +228,10 @@ describe('runBatch', () => {
       onItemUpdate: (index, patch) => updates.push({ index, ...patch }),
     })
 
-    expect(updates).toEqual([{ index: 0, status: 'running' }])
+    expect(updates).toEqual([
+      { index: 0, status: 'running' },
+      { index: 0, status: 'cancelled' },
+    ])
     expect(analytics.recordAnalyticsRun).not.toHaveBeenCalled()
   })
 
@@ -252,7 +255,37 @@ describe('runBatch', () => {
       onItemUpdate: (index, patch) => updates.push({ index, ...patch }),
     })
 
-    expect(updates).toEqual([{ index: 0, status: 'running' }])
+    expect(updates).toEqual([
+      { index: 0, status: 'running' },
+      { index: 0, status: 'cancelled' },
+    ])
+  })
+
+  it('leaves never-started rows waiting when cancellation stops the queue', async () => {
+    const updates = []
+    const signal = { aborted: false }
+    provider.runAgent.mockImplementation(async ({ userMessage }) => {
+      signal.aborted = true
+      return { content: `late:${userMessage}`, duration: 1 }
+    })
+
+    await runBatch({
+      items: ['one', 'two', 'three'],
+      agent,
+      fixedInputs: {},
+      batchFieldId: 'topic',
+      provider: 'openai',
+      model: 'gpt-test',
+      apiKey: 'sk-test',
+      concurrency: 1,
+      signal,
+      onItemUpdate: (index, patch) => updates.push({ index, ...patch }),
+    })
+
+    expect(updates).toEqual([
+      { index: 0, status: 'running' },
+      { index: 0, status: 'cancelled' },
+    ])
   })
 
   it('does nothing for an empty item list', async () => {

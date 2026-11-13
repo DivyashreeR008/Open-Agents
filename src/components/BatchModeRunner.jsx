@@ -21,6 +21,7 @@ const STATUS_COLORS = {
   running: 'text-zinc-900 dark:text-white',
   done: 'text-zinc-400',
   failed: 'text-zinc-400',
+  cancelled: 'text-amber-600 dark:text-amber-300',
 }
 
 function StatusIcon({ status }) {
@@ -29,6 +30,7 @@ function StatusIcon({ status }) {
     return <Loader2 size={13} className="text-zinc-900 dark:text-white animate-spin" />
   if (status === 'done') return <CheckCircle2 size={13} className={STATUS_COLORS.done} />
   if (status === 'failed') return <XCircle size={13} className={STATUS_COLORS.failed} />
+  if (status === 'cancelled') return <StopCircle size={13} className={STATUS_COLORS.cancelled} />
   return null
 }
 
@@ -135,16 +137,32 @@ export default function BatchModeRunner({ agent, provider, apiKey, selectedModel
       })
   }
 
-  const handleRun = async () => {
+  const startBatch = async (indexes, sourceItems, { reset = false } = {}) => {
+    if (indexes.length === 0) return
+
     setRunning(true)
     setHasRun(true)
-    setResults(items.map((item) => ({ input: item, status: 'waiting' })))
+
+    if (reset) {
+      setResults(sourceItems.map((item) => ({ input: item, status: 'waiting' })))
+    } else {
+      setResults((prev) =>
+        prev.map((row, index) =>
+          indexes.includes(index)
+            ? { ...row, status: 'waiting', output: undefined, error: undefined }
+            : row
+        )
+      )
+    }
 
     const controller = new AbortController()
     abortControllerRef.current = controller
 
-    const onItemUpdate = (index, patch) => {
-      setResults((prev) => prev.map((r, i) => (i === index ? { ...r, ...patch } : r)))
+    const onItemUpdate = (localIndex, patch) => {
+      const targetIndex = indexes[localIndex]
+      setResults((prev) =>
+        prev.map((row, index) => (index === targetIndex ? { ...row, ...patch } : row))
+      )
     }
 
     // Include resolved defaults for any fixed field the user never touched,
@@ -155,7 +173,7 @@ export default function BatchModeRunner({ agent, provider, apiKey, selectedModel
 
     try {
       await runBatch({
-        items,
+        items: indexes.map((index) => sourceItems[index]),
         agent,
         fixedInputs: mergedFixedInputs,
         batchFieldId,
@@ -173,6 +191,24 @@ export default function BatchModeRunner({ agent, provider, apiKey, selectedModel
     }
   }
 
+  const handleRun = () =>
+    startBatch(
+      items.map((_, index) => index),
+      items,
+      { reset: true }
+    )
+
+  const retryIndexes = results
+    .map((row, index) => ({ row, index }))
+    .filter(({ row }) => row.status !== 'done' && row.status !== 'running')
+    .map(({ index }) => index)
+
+  const handleRetry = () =>
+    startBatch(
+      retryIndexes,
+      results.map((row) => row.input)
+    )
+
   const handleStop = () => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort()
@@ -182,7 +218,6 @@ export default function BatchModeRunner({ agent, provider, apiKey, selectedModel
   }
 
   const completedCount = results.filter((r) => r.status === 'done' || r.status === 'failed').length
-  const allDone = hasRun && !running && completedCount === results.length && results.length > 0
 
   return (
     <div className="space-y-4">
@@ -387,13 +422,23 @@ export default function BatchModeRunner({ agent, provider, apiKey, selectedModel
           </button>
         )}
 
+        {hasRun && !running && retryIndexes.length > 0 && (
+          <button
+            onClick={handleRetry}
+            disabled={!canRun()}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-semibold border border-amber-500/50 text-amber-700 hover:bg-amber-50 dark:text-amber-200 dark:hover:bg-amber-500/10 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Retry unfinished ({retryIndexes.length})
+          </button>
+        )}
+
         {hasRun && (
           <span className="text-xs dark:text-text-secondary text-gray-500">
             {completedCount} of {results.length} complete
           </span>
         )}
 
-        {allDone && (
+        {hasRun && !running && completedCount > 0 && (
           <div className="flex items-center gap-2 ml-auto">
             <button
               onClick={() => exportBatchAsCSV(agent.name, results)}
@@ -447,6 +492,11 @@ export default function BatchModeRunner({ agent, provider, apiKey, selectedModel
               )}
               {r.status === 'failed' && r.error && (
                 <div className="px-3 py-2 text-xs text-zinc-400">{r.error}</div>
+              )}
+              {r.status === 'cancelled' && (
+                <div className="px-3 py-2 text-xs text-amber-700 dark:text-amber-200">
+                  Stopped before completing. Use Retry unfinished to finish this row.
+                </div>
               )}
             </div>
           ))}
