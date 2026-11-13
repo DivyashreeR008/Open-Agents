@@ -42,7 +42,7 @@ describe('CreateAutomationModal validation edge cases', () => {
     fireEvent.click(screen.getByRole('button', { name: /Activate Autopilot/i }))
 
     expect(
-      screen.getByText('An API key is required to run background automations.')
+      screen.getByText('Enter a OpenAI API key to run background automations.')
     ).toBeInTheDocument()
     expect(service.createAutomation).not.toHaveBeenCalled()
   })
