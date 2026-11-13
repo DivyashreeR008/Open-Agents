@@ -14,7 +14,7 @@ import {
   Loader2,
   X,
 } from 'lucide-react'
-import { useScheduler, SCHEDULE_OPTIONS } from '../lib/useScheduler'
+import { MAX_RESULT_OUTPUT_CHARS, SCHEDULE_OPTIONS, useScheduler } from '../lib/useScheduler'
 import OutputRenderer from '../components/OutputRenderer'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
 
@@ -53,8 +53,18 @@ function formatDuration(ms) {
 export default function SchedulerPage() {
   useDocumentTitle('Scheduled Agents')
 
-  const { jobs, results, running, toggleJob, deleteJob, runJob, deleteResult, clearResultsForJob } =
-    useScheduler()
+  const {
+    jobs,
+    results,
+    running,
+    toggleJob,
+    deleteJob,
+    runJob,
+    deleteResult,
+    clearResultsForJob,
+    clearAllResults,
+    storageError,
+  } = useScheduler()
 
   const [expandedJob, setExpandedJob] = useState(null)
   const [expandedResult, setExpandedResult] = useState(null)
@@ -69,6 +79,19 @@ export default function SchedulerPage() {
 
   return (
     <div className="max-w-3xl mx-auto animate-fade-in">
+      {storageError && (
+        <div role="alert" className="mb-4 border border-red-600/30 bg-red-500/10 p-3">
+          <p className="text-xs font-medium text-red-800 dark:text-red-300">{storageError}</p>
+          <button
+            type="button"
+            onClick={clearAllResults}
+            className="mt-1 text-xs font-semibold text-red-800 underline dark:text-red-300"
+          >
+            Clear all run results to free space
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -311,12 +334,23 @@ function ResultCard({ result, expanded, onToggle, onDelete }) {
               {result.error}
             </div>
           ) : (
-            <OutputRenderer
-              content={result.output}
-              outputType="markdown"
-              agentName={result.agentName}
-              systemPrompt=""
-            />
+            <>
+              {result.outputTruncated && (
+                <p
+                  role="status"
+                  className="mb-2 border border-amber-600/30 bg-amber-500/10 px-2 py-1 text-[11px] text-amber-900 dark:text-amber-200"
+                >
+                  Output shortened to {MAX_RESULT_OUTPUT_CHARS.toLocaleString()} characters from{' '}
+                  {result.originalOutputLength.toLocaleString()} to protect browser storage.
+                </p>
+              )}
+              <OutputRenderer
+                content={result.output}
+                outputType="markdown"
+                agentName={result.agentName}
+                systemPrompt=""
+              />
+            </>
           )}
         </div>
       )}
