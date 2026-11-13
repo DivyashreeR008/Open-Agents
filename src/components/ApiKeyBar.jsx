@@ -12,6 +12,7 @@ import openrouterLogo from '../assets/openrouter.svg'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 import { getGlobalKeys, getAvailableProviders } from '../lib/globalKeys'
 import { apiKeyFieldProps } from '../lib/apiKeyFieldProps'
+import { readSessionKeyExpiryInfo, validateApiKeyFormat } from '../lib/useApiKey'
 
 const PROVIDERS = [
   { value: 'openai', label: 'OpenAI' },
@@ -74,6 +75,15 @@ export default function ApiKeyBar({
   const [geminiModels, setGeminiModels] = useState([])
   const [geminiLoading, setGeminiLoading] = useState(false)
   const [geminiError, setGeminiError] = useState(null)
+  const [expiryInfo, setExpiryInfo] = useState(() => readSessionKeyExpiryInfo(provider))
+  const keyFormatError = validateApiKeyFormat(provider, apiKey)
+
+  useEffect(() => {
+    const updateExpiry = () => setExpiryInfo(readSessionKeyExpiryInfo(provider))
+    updateExpiry()
+    const timer = setInterval(updateExpiry, 30_000)
+    return () => clearInterval(timer)
+  }, [provider, apiKey, saveForSession])
 
   // ── Auto-fill from globally saved keys on mount and provider change
   useEffect(() => {
@@ -193,6 +203,8 @@ export default function ApiKeyBar({
             aria-label="API key"
             type={showKey ? 'text' : 'password'}
             {...apiKeyFieldProps(`api-key-${provider}`)}
+            aria-invalid={keyFormatError ? 'true' : undefined}
+            aria-describedby={keyFormatError ? 'api-key-format-error' : undefined}
             value={apiKey}
             onChange={(e) => {
               const newKey = e.target.value
@@ -236,6 +248,35 @@ export default function ApiKeyBar({
           </span>
         </label>
       </div>
+
+      {keyFormatError && (
+        <div className="mt-2 border border-red-600/30 bg-red-500/10 px-2.5 py-1.5">
+          <p
+            id="api-key-format-error"
+            role="alert"
+            className="text-[11px] font-medium text-red-800 dark:text-red-300"
+          >
+            {keyFormatError}
+          </p>
+        </div>
+      )}
+
+      {!keyFormatError && expiryInfo && (
+        <div className="mt-2 border border-zinc-500/20 bg-zinc-500/10 px-2.5 py-1.5">
+          <p
+            role="status"
+            className={`text-[11px] font-medium ${
+              expiryInfo.expired
+                ? 'text-zinc-800 dark:text-zinc-200'
+                : 'text-zinc-600 dark:text-zinc-300'
+            }`}
+          >
+            {expiryInfo.expired
+              ? `The saved session key expired at ${new Date(expiryInfo.expiresAt).toLocaleString()}. Enter it again to continue.`
+              : `Saved session key expires at ${new Date(expiryInfo.expiresAt).toLocaleString()}.`}
+          </p>
+        </div>
+      )}
 
       {/* Disclaimer */}
       <div className="flex items-center justify-between mt-2">

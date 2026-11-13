@@ -9,6 +9,8 @@ vi.mock('../lib/useAgents', () => ({
 }))
 
 vi.mock('../lib/useApiKey', () => ({
+  readSessionKeyExpiryInfo: () => null,
+  validateApiKeyFormat: () => '',
   useApiKey: () => ({
     provider: 'openai',
     setProvider: vi.fn(),
