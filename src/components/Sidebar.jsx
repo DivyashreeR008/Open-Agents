@@ -9,6 +9,23 @@ const SIDEBAR_CATEGORY_STORAGE_KEY = 'sidebar-category-collapsed-state'
 const SIDEBAR_CATEGORY_AGENT_LIMIT = 12
 const SIDEBAR_SEARCH_LIMIT = 15
 
+function useDesktopSidebar() {
+  const [isDesktop, setIsDesktop] = useState(
+    () =>
+      typeof window !== 'undefined' && Boolean(window.matchMedia?.('(min-width: 1024px)').matches)
+  )
+
+  useEffect(() => {
+    const media = window.matchMedia?.('(min-width: 1024px)')
+    if (!media) return undefined
+    const update = (event) => setIsDesktop(event.matches)
+    media.addEventListener?.('change', update)
+    return () => media.removeEventListener?.('change', update)
+  }, [])
+
+  return isDesktop
+}
+
 /** Zero-padded ordinal so every entry has a stable address in the index. */
 const pad = (n) => String(n).padStart(2, '0')
 
@@ -53,6 +70,7 @@ export default function Sidebar({ open, onClose }) {
   const { collections, moveAgentToCollection } = useCollections()
   const { agents } = useAgents()
   const location = useLocation()
+  const isDesktop = useDesktopSidebar()
 
   useEffect(() => {
     try {
@@ -72,17 +90,26 @@ export default function Sidebar({ open, onClose }) {
 
   const normalizedQuery = sidebarSearchQuery.trim().toLowerCase()
   const isSearching = normalizedQuery !== ''
+  const routeParams = new URLSearchParams(location.search)
+  const isAgentsRoute = location.pathname === '/agents'
+  const routeQuery = isAgentsRoute ? (routeParams.get('q') || '').trim().toLowerCase() : ''
+  const routeCategory = isAgentsRoute ? routeParams.get('category') : null
+  const routeProvider = isAgentsRoute ? routeParams.get('provider') : null
+  const effectiveQuery = isSearching ? normalizedQuery : routeQuery
+  const effectiveCategory = isSearching ? null : routeCategory
+  const effectiveProvider = isSearching ? null : routeProvider
 
   const { filteredAgents, categories, categoryOrder } = useMemo(() => {
-    const filtered = !normalizedQuery
-      ? agents
-      : agents.filter((agent) =>
-          [agent.name, agent.description, agent.category, agent.id]
-            .filter(Boolean)
-            .join(' ')
-            .toLowerCase()
-            .includes(normalizedQuery)
-        )
+    const filtered = agents.filter((agent) => {
+      if (effectiveCategory && agent.category !== effectiveCategory) return false
+      if (effectiveProvider && agent.provider !== effectiveProvider) return false
+      if (!effectiveQuery) return true
+      return [agent.name, agent.description, agent.category, agent.id]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+        .includes(effectiveQuery)
+    })
 
     const cats = filtered.reduce((acc, agent) => {
       if (!acc[agent.category]) acc[agent.category] = []
@@ -99,7 +126,7 @@ export default function Sidebar({ open, onClose }) {
       categories: cats,
       categoryOrder: Object.keys(cats).sort((a, b) => a.localeCompare(b)),
     }
-  }, [agents, normalizedQuery])
+  }, [agents, effectiveQuery, effectiveCategory, effectiveProvider])
 
   const toggleCategory = (category) => {
     const isActive = activeCategory === category
@@ -131,7 +158,8 @@ export default function Sidebar({ open, onClose }) {
   const customCollections = collections.filter(
     (collection) => collection.id !== DEFAULT_COLLECTION_ID
   )
-  const allAgentsCount = agents.length
+  const allAgentsCount = filteredAgents.length
+  const isDrawerHidden = !isDesktop && !open
 
   const collectionEntries = [
     { key: 'all', to: '/collections', icon: 'FolderPlus', label: 'All collections', count: null },
@@ -160,6 +188,8 @@ export default function Sidebar({ open, onClose }) {
       {open && <div className="fixed inset-0 z-30 bg-black/50 lg:hidden" onClick={onClose} />}
 
       <aside
+        inert={isDrawerHidden ? true : undefined}
+        aria-hidden={isDrawerHidden || undefined}
         className={`fixed top-12 left-0 bottom-0 z-40 flex w-60 flex-col border-r transition-all duration-200
           dark:border-border border-zinc-200
           ${open ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
@@ -341,9 +371,11 @@ export default function Sidebar({ open, onClose }) {
               return (
                 <div key={category}>
                   <button
+                    id={`sidebar-category-${index}`}
                     type="button"
                     onClick={() => toggleCategory(category)}
                     aria-expanded={isCategoryExpanded}
+                    aria-controls={`sidebar-category-panel-${index}`}
                     className={`rail-link w-full ${
                       isActiveCategory ? 'text-black dark:text-white' : ''
                     }`}
@@ -365,7 +397,12 @@ export default function Sidebar({ open, onClose }) {
                   </button>
 
                   {isCategoryExpanded && (
-                    <div className="border-l border-zinc-200 py-1 pl-2 dark:border-border">
+                    <div
+                      id={`sidebar-category-panel-${index}`}
+                      role="group"
+                      aria-labelledby={`sidebar-category-${index}`}
+                      className="border-l border-zinc-200 py-1 pl-2 dark:border-border"
+                    >
                       {visibleCategoryAgents.map((agent, agentIndex) => {
                         const IconComponent = resolveAgentIcon(agent.icon)
 
