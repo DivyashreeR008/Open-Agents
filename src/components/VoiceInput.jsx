@@ -30,6 +30,7 @@ export default function VoiceInput({
   // Text for the polite live region. Only state transitions are announced;
   // interim transcript updates are not, so they don't interrupt screen readers.
   const [announcement, setAnnouncement] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
   const recognitionRef = useRef(null)
   // Snapshot of `value` at the moment recording started. Each onresult event
   // appends the latest transcript to this baseline. We update it in two cases:
@@ -72,7 +73,23 @@ export default function VoiceInput({
   }, [])
 
   if (!SpeechRecognition) {
-    return null
+    return (
+      <>
+        <button
+          type="button"
+          disabled
+          title="Voice input is not supported in this browser"
+          aria-label="Voice input is not supported in this browser"
+          aria-describedby="voice-input-support"
+          className={`absolute z-10 flex items-center justify-center w-7 h-7 text-gray-400 opacity-40 cursor-not-allowed dark:text-text-muted ${className}`}
+        >
+          <MicOff size={14} aria-hidden="true" />
+        </button>
+        <span id="voice-input-support" role="status" className="sr-only">
+          Voice input is not supported in this browser. You can still type your input.
+        </span>
+      </>
+    )
   }
 
   const startRecording = () => {
@@ -83,6 +100,7 @@ export default function VoiceInput({
 
     baseValueRef.current = value || ''
     lastWrittenRef.current = value || ''
+    setErrorMessage('')
 
     recognition.onresult = (event) => {
       let finalTranscript = ''
@@ -119,18 +137,35 @@ export default function VoiceInput({
 
     // The Web Speech API fires `end` after `error`, so remember the failure
     // here; otherwise onend would overwrite the failure message.
-    let failed = false
+    let failureMessage = ''
 
-    recognition.onerror = () => {
-      failed = true
+    recognition.onerror = (event) => {
+      if (event?.error === 'aborted') {
+        setIsRecording(false)
+        recognitionRef.current = null
+        return
+      }
+
+      const code = event?.error
+      const message =
+        code === 'not-allowed' || code === 'service-not-allowed'
+          ? 'Microphone access is blocked. Allow microphone access in your browser settings to use voice input.'
+          : code === 'audio-capture'
+            ? 'No microphone was found. Connect a microphone and try again.'
+            : code === 'network'
+              ? 'Voice input lost its connection. Check your network and try again.'
+              : 'Voice input failed. Check your microphone and try again.'
+
+      failureMessage = message
+      setErrorMessage(message)
       setIsRecording(false)
-      setAnnouncement('Voice input failed')
+      setAnnouncement(message)
       recognitionRef.current = null
     }
 
     recognition.onend = () => {
       setIsRecording(false)
-      setAnnouncement(failed ? 'Voice input failed' : 'Listening stopped')
+      setAnnouncement(failureMessage || 'Listening stopped')
       recognitionRef.current = null
     }
 
@@ -141,8 +176,10 @@ export default function VoiceInput({
       setAnnouncement('Listening started')
     } catch {
       // start() throws if called while already running — safe to ignore.
+      const message = 'Voice input could not start. Check your microphone and browser permissions.'
       setIsRecording(false)
-      setAnnouncement('Voice input failed')
+      setErrorMessage(message)
+      setAnnouncement(message)
     }
   }
 
@@ -195,9 +232,19 @@ export default function VoiceInput({
           <Mic size={14} className="relative" />
         )}
       </button>
-      <span role="status" aria-live="polite" className="sr-only">
-        {announcement}
-      </span>
+      {errorMessage ? (
+        <span
+          role="status"
+          aria-live="polite"
+          className="absolute right-0 top-full z-20 mt-1 w-64 border border-amber-500/30 bg-amber-50 p-2 text-[11px] leading-relaxed text-amber-900 shadow-sm dark:bg-surface-card dark:text-amber-200"
+        >
+          {errorMessage}
+        </span>
+      ) : (
+        <span role="status" aria-live="polite" className="sr-only">
+          {announcement}
+        </span>
+      )}
     </>
   )
 }

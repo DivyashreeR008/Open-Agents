@@ -65,7 +65,7 @@ describe('VoiceInput listening state', () => {
     act(() => current().onerror({ error: 'network' }))
     act(() => current().onend())
 
-    expect(screen.getByRole('status')).toHaveTextContent('Voice input failed')
+    expect(screen.getByRole('status')).toHaveTextContent('Voice input lost its connection')
     expect(screen.getByRole('status')).not.toHaveTextContent('Listening stopped')
     expect(screen.getByRole('button', { name: 'Start voice input' })).toHaveAttribute(
       'aria-pressed',
