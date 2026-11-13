@@ -15,7 +15,7 @@ export default function AboutOpenSource() {
       title: 'Fork & Clone',
       description:
         'Fork the repository on GitHub and clone your fork locally. Install dependencies using npm install.',
-      command: 'git clone https://github.com/YOUR_USERNAME/OpenAgents.git',
+      command: 'git clone https://github.com/DivyashreeR008/Open-Agents.git',
     },
     {
       step: '02',
