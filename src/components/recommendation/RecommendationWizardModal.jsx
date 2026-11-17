@@ -141,6 +141,15 @@ export default function RecommendationWizardModal({ agents = [], isOpen, onClose
           </div>
           <div
             className="mt-4"
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.round(progress)}
+            aria-valuetext={
+              wizard.hasCompleted
+                ? 'Results ready'
+                : `Step ${wizard.currentStepIndex + 1} of ${TOTAL_STEPS}`
+            }
             aria-label={
               wizard.hasCompleted
                 ? 'Results ready'
@@ -163,7 +172,7 @@ export default function RecommendationWizardModal({ agents = [], isOpen, onClose
             </div>
           </div>
         </header>
-        <main className="min-h-0 flex-1 overflow-y-auto p-5 sm:p-6">
+        <div className="min-h-0 flex-1 overflow-y-auto p-5 sm:p-6">
           {wizard.hasCompleted ? (
             <RecommendationResults
               agents={agents}
@@ -181,7 +190,7 @@ export default function RecommendationWizardModal({ agents = [], isOpen, onClose
               toggleExtraPreference={wizard.toggleExtraPreference}
             />
           )}
-        </main>
+        </div>
         {!wizard.hasCompleted && (
           <footer className="shrink-0 border-t border-gray-200 bg-white p-4 dark:border-border dark:bg-surface-card">
             <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between">
