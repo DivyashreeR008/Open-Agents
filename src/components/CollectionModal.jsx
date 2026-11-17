@@ -16,6 +16,7 @@ export default function CollectionModal({
 }) {
   const panelRef = useRef(null)
   const titleId = useId()
+  const errorId = useId()
   useDialogFocus(panelRef, { onClose })
 
   return (
@@ -30,7 +31,7 @@ export default function CollectionModal({
         <div className="flex items-start justify-between gap-4 border-b border-gray-100 p-5 dark:border-border">
           <div className="flex items-start gap-3">
             <div className=" bg-zinc-500/10 p-2 text-zinc-600 dark:text-zinc-300">
-              <FolderPlus size={18} />
+              <FolderPlus size={18} aria-hidden="true" />
             </div>
             <div>
               <h2
@@ -61,13 +62,20 @@ export default function CollectionModal({
                 data-autofocus
                 value={value}
                 onChange={(event) => onChange(event.target.value)}
+                aria-invalid={error ? 'true' : undefined}
+                aria-describedby={error ? errorId : undefined}
                 className="mt-2 w-full border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500/40 dark:border-border dark:bg-surface-input dark:text-text-primary"
                 placeholder="e.g. Launch planning"
               />
             </label>
           )}
           {error && (
-            <p className=" border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-700 dark:border-zinc-500/30 dark:bg-zinc-500/10 dark:text-zinc-300">
+            <p
+              id={errorId}
+              role="alert"
+              aria-atomic="true"
+              className=" border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-700 dark:border-zinc-500/30 dark:bg-zinc-500/10 dark:text-zinc-300"
+            >
               {error}
             </p>
           )}
