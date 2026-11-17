@@ -2,6 +2,23 @@ import { useNavigate } from 'react-router-dom'
 import { Home, Swords, Search } from 'lucide-react'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
 
+function focusAgentSearch(attempt = 0) {
+  if (typeof document === 'undefined') return
+  const field = document.getElementById('agent-search')
+  if (field) {
+    field.focus()
+    return
+  }
+  if (attempt >= 120) return
+
+  const schedule =
+    typeof window.requestAnimationFrame === 'function'
+      ? window.requestAnimationFrame
+      : (callback) => window.setTimeout(callback, 16)
+
+  schedule(() => focusAgentSearch(attempt + 1))
+}
+
 export default function NotFoundPage() {
   const navigate = useNavigate()
   useDocumentTitle('Page not found')
@@ -20,20 +37,21 @@ export default function NotFoundPage() {
         </p>
 
         <div className="mt-6 flex flex-wrap items-center gap-2">
-          <button onClick={() => navigate('/agents')} className="btn-primary">
+          <button type="button" onClick={() => navigate('/agents')} className="btn-primary">
             <Home size={14} aria-hidden="true" />
             Back to agents
           </button>
-          <button onClick={() => navigate('/battle')} className="btn-secondary">
+          <button type="button" onClick={() => navigate('/battle')} className="btn-secondary">
             <Swords size={14} aria-hidden="true" />
             Battle mode
           </button>
         </div>
 
         <button
+          type="button"
           onClick={() => {
             navigate('/agents')
-            window.setTimeout(() => document.getElementById('agent-search')?.focus(), 120)
+            focusAgentSearch()
           }}
           className="mt-5 inline-flex items-center gap-1.5 font-mono text-[11px] text-zinc-400 transition-colors hover:text-black dark:hover:text-white dark:text-text-muted"
         >
