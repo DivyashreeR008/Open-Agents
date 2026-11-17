@@ -105,7 +105,10 @@ function readSecret(storageKey) {
     }
     return parsed.key
   } catch {
-    return raw // tolerate a legacy plaintext session value
+    // Migrate a plaintext session value left by an older build so it inherits
+    // the same expiry as every other key instead of staying for the whole tab.
+    if (raw.trim()) writeSecret(storageKey, raw)
+    return raw
   }
 }
 
