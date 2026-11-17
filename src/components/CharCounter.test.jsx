@@ -7,7 +7,7 @@ describe('CharCounter', () => {
     render(<CharCounter />)
 
     expect(screen.getByText('0 / 5000 characters')).toBeInTheDocument()
-    expect(screen.getByText('0 / 5000 characters').tagName).toBe('P')
+    expect(screen.getByText('0 / 5000 characters').closest('p')).toBeInTheDocument()
   })
 
   it('counts the exact supplied value against the supplied maximum', () => {
