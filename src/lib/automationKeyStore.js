@@ -105,3 +105,32 @@ export function getOrCreateDeviceKey() {
   }
   return cachedDeviceKeyPromise
 }
+
+/**
+ * Forget the device key so the next vault operation creates a fresh one.
+ * Callers use this after an explicit "reset secure storage" action or when a
+ * vault value cannot be decrypted with the key currently on this device.
+ */
+export async function resetDeviceKey() {
+  cachedDeviceKeyPromise = undefined
+  const database = await openDatabase()
+
+  try {
+    await new Promise((resolve, reject) => {
+      const transaction = database.transaction(STORE_NAME, 'readwrite')
+      const request = transaction.objectStore(STORE_NAME).delete(DEVICE_KEY_ID)
+      request.onerror = () => reject(request.error)
+      transaction.oncomplete = () => resolve()
+      transaction.onerror = () => reject(transaction.error)
+      transaction.onabort = () => reject(transaction.error)
+    })
+  } catch (error) {
+    throw new CredentialProtectionError(
+      'KEYSTORE_RESET_FAILED',
+      'The device encryption key could not be reset. Close other tabs and try again.',
+      error
+    )
+  } finally {
+    database.close()
+  }
+}
