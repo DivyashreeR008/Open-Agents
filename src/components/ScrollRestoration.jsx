@@ -81,6 +81,32 @@ export default function ScrollRestoration() {
       return
     }
 
+    if (pathChanged && location.hash) {
+      const id = decodeURIComponent(location.hash.slice(1))
+      let hashAttempts = 0
+
+      const scrollToHash = () => {
+        const target = id ? document.getElementById(id) : null
+
+        if (target) {
+          if (typeof target.scrollIntoView === 'function') {
+            target.scrollIntoView({ block: 'start' })
+          } else {
+            window.scrollTo(0, target.offsetTop || 0)
+          }
+          return
+        }
+
+        hashAttempts += 1
+        if (hashAttempts < MAX_RESTORE_FRAMES) {
+          frame.current = requestAnimationFrame(scrollToHash)
+        }
+      }
+
+      frame.current = requestAnimationFrame(scrollToHash)
+      return
+    }
+
     positions.current.set(location.key, 0)
     window.scrollTo(0, 0)
   }, [location.key, location.pathname, location.hash, navigationType])
