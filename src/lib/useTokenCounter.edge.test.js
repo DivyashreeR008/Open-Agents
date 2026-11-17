@@ -21,15 +21,12 @@ describe('token estimation at mixed code point boundaries', () => {
 })
 
 describe('useTokenCounter debounce boundaries and cleanup', () => {
-  it('estimates immediately with a zero delay for undefined text', () => {
+  it('settles immediately when undefined text cannot produce a count', () => {
     vi.useFakeTimers()
     const { result } = renderHook(() => useTokenCounter(undefined, 0))
 
-    expect(result.current).toEqual({ tokens: 0, isEstimating: true })
-
-    act(() => vi.advanceTimersByTime(0))
-
     expect(result.current).toEqual({ tokens: 0, isEstimating: false })
+    expect(vi.getTimerCount()).toBe(0)
   })
 
   it('returns to zero after the text becomes blank', () => {
@@ -42,10 +39,8 @@ describe('useTokenCounter debounce boundaries and cleanup', () => {
     expect(result.current).toEqual({ tokens: 6, isEstimating: false })
 
     rerender({ text: '   ' })
-    expect(result.current).toEqual({ tokens: 6, isEstimating: true })
-
-    act(() => vi.advanceTimersByTime(100))
     expect(result.current).toEqual({ tokens: 0, isEstimating: false })
+    expect(vi.getTimerCount()).toBe(0)
   })
 
   it('restarts the pending timer when the delay changes', () => {

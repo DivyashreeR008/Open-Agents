@@ -54,12 +54,19 @@ export function useTokenCounter(text, debounceMs = 300) {
   const timerRef = useRef(null)
 
   useEffect(() => {
-    setIsEstimating(true)
-
     if (timerRef.current) {
       clearTimeout(timerRef.current)
+      timerRef.current = null
     }
 
+    const hasText = typeof text === 'string' && text.trim().length > 0
+    if (!hasText) {
+      setTokens(0)
+      setIsEstimating(false)
+      return undefined
+    }
+
+    setIsEstimating(true)
     timerRef.current = setTimeout(() => {
       setTokens(estimateTokens(text))
       setIsEstimating(false)
