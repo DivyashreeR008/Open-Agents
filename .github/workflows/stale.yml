@@ -1,0 +1,52 @@
+name: Mark and close stale issues and pull requests
+
+on:
+  schedule:
+    # Weekly, off the hour to avoid the busiest part of the scheduler.
+    - cron: '17 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: stale
+  cancel-in-progress: false
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mark and close stale items
+        uses: actions/stale@4391f3da665fdf50b6810c1a66712fb9ba21aa93 # v11.0.0
+        with:
+          days-before-issue-stale: 45
+          days-before-issue-close: 14
+          days-before-pr-stale: 21
+          days-before-pr-close: 10
+          stale-issue-label: stale
+          stale-pr-label: stale
+          close-issue-reason: not_planned
+          exempt-issue-labels: 'pinned,security,good first issue,help wanted,triage'
+          exempt-pr-labels: 'pinned,security,dependencies,automated'
+          exempt-all-assignees: true
+          exempt-draft-pr: true
+          remove-stale-when-updated: true
+          ascending: true
+          operations-per-run: 100
+          stale-issue-message: |
+            This issue has had no activity for 45 days, so it is marked stale.
+            Comment with an update or remove the `stale` label if it should stay open.
+            It will close automatically after 14 more quiet days.
+          close-issue-message: |
+            Closing this after 14 days as stale. Reopen it if the problem is still
+            present, and include any new reproduction details.
+          stale-pr-message: |
+            This pull request has had no activity for 21 days, so it is marked stale.
+            Push an update, rebase, or comment if you are still working on it.
+            It will close after 10 more quiet days.
+          close-pr-message: |
+            Closing this stale pull request to keep the review queue focused. Reopen
+            it when you can continue the work.

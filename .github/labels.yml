@@ -93,3 +93,7 @@
 - name: 'automated'
   color: '6f42c1'
   description: 'Pull requests created by automation (Dependabot, etc.)'
+
+- name: 'stale'
+  color: 'ededed'
+  description: 'No recent activity; will close after the stale grace period'
