@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { AgentsProvider } from './lib/useAgents'
 import App from './App'
 import Preloader from './components/Preloader'
+import UpdateNotification from './components/UpdateNotification'
 import '@fontsource-variable/inter'
 import '@fontsource-variable/inter-tight'
 import '@fontsource-variable/jetbrains-mono'
@@ -33,6 +34,7 @@ function PreloaderApp() {
         <App />
       </div>
       {!preloaderDone && <Preloader onFinish={finishPreloader} />}
+      <UpdateNotification />
     </>
   )
 }
