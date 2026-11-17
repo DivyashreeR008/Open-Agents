@@ -10,6 +10,11 @@ export function formatDocumentTitle(pageTitle) {
 
 export function useDocumentTitle(pageTitle) {
   useEffect(() => {
+    const previousTitle = document.title
     document.title = formatDocumentTitle(pageTitle)
+
+    return () => {
+      document.title = previousTitle
+    }
   }, [pageTitle])
 }
