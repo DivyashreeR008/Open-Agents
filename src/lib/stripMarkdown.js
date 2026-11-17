@@ -46,9 +46,10 @@ export function stripMarkdown(text) {
     // task list, bullet and numbered list markers
     .replace(/^([ \t]*)[-*+][ \t]+(?:\[[ xX]\][ \t]+)?/gm, '$1')
     .replace(/^([ \t]*)\d+[.)][ \t]+/gm, '$1')
-    // images and links keep their label
-    .replace(/!\[([^\]]*)\]\([^)\s]*(?:\s+"[^"]*")?\)/g, '$1')
-    .replace(/\[([^\]]+)\]\([^)\s]*(?:\s+"[^"]*")?\)/g, '$1')
+    // images and links keep their label; destinations may contain balanced
+    // parentheses, as in https://en.wikipedia.org/wiki/Foo_(bar)
+    .replace(/!\[([^\]]*)\]\((?:[^()\s]|\([^()\s]*\))*(?:\s+"[^"]*")?\)/g, '$1')
+    .replace(/\[([^\]]+)\]\((?:[^()\s]|\([^()\s]*\))*(?:\s+"[^"]*")?\)/g, '$1')
     // emphasis: markers must touch the text on the inside
     .replace(/~~(?=\S)([^\n]*?\S)~~/g, '$1')
     .replace(/\*\*(?=\S)([^\n]*?\S)\*\*/g, '$1')
