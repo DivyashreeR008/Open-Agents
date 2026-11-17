@@ -59,7 +59,18 @@ export function finalizeTrace(trace, { status, finalOutput = null }) {
 export function loadTraces() {
   try {
     const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
-    return Array.isArray(parsed) ? parsed : []
+    if (!Array.isArray(parsed)) return []
+
+    return parsed
+      .filter(
+        (trace) =>
+          trace &&
+          typeof trace === 'object' &&
+          !Array.isArray(trace) &&
+          typeof trace.runId === 'string' &&
+          Array.isArray(trace.steps)
+      )
+      .slice(0, MAX_STORED_TRACES)
   } catch {
     return []
   }
