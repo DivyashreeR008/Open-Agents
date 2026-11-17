@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, Trash2 } from 'lucide-react'
 import AgentRunner from '../components/AgentRunner'
@@ -8,19 +8,72 @@ import { useAgents } from '../lib/useAgents'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
 import { buildDraftAgent, getDraft, getMissingDraftFields, removeDraft } from '../lib/marketplace'
 
+const BLOCKED_PATH_SEGMENTS = new Set(['__proto__', 'constructor', 'prototype'])
+
+function splitPath(path) {
+  return path
+    .replace(/\[(\d+)\]/g, '.$1')
+    .split('.')
+    .filter(Boolean)
+}
+
+function setConfigValue(target, path, value) {
+  const parts = splitPath(path)
+  let cursor = target
+
+  for (let i = 0; i < parts.length - 1; i += 1) {
+    const key = parts[i]
+    if (BLOCKED_PATH_SEGMENTS.has(key)) return target
+    if (!cursor[key] || typeof cursor[key] !== 'object') {
+      cursor[key] = /^\d+$/.test(parts[i + 1]) ? [] : {}
+    }
+    cursor = cursor[key]
+  }
+
+  const last = parts[parts.length - 1]
+  if (!BLOCKED_PATH_SEGMENTS.has(last)) cursor[last] = value
+  return target
+}
+
+function applyFieldValues(draft, values) {
+  const config = JSON.parse(JSON.stringify(draft.config ?? {}))
+
+  for (const field of draft.pendingCredentialFields ?? []) {
+    const value = values[field]
+    if (typeof value === 'string' && value.trim()) {
+      setConfigValue(config, field, value)
+    }
+  }
+
+  return { ...draft, config }
+}
+
 export default function MarketplaceDraftPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { agents, loading } = useAgents()
 
-  const [draft] = useState(() => getDraft(id))
+  const [draft, setDraft] = useState(() => getDraft(id))
+  const loadedId = useRef(id)
   // Credential values live in memory only. They are never written to storage,
   // so they have to be entered again after a reload.
   const [values, setValues] = useState({})
+  const [removeError, setRemoveError] = useState('')
+
+  useEffect(() => {
+    if (loadedId.current === id) return
+    loadedId.current = id
+    setDraft(getDraft(id))
+    setValues({})
+    setRemoveError('')
+  }, [id])
 
   useDocumentTitle(draft ? draft.name : 'Draft not found')
 
-  const draftAgent = useMemo(() => (draft ? buildDraftAgent(draft, agents) : null), [draft, agents])
+  const draftAgent = useMemo(
+    () => (draft ? buildDraftAgent(applyFieldValues(draft, values), agents) : null),
+    [draft, agents, values]
+  )
   const missing = draft ? getMissingDraftFields(draft, values) : []
 
   if (!draft) {
@@ -38,7 +91,16 @@ export default function MarketplaceDraftPage() {
   }
 
   const handleRemove = () => {
-    removeDraft(draft.id)
+    try {
+      if (removeDraft(draft.id) === false) {
+        setRemoveError('The draft could not be removed. Reload the page and try again.')
+        return
+      }
+    } catch {
+      setRemoveError('The draft could not be removed. Reload the page and try again.')
+      return
+    }
+
     navigate('/marketplace/drafts')
   }
 
@@ -62,6 +124,15 @@ export default function MarketplaceDraftPage() {
           </button>
         }
       />
+
+      {removeError && (
+        <p
+          role="alert"
+          className="mb-5 border border-red-300 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200"
+        >
+          {removeError}
+        </p>
+      )}
 
       {draft.pendingCredentialFields.length > 0 && (
         <section
