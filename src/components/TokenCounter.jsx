@@ -17,6 +17,11 @@ export default function TokenCounter({ value = '', modelId = '' }) {
 
   return (
     <span
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      aria-busy={isEstimating}
+      aria-label={`Estimated ${tokens.toLocaleString()} tokens${contextWindow > 0 ? ` of ${contextWindow.toLocaleString()}` : ''}${isEstimating ? ', updating' : ''}`}
       className={`inline-flex items-center gap-1 text-[11px] font-medium transition-colors ${colorClass}`}
     >
       <svg
@@ -29,6 +34,7 @@ export default function TokenCounter({ value = '', modelId = '' }) {
         strokeLinecap="round"
         strokeLinejoin="round"
         className="opacity-70"
+        aria-hidden="true"
       >
         <circle cx="12" cy="12" r="10" />
         <polyline points="12 6 12 12 16 14" />
@@ -37,11 +43,13 @@ export default function TokenCounter({ value = '', modelId = '' }) {
         ~{tokens.toLocaleString()} tokens
         {isEstimating && (
           <span
+            aria-hidden="true"
             className="ml-0.5 inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin align-middle"
             style={{ borderRadius: '50%' }}
           />
         )}
       </span>
+      {isEstimating && <span className="sr-only">Updating token estimate</span>}
       {contextWindow > 0 && <span className="opacity-60">/ {contextWindow.toLocaleString()}</span>}
     </span>
   )
