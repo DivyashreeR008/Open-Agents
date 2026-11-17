@@ -12,7 +12,7 @@ describe('Terms of Service content', () => {
     )
 
     expect(screen.getByRole('heading', { level: 1, name: 'Terms of Service' })).toBeInTheDocument()
-    expect(screen.getByText('June 2026')).toBeInTheDocument()
+    expect(screen.getByText('November 2026')).toBeInTheDocument()
   })
 
   it('keeps the liability and warranty sections distinct', () => {

@@ -35,6 +35,18 @@ const sections = [
       'To the fullest extent permitted by law, the maintainers and contributors of OpenAgents shall not be liable for any indirect, incidental, or consequential damages arising from your use of, or inability to use, the platform.',
   },
   {
+    icon: ShieldAlert,
+    title: 'AI Providers and Charges',
+    content:
+      "OpenAgents does not provide model access, API credentials, or usage credits. You connect your own account with an AI provider, and that provider bills you directly for requests made with your key. You are responsible for monitoring usage, quotas, and spend, and for complying with the provider's acceptable-use and billing terms.",
+  },
+  {
+    icon: FileText,
+    title: 'Third-Party Services',
+    content:
+      "Requests you run may be processed by third-party AI providers and other services you configure. Those services are governed by their own terms and privacy policies, not these terms. Model output can be inaccurate, incomplete, or offensive, so review it before relying on it and do not submit confidential material unless the provider's terms permit it.",
+  },
+  {
     icon: Copyright,
     title: 'Intellectual Property',
     content:
@@ -64,8 +76,8 @@ export default function TermsOfService() {
     <LegalDoc
       eyebrow="Legal"
       title="Terms of Service"
-      updated="June 2026"
-      intro="These terms outline the rules and guidelines for using OpenAgents, including your responsibilities as a user, the limitations of the platform, and how intellectual property is handled."
+      updated="November 2026"
+      intro="These terms outline the rules and guidelines for using OpenAgents, including your responsibilities as a user, the limitations of the platform, how third-party AI providers are billed, and how intellectual property is handled."
       sections={sections}
       footerTitle="Questions about these terms?"
       footerBody="OpenAgents is an open-source project built and maintained by its community. If anything here is unclear, or you'd like to suggest a change, reach out through the official GitHub repository."
