@@ -15,6 +15,10 @@ Open-Agents is a local-first web app for discovering, running, and composing AI 
 - **Local marketplace:** Publish, import, and rate agent configurations. Credential-like fields are sanitized before a listing is stored.
 - **Browser storage:** Favorites, collections, history, automations, analytics, and marketplace data stay in the browser unless a feature explicitly uses a configured backend.
 
+## Supported providers
+
+OpenAI, Anthropic, Google Gemini, and OpenRouter are supported. Add a key for any provider you want to use from the in-app key bar; keys are not read from `.env.local`. Battle mode sends the same prompt to all four providers and shows the responses side by side.
+
 ## Tech stack
 
 The app is built with React, Vite, Tailwind CSS, Vitest, and Testing Library. Agent definitions are plain JavaScript modules, and the production build is a static site.

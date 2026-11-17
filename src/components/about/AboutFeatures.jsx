@@ -15,14 +15,14 @@ export default function AboutFeatures() {
     {
       title: 'Multi-LLM Provider Support',
       description:
-        'Switch directly between OpenAI (GPT-4o), Anthropic (Claude Sonnet), and Google (Gemini Flash) at runtime with zero setup.',
+        'Switch directly between OpenAI (GPT-4o), Anthropic (Claude Sonnet), Google (Gemini Flash), and OpenRouter at runtime with zero setup.',
       icon: Cpu,
       color: 'bg-zinc-500/20 text-zinc-500',
     },
     {
       title: 'Battle Mode Arena',
       description:
-        'Pit three AI models head-to-head on the exact same prompt, compare speed & response quality, and pick the winner.',
+        'Pit four AI providers head-to-head on the exact same prompt, compare speed and response quality, and pick the winner.',
       icon: Swords,
       color: 'bg-zinc-500/20 text-zinc-500',
     },
