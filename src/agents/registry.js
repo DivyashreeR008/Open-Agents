@@ -64,15 +64,47 @@ let cachedAgentsPromise = null
 export function loadAllAgents() {
   if (cachedAgentsPromise) return cachedAgentsPromise
 
-  cachedAgentsPromise = Promise.all(Object.values(modules).map((loader) => loader()))
-    .then((entries) => {
-      return normalizeAgents(entries.map((mod) => mod.default))
+  cachedAgentsPromise = (async () => {
+    const entries = Object.entries(modules)
+    const results = await Promise.allSettled(
+      entries.map(async ([file, loader]) => {
+        const mod = await loader()
+        return { file, agent: mod?.default }
+      })
+    )
+
+    const agents = []
+    const failures = []
+
+    results.forEach((result, index) => {
+      if (result.status === 'fulfilled') {
+        agents.push(result.value.agent)
+      } else {
+        failures.push({ file: entries[index][0], reason: result.reason })
+      }
     })
-    .catch((error) => {
-      // Allow future calls to retry initialization after a failed load.
-      cachedAgentsPromise = null
-      throw error
-    })
+
+    if (failures.length > 0) {
+      for (const { file, reason } of failures) {
+        console.warn(`Skipping agent definition that failed to load: ${file}`, reason)
+      }
+
+      if (agents.length === 0) {
+        cachedAgentsPromise = null
+        throw new AggregateError(
+          failures.map(({ reason }) => reason),
+          'No agent definitions could be loaded'
+        )
+      }
+    }
+
+    return normalizeAgents(agents)
+  })()
+
+  cachedAgentsPromise.catch(() => {
+    // Allow future calls to retry when every definition failed.
+    cachedAgentsPromise = null
+  })
 
   return cachedAgentsPromise
 }
