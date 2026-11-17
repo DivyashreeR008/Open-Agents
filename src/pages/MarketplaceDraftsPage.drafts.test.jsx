@@ -22,7 +22,7 @@ describe('MarketplaceDraftsPage list states', () => {
     )
 
     expect(
-      screen.getByRole('heading', { level: 3, name: 'No imported drafts' })
+      screen.getByRole('heading', { level: 2, name: 'No imported drafts' })
     ).toBeInTheDocument()
   })
 
@@ -60,7 +60,7 @@ describe('MarketplaceDraftsPage list states', () => {
 
     expect(actions.removeDraft).toHaveBeenCalledWith('d1')
     expect(
-      screen.getByRole('heading', { level: 3, name: 'No imported drafts' })
+      screen.getByRole('heading', { level: 2, name: 'No imported drafts' })
     ).toBeInTheDocument()
   })
 })

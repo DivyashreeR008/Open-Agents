@@ -6,7 +6,7 @@ describe('EmptyState optional content', () => {
   it('omits the icon and description containers when only a title is supplied', () => {
     const { container } = render(<EmptyState title="Nothing here" />)
 
-    expect(screen.getByRole('heading', { level: 3, name: 'Nothing here' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2, name: 'Nothing here' })).toBeInTheDocument()
     expect(container.querySelector('svg')).toBeNull()
     expect(container.querySelector('p')).toBeNull()
   })

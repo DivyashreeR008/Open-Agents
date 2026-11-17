@@ -1,7 +1,16 @@
 /**
  * EmptyState — one dashed-panel treatment for every "nothing here yet" case.
  */
-export default function EmptyState({ icon: Icon, title, description, action, className = '' }) {
+export default function EmptyState({
+  icon: Icon,
+  title,
+  description,
+  action,
+  className = '',
+  level = 2,
+}) {
+  const Heading = `h${Math.min(6, Math.max(2, Number(level) || 2))}`
+
   return (
     <div
       className={`flex flex-col items-center justify-center border border-dashed border-zinc-300 px-6 py-16 text-center dark:border-border-light ${className}`}
@@ -10,7 +19,9 @@ export default function EmptyState({ icon: Icon, title, description, action, cla
         <Icon size={20} className="mb-3 text-zinc-300 dark:text-text-muted" aria-hidden="true" />
       )}
 
-      <h3 className="text-[13px] font-semibold text-zinc-900 dark:text-text-primary">{title}</h3>
+      <Heading className="text-[13px] font-semibold text-zinc-900 dark:text-text-primary">
+        {title}
+      </Heading>
 
       {description && (
         <p className="mt-1 max-w-sm text-xs leading-relaxed text-zinc-500 dark:text-text-secondary">

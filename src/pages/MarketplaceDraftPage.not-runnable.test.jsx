@@ -31,7 +31,7 @@ describe('MarketplaceDraftPage missing source agent', () => {
     )
 
     expect(
-      screen.getByRole('heading', { level: 3, name: 'This draft cannot run' })
+      screen.getByRole('heading', { level: 2, name: 'This draft cannot run' })
     ).toBeInTheDocument()
     expect(screen.getByText(/no longer in the catalogue/)).toBeInTheDocument()
     expect(screen.queryByText('runner')).not.toBeInTheDocument()

@@ -44,7 +44,7 @@ describe('MarketplaceDraftPage readiness states', () => {
     state.missing = []
     renderPage()
 
-    expect(screen.getByRole('heading', { level: 3, name: 'Draft not found' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2, name: 'Draft not found' })).toBeInTheDocument()
   })
 
   it('counts the credential fields still blocking the runner', () => {

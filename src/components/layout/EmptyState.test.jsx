@@ -4,11 +4,23 @@ import { Inbox } from 'lucide-react'
 import EmptyState from './EmptyState'
 
 describe('EmptyState', () => {
-  it('renders a level-three title and the guidance text', () => {
+  it('renders a level-two title and the guidance text', () => {
     render(<EmptyState title="No agents yet" description="Add a definition to get started." />)
 
-    expect(screen.getByRole('heading', { level: 3, name: 'No agents yet' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2, name: 'No agents yet' })).toBeInTheDocument()
     expect(screen.getByText('Add a definition to get started.')).toBeInTheDocument()
+  })
+
+  it('nests under a section when the caller requests a deeper level', () => {
+    render(<EmptyState title="No runs" level={3} />)
+
+    expect(screen.getByRole('heading', { level: 3, name: 'No runs' })).toBeInTheDocument()
+  })
+
+  it('clamps unsupported heading levels to the document range', () => {
+    render(<EmptyState title="No runs" level={9} />)
+
+    expect(screen.getByRole('heading', { level: 6, name: 'No runs' })).toBeInTheDocument()
   })
 
   it('renders a decorative icon at the documented size', () => {

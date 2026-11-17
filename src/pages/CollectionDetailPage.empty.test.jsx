@@ -34,7 +34,7 @@ describe('CollectionDetailPage empty collection', () => {
     )
 
     expect(
-      screen.getByRole('heading', { level: 3, name: 'No agents in this collection yet' })
+      screen.getByRole('heading', { level: 2, name: 'No agents in this collection yet' })
     ).toBeInTheDocument()
     expect(screen.getByText(/Use the checklist below to add agents/)).toBeInTheDocument()
     expect(screen.getByText('agent-picker')).toBeInTheDocument()
