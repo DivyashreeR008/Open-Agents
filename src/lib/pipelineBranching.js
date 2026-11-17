@@ -100,11 +100,18 @@ export function evaluateConditionalStep(step, context) {
  * @returns {string[]}
  */
 export function validateConditionalStep(step, allSteps = []) {
+  if (!step || typeof step !== 'object' || Array.isArray(step)) {
+    return ['Conditional step must be an object.']
+  }
+
   const problems = []
   if (!step.id) problems.push('Conditional step is missing an "id".')
   if (!step.condition) problems.push('Conditional step is missing a "condition" template.')
-  const labels =
-    step.branches && typeof step.branches === 'object' ? Object.keys(step.branches) : []
+  const branchMap =
+    step.branches && typeof step.branches === 'object' && !Array.isArray(step.branches)
+      ? step.branches
+      : null
+  const labels = branchMap ? Object.keys(branchMap) : []
   if (labels.length === 0) problems.push('Conditional step defines no branches.')
   if (!labels.includes(DEFAULT_BRANCH)) {
     problems.push(
@@ -112,13 +119,16 @@ export function validateConditionalStep(step, allSteps = []) {
     )
   }
   for (const label of labels) {
-    if (!Array.isArray(step.branches[label]) || step.branches[label].length === 0) {
+    const agents = branchMap[label]
+    if (!Array.isArray(agents) || agents.length === 0) {
       problems.push(`Branch "${label}" has no agent steps.`)
+    } else if (agents.some((agentId) => typeof agentId !== 'string' || !agentId.trim())) {
+      problems.push(`Branch "${label}" contains an invalid agent id.`)
     }
   }
   const circularProblems = detectCircularBranches(step, allSteps)
   problems.push(...circularProblems)
-  return problems
+  return [...new Set(problems)]
 }
 
 function getPath(obj, path) {
