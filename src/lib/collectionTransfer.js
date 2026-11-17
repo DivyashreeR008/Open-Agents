@@ -90,14 +90,14 @@ export function parseCollectionImport(text, { knownAgentIds } = {}) {
   }
 
   if (!Array.isArray(source.agentIds)) return fail('The collection has no agent list.')
-  if (source.agentIds.length > MAX_AGENTS_PER_COLLECTION) {
-    return fail(`A collection can hold at most ${MAX_AGENTS_PER_COLLECTION} agents.`)
-  }
   if (!source.agentIds.every((id) => typeof id === 'string' && AGENT_ID_PATTERN.test(id))) {
     return fail('The agent list contains an invalid agent id.')
   }
 
   const unique = [...new Set(source.agentIds)]
+  if (unique.length > MAX_AGENTS_PER_COLLECTION) {
+    return fail(`A collection can hold at most ${MAX_AGENTS_PER_COLLECTION} agents.`)
+  }
   if (!knownAgentIds) return { ok: true, name, agentIds: unique, skippedAgentIds: [] }
 
   const known = new Set(typeof knownAgentIds === 'string' ? [knownAgentIds] : knownAgentIds)
