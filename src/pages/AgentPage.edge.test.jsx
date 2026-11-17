@@ -64,7 +64,7 @@ describe('AgentPage edge behavior', () => {
 
     expect(screen.getByText('Missing agent page')).toBeInTheDocument()
     expect(screen.queryByTestId('runner')).not.toBeInTheDocument()
-    expect(mocks.useDocumentTitle).toHaveBeenCalledWith('Agent')
+    expect(mocks.useDocumentTitle).toHaveBeenCalledWith('Page not found')
     expect(localStorage.getItem('recentAgents')).toBeNull()
   })
 

@@ -57,9 +57,9 @@ describe('AgentPage title and remount', () => {
     expect(mocks.useDocumentTitle).toHaveBeenCalledWith('Alpha Agent')
   })
 
-  it('uses the generic fallback for an unknown or loading agent', () => {
+  it('uses a not-found title once loading has finished without a match', () => {
     renderPage('missing')
-    expect(mocks.useDocumentTitle).toHaveBeenCalledWith('Agent')
+    expect(mocks.useDocumentTitle).toHaveBeenCalledWith('Page not found')
   })
 
   it('remounts the runner and updates the title when the id changes', () => {
