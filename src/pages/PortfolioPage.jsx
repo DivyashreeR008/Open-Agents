@@ -31,8 +31,8 @@ export default function PortfolioPage() {
   ]
 
   const stack = [
-    ['Frontend', 'React 18, Vite 6, Tailwind CSS 3'],
-    ['Routing', 'React Router 6, lazy-loaded routes'],
+    ['Frontend', 'React 19, Vite 8, Tailwind CSS 4'],
+    ['Routing', 'React Router 7, lazy-loaded routes'],
     ['Backend', 'Supabase — Postgres, auth, storage'],
     ['Agents', `${agentCount} file-based definitions, zero-config registry`],
     ['Testing', 'Vitest'],
@@ -40,13 +40,6 @@ export default function PortfolioPage() {
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black antialiased">
-      <a
-        href="#index"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-black focus:text-sm"
-      >
-        Skip to content
-      </a>
-
       <header className="border-b border-white/10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
           <Link to="/" className="font-mono text-sm tracking-tight shrink-0">
@@ -74,7 +67,7 @@ export default function PortfolioPage() {
         </div>
       </header>
 
-      <main>
+      <div>
         <section className="border-b border-white/10">
           <div className="max-w-5xl mx-auto px-6 pt-20 pb-16 md:pt-28 md:pb-24">
             <p className="font-mono text-xs text-neutral-500 mb-6">
@@ -240,7 +233,7 @@ export default function PortfolioPage() {
             </p>
           </div>
         </section>
-      </main>
+      </div>
     </div>
   )
 }
