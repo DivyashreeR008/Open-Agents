@@ -7,7 +7,10 @@ const MAX_POLLS = 20
 
 function isRendered(el) {
   for (let node = el; node; node = node.parentElement) {
-    if (getComputedStyle(node).display === 'none') return false
+    if (node.hidden || node.inert || node.getAttribute?.('aria-hidden') === 'true') return false
+
+    const style = getComputedStyle(node)
+    if (style.display === 'none' || style.visibility === 'hidden') return false
   }
   return true
 }
