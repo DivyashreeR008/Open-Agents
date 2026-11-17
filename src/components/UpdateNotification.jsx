@@ -24,14 +24,18 @@ export default function UpdateNotification({
 
   return (
     <aside
-      role="status"
-      aria-live="polite"
+      role="region"
       aria-label="Application update available"
       className="fixed bottom-5 left-5 z-50 flex max-w-sm items-center gap-3 border border-zinc-300 bg-white px-4 py-3 shadow-pop dark:border-border dark:bg-surface-card"
     >
       <div className="flex-1 text-xs">
         <p className="font-semibold text-zinc-900 dark:text-text-primary">Update Available</p>
-        <p className="text-zinc-600 dark:text-text-secondary">
+        <p
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          className="text-zinc-600 dark:text-text-secondary"
+        >
           A new version of Open Agents is ready.
         </p>
       </div>
