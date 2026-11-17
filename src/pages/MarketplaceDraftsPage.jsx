@@ -10,9 +10,20 @@ export default function MarketplaceDraftsPage() {
   useDocumentTitle('Imported drafts')
 
   const [drafts, setDrafts] = useState(loadDrafts)
+  const [removeError, setRemoveError] = useState('')
 
   const handleRemove = (draft) => {
-    removeDraft(draft.id)
+    try {
+      if (removeDraft(draft.id) === false) {
+        setRemoveError(`Could not remove ${draft.name}. Reload the page and try again.`)
+        return
+      }
+    } catch {
+      setRemoveError(`Could not remove ${draft.name}. Reload the page and try again.`)
+      return
+    }
+
+    setRemoveError('')
     setDrafts(loadDrafts())
   }
 
@@ -29,6 +40,15 @@ export default function MarketplaceDraftsPage() {
           </Link>
         }
       />
+
+      {removeError && (
+        <p
+          role="alert"
+          className="mb-5 border border-red-300 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200"
+        >
+          {removeError}
+        </p>
+      )}
 
       {drafts.length === 0 ? (
         <EmptyState
@@ -67,12 +87,13 @@ export default function MarketplaceDraftsPage() {
                   Open
                 </Link>
                 <button
+                  type="button"
                   onClick={() => handleRemove(draft)}
                   className="btn-ghost h-7 px-2 hover:text-black dark:hover:text-white"
                   aria-label={`Remove ${draft.name}`}
                   title="Remove"
                 >
-                  <Trash2 size={13} />
+                  <Trash2 size={13} aria-hidden="true" />
                 </button>
               </div>
             </li>
