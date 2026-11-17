@@ -21,6 +21,18 @@ const sections = [
   },
   {
     icon: Eye,
+    title: 'Prompts and Outputs',
+    content:
+      "When you run an agent, the prompt and any inputs you provide are sent directly from your browser to the AI provider you selected. OpenAgents does not receive a copy of that request. The provider controls how long it retains the request and whether it uses it for training, so review that provider's policy before submitting sensitive material. Generated output is rendered in your browser and is not uploaded to OpenAgents unless you save or share it.",
+  },
+  {
+    icon: Lock,
+    title: 'API Keys',
+    content:
+      "API keys you enter are kept in this browser session, or in encrypted local storage when you explicitly save a key for an automation. Keys are sent only to the provider you choose and are not transmitted to OpenAgents servers. Clearing this site's browser storage removes saved keys from this device; revoke the key with the provider as well if you believe it was exposed.",
+  },
+  {
+    icon: Eye,
     title: 'How We Use Your Information',
     content:
       'Information collected through the platform is used to provide core functionality, improve performance, troubleshoot issues, understand feature usage, and enhance future releases. We do not sell your personal information.',
@@ -67,7 +79,7 @@ export default function Privacy() {
     <LegalDoc
       eyebrow="Legal"
       title="Privacy Policy"
-      updated="June 2026"
+      updated="November 2026"
       intro="Your privacy matters. This policy explains what OpenAgents collects, how that information is used, how browser storage works, the rights you have over your data, and the measures taken to protect it."
       sections={sections}
       footerTitle="Transparency and trust"
