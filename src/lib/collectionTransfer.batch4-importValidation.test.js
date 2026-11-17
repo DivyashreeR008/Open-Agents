@@ -31,7 +31,9 @@ describe('collection import validation', () => {
       ok: false,
       error: 'The agent list contains an invalid agent id.',
     })
-    expect(parseCollectionImport(payload({ agentIds: Array(16).fill('a') }))).toEqual({
+    expect(
+      parseCollectionImport(payload({ agentIds: Array.from({ length: 16 }, (_, i) => `a${i}`) }))
+    ).toEqual({
       ok: false,
       error: 'A collection can hold at most 15 agents.',
     })
