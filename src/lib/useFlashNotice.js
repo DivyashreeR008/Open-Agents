@@ -23,6 +23,20 @@ export function useFlashNotice(duration = 3500) {
     [clearTimer, duration]
   )
 
+  const durationRef = useRef(duration)
+
+  useEffect(() => {
+    if (durationRef.current === duration) return
+    durationRef.current = duration
+    if (timerRef.current === null) return
+
+    clearTimer()
+    timerRef.current = setTimeout(() => {
+      timerRef.current = null
+      setNotice(null)
+    }, duration)
+  }, [clearTimer, duration])
+
   useEffect(() => clearTimer, [clearTimer])
 
   return { notice, flash }
