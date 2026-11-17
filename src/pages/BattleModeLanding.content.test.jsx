@@ -26,7 +26,7 @@ describe('BattleModeLanding content', () => {
 
   it('opens the setup route from the primary action', () => {
     renderPage()
-    fireEvent.click(screen.getByRole('button', { name: 'Start Battle' }))
+    fireEvent.click(screen.getByRole('link', { name: 'Start Battle' }))
 
     expect(screen.getByText('setup route')).toBeInTheDocument()
   })

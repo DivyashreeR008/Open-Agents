@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Swords, Crosshair, PenLine, Cpu, Trophy, Bot } from 'lucide-react'
 import BattleNavbar from '../components/BattleNavbar'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
@@ -46,12 +46,11 @@ const providers = [
 ]
 
 export default function BattleModeLanding() {
-  const navigate = useNavigate()
   useDocumentTitle('Battle Mode')
 
   return (
     <div className="min-h-screen battle-page-transition dark:bg-surface bg-gray-50 dark:text-text-primary text-gray-900">
-      <main className="pt-12 pb-12 flex min-h-screen flex-col items-center px-4">
+      <div className="pt-12 pb-12 flex min-h-screen flex-col items-center px-4">
         {/* Hero */}
         <div className="text-center mb-14 battle-fade-in">
           <div className="w-16 h-16 bg-zinc-400/10 border border-zinc-400/30 flex items-center justify-center mx-auto mb-4 battle-glow-white hover:border-zinc-400/60 transition-all duration-300 cursor-default">
@@ -184,15 +183,15 @@ export default function BattleModeLanding() {
         </div>
 
         {/* Start Button */}
-        <button
-          onClick={() => navigate('/battle/setup')}
+        <Link
+          to="/battle/setup"
           className="flex items-center gap-2.5 px-8 py-4 text-base font-bold bg-zinc-500 text-white hover:bg-zinc-400 transition-colors duration-200 battle-fade-in border border-zinc-400/20 hover:border-zinc-300/40 shadow-panel "
           style={{ animationDelay: '600ms' }}
         >
-          <Swords size={18} className="text-zinc-600 dark:text-zinc-400" />
+          <Swords size={18} className="text-zinc-600 dark:text-zinc-400" aria-hidden="true" />
           Start Battle
-        </button>
-      </main>
+        </Link>
+      </div>
     </div>
   )
 }
