@@ -1,15 +1,22 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import CollectionModal from '../CollectionModal'
 import { MAX_COLLECTION_IMPORT_BYTES, parseCollectionImport } from '../../lib/collectionTransfer'
 
 export default function ImportCollectionModal({ agents, onImport, onClose }) {
   const [preview, setPreview] = useState(null)
   const [error, setError] = useState('')
+  const readIdRef = useRef(0)
 
   const agentById = useMemo(() => new Map(agents.map((agent) => [agent.id, agent])), [agents])
 
   const handleFile = async (event) => {
-    const file = event.target.files?.[0]
+    const input = event.target
+    const file = input.files?.[0]
+    const readId = readIdRef.current + 1
+    readIdRef.current = readId
+
+    // Allow the same file to be selected again after a validation error.
+    input.value = ''
     setPreview(null)
     setError('')
     if (!file) return
@@ -27,9 +34,11 @@ export default function ImportCollectionModal({ agents, onImport, onClose }) {
     try {
       text = await file.text()
     } catch {
-      setError('Could not read that file.')
+      if (readId === readIdRef.current) setError('Could not read that file.')
       return
     }
+
+    if (readId !== readIdRef.current) return
 
     const result = parseCollectionImport(text, { knownAgentIds: agentById.keys() })
     if (!result.ok) {
@@ -64,6 +73,7 @@ export default function ImportCollectionModal({ agents, onImport, onClose }) {
           <input
             type="file"
             accept="application/json,.json"
+            aria-invalid={error ? 'true' : undefined}
             onChange={handleFile}
             className="mt-2 block w-full text-sm text-gray-700 dark:text-text-secondary"
           />
