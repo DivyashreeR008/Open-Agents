@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { Check } from 'lucide-react'
 import {
   GOAL_OPTIONS,
@@ -7,13 +8,14 @@ import {
   EXTRA_PREFERENCE_OPTIONS,
 } from '../../lib/agentRecommendation/constants.js'
 
-function OptionButton({ option, selected, onClick }) {
+function OptionButton({ option, selected, onClick, errorId }) {
   const Icon = option.icon
   return (
     <button
       type="button"
       onClick={onClick}
       aria-pressed={selected}
+      aria-describedby={errorId}
       className={`min-h-11 border p-4 text-left transition-colors duration-200 ${selected ? 'border-zinc-900 bg-zinc-900/5 text-zinc-900 dark:border-white dark:bg-white/10 dark:text-white' : 'border-gray-200 bg-white text-gray-700 hover:border-zinc-400/60 dark:bg-surface-card dark:border-border dark:text-text-secondary dark:hover:border-zinc-400'}`}
     >
       <span className="flex items-start gap-3">
@@ -46,12 +48,15 @@ export default function RecommendationWizardStep({
   setPreference,
   toggleExtraPreference,
 }) {
+  const errorId = useId()
+
   if (stepIndex === 0)
     return (
       <StepShell
         step="Step 1 of 5"
         title="What do you want help with today?"
         error={errors.primaryGoal}
+        errorId={errorId}
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {GOAL_OPTIONS.map((option) => (
@@ -60,6 +65,7 @@ export default function RecommendationWizardStep({
               option={option}
               selected={preferences.primaryGoal === option.id}
               onClick={() => setPreference('primaryGoal', option.id)}
+              errorId={errors.primaryGoal ? errorId : undefined}
             />
           ))}
         </div>
@@ -71,6 +77,7 @@ export default function RecommendationWizardStep({
         step="Step 2 of 5"
         title="How much guidance do you want?"
         error={errors.experienceLevel}
+        errorId={errorId}
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {EXPERIENCE_OPTIONS.map((option) => (
@@ -79,6 +86,7 @@ export default function RecommendationWizardStep({
               option={option}
               selected={preferences.experienceLevel === option.id}
               onClick={() => setPreference('experienceLevel', option.id)}
+              errorId={errors.experienceLevel ? errorId : undefined}
             />
           ))}
         </div>
@@ -161,7 +169,7 @@ export default function RecommendationWizardStep({
   )
 }
 
-function StepShell({ step, title, helper, error, children }) {
+function StepShell({ step, title, helper, error, errorId, children }) {
   return (
     <div className="space-y-4">
       <div>
@@ -176,7 +184,7 @@ function StepShell({ step, title, helper, error, children }) {
         </h2>
         {helper && <p className="mt-1 text-xs text-gray-500 dark:text-text-secondary">{helper}</p>}
         {error && (
-          <p className="mt-2 text-xs font-medium text-zinc-500" role="alert">
+          <p id={errorId} className="mt-2 text-xs font-medium text-zinc-500" role="alert">
             {error}
           </p>
         )}
