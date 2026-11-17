@@ -109,6 +109,7 @@ export function isUnexecutedRun(run) {
 }
 
 function formatWindow(ts) {
+  if (!Number.isFinite(ts)) return null
   return new Date(ts).toLocaleString(undefined, {
     month: 'short',
     day: 'numeric',
@@ -123,12 +124,19 @@ function formatWindow(ts) {
  */
 export function describeUnexecutedRun(run) {
   const missed = run?.status === 'missed'
-  const count = (missed ? run.missedCount : run?.skippedCount) || 1
+  const recordedCount = Number(missed ? run.missedCount : run?.skippedCount)
+  const count = Number.isFinite(recordedCount) && recordedCount > 0 ? Math.floor(recordedCount) : 1
   const noun = count === 1 ? 'run' : 'runs'
   const first = run?.firstWindow ?? run?.startedAt
   const last = run?.lastWindow ?? run?.startedAt
+  const firstLabel = formatWindow(first)
+  const lastLabel = formatWindow(last)
   const when =
-    first === last ? formatWindow(first) : `${formatWindow(first)} to ${formatWindow(last)}`
+    firstLabel && lastLabel
+      ? firstLabel === lastLabel
+        ? firstLabel
+        : `${firstLabel} to ${lastLabel}`
+      : 'at an unknown time'
 
   if (missed) {
     const setting = MISSED_RUN_POLICIES.find((p) => p.value === run.policy)
