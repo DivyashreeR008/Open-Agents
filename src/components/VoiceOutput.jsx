@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useId } from 'react'
 import { Volume2, VolumeX, Square } from 'lucide-react'
 import { stripMarkdown } from '../lib/stripMarkdown'
 
@@ -26,16 +26,25 @@ export default function VoiceOutput({ text, lang, rate = 1, pitch = 1 }) {
   const [status, setStatus] = useState('idle') // "idle" | "speaking" | "paused" | "finished" | "stopped" | "error"
   const [errorMsg, setErrorMsg] = useState('')
   const utteranceRef = useRef(null)
+  const mountedRef = useRef(false)
+  const hintId = useId()
 
   const isSupported = typeof window !== 'undefined' && 'speechSynthesis' in window
 
-  // Cancel speech if the component unmounts or text changes while speaking
+  // Cancel speech if the component unmounts or text changes while speaking.
+  // Unmount cleanup must not update state after the component is gone.
   const cancel = useCallback(() => {
     if (isSupported) window.speechSynthesis.cancel()
-    setStatus('idle')
+    if (mountedRef.current) setStatus('idle')
   }, [isSupported])
 
-  useEffect(() => () => cancel(), [cancel])
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+      if (isSupported) window.speechSynthesis.cancel()
+    }
+  }, [isSupported])
   useEffect(() => {
     // If output changes while speaking, stop the previous reading
     if (status === 'speaking' || status === 'paused') cancel()
@@ -60,9 +69,14 @@ export default function VoiceOutput({ text, lang, rate = 1, pitch = 1 }) {
     utterance.rate = rate
     utterance.pitch = pitch
 
-    utterance.onstart = () => setStatus('speaking')
-    utterance.onend = () => setStatus('finished')
+    utterance.onstart = () => {
+      if (mountedRef.current) setStatus('speaking')
+    }
+    utterance.onend = () => {
+      if (mountedRef.current) setStatus('finished')
+    }
     utterance.onerror = (e) => {
+      if (!mountedRef.current) return
       if (e.error === 'interrupted' || e.error === 'canceled') {
         setStatus('idle')
         return
@@ -107,15 +121,23 @@ export default function VoiceOutput({ text, lang, rate = 1, pitch = 1 }) {
   return (
     <span className="relative inline-flex items-center gap-1">
       {/* Screen-reader status announcements for playback state */}
-      <span role="status" aria-live="polite" className="sr-only">
+      <span role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {statusMessage}
       </span>
+      {(!isSupported || !text) && (
+        <span id={hintId} className="sr-only">
+          {!isSupported
+            ? 'Text-to-speech is not supported in this browser.'
+            : 'There is no response to read aloud yet.'}
+        </span>
+      )}
 
       {/* Play / Pause button */}
       <button
         type="button"
         onClick={isActive ? togglePause : speak}
         disabled={!isSupported || !text}
+        aria-describedby={!isSupported || !text ? hintId : undefined}
         title={
           !isSupported
             ? 'Text-to-speech not supported in this browser'
@@ -140,9 +162,9 @@ export default function VoiceOutput({ text, lang, rate = 1, pitch = 1 }) {
         ].join(' ')}
       >
         {isSpeaking ? (
-          <Volume2 size={15} strokeWidth={2} className="animate-pulse" />
+          <Volume2 size={15} strokeWidth={2} className="animate-pulse" aria-hidden="true" />
         ) : (
-          <Volume2 size={15} strokeWidth={2} />
+          <Volume2 size={15} strokeWidth={2} aria-hidden="true" />
         )}
       </button>
 
@@ -155,7 +177,7 @@ export default function VoiceOutput({ text, lang, rate = 1, pitch = 1 }) {
           aria-label="Stop reading"
           className="flex items-center justify-center w-8 h-8 bg-gray-100 text-gray-600 hover:bg-zinc-50 hover:text-zinc-600 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-1 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-zinc-900/30 dark:hover:text-zinc-400"
         >
-          <Square size={13} strokeWidth={2} fill="currentColor" />
+          <Square size={13} strokeWidth={2} fill="currentColor" aria-hidden="true" />
         </button>
       )}
 
@@ -182,7 +204,11 @@ export default function VoiceOutput({ text, lang, rate = 1, pitch = 1 }) {
       )}
 
       {/* Paused indicator */}
-      {isPaused && <span className="text-xs text-zinc-500 font-medium ml-1">paused</span>}
+      {isPaused && (
+        <span aria-hidden="true" className="text-xs text-zinc-500 font-medium ml-1">
+          paused
+        </span>
+      )}
 
       {/* Error tooltip */}
       {status === 'error' && errorMsg && (
