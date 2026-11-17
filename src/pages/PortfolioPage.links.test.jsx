@@ -37,9 +37,10 @@ describe('PortfolioPage link safety', () => {
     expect(mail).not.toHaveAttribute('target')
   })
 
-  it('points the skip link at the index section', () => {
+  it('leaves the app skip link and main landmark to the shell', () => {
     const { container } = renderPage()
-    expect(screen.getByRole('link', { name: 'Skip to content' })).toHaveAttribute('href', '#index')
+    expect(screen.queryByRole('link', { name: 'Skip to content' })).not.toBeInTheDocument()
+    expect(container.querySelector('main')).toBeNull()
     expect(container.querySelector('#index')).toBeInTheDocument()
   })
 })
