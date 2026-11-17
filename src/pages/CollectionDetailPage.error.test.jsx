@@ -36,7 +36,7 @@ describe('CollectionDetailPage agent load failure', () => {
     )
 
     expect(
-      screen.getByRole('heading', { level: 3, name: 'Unable to load agents' })
+      screen.getByRole('heading', { level: 2, name: 'Unable to load agents' })
     ).toBeInTheDocument()
     expect(
       screen.getByText(/Refresh the page and try opening this collection again/)
