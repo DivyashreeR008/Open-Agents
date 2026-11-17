@@ -19,6 +19,15 @@ export default function PageTransition({ children }) {
     prevLocation.current = location
 
     if (prev.pathname !== location.pathname) {
+      const reduceMotion =
+        typeof window.matchMedia === 'function' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+      if (reduceMotion) {
+        setIsTransitioning(false)
+        return
+      }
+
       // Determine direction based on pathname comparison
       setDirection(location.pathname > prev.pathname ? 'next' : 'prev')
       setIsTransitioning(true)
