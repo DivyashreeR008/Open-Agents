@@ -12,7 +12,7 @@ describe('Privacy policy content', () => {
     )
 
     expect(screen.getByRole('heading', { level: 1, name: 'Privacy Policy' })).toBeInTheDocument()
-    expect(screen.getByText('June 2026')).toBeInTheDocument()
+    expect(screen.getByText('November 2026')).toBeInTheDocument()
   })
 
   it('renders every policy section in order', () => {
@@ -29,6 +29,8 @@ describe('Privacy policy content', () => {
       'Information We Collect',
       'Cookies & Local Storage',
       'Network Activity',
+      'Prompts and Outputs',
+      'API Keys',
       'How We Use Your Information',
       'Data Security',
       'Your Privacy Rights',
