@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
-import { Loader2 } from 'lucide-react'
+import { useEffect, useMemo } from 'react'
+import { Link, useParams } from 'react-router-dom'
+import { Loader2, Store } from 'lucide-react'
 
 import AgentRunner from '../components/AgentRunner'
 import ErrorCard from '../components/ErrorCard'
@@ -8,6 +8,7 @@ import NotFoundPage from './NotFoundPage'
 
 import { useAgents } from '../lib/useAgents'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
+import { loadListings } from '../lib/marketplace'
 
 export default function AgentPage() {
   const { id } = useParams()
@@ -16,7 +17,12 @@ export default function AgentPage() {
 
   const agent = agents.find((a) => a.id === id)
 
-  useDocumentTitle(agent?.name ?? 'Agent')
+  useDocumentTitle(agent?.name ?? (isLoading || error ? 'Agent' : 'Page not found'))
+
+  const listing = useMemo(() => {
+    if (!agent) return null
+    return loadListings().find((item) => item.config?.baseAgentId === agent.id) ?? null
+  }, [agent])
 
   useEffect(() => {
     if (!agent) return
@@ -71,5 +77,34 @@ export default function AgentPage() {
     return <NotFoundPage />
   }
 
-  return <AgentRunner key={agent.id} agent={agent} />
+  return (
+    <>
+      <div className="mx-auto w-full max-w-5xl px-4 pt-4">
+        <p
+          role="note"
+          className="border border-amber-300 bg-amber-50 p-3 text-xs leading-relaxed text-amber-900 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100"
+        >
+          Treat pasted emails, documents, issues, and web pages as data, not instructions. Text
+          inside them can try to redirect this run.
+        </p>
+
+        {listing && (
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border border-zinc-200 p-3 text-xs dark:border-border">
+            <span className="text-zinc-600 dark:text-text-secondary">
+              Marketplace listing by {listing.author}: {listing.name}
+            </span>
+            <Link
+              to="/marketplace"
+              className="inline-flex items-center gap-1 font-medium text-zinc-900 underline underline-offset-2 dark:text-text-primary"
+            >
+              <Store size={13} aria-hidden="true" />
+              Browse the marketplace
+            </Link>
+          </div>
+        )}
+      </div>
+
+      <AgentRunner key={agent.id} agent={agent} />
+    </>
+  )
 }
