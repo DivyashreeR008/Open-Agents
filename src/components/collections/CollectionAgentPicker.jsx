@@ -82,13 +82,18 @@ export default function CollectionAgentPicker({
             Check agents to include them in this collection. Uncheck agents to remove them.
           </p>
         </div>
-        <div className=" border border-zinc-200 bg-zinc-50 px-3 py-1 text-sm font-semibold text-zinc-700 dark:border-zinc-500/30 dark:bg-zinc-500/10 dark:text-zinc-300">
+        <div
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          className=" border border-zinc-200 bg-zinc-50 px-3 py-1 text-sm font-semibold text-zinc-700 dark:border-zinc-500/30 dark:bg-zinc-500/10 dark:text-zinc-300"
+        >
           {selectedCount} / {maxAgents} agents
         </div>
       </div>
 
       <label className="mt-4 flex items-center gap-2 border border-gray-200 bg-gray-50 px-3 py-2 dark:border-border dark:bg-surface-input">
-        <Search size={16} className="text-gray-400" />
+        <Search size={16} className="text-gray-400" aria-hidden="true" />
         <input
           type="search"
           value={searchQuery}
@@ -106,8 +111,19 @@ export default function CollectionAgentPicker({
         </p>
       )}
       {feedback && (
-        <p className="mt-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">{feedback}</p>
+        <p
+          role="alert"
+          aria-atomic="true"
+          className="mt-3 text-sm font-medium text-zinc-700 dark:text-zinc-300"
+        >
+          {feedback}
+        </p>
       )}
+      <p role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {searchQuery.trim()
+          ? `${matchingCount} of ${agents.length} agents match your search.`
+          : `${matchingCount} agents available.`}
+      </p>
 
       <div className="mt-4 max-h-[32rem] divide-y divide-gray-100 overflow-y-auto border border-gray-200 dark:divide-border dark:border-border">
         {visibleAgents.map((agent) => {
