@@ -16,6 +16,7 @@ import {
   CornerDownLeft,
   X,
   Layers,
+  Store,
 } from 'lucide-react'
 import { useAgents } from '../lib/useAgents'
 import { useCollections } from '../lib/useCollections'
@@ -164,6 +165,9 @@ export default function CommandPalette({ isOpen, onClose }) {
   const [query, setQuery] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [workflows, setWorkflows] = useState([])
+  const [suites, setSuites] = useState([])
+  const [listings, setListings] = useState([])
+  const [automations, setAutomations] = useState([])
 
   const panelRef = useRef(null)
   const backdropRef = useRef(null)
@@ -189,6 +193,32 @@ export default function CommandPalette({ isOpen, onClose }) {
       })
       .catch(() => {
         // Silently handle if unauthenticated / offline
+      })
+
+    return () => {
+      mounted = false
+    }
+  }, [isOpen])
+
+  // Load local catalogue objects lazily so they stay out of the shell bundle.
+  useEffect(() => {
+    if (!isOpen) return
+
+    let mounted = true
+
+    Promise.all([
+      import('../suites/suitesData'),
+      import('../lib/marketplace'),
+      import('../lib/automationsService'),
+    ])
+      .then(([suiteModule, marketplace, automationsService]) => {
+        if (!mounted) return
+        setSuites(Array.isArray(suiteModule.suites) ? suiteModule.suites : [])
+        setListings(marketplace.loadListings())
+        setAutomations(automationsService.loadAutomations())
+      })
+      .catch(() => {
+        // The palette still works when optional local modules cannot load.
       })
 
     return () => {
@@ -235,6 +265,45 @@ export default function CommandPalette({ isOpen, onClose }) {
       })
     }
 
+    // Generated suites
+    for (const suite of suites) {
+      items.push({
+        id: `suite-${suite.id}`,
+        title: suite.name,
+        subtitle: `${(suite.agents || []).length} agents · ${suite.description || 'Agent suite'}`,
+        type: 'suite',
+        url: '/suites',
+        icon: Sparkles,
+        keywords: [suite.name, suite.description || '', 'suite', 'bundle', ...(suite.agents || [])],
+      })
+    }
+
+    // Marketplace listings
+    for (const listing of listings) {
+      items.push({
+        id: `listing-${listing.id}`,
+        title: listing.name,
+        subtitle: `Marketplace listing by ${listing.author}`,
+        type: 'listing',
+        url: '/marketplace',
+        icon: Store,
+        keywords: [listing.name, listing.author, listing.category || '', 'marketplace', 'listing'],
+      })
+    }
+
+    // Saved automations
+    for (const automation of automations) {
+      items.push({
+        id: `automation-${automation.id}`,
+        title: automation.name,
+        subtitle: automation.description || 'Scheduled agent automation',
+        type: 'automation',
+        url: '/automations',
+        icon: Layers,
+        keywords: [automation.name, automation.description || '', 'automation', 'schedule'],
+      })
+    }
+
     // Agents
     for (const agent of agents) {
       items.push({
@@ -250,7 +319,7 @@ export default function CommandPalette({ isOpen, onClose }) {
     }
 
     return items
-  }, [agents, collections, workflows])
+  }, [agents, collections, workflows, suites, listings, automations])
 
   // Filter items based on user query
   const filteredItems = useMemo(() => {
@@ -372,7 +441,7 @@ export default function CommandPalette({ isOpen, onClose }) {
             data-autofocus
             type="text"
             role="combobox"
-            aria-label="Search agents, collections, workflows, or settings"
+            aria-label="Search agents, suites, listings, workflows, or settings"
             aria-autocomplete="list"
             aria-expanded={filteredItems.length > 0}
             aria-controls="command-palette-results"
@@ -383,7 +452,7 @@ export default function CommandPalette({ isOpen, onClose }) {
               setSelectedIndex(0)
             }}
             onKeyDown={handleKeyDown}
-            placeholder="Search agents, collections, workflows, or settings…"
+            placeholder="Search agents, suites, listings, workflows, or settings…"
             className="flex-1 bg-transparent text-sm text-zinc-900 outline-none placeholder:text-zinc-400 dark:text-text-primary dark:placeholder:text-text-muted"
           />
           {query ? (
@@ -417,7 +486,7 @@ export default function CommandPalette({ isOpen, onClose }) {
             <div className="py-12 text-center text-sm text-zinc-500 dark:text-text-secondary">
               <p>No results found for &ldquo;{query}&rdquo;</p>
               <p className="mt-1 text-xs text-zinc-400 dark:text-text-muted">
-                Try searching for an agent name, collection, workflow, or settings page.
+                Try an agent, suite, marketplace listing, automation, workflow, or settings page.
               </p>
             </div>
           ) : (
