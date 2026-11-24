@@ -33,6 +33,8 @@ changelog tooling is planned but not yet in place (see ROADMAP.md, section 6).
 
 ### Changed
 
+- Scheduled-run browser notifications are private by default; Settings offers an explicit detailed-content opt-in with lock-screen privacy guidance (#306).
+
 - None.
 
 ### Deprecated

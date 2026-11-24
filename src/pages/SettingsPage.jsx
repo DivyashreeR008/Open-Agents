@@ -23,6 +23,7 @@ import {
 import { clearAutomationKeys } from '../lib/automationsService'
 import { apiKeyFieldProps } from '../lib/apiKeyFieldProps'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
+import { getRunNotificationPrivacy, saveRunNotificationPrivacy } from '../lib/runNotifications'
 import openaiLogo from '../assets/openai.svg'
 import anthropicLogo from '../assets/anthropic.svg'
 import geminiLogo from '../assets/gemini.svg'
@@ -98,6 +99,8 @@ export default function SettingsPage() {
   const [announcement, setAnnouncement] = useState('')
   const [storageStatus, setStorageStatus] = useState(() => getKeyStorageStatus())
   const [confirmClearAll, setConfirmClearAll] = useState(false)
+  const [notificationPrivacy, setNotificationPrivacy] = useState(getRunNotificationPrivacy)
+  const [notificationMessage, setNotificationMessage] = useState('')
   const [confirmClearProvider, setConfirmClearProvider] = useState(null)
   const messageTimer = useRef(null)
   const clearAllTriggerRef = useRef(null)
@@ -293,6 +296,50 @@ export default function SettingsPage() {
           <p className="text-xs leading-relaxed">{storageWarning}</p>
         </div>
       )}
+
+      <section className="mb-8 border dark:bg-surface-card dark:border-border bg-white border-gray-200 px-5 py-4">
+        <h2 className="text-sm font-bold dark:text-text-primary text-gray-900">
+          Browser notification privacy
+        </h2>
+        <p
+          id="notification-privacy-help"
+          className="text-xs dark:text-text-secondary text-gray-500 mt-2"
+        >
+          Private notifications only say that an update is available. Open the app to read run
+          details. Detailed notifications can reveal job names and error messages on lock screens,
+          shared screens and in notification history. The app cannot detect whether your device is
+          unlocked. This preference applies to this browser; email notifications are separate.
+        </p>
+        <label
+          className="block text-xs dark:text-text-primary text-gray-900 mt-3"
+          htmlFor="notification-privacy"
+        >
+          Notification content
+        </label>
+        <select
+          id="notification-privacy"
+          aria-describedby="notification-privacy-help"
+          value={notificationPrivacy}
+          onChange={(event) => {
+            try {
+              saveRunNotificationPrivacy(event.target.value)
+              setNotificationPrivacy(event.target.value)
+              setNotificationMessage('Notification preference saved.')
+            } catch {
+              setNotificationMessage(
+                'Could not save the notification preference. Allow browser storage, then try again.'
+              )
+            }
+          }}
+          className="mt-2 w-full border border-gray-200 bg-gray-50 text-gray-900 dark:border-border dark:bg-surface-input dark:text-text-primary px-3 py-2 text-xs"
+        >
+          <option value="private">Private (recommended)</option>
+          <option value="detailed">Detailed — may expose private information</option>
+        </select>
+        <p aria-live="polite" className="text-xs dark:text-text-secondary text-gray-500 mt-2">
+          {notificationMessage}
+        </p>
+      </section>
 
       {/* ─────────────────────────────────────────── */}
       {/* SECTION 1 — API Keys                        */}

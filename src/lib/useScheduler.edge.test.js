@@ -176,7 +176,10 @@ describe('useScheduler storage and scheduling edges', () => {
     })
 
     expect(run.error).toBe('Unknown error')
-    expect(notifications[0].title).toContain('Failed: Daily review')
+    expect(notifications[0]).toEqual({
+      title: 'OpenAgents update',
+      options: { body: 'Open the app to view run details.', icon: '/favicon.ico' },
+    })
   })
 
   it('skips a due job that is still running when the minute check fires', async () => {

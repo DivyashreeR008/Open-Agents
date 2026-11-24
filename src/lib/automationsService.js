@@ -3,6 +3,7 @@ import { runAgent } from './llmAdapter'
 import { recordAnalyticsRun } from './useAnalytics'
 import { CredentialProtectionError, getOrCreateDeviceKey } from './automationKeyStore'
 import { dueWindows, normalizeMissedPolicy, planDueRuns } from './missedRuns'
+import { notifyRun } from './runNotifications'
 
 const STORAGE_KEY = 'oa_automations_v2'
 const RUNS_KEY = 'oa_automation_runs_v2'
@@ -811,16 +812,10 @@ export async function runAutomationNow(automationId, options = {}) {
   )
 
   // Trigger browser notification if supported
-  if ('Notification' in window && Notification.permission === 'granted') {
-    new Notification(
-      status === 'success' ? `${automation.name} Finished` : `${automation.name} Failed`,
-      {
-        body:
-          status === 'success' ? `Output generated in ${(duration / 1000).toFixed(1)}s` : errorMsg,
-        icon: '/favicon.ico',
-      }
-    )
-  }
+  notifyRun(
+    status === 'success' ? `${automation.name} Finished` : `${automation.name} Failed`,
+    status === 'success' ? `Output generated in ${(duration / 1000).toFixed(1)}s` : errorMsg
+  )
 
   return finishedRunRecord
 }
