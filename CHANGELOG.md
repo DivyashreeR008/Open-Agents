@@ -19,6 +19,8 @@ changelog tooling is planned but not yet in place (see ROADMAP.md, section 6).
 
 ### Added
 
+- Per-agent activity joins retained manual and scheduled outputs with visible trigger types and original run IDs, including conservative matching of older scheduler records (#299).
+
 - Accessibility statement, known limitations, and barrier reporting guidance linked from the About resources and support documentation (#358).
 - Global command palette accessible via Ctrl/Cmd+K to jump directly to agents, collections, workflows, and settings pages (#473).
 - Changelog maintenance process documented; entries are added as changes ship.

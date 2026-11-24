@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { streamAgent } from './llmAdapter'
 import { resolveAgentModel } from './resolveAgentModel'
 import { recordAnalyticsRun } from './useAnalytics'
+import { ACTIVITY_EVENT } from './agentActivity'
 
 const STORAGE_KEY = 'oa_scheduled_jobs'
 const HISTORY_KEY = 'oa_scheduler_results'
@@ -55,6 +56,7 @@ function loadJobs() {
 
 function saveJobs(jobs) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(jobs.map(stripJobSecret)))
+  window.dispatchEvent(new Event(ACTIVITY_EVENT))
 }
 
 function loadResults() {
@@ -67,6 +69,7 @@ function loadResults() {
 
 function saveResults(results) {
   localStorage.setItem(HISTORY_KEY, JSON.stringify(results))
+  window.dispatchEvent(new Event(ACTIVITY_EVENT))
 }
 
 // ── Browser notification helper
@@ -164,12 +167,13 @@ export function useScheduler({ autoRun = true } = {}) {
   }, [])
 
   // ── Manually run a job right now
-  const runJob = useCallback(async (job) => {
+  const runJob = useCallback(async (job, options = {}) => {
     if (activeJobIds.has(job.id)) return null
     activeJobIds.add(job.id)
     setRunning((prev) => ({ ...prev, [job.id]: true }))
 
     const startTime = Date.now()
+    const runId = `result_${startTime}_${Math.random().toString(36).slice(2)}`
     let output = ''
     let errorMsg = null
 
@@ -200,6 +204,7 @@ export function useScheduler({ autoRun = true } = {}) {
 
       output = result.content
       recordAnalyticsRun({
+        runId,
         agentId: job.agentId,
         agentName: job.agentName,
         category: job.agentDefinition?.category || 'Scheduled',
@@ -225,7 +230,9 @@ export function useScheduler({ autoRun = true } = {}) {
 
     // Save result
     const newResult = {
-      id: `result_${now}_${Math.random().toString(36).slice(2)}`,
+      id: runId,
+      agentId: job.agentId,
+      trigger: options.trigger === 'scheduled' ? 'scheduled' : 'manual',
       jobId: job.id,
       jobLabel: job.label,
       agentName: job.agentName,
@@ -265,7 +272,7 @@ export function useScheduler({ autoRun = true } = {}) {
         if (!job.apiKey) return
         if (activeJobIds.has(job.id)) return
         if (now >= job.nextRunAt) {
-          runJob(job)
+          runJob(job, { trigger: 'scheduled' })
         }
       })
     }

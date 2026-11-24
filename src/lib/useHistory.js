@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
 import { stripCredentialFields } from './secretPolicy'
+import { ACTIVITY_EVENT } from './agentActivity'
 
 const STORAGE_KEY = 'OpenAgents_history'
 
@@ -61,6 +62,7 @@ function loadHistory() {
 function persistHistory(history) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(history))
+    window.dispatchEvent(new Event(ACTIVITY_EVENT))
     return { ok: true, history }
   } catch (error) {
     if (isQuotaError(error)) {

@@ -75,6 +75,7 @@ describe('automation run request payload', () => {
     expect(run.tokens).toBe(Math.round((8 + userMessage.length) / 4))
     expect(run.output).toBe('ABCDEFGH')
     expect(analytics.recordAnalyticsRun).toHaveBeenCalledWith({
+      runId: run.id,
       agentId: '5',
       agentName: 'Blog Post SEO Optimizer',
       category: 'Marketing',
@@ -83,6 +84,25 @@ describe('automation run request payload', () => {
       duration: 17,
     })
   })
+
+  it.each([false, true])(
+    'records the agent and actual trigger with the same analytics ID (scheduled: %s)',
+    async (scheduled) => {
+      provider.runAgent.mockResolvedValue({ content: 'Retained output', tokens: 3, duration: 2 })
+      const job = await createAutomation({
+        name: 'Joined activity',
+        agentId: 'agent-a',
+        apiKey: 'synthetic-fixture-key',
+      })
+      const run = await runAutomationNow(job.id, scheduled ? { scheduledFor: NOW } : {})
+      expect(run).toMatchObject({ agentId: 'agent-a', trigger: scheduled ? 'scheduled' : 'manual' })
+      expect(analytics.recordAnalyticsRun).toHaveBeenCalledWith(
+        expect.objectContaining({ runId: run.id, agentId: 'agent-a' })
+      )
+      const saved = JSON.parse(localStorage.getItem('oa_automation_runs_v2'))[0]
+      expect(saved).toMatchObject({ id: run.id, agentId: 'agent-a', trigger: run.trigger })
+    }
+  )
 
   it('uses a saved system prompt and the provider token count when present', async () => {
     provider.runAgent.mockResolvedValue({ content: 'report', tokens: 321, duration: 4 })

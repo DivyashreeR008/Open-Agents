@@ -42,6 +42,7 @@ import { useApiKey } from '../lib/useApiKey'
 import { streamAgent } from '../lib/llmAdapter'
 import { analyseModels } from '../lib/modelAnalyser'
 import { useHistory } from '../lib/useHistory'
+import AgentActivity from './AgentActivity'
 import { resolveAgentModel, MODEL_MAP, MODELS } from '../lib/resolveAgentModel'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 
@@ -1222,6 +1223,8 @@ export default function AgentRunner({ agent }) {
               )}
             </>
           )}
+
+          <AgentActivity key={agent.id} agentId={agent.id} />
 
           {/* Prompt History Panel */}
           <PromptHistoryPanel

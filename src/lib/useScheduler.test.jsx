@@ -196,6 +196,7 @@ describe('useScheduler', () => {
     expect(request.userMessage).toBe('Topic: Authentication\n\nFormat: json, markdown')
     expect(mocks.resolveAgentModel).toHaveBeenCalledWith(agentDefinition, 'openai', 'saved-model')
     expect(mocks.recordAnalyticsRun).toHaveBeenCalledWith({
+      runId: run.id,
       agentId: 'agent-1',
       agentName: 'Code Reviewer',
       category: 'Engineering',
@@ -293,6 +294,7 @@ describe('useScheduler', () => {
     await waitFor(() => expect(mocks.streamAgent).toHaveBeenCalledTimes(1))
     await waitFor(() => expect(result.current.results).toHaveLength(1))
     expect(result.current.results[0].output).toBe('Model output')
+    expect(result.current.results[0]).toMatchObject({ agentId: 'agent-1', trigger: 'scheduled' })
   })
 
   it('skips disabled jobs and jobs without a stored key during the due check', () => {
