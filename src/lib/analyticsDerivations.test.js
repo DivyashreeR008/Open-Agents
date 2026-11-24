@@ -195,6 +195,11 @@ describe('analytics rolling windows', () => {
       dailyRuns: [],
       heatmapData: [],
       recentRuns: [],
+      metadataCoverage: {
+        provider: { known: 0, unknown: 0 },
+        category: { known: 0, unknown: 0 },
+      },
+      provenance: { imported: 0, recorded: 0, unknown: 0 },
     })
   })
 })

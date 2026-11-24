@@ -17,6 +17,10 @@ changelog tooling is planned but not yet in place (see ROADMAP.md, section 6).
 
 ## [Unreleased]
 
+### Fixed
+
+- Analytics marks new history imports, preserves recorded metadata and shows unknown coverage separately from provider/category percentages; older unmarked origins remain unknown (#285).
+
 ### Added
 
 - Accessibility statement, known limitations, and barrier reporting guidance linked from the About resources and support documentation (#358).

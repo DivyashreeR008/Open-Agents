@@ -12,8 +12,9 @@ describe('analytics event sanitization', () => {
 
     expect(stats.totalRuns).toBe(1)
     expect(stats.uniqueAgents).toBe(1)
-    expect(stats.favoriteProvider).toBe('unknown')
-    expect(stats.categoryDistribution).toEqual([{ name: 'Uncategorized', count: 1, pct: 100 }])
+    expect(stats.favoriteProvider).toBeNull()
+    expect(stats.categoryDistribution).toEqual([])
+    expect(stats.metadataCoverage.category).toEqual({ known: 0, unknown: 1 })
     expect(stats.recentRuns[0]).toMatchObject({ id: 'valid', provider: undefined })
   })
 })

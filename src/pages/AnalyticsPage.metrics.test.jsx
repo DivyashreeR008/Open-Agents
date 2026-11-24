@@ -94,8 +94,8 @@ describe('AnalyticsPage populated metrics', () => {
 
     expect(screen.getByText('Researcher')).toBeInTheDocument()
     expect(screen.getByText('OpenAI (67%)')).toBeInTheDocument()
-    expect(screen.getByText('Unknown (33%)')).toBeInTheDocument()
-    expect(screen.getByText('RUNS')).toBeInTheDocument()
+    expect(screen.getByText('mystery (33%)')).toBeInTheDocument()
+    expect(screen.getByText('KNOWN RUNS')).toBeInTheDocument()
     expect(screen.getAllByText('Research')[0]).toBeInTheDocument()
     expect(screen.getByText('7 (58%)')).toBeInTheDocument()
     expect(screen.getByText('30 days ago')).toBeInTheDocument()

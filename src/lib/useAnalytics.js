@@ -3,6 +3,16 @@ import { useState, useCallback, useEffect, useMemo } from 'react'
 const STORAGE_KEY = 'oa_analytics'
 const MAX_EVENTS = 500
 
+function knownAttribute(value, placeholders) {
+  if (typeof value !== 'string') return null
+  const name = value.trim()
+  return name && !placeholders.includes(name.toLowerCase()) ? name : null
+}
+
+function eventOrigin(event) {
+  return ['history-import', 'recorded'].includes(event.origin) ? event.origin : 'unknown'
+}
+
 // ── Persistence helpers ─────────────────────────────────────────────────────
 
 function sanitizeEvents(value) {
@@ -69,10 +79,11 @@ function seedFromHistory() {
         id: run.id,
         agentId: run.agentId,
         agentName: run.agentName,
+        origin: 'history-import',
         provider: run.provider || 'unknown',
-        category: '', // history doesn't store category
-        model: '',
-        duration: null,
+        category: typeof run.category === 'string' ? run.category : '',
+        model: typeof run.model === 'string' ? run.model : '',
+        duration: Number.isFinite(run.duration) && run.duration >= 0 ? run.duration : null,
         timestamp: run.timestamp || Date.now(),
       }))
 
@@ -106,6 +117,7 @@ export function recordAnalyticsRun({
     id: runId || `${agentId}_${Date.now()}`,
     agentId,
     agentName,
+    origin: 'recorded',
     category: category || '',
     provider: provider || 'unknown',
     model: model || '',
@@ -191,6 +203,11 @@ export function computeStats(events, timeRange = 'all', now = new Date()) {
       dailyRuns: [],
       heatmapData: [],
       recentRuns: [],
+      metadataCoverage: {
+        provider: { known: 0, unknown: 0 },
+        category: { known: 0, unknown: 0 },
+      },
+      provenance: { imported: 0, recorded: 0, unknown: 0 },
     }
   }
 
@@ -200,10 +217,10 @@ export function computeStats(events, timeRange = 'all', now = new Date()) {
   const uniqueAgents = agentSet.size
 
   // ── Provider distribution
-  const providerCounts = {}
+  const providerCounts = Object.create(null)
   filteredEvents.forEach((e) => {
-    const p = e.provider || 'unknown'
-    providerCounts[p] = (providerCounts[p] || 0) + 1
+    const p = knownAttribute(e.provider, ['unknown', 'any'])
+    if (p) providerCounts[p] = (providerCounts[p] || 0) + 1
   })
   const providerDistribution = allocateRoundedPercentages(
     Object.entries(providerCounts).map(([name, count]) => ({ name, count }))
@@ -223,14 +240,26 @@ export function computeStats(events, timeRange = 'all', now = new Date()) {
     .slice(0, 8)
 
   // ── Category distribution
-  const categoryCounts = {}
+  const categoryCounts = Object.create(null)
   filteredEvents.forEach((e) => {
-    const cat = e.category || 'Uncategorized'
-    categoryCounts[cat] = (categoryCounts[cat] || 0) + 1
+    const cat = knownAttribute(e.category, ['unknown', 'uncategorized'])
+    if (cat) categoryCounts[cat] = (categoryCounts[cat] || 0) + 1
   })
   const categoryDistribution = allocateRoundedPercentages(
     Object.entries(categoryCounts).map(([name, count]) => ({ name, count }))
   ).sort((a, b) => b.count - a.count)
+
+  const knownProviders = providerDistribution.reduce((sum, item) => sum + item.count, 0)
+  const knownCategories = categoryDistribution.reduce((sum, item) => sum + item.count, 0)
+  const metadataCoverage = {
+    provider: { known: knownProviders, unknown: totalRuns - knownProviders },
+    category: { known: knownCategories, unknown: totalRuns - knownCategories },
+  }
+  const provenance = { imported: 0, recorded: 0, unknown: 0 }
+  filteredEvents.forEach((event) => {
+    const origin = eventOrigin(event)
+    provenance[origin === 'history-import' ? 'imported' : origin] += 1
+  })
 
   // ── Daily runs (last 30 days) for sparkline
   const dailyRuns = []
@@ -326,6 +355,7 @@ export function computeStats(events, timeRange = 'all', now = new Date()) {
     model: e.model,
     duration: e.duration,
     timestamp: e.timestamp,
+    origin: eventOrigin(e),
   }))
 
   return {
@@ -342,6 +372,8 @@ export function computeStats(events, timeRange = 'all', now = new Date()) {
     dailyRuns,
     heatmapData,
     recentRuns,
+    metadataCoverage,
+    provenance,
   }
 }
 
