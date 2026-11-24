@@ -17,6 +17,7 @@ import { useTimedState } from '../lib/useTimedState'
 import CollectionPicker from './CollectionPicker'
 import HighlightedText from './HighlightedText'
 import { resolveAgentIcon } from '../lib/agentIcons'
+import { canRunWithSavedKeys } from '../lib/useApiKey'
 
 const providerMeta = {
   openai: { label: 'OpenAI', dot: 'bg-zinc-500' },
@@ -40,9 +41,25 @@ function formatMatchList(fields) {
   return `${fields.slice(0, -1).join(', ')}, and ${fields[fields.length - 1]}`
 }
 
-export default function AgentCard({ agent, variant = 'grid', index = null, searchQuery = '' }) {
+export default function AgentCard({
+  agent,
+  variant = 'grid',
+  index = null,
+  searchQuery = '',
+  savedProviders = null,
+}) {
   const IconComponent = resolveAgentIcon(agent?.icon)
   const provider = providerMeta[agent?.provider] || providerMeta.any
+  const keyStatus =
+    savedProviders === null
+      ? null
+      : canRunWithSavedKeys(agent, savedProviders)
+        ? agent.provider && agent.provider !== 'any'
+          ? 'Saved key available'
+          : 'Saved key available · choose provider'
+        : agent.provider && agent.provider !== 'any'
+          ? `Needs ${provider.label} key`
+          : 'Needs a provider key'
   const { isFavorite, toggleFavorite } = useFavorites()
   const [showCollectionPicker, setShowCollectionPicker] = useState(false)
   const favorited = isFavorite(agent.id)
@@ -176,7 +193,14 @@ export default function AgentCard({ agent, variant = 'grid', index = null, searc
           />
 
           <span className="w-44 shrink-0 truncate text-[13.5px] font-medium text-zinc-900 dark:text-text-primary sm:w-60">
-            <HighlightedText text={name} query={agent?.name ? query : ''} />
+            <span className="block truncate">
+              <HighlightedText text={name} query={agent?.name ? query : ''} />
+            </span>
+            {keyStatus && (
+              <span className="block text-[10px] font-normal text-zinc-600 dark:text-text-secondary">
+                {keyStatus}
+              </span>
+            )}
           </span>
 
           <span className="hidden min-w-0 flex-1 truncate text-xs text-zinc-500 sm:block dark:text-text-secondary">
@@ -242,6 +266,9 @@ export default function AgentCard({ agent, variant = 'grid', index = null, searc
         <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-zinc-500 dark:text-text-secondary">
           <HighlightedText text={description} query={agent?.description ? query : ''} />
         </p>
+        {keyStatus && (
+          <p className="mt-2 text-xs text-zinc-600 dark:text-text-secondary">{keyStatus}</p>
+        )}
 
         <div className="mt-3 flex items-center justify-between border-t border-zinc-200 pt-2.5 dark:border-border">
           <span className="flex items-center gap-1.5 font-mono text-[10px] text-zinc-400 dark:text-text-muted">

@@ -56,6 +56,14 @@ Interactive session keys are not protected by that vault. They are readable by
 scripts in the page while the tab is open, and the expiry timestamp bounds the
 window rather than preventing access.
 
+## Catalogue key availability
+
+The catalogue can filter agents by saved provider keys. It uses the same expiring
+Settings and runner stores as agent execution, keeps only provider IDs in its UI
+state, and does not send a request to validate a key. Same-tab changes and expiry
+refresh within one second while the catalogue is open. Availability does not
+guarantee provider acceptance, quota or network access.
+
 ## Where run and prompt data are stored
 
 | Storage        | Key                           | Contents                                                                                                | Retention                                                                                    |
