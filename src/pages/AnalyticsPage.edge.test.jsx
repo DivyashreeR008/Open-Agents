@@ -124,7 +124,7 @@ describe('AnalyticsPage malformed activity records', () => {
     renderPage()
 
     expect(screen.getByText('Unknown Agent')).toBeInTheDocument()
-    expect(screen.getByText('Unknown')).toBeInTheDocument()
+    expect(screen.getByText('mystery')).toBeInTheDocument()
     expect(screen.getByText(formatStamp(timestamp))).toBeInTheDocument()
     expect(screen.queryByText('0.0s')).not.toBeInTheDocument()
 

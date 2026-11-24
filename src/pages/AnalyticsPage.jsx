@@ -186,6 +186,15 @@ export default function AnalyticsPage() {
         setTimeRange={setTimeRange}
       />
 
+      {stats.provenance && (
+        <p className="text-sm text-gray-600 dark:text-text-secondary mb-4">
+          Run origins: {stats.provenance.imported} imported from history ·{' '}
+          {stats.provenance.recorded} recorded by analytics · {stats.provenance.unknown} unknown.
+          Older entries may not have an origin marker. Activity totals include every run; breakdown
+          percentages use only runs with known metadata.
+        </p>
+      )}
+
       {/* ── Primary Stat Cards ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         <StatCard
@@ -264,7 +273,11 @@ export default function AnalyticsPage() {
         </div>
         <div className="lg:col-span-2">
           <SectionCard title="Providers" icon={<Users size={16} />} delay={520}>
-            <ProviderDonut data={stats.providerDistribution} total={stats.totalRuns} />
+            <MetadataCoverage data={stats.providerDistribution} total={stats.totalRuns} />
+            <ProviderDonut
+              data={stats.providerDistribution}
+              total={stats.providerDistribution.reduce((sum, item) => sum + item.count, 0)}
+            />
           </SectionCard>
         </div>
       </div>
@@ -272,6 +285,7 @@ export default function AnalyticsPage() {
       {/* ── Two-column: Categories + Sparkline ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <SectionCard title="Categories" icon={<BarChart3 size={16} />} delay={580}>
+          <MetadataCoverage data={stats.categoryDistribution} total={stats.totalRuns} />
           <CategoryBars data={stats.categoryDistribution} />
         </SectionCard>
         <SectionCard title="Last 30 Days" icon={<Activity size={16} />} delay={640}>
@@ -525,6 +539,15 @@ function TopAgentsChart({ agents, navigate }) {
 
 // ── Provider Donut (SVG) ────────────────────────────────────────────────────
 
+function MetadataCoverage({ data, total }) {
+  const known = data.reduce((sum, item) => sum + item.count, 0)
+  return (
+    <p className="text-xs text-gray-600 dark:text-text-secondary mb-3">
+      Known for {known} of {total} runs · {total - known} unknown. Percentages show known runs.
+    </p>
+  )
+}
+
 function ProviderDonut({ data, total }) {
   if (data.length === 0) return <EmptyMini text="No provider data" />
 
@@ -540,7 +563,7 @@ function ProviderDonut({ data, total }) {
     const offset = cumulativeOffset
     cumulativeOffset += dash
     const providerInfo = PROVIDER_COLORS[item.name] || PROVIDER_COLORS.unknown
-    return { ...item, dash, offset, color: providerInfo.color, label: providerInfo.label }
+    return { ...item, dash, offset, color: providerInfo.color, label: formatProvider(item.name) }
   })
 
   return (
@@ -580,7 +603,9 @@ function ProviderDonut({ data, total }) {
           <span className="font-display text-[17px] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-text-primary tabular-nums">
             {total}
           </span>
-          <span className="text-[9px] dark:text-text-muted text-gray-400 font-medium">RUNS</span>
+          <span className="text-[9px] dark:text-text-muted text-gray-400 font-medium">
+            KNOWN RUNS
+          </span>
         </div>
       </div>
       {/* Legend */}
@@ -753,9 +778,16 @@ function RecentTimeline({ runs, navigate }) {
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-2 mt-0.5">
+              <div className="flex flex-wrap items-center gap-2 mt-0.5">
                 <span className="text-[10px] font-medium" style={{ color: providerInfo.color }}>
-                  {providerInfo.label}
+                  {formatProvider(run.provider || 'unknown')}
+                </span>
+                <span className="text-[10px] text-gray-600 dark:text-text-secondary">
+                  {run.origin === 'history-import'
+                    ? 'Imported from history'
+                    : run.origin === 'recorded'
+                      ? 'Recorded by analytics'
+                      : 'Origin unknown'}
                 </span>
                 {run.model && (
                   <>
@@ -860,6 +892,9 @@ function ExportBar({ stats }) {
       topAgents: stats.topAgents,
       providerDistribution: stats.providerDistribution,
       categoryDistribution: stats.categoryDistribution,
+      metadataCoverage: stats.metadataCoverage,
+      provenance: stats.provenance,
+      recentRuns: stats.recentRuns,
       dailyRuns: stats.dailyRuns,
     }
 
@@ -901,6 +936,7 @@ function formatProvider(p) {
     anthropic: 'Anthropic',
     gemini: 'Gemini',
     openrouter: 'OpenRouter',
+    unknown: 'Unknown',
   }
-  return labels[p] || p || '—'
+  return Object.hasOwn(labels, p) ? labels[p] : typeof p === 'string' && p.trim() ? p : '—'
 }
