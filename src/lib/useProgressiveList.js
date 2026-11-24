@@ -2,6 +2,14 @@ import { useEffect, useMemo, useState } from 'react'
 
 export const DEFAULT_PAGE_SIZE = 60
 
+function normalizePageSize(pageSize) {
+  const parsed = Number(pageSize)
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return DEFAULT_PAGE_SIZE
+  }
+  return Math.floor(parsed)
+}
+
 /**
  * Keeps large catalogues cheap to render by exposing only a window of items
  * and letting the caller add another page on demand.
@@ -11,7 +19,11 @@ export const DEFAULT_PAGE_SIZE = 60
  * at the top. The reset is derived during render rather than waiting for an
  * effect, so a new result set never flashes the previous (larger) window.
  */
-export function useProgressiveList(items, { pageSize = DEFAULT_PAGE_SIZE, resetKey = '' } = {}) {
+export function useProgressiveList(
+  items,
+  { pageSize: rawPageSize = DEFAULT_PAGE_SIZE, resetKey = '' } = {}
+) {
+  const pageSize = normalizePageSize(rawPageSize)
   const [windowState, setWindowState] = useState({
     resetKey,
     pageSize,
