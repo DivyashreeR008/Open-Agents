@@ -3,6 +3,7 @@ import { runAgent } from './llmAdapter'
 import { recordAnalyticsRun } from './useAnalytics'
 import { CredentialProtectionError, getOrCreateDeviceKey } from './automationKeyStore'
 import { dueWindows, normalizeMissedPolicy, planDueRuns } from './missedRuns'
+import { ACTIVITY_EVENT } from './agentActivity'
 
 const STORAGE_KEY = 'oa_automations_v2'
 const RUNS_KEY = 'oa_automation_runs_v2'
@@ -487,6 +488,7 @@ export function loadAutomations() {
 export function saveAutomations(automations) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(automations))
+    window.dispatchEvent(new Event(ACTIVITY_EVENT))
   } catch {}
 }
 
@@ -506,6 +508,7 @@ export function loadRuns() {
 export function saveRuns(runs) {
   try {
     localStorage.setItem(RUNS_KEY, JSON.stringify(runs))
+    window.dispatchEvent(new Event(ACTIVITY_EVENT))
   } catch {}
 }
 
@@ -691,6 +694,8 @@ export async function runAutomationNow(automationId, options = {}) {
   // Create running record
   const initialRunRecord = {
     id: runId,
+    agentId: automation.agentId,
+    trigger: options.scheduledFor ? 'scheduled' : 'manual',
     automationId: automation.id,
     automationName: automation.name,
     agentName: automation.agentName,
@@ -748,6 +753,7 @@ export async function runAutomationNow(automationId, options = {}) {
     tokenCount = result.tokens || Math.round((outputContent.length + userMessage.length) / 4)
 
     recordAnalyticsRun({
+      runId,
       agentId: automation.agentId,
       agentName: automation.agentName,
       category: automation.category || 'Scheduled',
@@ -840,6 +846,8 @@ function patchAutomation(id, patch) {
 function addUnexecutedRecord(automation, { status, count, first, last, now, policy, reason }) {
   const record = {
     id: `run_${now}_${Math.random().toString(36).slice(2, 7)}`,
+    agentId: automation.agentId,
+    trigger: 'scheduled',
     automationId: automation.id,
     automationName: automation.name,
     agentName: automation.agentName,
