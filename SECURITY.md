@@ -27,6 +27,17 @@ below reduce persistence and limit accidental copies; they do not make a browser
 safe against XSS, a malicious extension, or another person using an unlocked
 profile.
 
+## Images in generated output
+
+Markdown images in agent output, saved runs, and battle results are blocked until
+the reader chooses to load each image. The placeholder shows the destination and
+description first. Loading contacts that server (including any redirects) and
+shares the reader's network address; the image request sends no referrer.
+Only HTTP(S) destinations without embedded credentials are allowed. Consent is
+held only in the current output view, resets when the output changes, and is not
+saved with run history. Reopening saved output requires consent again. Failed
+images require an explicit retry. Raw HTML remains disabled.
+
 ## Where credentials are stored
 
 | Storage          | Key                                                       | Contents                                                                                     | Lifetime                                                                    |

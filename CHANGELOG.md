@@ -17,6 +17,10 @@ changelog tooling is planned but not yet in place (see ROADMAP.md, section 6).
 
 ## [Unreleased]
 
+### Fixed
+
+- Require per-image consent before loading Markdown images in generated and saved output, including battle results (#302).
+
 ### Added
 
 - Accessibility statement, known limitations, and barrier reporting guidance linked from the About resources and support documentation (#358).

@@ -2,8 +2,7 @@ import { useTimedState } from '../lib/useTimedState'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Trophy, Copy, Check, RotateCcw, ArrowLeft } from 'lucide-react'
 import BattleNavbar from '../components/BattleNavbar'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
+import OutputMarkdown from '../components/OutputMarkdown'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
 
 // Single monochrome theme — winner is never color-coded by provider.
@@ -83,7 +82,7 @@ export default function BattleModeWinner() {
             </span>
           </div>
           <div className="markdown-output text-sm dark:text-text-primary text-gray-900 leading-relaxed">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+            <OutputMarkdown>{content}</OutputMarkdown>
           </div>
         </div>
 
