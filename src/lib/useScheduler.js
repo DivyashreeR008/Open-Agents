@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { streamAgent } from './llmAdapter'
 import { resolveAgentModel } from './resolveAgentModel'
 import { recordAnalyticsRun } from './useAnalytics'
+import { notifyRun } from './runNotifications'
 
 const STORAGE_KEY = 'oa_scheduled_jobs'
 const HISTORY_KEY = 'oa_scheduler_results'
@@ -67,14 +68,6 @@ function loadResults() {
 
 function saveResults(results) {
   localStorage.setItem(HISTORY_KEY, JSON.stringify(results))
-}
-
-// ── Browser notification helper
-function notify(title, body) {
-  if (!('Notification' in window)) return
-  if (Notification.permission === 'granted') {
-    new Notification(title, { body, icon: '/favicon.ico' })
-  }
 }
 
 /**
@@ -207,13 +200,13 @@ export function useScheduler({ autoRun = true } = {}) {
         model,
         duration: result.duration,
       })
-      notify(
+      notifyRun(
         `Completed: ${job.label} — Agent run complete`,
         `${job.agentName} finished. Open OpenAgents to see the output.`
       )
     } catch (err) {
       errorMsg = err.message || 'Unknown error'
-      notify(`Failed: ${job.label} — Agent run failed`, `${job.agentName}: ${errorMsg}`)
+      notifyRun(`Failed: ${job.label} — Agent run failed`, `${job.agentName}: ${errorMsg}`)
     } finally {
       activeJobIds.delete(job.id)
       setRunning((prev) => ({ ...prev, [job.id]: false }))

@@ -217,7 +217,10 @@ describe('useScheduler', () => {
     )
     expect(result.current.running[job.id]).toBe(false)
     expect(notifications).toHaveLength(1)
-    expect(notifications[0].title).toContain('Completed: Daily review')
+    expect(notifications[0]).toEqual({
+      title: 'OpenAgents update',
+      options: { body: 'Open the app to view run details.', icon: '/favicon.ico' },
+    })
   })
 
   it('records a failed run, notifies the user, and clears the running flag', async () => {
@@ -238,8 +241,36 @@ describe('useScheduler', () => {
     expect(result.current.results[0].error).toBe('provider unavailable')
     expect(result.current.jobs[0].lastRunAt).not.toBeNull()
     expect(result.current.running[job.id]).toBe(false)
-    expect(notifications[0].title).toContain('Failed: Daily review')
+    expect(notifications[0]).toEqual({
+      title: 'OpenAgents update',
+      options: { body: 'Open the app to view run details.', icon: '/favicon.ico' },
+    })
   })
+
+  it.each([false, true])(
+    'uses the detailed preference in the legacy scheduler (failure: %s)',
+    async (failed) => {
+      localStorage.setItem('oa_run_notification_privacy', 'detailed')
+      if (failed)
+        mocks.streamAgent.mockRejectedValueOnce(new Error('private provider configuration'))
+      const { result } = renderHook(() => useScheduler({ autoRun: false }))
+      let job
+      act(() => {
+        job = result.current.addJob(jobData)
+      })
+      await act(async () => {
+        await result.current.runJob(job)
+      })
+      expect(notifications[0].title).toContain(
+        failed ? 'Failed: Daily review' : 'Completed: Daily review'
+      )
+      expect(notifications[0].options.body).toBe(
+        failed
+          ? 'Code Reviewer: private provider configuration'
+          : 'Code Reviewer finished. Open OpenAgents to see the output.'
+      )
+    }
+  )
 
   it('does not notify when permission is denied', async () => {
     MockNotification.permission = 'denied'

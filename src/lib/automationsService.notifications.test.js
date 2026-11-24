@@ -85,8 +85,8 @@ describe('run completion notifications', () => {
     ])
     expect(MockNotification.instances).toEqual([
       {
-        title: 'Nightly report Finished',
-        options: { body: 'Output generated in 0.0s', icon: '/favicon.ico' },
+        title: 'OpenAgents update',
+        options: { body: 'Open the app to view run details.', icon: '/favicon.ico' },
       },
     ])
   })
@@ -110,11 +110,31 @@ describe('run completion notifications', () => {
     })
     expect(MockNotification.instances).toEqual([
       {
-        title: 'Nightly report Failed',
-        options: { body: 'provider exploded', icon: '/favicon.ico' },
+        title: 'OpenAgents update',
+        options: { body: 'Open the app to view run details.', icon: '/favicon.ico' },
       },
     ])
   })
+
+  it.each([false, true])(
+    'reveals details only after explicit opt-in (failure: %s)',
+    async (failed) => {
+      localStorage.setItem('oa_run_notification_privacy', 'detailed')
+      if (failed) provider.runAgent.mockRejectedValue(new Error('private provider configuration'))
+      else
+        provider.runAgent.mockResolvedValue({ content: 'private output', tokens: 1, duration: 1 })
+      const job = await makeJob()
+      const run = await runAutomationNow(job.id)
+      expect(run.status).toBe(failed ? 'failed' : 'success')
+      expect(MockNotification.instances[0]).toEqual({
+        title: failed ? 'Nightly report Failed' : 'Nightly report Finished',
+        options: {
+          body: failed ? 'private provider configuration' : 'Output generated in 0.0s',
+          icon: '/favicon.ico',
+        },
+      })
+    }
+  )
 
   it('does not notify when the browser permission is denied', async () => {
     MockNotification.permission = 'denied'
