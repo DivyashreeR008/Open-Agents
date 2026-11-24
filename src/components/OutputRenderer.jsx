@@ -1,7 +1,6 @@
 import { useTimedState } from '../lib/useTimedState'
 import { Copy, Check, FileText, Download } from 'lucide-react'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
+import OutputMarkdown from './OutputMarkdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import ScorecardOutput from './ScorecardOutput'
 import VoiceOutput from './VoiceOutput'
@@ -72,7 +71,7 @@ const monoPrism = {
 
 /**
  * XSS Protection:
- * - ReactMarkdown v9 by default does NOT render raw HTML or script tags
+ * - OutputMarkdown disables raw HTML and requires per-image consent
  * - Markdown input is safely escaped; only safe markdown syntax is rendered
  * - Agent prompts cannot inject <script> or HTML attributes via output
  * - Code blocks are syntax-highlighted but never evaluated
@@ -297,9 +296,7 @@ ${stringContent}
           <ScorecardOutput data={content} />
         ) : outputType === 'markdown' ? (
           <div className="markdown-output text-sm dark:text-text-primary text-gray-900">
-            <ReactMarkdown
-              skipHtml={true}
-              remarkPlugins={[remarkGfm]}
+            <OutputMarkdown
               components={{
                 // Fenced blocks supply their own pre element through the
                 // highlighter. Drop the default wrapper so the scroll region
@@ -339,7 +336,7 @@ ${stringContent}
               }}
             >
               {stringContent}
-            </ReactMarkdown>
+            </OutputMarkdown>
           </div>
         ) : (
           /* text output */

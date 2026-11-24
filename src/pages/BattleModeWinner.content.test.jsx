@@ -27,6 +27,13 @@ const state = {
 beforeEach(() => vi.clearAllMocks())
 
 describe('BattleModeWinner content', () => {
+  it('blocks images in winning output until the reader opts in', () => {
+    renderWinner({ ...state, content: '![Remote](https://images.example/winner.png)' })
+    expect(screen.queryByRole('img')).not.toBeInTheDocument()
+    expect(screen.getByText('https://images.example/winner.png')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Load image from images.example' })).toBeEnabled()
+  })
+
   it('renders the winner identity, duration, and markdown output', () => {
     renderWinner(state)
     expect(screen.getByRole('heading', { name: 'Winner' })).toBeInTheDocument()

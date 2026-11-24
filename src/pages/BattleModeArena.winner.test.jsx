@@ -65,6 +65,22 @@ beforeEach(() => {
 })
 
 describe('BattleModeArena winner handoff and failures', () => {
+  it('blocks remote images independently in every provider pane', async () => {
+    runAgent.mockResolvedValue({
+      content: '![Diagram](https://images.example/arena.png)',
+      duration: 50,
+    })
+    renderArena({ agent: { ...agent, outputType: 'markdown' }, inputs: {}, apiKeys })
+    await waitFor(() =>
+      expect(
+        screen.getAllByRole('button', { name: 'Load image from images.example' })
+      ).toHaveLength(4)
+    )
+    expect(screen.queryByRole('img')).not.toBeInTheDocument()
+    fireEvent.click(screen.getAllByRole('button', { name: 'Load image from images.example' })[0])
+    expect(screen.getAllByRole('img')).toHaveLength(1)
+  })
+
   it('redirects a direct visit without battle state to setup', async () => {
     renderArena(null)
     expect(await screen.findByText('Battle setup')).toBeInTheDocument()
