@@ -28,6 +28,7 @@ import RecommendationWizardEntry from '../components/recommendation/Recommendati
 import { DEFAULT_COLLECTION_ID, useCollections } from '../lib/useCollections'
 import RecommendationWizardModal from '../components/recommendation/RecommendationWizardModal'
 import { getGlobalKeys } from '../lib/globalKeys'
+import { canRunWithSavedKeys, useSavedProviders } from '../lib/useApiKey'
 import Logo from '../components/Logo'
 import GitHubIcon from '../components/GitHubIcon'
 
@@ -48,13 +49,13 @@ function formatFilterList(items) {
 }
 
 /** A filter is a word, not a pill: active options invert to a solid block. */
-function RailOption({ selected, onClick, children }) {
+function RailOption({ selected, onClick, children, className = '' }) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-pressed={selected}
-      className={`shrink-0 px-2 py-1 font-mono text-[11px] uppercase tracking-[0.08em] transition-colors ${
+      className={`shrink-0 px-2 py-1 font-mono text-[11px] uppercase tracking-[0.08em] transition-colors ${className} ${
         selected
           ? 'bg-black text-white dark:bg-white dark:text-black'
           : 'text-zinc-500 hover:text-black dark:text-text-muted dark:hover:text-white'
@@ -80,6 +81,8 @@ export default function HomePage() {
   const searchQuery = searchParams.get('q') || ''
   const selectedCategory = searchParams.get('category') || null
   const selectedProvider = searchParams.get('provider') || null
+  const savedKeysOnly = searchParams.get('ready') === '1'
+  const savedProviders = useSavedProviders()
 
   const updateFilter = (key, value) => {
     setSearchParams(
@@ -210,6 +213,7 @@ export default function HomePage() {
       const provider = agent.provider || 'any'
       const matchesProvider = !selectedProvider || provider === selectedProvider
       if (!matchesProvider) return false
+      if (savedKeysOnly && !canRunWithSavedKeys(agent, savedProviders)) return false
 
       const matchesCollection =
         activeCollectionId === DEFAULT_COLLECTION_ID
@@ -245,6 +249,8 @@ export default function HomePage() {
     searchQuery,
     selectedCategory,
     selectedProvider,
+    savedKeysOnly,
+    savedProviders,
   ])
 
   const {
@@ -256,7 +262,14 @@ export default function HomePage() {
     showMore,
   } = useProgressiveList(filteredAgents, {
     pageSize: CATALOG_PAGE_SIZE,
-    resetKey: [searchQuery, selectedCategory, selectedProvider, activeCollectionId].join('|'),
+    resetKey: [
+      searchQuery,
+      selectedCategory,
+      selectedProvider,
+      activeCollectionId,
+      savedKeysOnly,
+      savedKeysOnly ? savedProviders.join() : '',
+    ].join('|'),
   })
 
   const handleOpenRecommendationWizard = (event) => {
@@ -292,6 +305,7 @@ export default function HomePage() {
     searchQuery.trim() ||
     selectedCategory ||
     selectedProvider ||
+    savedKeysOnly ||
     activeCollectionId !== DEFAULT_COLLECTION_ID
 
   const resultsStatus = agentsLoading
@@ -318,6 +332,7 @@ export default function HomePage() {
         next.delete('q')
         next.delete('category')
         next.delete('provider')
+        next.delete('ready')
         return next
       },
       { replace: true }
@@ -331,6 +346,7 @@ export default function HomePage() {
   if (selectedProvider) {
     narrowingFilters.push(`provider ${providerLabels[selectedProvider] || selectedProvider}`)
   }
+  if (savedKeysOnly) narrowingFilters.push('saved keys only')
 
   const hasLimitingScope =
     narrowingFilters.length > 0 || activeCollectionId !== DEFAULT_COLLECTION_ID
@@ -558,7 +574,15 @@ export default function HomePage() {
               </RailOption>
             ))}
 
-            {(selectedCategory || selectedProvider || searchQuery) && (
+            <RailOption
+              selected={savedKeysOnly}
+              className="min-h-11"
+              onClick={() => updateFilter('ready', savedKeysOnly ? null : '1')}
+            >
+              With saved keys
+            </RailOption>
+
+            {(selectedCategory || selectedProvider || searchQuery || savedKeysOnly) && (
               <button
                 type="button"
                 onClick={clearFilters}
@@ -568,6 +592,9 @@ export default function HomePage() {
               </button>
             )}
           </div>
+          <p className="text-xs text-zinc-500 dark:text-text-secondary">
+            Saved keys unlock matching agents. Provider validity and quota are checked when you run.
+          </p>
         </div>
       </div>
 
@@ -633,7 +660,12 @@ export default function HomePage() {
               >
                 {visibleAgents.map((agent) => (
                   <div role="listitem" key={agent.id}>
-                    <AgentCard agent={agent} variant="grid" searchQuery={searchQuery} />
+                    <AgentCard
+                      agent={agent}
+                      variant="grid"
+                      searchQuery={searchQuery}
+                      savedProviders={savedProviders}
+                    />
                   </div>
                 ))}
               </div>
@@ -650,6 +682,7 @@ export default function HomePage() {
                       variant="row"
                       index={i + 1}
                       searchQuery={searchQuery}
+                      savedProviders={savedProviders}
                     />
                   </div>
                 ))}
@@ -657,6 +690,11 @@ export default function HomePage() {
             )
           ) : (
             <div className="flex flex-col items-start py-14">
+              {savedKeysOnly && savedProviders.length === 0 && (
+                <Link to="/settings" className="mb-3 text-sm underline">
+                  Add a provider key in Settings
+                </Link>
+              )}
               <span className="eyebrow mb-2">
                 {trimmedSearchQuery
                   ? 'No matches'

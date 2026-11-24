@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { getGlobalKeys } from './globalKeys'
 const STORAGE_PREFIX = 'oa_apikey_'
 const EXPIRY_MS = 8 * 60 * 60 * 1000 // 8 hours
+const PROVIDERS = ['openai', 'anthropic', 'gemini', 'openrouter']
 
 /**
  * Safely retrieve an API key if it exists and hasn't expired.
@@ -127,4 +128,38 @@ export function useApiKey() {
     saveForSession,
     setSaveForSession: updateSaveForSession,
   }
+}
+
+// Expose provider IDs, never secret values, to catalogue consumers.
+export function getSavedProviders() {
+  const globalKeys = getGlobalKeys()
+  return PROVIDERS.filter((provider) =>
+    (getSafeApiKey(provider) || globalKeys[provider] || '').trim()
+  )
+}
+
+export function canRunWithSavedKeys(agent, providers) {
+  return !agent.provider || agent.provider === 'any'
+    ? providers.length > 0
+    : providers.includes(agent.provider)
+}
+
+export function useSavedProviders() {
+  const [providers, setProviders] = useState(getSavedProviders)
+  useEffect(() => {
+    const refresh = () => {
+      const next = getSavedProviders()
+      setProviders((previous) => (previous.join() === next.join() ? previous : next))
+    }
+    // Storage events do not fire for same-tab writes or key expiry.
+    const timer = window.setInterval(refresh, 1000)
+    window.addEventListener('focus', refresh)
+    window.addEventListener('storage', refresh)
+    return () => {
+      window.clearInterval(timer)
+      window.removeEventListener('focus', refresh)
+      window.removeEventListener('storage', refresh)
+    }
+  }, [])
+  return providers
 }
