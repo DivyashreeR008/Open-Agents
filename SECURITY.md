@@ -56,19 +56,22 @@ Interactive session keys are not protected by that vault. They are readable by
 scripts in the page while the tab is open, and the expiry timestamp bounds the
 window rather than preventing access.
 
-## Where run and prompt data are stored
+## Where run, prompt, and search data are stored
 
-| Storage        | Key                           | Contents                                                                                                | Retention                                                                                    |
-| -------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `localStorage` | `OpenAgents_history`          | The inputs and output of recent interactive runs                                                        | Ten most recent runs; individual entries can be deleted or all history cleared               |
-| `localStorage` | `oa_scheduler_results`        | Scheduled job output and error text                                                                     | Fifty most recent results; deleted with the job or individually                              |
-| `localStorage` | `oa_automation_runs_v2`       | Automation run records, including output and error text                                                 | Retained until the run or automation is deleted, or site data is cleared                     |
-| `localStorage` | `oa_automations_v2`           | Automation definitions, including saved input values, system prompt, schedule, and notification address | Retained until the automation is deleted or site data is cleared                             |
-| `localStorage` | `oa_automation_email_logs_v2` | Email delivery metadata: recipient, subject, status, and a short output preview                         | Fifty most recent entries                                                                    |
-| `localStorage` | `oa_execution_traces`         | Workflow trace records with step inputs, step outputs, and final output                                 | Twenty most recent traces; each payload is truncated to 8,000 characters by the trace module |
-| `localStorage` | `oa_prompt_history`           | Prompts you explicitly save, plus an optional agent name                                                | One hundred most recent prompts; individual entries or the whole list can be deleted         |
-| `localStorage` | `oa_analytics`                | Run metadata: agent, provider, model, duration, and timestamp. No prompt or output text.                | Five hundred most recent events; can be cleared from Analytics                               |
-| `localStorage` | `oa_session_spend`            | Token counts and estimated cost for recent runs                                                         | Two hundred most recent runs; can be cleared from the spend panel                            |
+| Storage        | Key                           | Contents                                                                                                                          | Retention                                                                                                    |
+| -------------- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `localStorage` | `OpenAgents_history`          | The inputs and output of recent interactive runs                                                                                  | Ten most recent runs; individual entries can be deleted or all history cleared                               |
+| `localStorage` | `oa_scheduler_results`        | Scheduled job output and error text                                                                                               | Fifty most recent results; deleted with the job or individually                                              |
+| `localStorage` | `oa_automation_runs_v2`       | Automation run records, including output and error text                                                                           | Retained until the run or automation is deleted, or site data is cleared                                     |
+| `localStorage` | `oa_automations_v2`           | Automation definitions, including saved input values, system prompt, schedule, and notification address                           | Retained until the automation is deleted or site data is cleared                                             |
+| `localStorage` | `oa_automation_email_logs_v2` | Email delivery metadata: recipient, subject, status, and a short output preview                                                   | Fifty most recent entries                                                                                    |
+| `localStorage` | `oa_execution_traces`         | Workflow trace records with step inputs, step outputs, and final output                                                           | Twenty most recent traces; each payload is truncated to 8,000 characters by the trace module                 |
+| `localStorage` | `oa_search_history_v1`        | Explicitly remembered or submitted search queries, surface, and catalogue category/provider/collection/readiness filters and view | Ten most recent distinct searches across both surfaces; individual removal or clear all from Recent searches |
+| `localStorage` | `oa_prompt_history`           | Prompts you explicitly save, plus an optional agent name                                                                          | One hundred most recent prompts; individual entries or the whole list can be deleted                         |
+| `localStorage` | `oa_analytics`                | Run metadata: agent, provider, model, duration, and timestamp. No prompt or output text.                                          | Five hundred most recent events; can be cleared from Analytics                                               |
+| `localStorage` | `oa_session_spend`            | Token counts and estimated cost for recent runs                                                                                   | Two hundred most recent runs; can be cleared from the spend panel                                            |
+
+Search history stays on this device and is not sent to providers or analytics. Typing alone does not save a query. Catalogue Enter/Remember search and global result selection/Remember search do save it, so avoid submitting secrets as search queries.
 
 The app also stores non-secret preferences and workflow content, such as theme,
 favorites, collections, sidebar state, marketplace data, and dismissed banners.
@@ -104,6 +107,8 @@ an accepted exception in `security-exceptions.json`.
   disappear when the tab closes.
 - Recent runs can be deleted from the recent runs panel. Analytics has a clear
   control, and prompt history supports deleting one entry or clearing the list.
+- Recent searches in the catalogue or global search can remove one query or clear
+  all search history across both surfaces. This does not clear run history or keys.
 - Clearing site data for the origin removes `localStorage`, `sessionStorage`, and
   the IndexedDB device key. Encrypted automation keys cannot be recovered after
   that, and stored runs and prompts are removed with the rest of the site data.

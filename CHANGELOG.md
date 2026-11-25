@@ -19,6 +19,8 @@ changelog tooling is planned but not yet in place (see ROADMAP.md, section 6).
 
 ### Added
 
+- Device-local recent searches for the catalogue and global command palette, with explicit saving, scope/view replay, individual removal, clear all, and a shared ten-entry limit (#258).
+
 - Accessibility statement, known limitations, and barrier reporting guidance linked from the About resources and support documentation (#358).
 - Global command palette accessible via Ctrl/Cmd+K to jump directly to agents, collections, workflows, and settings pages (#473).
 - Changelog maintenance process documented; entries are added as changes ship.
