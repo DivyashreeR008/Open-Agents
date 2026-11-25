@@ -17,6 +17,7 @@ import { useTimedState } from '../lib/useTimedState'
 import CollectionPicker from './CollectionPicker'
 import HighlightedText from './HighlightedText'
 import { resolveAgentIcon } from '../lib/agentIcons'
+import AgentNameContext from './AgentNameContext'
 
 const providerMeta = {
   openai: { label: 'OpenAI', dot: 'bg-zinc-500' },
@@ -40,7 +41,13 @@ function formatMatchList(fields) {
   return `${fields.slice(0, -1).join(', ')}, and ${fields[fields.length - 1]}`
 }
 
-export default function AgentCard({ agent, variant = 'grid', index = null, searchQuery = '' }) {
+export default function AgentCard({
+  agent,
+  variant = 'grid',
+  index = null,
+  searchQuery = '',
+  nameContext,
+}) {
   const IconComponent = resolveAgentIcon(agent?.icon)
   const provider = providerMeta[agent?.provider] || providerMeta.any
   const { isFavorite, toggleFavorite } = useFavorites()
@@ -175,8 +182,11 @@ export default function AgentCard({ agent, variant = 'grid', index = null, searc
             aria-hidden="true"
           />
 
-          <span className="w-44 shrink-0 truncate text-[13.5px] font-medium text-zinc-900 dark:text-text-primary sm:w-60">
+          <span
+            className={`w-44 shrink-0 text-[13.5px] font-medium text-zinc-900 dark:text-text-primary sm:w-60 ${nameContext ? 'whitespace-normal break-words' : 'truncate'}`}
+          >
             <HighlightedText text={name} query={agent?.name ? query : ''} />
+            <AgentNameContext context={nameContext} compact />
           </span>
 
           <span className="hidden min-w-0 flex-1 truncate text-xs text-zinc-500 sm:block dark:text-text-secondary">
@@ -225,7 +235,9 @@ export default function AgentCard({ agent, variant = 'grid', index = null, searc
           </span>
 
           <div className="min-w-0 flex-1">
-            <h3 className="truncate text-[14px] font-semibold leading-5 tracking-[-0.01em] text-zinc-900 dark:text-text-primary">
+            <h3
+              className={`text-[14px] font-semibold leading-5 tracking-[-0.01em] text-zinc-900 dark:text-text-primary ${nameContext ? 'whitespace-normal break-words' : 'truncate'}`}
+            >
               <HighlightedText text={name} query={agent?.name ? query : ''} />
             </h3>
             <div className="mt-1 flex items-center gap-1.5">
@@ -242,6 +254,8 @@ export default function AgentCard({ agent, variant = 'grid', index = null, searc
         <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-zinc-500 dark:text-text-secondary">
           <HighlightedText text={description} query={agent?.description ? query : ''} />
         </p>
+
+        <AgentNameContext context={nameContext} />
 
         <div className="mt-3 flex items-center justify-between border-t border-zinc-200 pt-2.5 dark:border-border">
           <span className="flex items-center gap-1.5 font-mono text-[10px] text-zinc-400 dark:text-text-muted">

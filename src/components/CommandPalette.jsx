@@ -1,3 +1,5 @@
+import AgentNameContext from './AgentNameContext'
+import { buildAgentNameContext } from '../lib/agentNameContext'
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -171,6 +173,7 @@ export default function CommandPalette({ isOpen, onClose }) {
   const navigate = useNavigate()
 
   const { agents = [] } = useAgents()
+  const nameContexts = useMemo(() => buildAgentNameContext(agents), [agents])
   const { collections = [] } = useCollections()
 
   // Trap focus while active, restore focus on close, close on Escape
@@ -243,6 +246,7 @@ export default function CommandPalette({ isOpen, onClose }) {
         subtitle: agent.description,
         category: agent.category,
         type: 'agent',
+        nameContext: nameContexts.get(agent.id),
         url: `/agent/${agent.id}`,
         icon: Bot,
         keywords: [agent.name, agent.category || '', agent.description || '', agent.id],
@@ -250,7 +254,7 @@ export default function CommandPalette({ isOpen, onClose }) {
     }
 
     return items
-  }, [agents, collections, workflows])
+  }, [agents, collections, workflows, nameContexts])
 
   // Filter items based on user query
   const filteredItems = useMemo(() => {
@@ -445,7 +449,7 @@ export default function CommandPalette({ isOpen, onClose }) {
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="truncate text-[13px] font-medium text-zinc-900 dark:text-text-primary">
+                        <span className="break-words text-[13px] font-medium text-zinc-900 dark:text-text-primary">
                           {item.title}
                         </span>
                         {item.category && (
@@ -454,6 +458,7 @@ export default function CommandPalette({ isOpen, onClose }) {
                           </span>
                         )}
                       </div>
+                      <AgentNameContext context={item.nameContext} compact />
                       {item.subtitle && (
                         <p className="truncate text-[11px] text-zinc-500 dark:text-text-secondary">
                           {item.subtitle}

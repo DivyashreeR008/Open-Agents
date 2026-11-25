@@ -1,3 +1,5 @@
+import { buildAgentNameContext } from '../../lib/agentNameContext'
+import AgentNameContext from '../AgentNameContext'
 import { useMemo, useState } from 'react'
 import { Search } from 'lucide-react'
 import { MAX_AGENTS_PER_COLLECTION } from '../../lib/useCollections'
@@ -20,6 +22,7 @@ export default function CollectionAgentPicker({
   maxAgents = MAX_AGENTS_PER_COLLECTION,
 }) {
   const [searchQuery, setSearchQuery] = useState('')
+  const nameContexts = useMemo(() => buildAgentNameContext(agents), [agents])
   const [feedback, setFeedback] = useState('')
   const selectedIds = useMemo(
     () => new Set((collection?.agentIds || []).filter(Boolean)),
@@ -133,6 +136,7 @@ export default function CollectionAgentPicker({
                 <span className="mt-1 line-clamp-2 block text-xs leading-relaxed text-gray-500 dark:text-text-secondary">
                   {agent.description}
                 </span>
+                <AgentNameContext context={nameContexts.get(agent.id)} compact />
                 {agent.category && (
                   <span className="mt-2 inline-flex border border-gray-200 px-2 py-0.5 text-[11px] font-medium text-gray-500 dark:border-border dark:text-text-muted">
                     {agent.category}

@@ -1,3 +1,4 @@
+import { buildAgentNameContext } from '../lib/agentNameContext'
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import {
@@ -75,6 +76,7 @@ export default function HomePage() {
   const [viewMode, setViewMode] = useState('index')
   const [searchParams, setSearchParams] = useSearchParams()
   const { collections, getAgentCollectionId } = useCollections()
+  const nameContexts = useMemo(() => buildAgentNameContext(agents), [agents])
 
   // Filters live in the URL so a search or category can be linked to directly.
   const searchQuery = searchParams.get('q') || ''
@@ -633,7 +635,12 @@ export default function HomePage() {
               >
                 {visibleAgents.map((agent) => (
                   <div role="listitem" key={agent.id}>
-                    <AgentCard agent={agent} variant="grid" searchQuery={searchQuery} />
+                    <AgentCard
+                      agent={agent}
+                      nameContext={nameContexts.get(agent.id)}
+                      variant="grid"
+                      searchQuery={searchQuery}
+                    />
                   </div>
                 ))}
               </div>
@@ -647,6 +654,7 @@ export default function HomePage() {
                   <div role="listitem" key={agent.id}>
                     <AgentCard
                       agent={agent}
+                      nameContext={nameContexts.get(agent.id)}
                       variant="row"
                       index={i + 1}
                       searchQuery={searchQuery}
