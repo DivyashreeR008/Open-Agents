@@ -23,6 +23,7 @@ import {
 import { clearAutomationKeys } from '../lib/automationsService'
 import { apiKeyFieldProps } from '../lib/apiKeyFieldProps'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
+import StorageUsage from '../components/StorageUsage'
 import openaiLogo from '../assets/openai.svg'
 import anthropicLogo from '../assets/anthropic.svg'
 import geminiLogo from '../assets/gemini.svg'
@@ -501,6 +502,8 @@ export default function SettingsPage() {
       {/* ─────────────────────────────────────────── */}
       {/* SECTION 3 — Privacy                         */}
       {/* ─────────────────────────────────────────── */}
+      <StorageUsage />
+
       <section className=" border dark:bg-surface-card dark:border-border bg-white border-gray-200 overflow-hidden">
         <div className="px-5 py-4 border-b dark:border-border border-gray-100">
           <h2 className="text-sm font-bold dark:text-text-primary text-gray-900">Privacy</h2>

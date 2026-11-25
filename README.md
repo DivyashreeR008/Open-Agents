@@ -14,6 +14,7 @@ Open-Agents is a local-first web app for discovering, running, and composing AI 
 - **Batch mode:** Run an agent across rows from a CSV file and export the results as CSV or Markdown.
 - **Local marketplace:** Publish, import, and rate agent configurations. Credential-like fields are sanitized before a listing is stored.
 - **Browser storage:** Favorites, collections, history, automations, analytics, and marketplace data stay in the browser unless a feature explicitly uses a configured backend.
+- **Storage usage:** Settings shows approximate localStorage sizes by feature, the largest consumers, and a separate browser origin-wide usage/quota estimate. The 5 MiB localStorage planning reference is an app warning guide, not a detected browser limit. The report never displays saved values or raw storage names and does not delete data.
 
 ## Tech stack
 
