@@ -30,6 +30,8 @@ import RecommendationWizardModal from '../components/recommendation/Recommendati
 import { getGlobalKeys } from '../lib/globalKeys'
 import Logo from '../components/Logo'
 import GitHubIcon from '../components/GitHubIcon'
+import SearchHistory from '../components/SearchHistory'
+import { useSearchHistory } from '../lib/useSearchHistory'
 
 const providerLabels = {
   any: 'Any Provider',
@@ -74,12 +76,20 @@ export default function HomePage() {
   const recommendationWizardReturnFocusRef = useRef(null)
   const [viewMode, setViewMode] = useState('index')
   const [searchParams, setSearchParams] = useSearchParams()
+  const searchHistory = useSearchHistory()
   const { collections, getAgentCollectionId } = useCollections()
 
   // Filters live in the URL so a search or category can be linked to directly.
   const searchQuery = searchParams.get('q') || ''
   const selectedCategory = searchParams.get('category') || null
   const selectedProvider = searchParams.get('provider') || null
+  const rememberSearch = () =>
+    searchHistory.remember({
+      surface: 'catalogue',
+      query: searchQuery,
+      scope: searchParams.toString(),
+      view: viewMode,
+    })
 
   const updateFilter = (key, value) => {
     setSearchParams(
@@ -466,6 +476,16 @@ export default function HomePage() {
         )}
       </header>
 
+      <SearchHistory
+        history={searchHistory}
+        surface="catalogue"
+        onRecall={(entry) => {
+          setViewMode(entry.view)
+          setSearchParams(new URLSearchParams(entry.scope))
+          document.getElementById('agent-search')?.focus()
+        }}
+      />
+
       {/* ── Filter bar ───────────────────────────────────────────────── */}
       <div className="sticky top-12 z-30 -mx-1 mb-5 border-b border-zinc-200 bg-white/90 px-1 py-2.5 backdrop-blur-xl dark:border-border dark:bg-surface/90">
         <div className="flex flex-col gap-2">
@@ -481,6 +501,16 @@ export default function HomePage() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(event) => {
+                  if (
+                    event.key === 'Enter' &&
+                    !event.nativeEvent.isComposing &&
+                    searchQuery.trim()
+                  ) {
+                    event.preventDefault()
+                    rememberSearch()
+                  }
+                }}
                 placeholder="Search agents by name, description, or category…"
                 aria-label="Search agents"
                 className="field h-9 pl-8 pr-16"
@@ -530,6 +560,15 @@ export default function HomePage() {
               ))}
             </div>
           </div>
+
+          <button
+            type="button"
+            className="min-h-11 self-start px-2 text-xs underline"
+            disabled={!searchQuery.trim()}
+            onClick={rememberSearch}
+          >
+            Remember search
+          </button>
 
           <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
             <span className="eyebrow mr-1 shrink-0">Category</span>

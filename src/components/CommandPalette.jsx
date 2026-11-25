@@ -21,6 +21,8 @@ import { useAgents } from '../lib/useAgents'
 import { useCollections } from '../lib/useCollections'
 import { fetchWorkflows } from '../hooks/useWorkflows'
 import { useDialogFocus } from '../hooks/useDialogFocus'
+import SearchHistory from './SearchHistory'
+import { useSearchHistory } from '../lib/useSearchHistory'
 
 const STATIC_DESTINATIONS = [
   {
@@ -169,6 +171,8 @@ export default function CommandPalette({ isOpen, onClose }) {
   const backdropRef = useRef(null)
   const listboxRef = useRef(null)
   const navigate = useNavigate()
+  const searchHistory = useSearchHistory()
+  const { remember } = searchHistory
 
   const { agents = [] } = useAgents()
   const { collections = [] } = useCollections()
@@ -315,10 +319,11 @@ export default function CommandPalette({ isOpen, onClose }) {
   const handleSelect = useCallback(
     (item) => {
       if (!item) return
+      if (query.trim()) remember({ surface: 'palette', query })
       onClose()
       navigate(item.url)
     },
-    [navigate, onClose]
+    [navigate, onClose, query, remember]
   )
 
   const handleKeyDown = (event) => {
@@ -332,7 +337,7 @@ export default function CommandPalette({ isOpen, onClose }) {
       if (filteredItems.length > 0) {
         setSelectedIndex((prev) => (prev - 1 + filteredItems.length) % filteredItems.length)
       }
-    } else if (event.key === 'Enter') {
+    } else if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
       event.preventDefault()
       if (filteredItems[clampedIndex]) {
         handleSelect(filteredItems[clampedIndex])
@@ -403,6 +408,26 @@ export default function CommandPalette({ isOpen, onClose }) {
               Esc
             </kbd>
           )}
+        </div>
+
+        <div className="max-h-48 shrink-0 overflow-y-auto">
+          <button
+            type="button"
+            className="min-h-11 px-4 text-xs underline"
+            disabled={!query.trim()}
+            onClick={() => remember({ surface: 'palette', query })}
+          >
+            Remember search
+          </button>
+          <SearchHistory
+            history={searchHistory}
+            surface="palette"
+            onRecall={(entry) => {
+              setQuery(entry.query)
+              setSelectedIndex(0)
+              panelRef.current?.querySelector('[role="combobox"]')?.focus()
+            }}
+          />
         </div>
 
         {/* Results Listbox */}
