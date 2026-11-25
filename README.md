@@ -11,6 +11,7 @@ Open-Agents is a local-first web app for discovering, running, and composing AI 
 - **Collections and suites:** Group agents, use curated suites, or generate a custom suite from a goal.
 - **Automations:** Schedule recurring agent runs, inspect run history, and surface missed or failed runs. Email notifications are optional.
 - **Analytics:** Review run volume, provider mix, activity streaks, token usage, and session cost.
+- **Spend provenance:** The spend popup separates reported monetary costs, token-based estimates, and amounts whose source is unknown. Missing cost components stay visibly incomplete, including runs with no known price. Current agent runs use text-length token estimates, not provider billing receipts. The subtotal covers the newest 200 retained runs; the popup lists the newest ten. Older records keep their amounts without guessing their source.
 - **Batch mode:** Run an agent across rows from a CSV file and export the results as CSV or Markdown.
 - **Local marketplace:** Publish, import, and rate agent configurations. Credential-like fields are sanitized before a listing is stored.
 - **Browser storage:** Favorites, collections, history, automations, analytics, and marketplace data stay in the browser unless a feature explicitly uses a configured backend.
