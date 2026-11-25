@@ -17,6 +17,8 @@ changelog tooling is planned but not yet in place (see ROADMAP.md, section 6).
 
 ## [Unreleased]
 
+- Distinguish reported, estimated and unknown run costs in the spend popup, including missing usage and legacy amounts; disclose estimates and omissions in retained-run totals ([#297](https://github.com/DivyashreeR008/Open-Agents/issues/297)).
+
 ### Added
 
 - Accessibility statement, known limitations, and barrier reporting guidance linked from the About resources and support documentation (#358).

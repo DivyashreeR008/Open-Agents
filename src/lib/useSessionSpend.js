@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
-import { estimateInputCost, estimateOutputCost, getPricing } from './modelPricing'
+import { readCostProvenance, resolveCostComponent, summarizeSpend } from './spendProvenance'
 
 const STORAGE_KEY = 'oa_session_spend'
 const MAX_RUNS = 200
@@ -26,6 +26,7 @@ function normalizeRun(run) {
     inputCost,
     outputCost,
     totalCost: componentTotal > 0 ? componentTotal : storedTotal,
+    costProvenance: readCostProvenance(run),
   }
 }
 
@@ -68,27 +69,17 @@ export function useSessionSpend() {
   const addRun = useCallback(({ model, inputTokens, outputTokens, inputCost, outputCost }) => {
     const safeInputTokens = toNonNegativeNumber(inputTokens)
     const safeOutputTokens = toNonNegativeNumber(outputTokens)
-    const explicitInput = Number.isFinite(inputCost) && inputCost >= 0 ? inputCost : null
-    const explicitOutput = Number.isFinite(outputCost) && outputCost >= 0 ? outputCost : null
-
-    let inputC = explicitInput
-    let outputC = explicitOutput
-
-    if (inputC == null && safeInputTokens > 0 && model) {
-      inputC = estimateInputCost(model, safeInputTokens) || 0
-    }
-    if (outputC == null && safeOutputTokens > 0 && model) {
-      outputC = estimateOutputCost(model, safeOutputTokens) || 0
-    }
-
-    const runCost = (inputC || 0) + (outputC || 0)
+    const input = resolveCostComponent(model, inputTokens, inputCost, 'input')
+    const output = resolveCostComponent(model, outputTokens, outputCost, 'output')
+    const runCost = input.cost + output.cost
     const run = {
       model,
       inputTokens: safeInputTokens,
       outputTokens: safeOutputTokens,
-      inputCost: inputC || 0,
-      outputCost: outputC || 0,
+      inputCost: input.cost,
+      outputCost: output.cost,
       totalCost: runCost,
+      costProvenance: { version: 1, input: input.source, output: output.source },
       timestamp: Date.now(),
     }
 
@@ -113,6 +104,7 @@ export function useSessionSpend() {
   return {
     runs: sessionData.runs,
     totalSpend: sessionData.totalSpend,
+    costSummary: summarizeSpend(sessionData.runs),
     addRun,
     clearSession,
   }

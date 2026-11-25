@@ -8,7 +8,6 @@ import {
   X,
   HelpCircle,
   DollarSign,
-  RotateCcw,
   Settings,
   PanelLeft,
   ExternalLink,
@@ -17,6 +16,7 @@ import {
 import GitHubIcon from './GitHubIcon'
 import Logo from './Logo'
 import KeyboardShortcutsModal from './KeyboardShortcutsModal'
+import SpendBreakdown from './SpendBreakdown'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 import { useSessionSpend } from '../lib/useSessionSpend'
 import { formatCost } from '../lib/formatting'
@@ -57,7 +57,7 @@ export default function Navbar({ sidebarOpen, setSidebarOpen, onOpenCommandPalet
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showSpendPopup, setShowSpendPopup] = useState(false)
   const themeMenuRef = useRef(null)
-  const { totalSpend, runs, clearSession } = useSessionSpend()
+  const { totalSpend, runs, costSummary, clearSession } = useSessionSpend()
   const navigate = useNavigate()
 
   const resolvedTheme = resolveThemeMode(themeMode, systemDark)
@@ -206,49 +206,36 @@ export default function Navbar({ sidebarOpen, setSidebarOpen, onOpenCommandPalet
               <HelpCircle size={16} />
             </button>
 
-            {totalSpend > 0 && (
-              <div className="relative hidden md:block">
+            {runs.length > 0 && (
+              <div className="relative">
                 <button
                   onClick={() => setShowSpendPopup((p) => !p)}
                   className="inline-flex h-8 items-center gap-1 border px-2 font-mono text-[11px] font-medium tabular-nums transition-colors border-zinc-500/25 bg-zinc-500/10 text-zinc-600 hover:bg-zinc-500/20 dark:text-zinc-400"
                   aria-label="Session spend"
+                  aria-expanded={showSpendPopup}
+                  aria-controls="session-spend-breakdown"
                 >
                   <DollarSign size={11} />
-                  {formatCost(totalSpend, { symbol: false })}
+                  {costSummary.estimatedComponents > 0 ? '≈' : ''}
+                  {totalSpend === 0 && costSummary.unknownComponents > 0
+                    ? '?'
+                    : formatCost(totalSpend, { symbol: false })}
                 </button>
 
                 {showSpendPopup && (
-                  <div className="absolute right-0 top-full z-50 mt-2 w-64 animate-fade-in border border-zinc-200 bg-white p-3 shadow-pop dark:border-border dark:bg-surface-card">
-                    <div className="mb-2 flex items-center justify-between">
-                      <span className="eyebrow">Session spend</span>
-                      <span className="font-mono text-[10px] text-zinc-400 dark:text-text-muted">
-                        {runs.length} run{runs.length !== 1 ? 's' : ''}
-                      </span>
-                    </div>
-                    <div className="mb-2 font-mono text-lg font-semibold tabular-nums text-zinc-900 dark:text-text-primary">
-                      {formatCost(totalSpend)}
-                    </div>
-                    <div className="mb-2 max-h-32 space-y-1 overflow-y-auto">
-                      {runs.slice(0, 10).map((run, i) => (
-                        <div
-                          key={i}
-                          className="flex justify-between font-mono text-[10px] text-zinc-400 dark:text-text-muted"
-                        >
-                          <span className="max-w-[140px] truncate">{run.model || 'Unknown'}</span>
-                          <span className="tabular-nums">{formatCost(run.totalCost)}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <button
-                      onClick={() => {
+                  <div
+                    id="session-spend-breakdown"
+                    className="fixed inset-x-3 top-14 z-50 max-h-[calc(100dvh-5rem)] overflow-y-auto border border-zinc-200 bg-white p-3 shadow-pop sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-72 dark:border-border dark:bg-surface-card"
+                  >
+                    <SpendBreakdown
+                      runs={runs}
+                      totalSpend={totalSpend}
+                      summary={costSummary}
+                      onReset={() => {
                         clearSession()
                         setShowSpendPopup(false)
                       }}
-                      className="inline-flex items-center gap-1 font-mono text-[10px] text-zinc-400 transition-colors hover:text-black dark:hover:text-white dark:text-text-muted"
-                    >
-                      <RotateCcw size={10} />
-                      Reset
-                    </button>
+                    />
                   </div>
                 )}
               </div>
