@@ -1,3 +1,4 @@
+import { buildAgentNameContext } from '../lib/agentNameContext'
 import { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, FolderPlus, Trash2, X } from 'lucide-react'
@@ -20,6 +21,7 @@ export default function CollectionDetailPage() {
   const { getCollectionById, deleteCollection, addAgentToCollection, removeAgentFromCollection } =
     useCollections()
   const { agents, loading, error } = useAgents()
+  const nameContexts = useMemo(() => buildAgentNameContext(agents), [agents])
 
   const collection = getCollectionById(id)
   const [removalNotice, setRemovalNotice] = useTimedState(null)
@@ -207,7 +209,7 @@ export default function CollectionDetailPage() {
           <div className="grid grid-cols-1 gap-2.5 pt-1.5 sm:grid-cols-2 xl:grid-cols-3">
             {collectionAgents.map((agent) => (
               <div key={agent.id} className="relative">
-                <AgentCard agent={agent} />
+                <AgentCard agent={agent} nameContext={nameContexts.get(agent.id)} />
 
                 <button
                   onClick={() => handleRemoveFromCard(agent)}

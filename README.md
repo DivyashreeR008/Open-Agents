@@ -124,3 +124,5 @@ For setup details, test commands, and the agent authoring guide, read [CONTRIBUT
 ### Dependency update policy
 
 Dependabot checks npm dependencies weekly. Patch and minor updates are proposed normally; major updates are grouped into one `major-dependencies` pull request so maintainers can review breaking changes together. No package is globally excluded from major-version updates: grouped pull requests keep the upgrade backlog visible while allowing compatibility work to be planned.
+
+Similar catalogue titles: [distinguishing context and maintainer report](SIMILAR_AGENT_NAMES.md).

@@ -1,3 +1,5 @@
+import AgentNameContext from './AgentNameContext'
+import { buildAgentNameContext } from '../lib/agentNameContext'
 import { useState, useEffect, useMemo } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import * as Icons from 'lucide-react'
@@ -52,6 +54,7 @@ export default function Sidebar({ open, onClose }) {
   const [feedback, setFeedback] = useState('')
   const { collections, moveAgentToCollection } = useCollections()
   const { agents } = useAgents()
+  const nameContexts = useMemo(() => buildAgentNameContext(agents), [agents])
   const location = useLocation()
 
   useEffect(() => {
@@ -300,7 +303,10 @@ export default function Sidebar({ open, onClose }) {
                           {pad(index + 1)}
                         </span>
                         <IconComponent size={13} className="shrink-0" aria-hidden="true" />
-                        <span className="min-w-0 flex-1 truncate">{agent.name}</span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block break-words">{agent.name}</span>
+                          <AgentNameContext context={nameContexts.get(agent.id)} compact />
+                        </span>
                         {isActive && (
                           <span className="font-mono text-[10px] opacity-60" aria-hidden="true">
                             ●
@@ -389,7 +395,10 @@ export default function Sidebar({ open, onClose }) {
                                   {pad(index + 1)}.{pad(agentIndex + 1)}
                                 </span>
                                 <IconComponent size={13} className="shrink-0" aria-hidden="true" />
-                                <span className="truncate">{agent.name}</span>
+                                <span className="min-w-0 flex-1">
+                                  <span className="block break-words">{agent.name}</span>
+                                  <AgentNameContext context={nameContexts.get(agent.id)} compact />
+                                </span>
                                 {isActive && (
                                   <span
                                     className="ml-auto font-mono text-[10px] opacity-60"
