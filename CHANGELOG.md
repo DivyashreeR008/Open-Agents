@@ -19,6 +19,8 @@ changelog tooling is planned but not yet in place (see ROADMAP.md, section 6).
 
 ### Added
 
+- Read-only Settings storage usage with per-feature UTF-16 size estimates, largest consumers, early planning warnings, and a separately labelled browser origin-wide quota estimate ([#264](https://github.com/DivyashreeR008/Open-Agents/issues/264)).
+
 - Accessibility statement, known limitations, and barrier reporting guidance linked from the About resources and support documentation (#358).
 - Global command palette accessible via Ctrl/Cmd+K to jump directly to agents, collections, workflows, and settings pages (#473).
 - Changelog maintenance process documented; entries are added as changes ship.
