@@ -54,7 +54,7 @@ describe('AboutFeatures', () => {
       '100% Client-Side Privacy (BYOK)',
       'Suites & Custom Collections',
     ])
-    expect(screen.getByText(/Pit three AI models head-to-head/)).toBeInTheDocument()
+    expect(screen.getByText(/Pit four AI providers head-to-head/)).toBeInTheDocument()
     expect(screen.getByText(/Your API key never leaves your browser/)).toBeInTheDocument()
   })
 
